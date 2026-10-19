@@ -4,7 +4,8 @@
 	"source": "https://github.com/joblisttoday/joblist-atproto",
 	"collections": {
 		"company": "today.joblist.company",
-		"list": "today.joblist.list"
+		"list": "today.joblist.list",
+		"job": "today.joblist.job"
 	},
 	"services": {
 		"relay": "https://relay1.us-east.bsky.network",
@@ -14,14 +15,25 @@
 	},
 	"map": {
 		"style": "https://tiles.openfreemap.org/styles/positron",
-		"center": [13.405, 52.52],
+		"center": [
+			13.405,
+			52.52
+		],
 		"zoom": 2
 	},
 	"limits": {
 		"concurrency": 6,
 		"jobsConcurrency": 4,
-		"pagesPerRepo": 20
+		"pagesPerRepo": 20,
+		"indexerConcurrency": 8
 	},
-	"locales": ["en", "fr"],
-	"defaultLocale": "en"
+	"locales": [
+		"en",
+		"fr"
+	],
+	"defaultLocale": "en",
+	"snapshot": {
+		"path": "/snapshot",
+		"maxAgeHours": 12
+	}
 }
