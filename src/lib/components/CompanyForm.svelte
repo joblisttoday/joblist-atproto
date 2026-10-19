@@ -6,22 +6,24 @@
 	import { session } from '#lib/auth/session.svelte.js';
 	import { upsertLocal } from '#lib/network/network.svelte.js';
 	import { boardUrl, toDomain, toForm, toRecord } from '#lib/models/company.js';
+	import { withPrefill } from '#lib/models/paste.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
 	 * @type {{
 	 *   company?: import('#lib/models/company.js').Company | null,
-	 *   initialUrl?: string,
+	 *   prefill?: Parameters<typeof withPrefill>[1],
 	 *   onsaved: (key: string) => void,
 	 *   oncancel?: () => void
 	 * }}
 	 */
-	let { company = null, initialUrl = '', onsaved, oncancel } = $props();
+	let { company = null, prefill = {}, onsaved, oncancel } = $props();
 
 	const editing = $derived(Boolean(company));
 	const own = $derived(company?.versions.find((v) => v.did === session.did));
-	// The form starts from the company as it is now; the page remounts it for another company.
-	const initialForm = () => ({ ...toForm(company), url: company?.url || initialUrl });
+	// The form starts from the company as it is now, its gaps filled from what was pasted;
+	// the page remounts it for another company.
+	const initialForm = () => withPrefill(toForm(company), prefill);
 	let form = $state(initialForm());
 	let busy = $state(false);
 	/** @type {string | null} */
