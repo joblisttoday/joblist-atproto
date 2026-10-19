@@ -1,8 +1,8 @@
 import { BrowserOAuthClient } from '@atproto/oauth-client-browser';
 import config from '#lib/data/config.json';
 
-/** Only what the app writes: its two record types. */
-export const SCOPE = `atproto repo:${config.collections.company} repo:${config.collections.list}`;
+/** Only what the app writes: its own record types. */
+export const SCOPE = ['atproto', ...Object.values(config.collections).map((nsid) => `repo:${nsid}`)].join(' ');
 
 /**
  * Production loads the published client metadata; local development

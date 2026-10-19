@@ -5,7 +5,8 @@
 	"collections": {
 		"company": "today.joblist.company",
 		"list": "today.joblist.list",
-		"job": "today.joblist.job"
+		"job": "today.joblist.job",
+		"suggestion": "today.joblist.suggestion"
 	},
 	"bots": [],
 	"services": {

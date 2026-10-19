@@ -20,7 +20,7 @@ const generatedAt = new Date().toISOString();
 
 const { records, profiles } = await crawlRecords();
 const companies = groupCompanies(records.company, profiles);
-console.log(`records: ${records.company.length} company, ${records.list.length} list, ${records.job.length} job, from ${profiles.size} accounts`);
+console.log(`records: ${records.company.length} company, ${records.list.length} list, ${records.suggestion.length} suggestion, ${records.job.length} job, from ${profiles.size} accounts`);
 
 const board = await fetchBoardJobs(companies);
 const jobs = [...recordJobs(records.job, profiles), ...board.jobs];
@@ -32,6 +32,7 @@ const files = {
 		loadedAt: generatedAt,
 		companyRecords: records.company,
 		listRecords: records.list,
+		suggestionRecords: records.suggestion,
 		jobRecords: records.job,
 		profiles: Object.fromEntries(profiles)
 	},
@@ -46,6 +47,7 @@ const files = {
 			accounts: profiles.size,
 			companies: companies.length,
 			lists: records.list.length,
+			suggestions: records.suggestion.length,
 			jobRecords: records.job.length,
 			jobs: jobs.length
 		}

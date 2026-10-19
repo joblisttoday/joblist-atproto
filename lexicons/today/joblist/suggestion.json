@@ -1,0 +1,21 @@
+{
+	"lexicon": 1,
+	"id": "today.joblist.suggestion",
+	"description": "A company someone suggests for a list they do not own, written in their own repository. Open lists show it at once, credited to its author; for other lists, the list's author accepts or dismisses it.",
+	"defs": {
+		"main": {
+			"type": "record",
+			"key": "tid",
+			"record": {
+				"type": "object",
+				"required": ["list", "company", "createdAt"],
+				"properties": {
+					"list": { "type": "string", "format": "at-uri", "description": "The today.joblist.list the company is suggested for." },
+					"company": { "type": "string", "maxLength": 512, "description": "Company record key (its domain)." },
+					"note": { "type": "string", "maxLength": 3000, "maxGraphemes": 300, "description": "Why it belongs in the list." },
+					"createdAt": { "type": "string", "format": "datetime" }
+				}
+			}
+		}
+	}
+}

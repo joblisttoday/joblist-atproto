@@ -5,6 +5,7 @@ import { mapLimit } from '#lib/atproto/xrpc.js';
 import { session } from '#lib/auth/session.svelte.js';
 import { toCompany } from '#lib/models/company.js';
 import { toList } from '#lib/models/list.js';
+import { toSuggestion } from '#lib/models/suggestion.js';
 import { readCache, writeCache } from './cache.js';
 import { getSnapshotRecords } from './snapshot.js';
 
@@ -13,7 +14,13 @@ import { getSnapshotRecords } from './snapshot.js';
  * @typedef {import('#lib/atproto/identity.js').Profile} Profile
  */
 
-const { company: COMPANY, list: LIST } = config.collections;
+/** The record types the app reads, and where each is kept. */
+const TYPES = /** @type {const} */ ({
+	company: 'companyRecords',
+	list: 'listRecords',
+	suggestion: 'suggestionRecords'
+});
+/** @typedef {keyof typeof TYPES} RecordType */
 
 /** Everything the app knows about the network, loaded in the browser. */
 export const network = $state({
@@ -26,6 +33,8 @@ export const network = $state({
 	companyRecords: [],
 	/** @type {RepoRecord[]} */
 	listRecords: [],
+	/** @type {RepoRecord[]} */
+	suggestionRecords: [],
 	/** @type {Record<string, Profile>} */
 	profiles: {},
 	/** What a load has read so far. */
@@ -56,12 +65,19 @@ const lists = $derived(
 		.sort((a, b) => b.createdAt.localeCompare(a.createdAt))
 );
 
+const suggestions = $derived(
+	network.suggestionRecords.filter((r) => r.value?.list && r.value?.company).map(toSuggestion)
+);
+
 export const data = {
 	get companies() {
 		return companies;
 	},
 	get lists() {
 		return lists;
+	},
+	get suggestions() {
+		return suggestions;
 	},
 	get profiles() {
 		return profileMap;
@@ -98,6 +114,7 @@ export async function startNetwork() {
 		if (snapshot && !network.loadedAt) {
 			network.companyRecords = snapshot.companyRecords;
 			network.listRecords = snapshot.listRecords;
+			network.suggestionRecords = snapshot.suggestionRecords || [];
 			network.profiles = snapshot.profiles;
 			network.loadedAt = snapshot.loadedAt;
 		}
@@ -105,27 +122,28 @@ export async function startNetwork() {
 	refresh();
 }
 
-/** Read every company and list record from every repository that has some. */
+/** Read every record the app uses from every repository that has some. */
 export async function refresh() {
 	if (network.loading) return;
 	network.loading = true;
 	try {
-		const [companyDids, listDids] = await Promise.all([listRepos(COMPANY), listRepos(LIST)]);
-		const dids = [...new Set([...companyDids, ...listDids])];
+		const types = /** @type {RecordType[]} */ (Object.keys(TYPES));
+		const reposByType = await Promise.all(types.map((type) => listRepos(config.collections[type])));
+		const dids = [...new Set(reposByType.flat())];
 		network.progress = { accounts: 0, total: dids.length, records: 0 };
 		/** @param {number} count */
 		const onPage = (count) => (network.progress.records += count);
 		const perRepo = await mapLimit(dids, config.limits.concurrency, async (did) => {
-			const [c, l] = await Promise.all([
-				companyDids.includes(did) ? listRecords(did, COMPANY, onPage).catch(() => []) : [],
-				listDids.includes(did) ? listRecords(did, LIST, onPage).catch(() => []) : []
-			]);
+			const records = await Promise.all(
+				types.map((type, i) =>
+					reposByType[i].includes(did) ? listRecords(did, config.collections[type], onPage).catch(() => []) : []
+				)
+			);
 			network.progress.accounts++;
-			return { c, l };
+			return records;
 		});
 		const profiles = await getProfiles(dids);
-		network.companyRecords = perRepo.flatMap((r) => r.c);
-		network.listRecords = perRepo.flatMap((r) => r.l);
+		types.forEach((type, i) => (network[TYPES[type]] = perRepo.flatMap((r) => r[i])));
 		network.profiles = Object.fromEntries(profiles);
 		network.loadedAt = new Date().toISOString();
 		network.error = null;
@@ -140,11 +158,11 @@ export async function refresh() {
 
 /**
  * Apply a local write at once, without waiting for a full refresh.
- * @param {'company' | 'list'} type
+ * @param {RecordType} type
  * @param {RepoRecord} record
  */
 export function upsertLocal(type, record) {
-	const key = type === 'company' ? 'companyRecords' : 'listRecords';
+	const key = TYPES[type];
 	network[key] = [...network[key].filter((r) => r.uri !== record.uri), record];
 	if (session.did && session.handle && !network.profiles[session.did]) {
 		network.profiles[session.did] = { did: session.did, handle: session.handle };
@@ -153,11 +171,11 @@ export function upsertLocal(type, record) {
 }
 
 /**
- * @param {'company' | 'list'} type
+ * @param {RecordType} type
  * @param {string} uri
  */
 export function removeLocal(type, uri) {
-	const key = type === 'company' ? 'companyRecords' : 'listRecords';
+	const key = TYPES[type];
 	network[key] = network[key].filter((r) => r.uri !== uri);
 	writeCache(network);
 }
