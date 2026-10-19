@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync } from 'node:fs';
+import manifestText from '../../../static/manifest.webmanifest?raw';
 import { readParams } from './paste.js';
 
-const manifest = JSON.parse(readFileSync('static/manifest.webmanifest', 'utf8'));
+const manifest = JSON.parse(manifestText);
 
 /**
  * What the add page reads when the system share sheet opens it.

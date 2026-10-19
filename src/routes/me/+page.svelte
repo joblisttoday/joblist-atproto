@@ -48,6 +48,9 @@
 		{:else}
 			<p><small>{t('me.companies.empty')}</small></p>
 		{/if}
-		<menu><a href="/add">+ {t('form.company.title')}</a></menu>
+		<menu>
+			<a href="/add">+ {t('form.company.title')}</a>
+			<a href="/tools">{t('tools.nav')}</a>
+		</menu>
 	</section>
 </RequireSession>
