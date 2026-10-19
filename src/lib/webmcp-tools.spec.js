@@ -41,7 +41,7 @@ describe('get_list', () => {
 		expect(parseListUrl('nope')).toBeNull();
 	});
 	it('describes a list with its companies in order', () => {
-		const list = { uri: '', did: 'did:plc:abc', rkey: '3abc', name: 'Music', companies: ['ableton.com', 'gone.org'], createdAt: '' };
+		const list = { uri: '', did: 'did:plc:abc', rkey: '3abc', name: 'Music', companies: ['ableton.com', 'gone.org'], open: false, hidden: [], createdAt: '' };
 		const summary = listSummary(list, companies, 'alice.test', origin);
 		expect(summary.page).toBe(`${origin}/alice.test/3abc`);
 		expect(summary.companies.map((c) => c.name)).toEqual(['Ableton', 'gone.org']);

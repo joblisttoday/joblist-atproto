@@ -1,7 +1,7 @@
 import webmcp from '#lib/data/webmcp.json';
 import { getSnapshotJobs } from '#lib/network/snapshot.js';
 import { loadList } from '#lib/network/load-list.js';
-import { data, handleOf } from '#lib/network/network.svelte.js';
+import { data, handleOf, membersOf } from '#lib/network/network.svelte.js';
 import { listSummary, parseListUrl, searchCompanies, searchJobs } from './webmcp-tools.js';
 
 /**
@@ -24,7 +24,9 @@ const handlers = {
 		const known = data.lists.find((l) => l.rkey === ref.rkey && (l.did === ref.actor || handleOf(l.did) === ref.actor));
 		const list = known || (await loadList(ref.actor, ref.rkey).catch(() => null));
 		if (!list) return { error: 'List not found.' };
-		return listSummary(list, data.companies, handleOf(list.did), location.origin);
+		// Open lists include the companies others added.
+		const companies = membersOf(list).members.map((m) => m.key);
+		return listSummary({ ...list, companies }, data.companies, handleOf(list.did), location.origin);
 	}
 };
 
