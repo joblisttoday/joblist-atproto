@@ -11,14 +11,21 @@ import { join } from 'node:path';
 import config from '../src/lib/data/config.json' with { type: 'json' };
 import en from '../src/lib/i18n/locales/en.json' with { type: 'json' };
 import { toCompany } from '../src/lib/models/company.js';
-import { toList } from '../src/lib/models/list.js';
+import { membership, toList } from '../src/lib/models/list.js';
+import { toSuggestion } from '../src/lib/models/suggestion.js';
 import { escape, page } from './html.js';
 
 const [build = 'build', snapshot = 'static/snapshot'] = process.argv.slice(2);
 const template = readFileSync(join(build, 'index.html'), 'utf8');
-const { companyRecords, listRecords, profiles: profileObject } = JSON.parse(
-	readFileSync(join(snapshot, 'records.json'), 'utf8')
-);
+const {
+	companyRecords,
+	listRecords,
+	suggestionRecords = [],
+	profiles: profileObject
+} = JSON.parse(readFileSync(join(snapshot, 'records.json'), 'utf8'));
+const suggestions = suggestionRecords
+	.filter((/** @type {any} */ r) => r.value?.list && r.value?.company)
+	.map(toSuggestion);
 const { jobs } = JSON.parse(readFileSync(join(snapshot, 'jobs.json'), 'utf8'));
 const profiles = new Map(Object.entries(profileObject));
 const handleOf = (/** @type {string} */ did) => profiles.get(did)?.handle || did;
@@ -43,7 +50,10 @@ let count = 0;
 for (const record of listRecords) {
 	if (!record.value?.name) continue;
 	const list = toList(record);
-	const members = list.companies.map((key) => companies.get(key)).filter(Boolean);
+	// Open lists include the companies others added to them.
+	const members = membership(list, suggestions)
+		.members.map((m) => companies.get(m.key))
+		.filter(Boolean);
 	const open = members.reduce((n, c) => n + (jobCounts.get(c.key) || 0), 0);
 	const path = `/${handleOf(list.did)}/${list.rkey}`;
 	const summary = `${members.length} companies, ${open} open jobs. ${list.description || ''}`.trim();
