@@ -5,6 +5,7 @@
 	import JobItem from './JobItem.svelte';
 	import { getJobs } from '#lib/ats/index.js';
 	import { mapLimit } from '#lib/atproto/xrpc.js';
+	import { getSnapshotJobs } from '#lib/network/snapshot.js';
 	import { boardUrl, hasJobsApi } from '#lib/models/company.js';
 	import { byCompany, commonPlaces, filterJobs } from '#lib/models/job.js';
 	import { t } from '#lib/i18n/index.svelte.js';
@@ -36,11 +37,25 @@
 		const seen = new Set();
 		jobs = [];
 		answered = 0;
-		mapLimit(list, config.limits.jobsConcurrency, async (company) => {
-			const found = (await getJobs(company)).filter((j) => !seen.has(j.url) && seen.add(j.url));
+		/** @param {import('#lib/ats/job.js').Job[]} found */
+		const add = (found) => {
+			const fresh = found.filter((j) => !seen.has(j.url) && seen.add(j.url));
+			if (fresh.length) jobs = jobs.concat(fresh);
+		};
+		// Boards in the snapshot answer at once; only newer ones are asked live.
+		getSnapshotJobs().then((snapshot) => {
 			if (cancelled) return;
-			if (found.length) jobs = jobs.concat(found);
-			answered++;
+			const live = snapshot ? list.filter((c) => !snapshot.checked.has(c.key)) : list;
+			if (snapshot) {
+				add(list.flatMap((c) => snapshot.jobs.get(c.key) || []));
+				answered = list.length - live.length;
+			}
+			mapLimit(live, config.limits.jobsConcurrency, async (company) => {
+				const found = await getJobs(company);
+				if (cancelled) return;
+				add(found);
+				answered++;
+			});
 		});
 		return () => (cancelled = true);
 	});

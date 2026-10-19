@@ -35,7 +35,8 @@ const files = {
 		jobRecords: records.job,
 		profiles: Object.fromEntries(profiles)
 	},
-	'jobs.json': { generatedAt, jobs },
+	// `checked`: companies whose board was read, so the app knows an empty result is real.
+	'jobs.json': { generatedAt, checked: Object.keys(board.health), jobs },
 	'health.json': { generatedAt, companies: board.health },
 	'suggestions.json': { generatedAt, companies: suggest(companies, records) },
 	'meta.json': {

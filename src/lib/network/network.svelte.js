@@ -6,6 +6,7 @@ import { session } from '#lib/auth/session.svelte.js';
 import { toCompany } from '#lib/models/company.js';
 import { toList } from '#lib/models/list.js';
 import { readCache, writeCache } from './cache.js';
+import { getSnapshotRecords } from './snapshot.js';
 
 /**
  * @typedef {import('#lib/atproto/records.js').RepoRecord} RepoRecord
@@ -82,12 +83,25 @@ export function listsWith(key) {
 
 let started = false;
 
-/** Load from the local cache at once, then refresh from the network. */
-export function startNetwork() {
+/**
+ * Show what is known at once (local cache, else the AppView snapshot),
+ * then refresh from the network, which stays the source of truth.
+ */
+export async function startNetwork() {
 	if (started) return;
 	started = true;
 	const cached = readCache();
-	if (cached) Object.assign(network, cached);
+	if (cached) {
+		Object.assign(network, cached);
+	} else {
+		const snapshot = await getSnapshotRecords();
+		if (snapshot && !network.loadedAt) {
+			network.companyRecords = snapshot.companyRecords;
+			network.listRecords = snapshot.listRecords;
+			network.profiles = snapshot.profiles;
+			network.loadedAt = snapshot.loadedAt;
+		}
+	}
 	refresh();
 }
 
