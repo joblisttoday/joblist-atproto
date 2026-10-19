@@ -44,6 +44,17 @@ function toLocation(position) {
 	return location;
 }
 
+/**
+ * A valid record key from an old joblist slug ('charité' → 'charite').
+ * @param {string} slug
+ */
+function toKey(slug) {
+	return slug
+		.normalize('NFD')
+		.replace(/[\u0300-\u036f]/g, '')
+		.replace(/[^A-Za-z0-9._:~-]/g, '-');
+}
+
 /** @param {string} s */
 function capitalize(s) {
 	return s.charAt(0).toUpperCase() + s.slice(1);
@@ -77,7 +88,7 @@ function readCompanies() {
 		const d = JSON.parse(readFileSync(file, 'utf8'));
 		if (!d.title) continue;
 		const domain = isUrl(d.company_url) ? toDomain(d.company_url) : '';
-		const rkey = domain && !byKey.has(domain) ? domain : slug;
+		const rkey = domain && !byKey.has(domain) ? domain : toKey(slug);
 		/** @type {Record<string, any>} */
 		const record = { $type: COMPANY, name: d.title.slice(0, 100), createdAt: now };
 		if (domain) record.url = d.company_url;
@@ -140,7 +151,7 @@ const companies = readCompanies();
 const lists = buildLists(companies);
 const withBoard = companies.filter((c) => c.record.jobBoard?.provider).length;
 const withMap = companies.filter((c) => c.record.locations?.some((/** @type {any} */ l) => l.latitude)).length;
-const byDomain = companies.filter((c) => c.rkey !== c.slug).length;
+const byDomain = companies.filter((c) => c.rkey.includes('.')).length;
 console.log(`${companies.length} companies: ${byDomain} keyed by domain, ${withBoard} with a job board API, ${withMap} on the map`);
 for (const list of lists) console.log(`list "${list.name}": ${list.companies.length} companies`);
 
