@@ -9,17 +9,23 @@
 	"nav.back": "Back",
 	"nav.skip": "Skip to content",
 
-	"home.title": "Lists of companies",
-	"home.intro": "Companies that hire, curated by people. Anyone can add a company or make a list; every record belongs to its author.",
+	"home.title": "Companies that hire, chosen by people",
+	"home.intro": "Lists of companies by city or field, made by anyone with a Bluesky account. Every list is also a live job board.",
 	"home.empty": "No lists yet.",
+	"home.jobs": "Search all jobs",
+	"home.companies": "All companies",
 
 	"search.placeholder": "Search",
 	"search.lists": "Search lists",
 	"search.companies": "Search companies, tags, places",
+	"search.none": "Nothing matches.",
 
 	"network.loading": "Reading the network…",
 	"network.refresh": "Refresh",
 	"network.counts": "{companies} companies · {lists} lists",
+	"network.progress": "Reading the network… {records} records from {accounts} of {total} accounts",
+	"network.updating": "updating…",
+	"network.error": "The network did not answer.",
 
 	"list.companies": "{count} companies",
 	"list.by": "by",

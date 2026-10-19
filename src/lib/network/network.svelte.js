@@ -26,7 +26,9 @@ export const network = $state({
 	/** @type {RepoRecord[]} */
 	listRecords: [],
 	/** @type {Record<string, Profile>} */
-	profiles: {}
+	profiles: {},
+	/** What a load has read so far. */
+	progress: { accounts: 0, total: 0, records: 0 }
 });
 
 const profileMap = $derived(new Map(Object.entries(network.profiles)));
@@ -96,11 +98,15 @@ export async function refresh() {
 	try {
 		const [companyDids, listDids] = await Promise.all([listRepos(COMPANY), listRepos(LIST)]);
 		const dids = [...new Set([...companyDids, ...listDids])];
+		network.progress = { accounts: 0, total: dids.length, records: 0 };
+		/** @param {number} count */
+		const onPage = (count) => (network.progress.records += count);
 		const perRepo = await mapLimit(dids, config.limits.concurrency, async (did) => {
 			const [c, l] = await Promise.all([
-				companyDids.includes(did) ? listRecords(did, COMPANY).catch(() => []) : [],
-				listDids.includes(did) ? listRecords(did, LIST).catch(() => []) : []
+				companyDids.includes(did) ? listRecords(did, COMPANY, onPage).catch(() => []) : [],
+				listDids.includes(did) ? listRecords(did, LIST, onPage).catch(() => []) : []
 			]);
+			network.progress.accounts++;
 			return { c, l };
 		});
 		const profiles = await getProfiles(dids);

@@ -32,7 +32,7 @@
 		position: fixed;
 		inset: auto 0 0 0;
 		z-index: 10;
-		background: var(--color-overlay);
+		background: var(--color-bg);
 		border-top: var(--border);
 		padding-bottom: env(safe-area-inset-bottom);
 	}

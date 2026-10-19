@@ -57,10 +57,7 @@
 			position: sticky;
 			top: 0;
 			z-index: 10;
-			background: var(--color-overlay);
-		}
-		header {
-			max-width: var(--wide-width);
+			background: var(--color-bg);
 		}
 	}
 </style>

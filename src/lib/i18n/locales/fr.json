@@ -9,17 +9,23 @@
 	"nav.back": "Retour",
 	"nav.skip": "Aller au contenu",
 
-	"home.title": "Listes d'entreprises",
-	"home.intro": "Des entreprises qui recrutent, choisies par des gens. Chacun peut ajouter une entreprise ou créer une liste ; chaque fiche appartient à son auteur.",
+	"home.title": "Des entreprises qui recrutent, choisies par des gens",
+	"home.intro": "Des listes d'entreprises par ville ou par domaine, faites par toute personne ayant un compte Bluesky. Chaque liste est aussi un tableau d'offres en direct.",
 	"home.empty": "Aucune liste pour l'instant.",
+	"home.jobs": "Chercher une offre",
+	"home.companies": "Toutes les entreprises",
 
 	"search.placeholder": "Rechercher",
 	"search.lists": "Rechercher des listes",
 	"search.companies": "Rechercher entreprises, tags, lieux",
+	"search.none": "Aucun résultat.",
 
 	"network.loading": "Lecture du réseau…",
 	"network.refresh": "Actualiser",
 	"network.counts": "{companies} entreprises · {lists} listes",
+	"network.progress": "Lecture du réseau… {records} fiches de {accounts} comptes sur {total}",
+	"network.updating": "mise à jour…",
+	"network.error": "Le réseau n'a pas répondu.",
 
 	"list.companies": "{count} entreprises",
 	"list.by": "par",

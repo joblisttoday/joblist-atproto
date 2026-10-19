@@ -31,9 +31,10 @@ export async function listRepos(collection) {
  * All records of a collection in one repo, read from its PDS.
  * @param {string} did
  * @param {string} collection
+ * @param {(count: number) => void} [onPage] called with the number of records of each page read
  * @returns {Promise<RepoRecord[]>}
  */
-export async function listRecords(did, collection) {
+export async function listRecords(did, collection, onPage) {
 	const pds = await getPds(did);
 	/** @type {RepoRecord[]} */
 	const records = [];
@@ -49,6 +50,7 @@ export async function listRecords(did, collection) {
 		for (const r of /** @type {AtRecord[]} */ (page.records || [])) {
 			records.push({ did, rkey: r.uri.split('/').pop() || '', uri: r.uri, cid: r.cid, value: r.value });
 		}
+		onPage?.(page.records?.length || 0);
 		cursor = page.records?.length ? page.cursor : undefined;
 		pages++;
 	} while (cursor && pages < config.limits.pagesPerRepo);
