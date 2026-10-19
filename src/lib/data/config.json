@@ -67,7 +67,7 @@
 		"profile": "https://bsky.app/profile/{handle}"
 	},
 	"snapshot": {
-		"path": "https://joblisttoday.github.io/joblist-snapshot",
+		"path": "https://joblist.today/joblist-snapshot",
 		"maxAgeHours": 12
 	},
 	"crawler": {
