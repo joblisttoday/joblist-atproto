@@ -10,7 +10,7 @@ with a supported job board, open jobs are read live from that board.
 It started as a hand-made spreadsheet of Berlin companies (joblistberlin), and
 grew into joblist.today. This version keeps the part that worked, the
 crowd-curated list of companies, and drops everything else: no database, no
-crawler, no server.
+crawler, no server (besides a tiny Worker that only records paid featured jobs).
 
 ## Records
 
@@ -56,7 +56,7 @@ config); expired ones are hidden everywhere, in the app and the snapshot.
 Their poster can edit, renew or delete them from the offer, the company
 page or `/me`.
 
-**Applications never go through joblist.** joblist has no server and keeps
+**Applications never go through joblist.** joblist has no application server and keeps
 nothing private: no tokens beyond the browser's own OAuth session, no
 passwords, no messages, no CVs. The offer only says where to apply: the
 company's form, an email (`mailto:`), or the poster's Bluesky profile to
