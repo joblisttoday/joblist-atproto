@@ -44,6 +44,7 @@
 	"list.confirmDelete": "Supprimer cette liste ?",
 	"list.tabs": "Affichage",
 	"list.notFoundTitle": "Liste introuvable",
+	"list.companies.one": "1 entreprise",
 
 	"company.website": "Site web",
 	"company.jobBoard": "Offres d'emploi",
@@ -60,6 +61,7 @@
 	"company.confirmDelete": "Supprimer votre version de cette entreprise ?",
 	"company.improve": "Améliorer",
 	"company.newList": "Nouvelle liste avec cette entreprise",
+	"company.versions.one": "1 version",
 
 	"jobs.loading": "Interrogation des sites d'offres…",
 	"jobs.none": "Aucune offre trouvée.",
@@ -77,6 +79,7 @@
 	"jobs.withoutBoard": "{count} entreprises publient leurs offres sur leur propre page carrières",
 	"jobs.title": "Toutes les offres",
 	"jobs.intro": "Les offres de toutes les entreprises de joblist, lues en direct sur leurs sites d'offres.",
+	"jobs.count.one": "1 offre ouverte",
 
 	"map.none": "Aucun lieu sur la carte pour l'instant.",
 	"map.label": "Carte de {count} lieux",

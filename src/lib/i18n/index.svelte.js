@@ -36,6 +36,8 @@ export function setLocale(locale) {
  * @param {Record<string, string | number>} [vars]
  */
 export function t(key, vars = {}) {
+	// "{count} jobs" can have a "….one" variant for a count of 1.
+	if (vars.count === 1 && `${key}.one` in messages[config.defaultLocale]) key = `${key}.one`;
 	const text = messages[i18n.locale]?.[key] ?? messages[config.defaultLocale][key] ?? key;
 	return text.replace(/\{(\w+)\}/g, (_, name) => {
 		const value = vars[name];
