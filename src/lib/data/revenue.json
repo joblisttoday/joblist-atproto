@@ -1,0 +1,16 @@
+{
+	"currency": "EUR",
+	"api": "/api",
+	"featured": {
+		"price": 49,
+		"days": 30,
+		"maxPerBlock": 3,
+		"rotateMinutes": 60,
+		"intentDays": 2,
+		"cacheSeconds": 60,
+		"paymentLink": ""
+	},
+	"support": {
+		"paymentLink": ""
+	}
+}
