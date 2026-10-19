@@ -31,9 +31,21 @@ export function getJobs(company) {
 		cache.set(
 			key,
 			fetcher(id)
-				.then((jobs) => jobs.filter((j) => j.title && j.url).map((j) => ({ ...j, company: company.key })))
+				.then((jobs) =>
+					jobs
+						.filter((j) => j.title && j.url)
+						.map((j) => ({ ...j, location: tidyPlace(j.location), company: company.key }))
+				)
 				.catch(() => [])
 		);
 	}
 	return /** @type {Promise<import('./job.js').Job[]>} */ (cache.get(key));
+}
+
+/**
+ * 'Miskolc, , Hungary' → 'Miskolc, Hungary'
+ * @param {string | undefined} place
+ */
+function tidyPlace(place) {
+	return place?.split(',').map((part) => part.trim()).filter(Boolean).join(', ') || undefined;
 }
