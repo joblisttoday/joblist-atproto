@@ -16,9 +16,9 @@
 	"kv_namespaces": [
 		{
 			"binding": "FEATURED",
-			// Placeholder: replace with the id printed by `npx wrangler kv namespace create FEATURED`.
+			// Created with `npx wrangler kv namespace create FEATURED`.
 			// `wrangler dev` uses a local namespace and ignores it.
-			"id": "00000000000000000000000000000000"
+			"id": "69d46ba726414474b24e3e42a3371b94"
 		}
 	],
 	// Secret (not in this file): STRIPE_WEBHOOK_SECRET, set with
