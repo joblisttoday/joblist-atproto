@@ -181,3 +181,14 @@ export function withPrefill(form, prefill) {
 	}
 	return out;
 }
+
+/**
+ * A job board link given as the careers page becomes the job board.
+ * @template {{provider: string, boardId: string, careersUrl: string}} F
+ * @param {F} form
+ * @returns {F}
+ */
+export function boardFromCareers(form) {
+	const board = !form.provider && form.careersUrl.trim() ? detectBoard(form.careersUrl.trim()) : null;
+	return board ? { ...form, provider: board.provider, boardId: board.id, careersUrl: '' } : form;
+}

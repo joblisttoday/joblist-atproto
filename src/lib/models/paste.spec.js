@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { findCompany, firstUrl, guessName, hasInput, parsePaste, prettyId, readParams, toPrefill, withPrefill } from './paste.js';
+import { findCompany, firstUrl, guessName, hasInput, parsePaste, prettyId, readParams, toPrefill, withPrefill, boardFromCareers } from './paste.js';
 
 /** @param {Record<string, string>} query */
 const params = (query) => new URLSearchParams(query);
@@ -123,5 +123,14 @@ describe('withPrefill', () => {
 		expect(withPrefill(empty, prefill)).toEqual({ ...empty, ...prefill });
 		const existing = { ...empty, name: 'ACME Inc', careersUrl: 'https://acme.org/jobs' };
 		expect(withPrefill(existing, prefill)).toEqual({ ...existing, url: 'https://acme.org' });
+	});
+});
+
+describe('boardFromCareers', () => {
+	it('turns a job board given as careers page into the job board', () => {
+		const form = { provider: '', boardId: '', careersUrl: 'https://job-boards.greenhouse.io/acme/jobs/1' };
+		expect(boardFromCareers(form)).toEqual({ provider: 'greenhouse', boardId: 'acme', careersUrl: '' });
+		const own = { provider: '', boardId: '', careersUrl: 'https://acme.org/jobs' };
+		expect(boardFromCareers(own)).toBe(own);
 	});
 });

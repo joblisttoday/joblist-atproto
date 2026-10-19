@@ -9,12 +9,14 @@
 	import { startNetwork } from '#lib/network/network.svelte.js';
 	import { history } from '#lib/navigation/history.svelte.js';
 	import { i18n, t } from '#lib/i18n/index.svelte.js';
+	import { registerTools } from '#lib/webmcp.js';
 
 	/** @type {{children: import('svelte').Snippet}} */
 	let { children } = $props();
 
 	initSession();
 	startNetwork();
+	registerTools();
 
 	afterNavigate(({ from }) => {
 		if (from) history.inApp = true;

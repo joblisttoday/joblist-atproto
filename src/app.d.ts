@@ -10,4 +10,16 @@ declare global {
 	}
 }
 
+// WebMCP declarative tools: https://developer.chrome.com/docs/ai/webmcp/declarative-api
+declare module 'svelte/elements' {
+	interface HTMLFormAttributes {
+		toolname?: string;
+		tooldescription?: string;
+		toolautosubmit?: boolean;
+	}
+	interface HTMLAttributes<T> {
+		toolparamdescription?: string;
+	}
+}
+
 export {};

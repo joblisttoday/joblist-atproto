@@ -1,0 +1,65 @@
+{
+	"originTrialToken": "",
+	"resultLimit": 20,
+	"forms": {
+		"company": {
+			"toolname": "add_company",
+			"tooldescription": "Fill in the form describing a company that hires, for the signed-in person to check and save on joblist. The website domain identifies the company.",
+			"params": {
+				"url": "The company's own website, e.g. https://acme.org (not a job board).",
+				"name": "The company's name.",
+				"description": "A short, factual description of what the company does.",
+				"provider": "The job board provider hosting the company's open jobs, if any.",
+				"boardId": "The company's id at the job board provider, e.g. 'acme' in https://jobs.lever.co/acme.",
+				"careersUrl": "The company's careers page, when its jobs are not on a known provider. A job board link also works.",
+				"tags": "Comma-separated lowercase tags, e.g. 'climate, open-source, coop'.",
+				"links": "Other links about the company, one per line."
+			}
+		},
+		"list": {
+			"toolname": "create_list",
+			"tooldescription": "Fill in the name and description of a new list of companies, for the signed-in person to add companies, check and save.",
+			"params": {
+				"name": "The list's name, e.g. 'Co-ops in Lyon'.",
+				"description": "What the list is about and who it is for."
+			}
+		}
+	},
+	"tools": [
+		{
+			"name": "search_companies",
+			"description": "Search the companies described on joblist by name, domain, tag or place. Returns up to 20 companies with their website, tags, locations, job board and joblist page.",
+			"inputSchema": {
+				"type": "object",
+				"properties": {
+					"query": { "type": "string", "description": "Words to match, e.g. 'berlin climate' or 'ableton'." }
+				},
+				"required": ["query"]
+			}
+		},
+		{
+			"name": "search_jobs",
+			"description": "Search open jobs at companies on joblist (as of the last snapshot, refreshed every few hours). Returns up to 20 jobs, newest first, with title, company, location and link to apply.",
+			"inputSchema": {
+				"type": "object",
+				"properties": {
+					"query": { "type": "string", "description": "Words in the job title, department or company name, e.g. 'frontend engineer'." },
+					"place": { "type": "string", "description": "A city or country the job location must mention, e.g. 'Berlin'." },
+					"remote": { "type": "boolean", "description": "Only jobs that say they can be done remotely." }
+				},
+				"required": ["query"]
+			}
+		},
+		{
+			"name": "get_list",
+			"description": "Read a curated list of companies on joblist: its name, description, author and companies in order.",
+			"inputSchema": {
+				"type": "object",
+				"properties": {
+					"url": { "type": "string", "description": "The list's joblist link (https://…/{handle}/{id}) or its at:// URI." }
+				},
+				"required": ["url"]
+			}
+		}
+	]
+}
