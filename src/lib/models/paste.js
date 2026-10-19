@@ -21,8 +21,8 @@ const URL_IN_TEXT = /https?:\/\/[^\s<>"']+/i;
 const TRAILING = /[.,;:!?)\]}>'"»]+$/;
 /** Looks like a bare domain: "acme.org", "acme.org/jobs". */
 const BARE_DOMAIN = /^[a-z0-9-]+(\.[a-z0-9-]+)+(\/\S*)?$/i;
-/** Subdomains that host a company's careers site, not the company itself. */
-const CAREERS_HOST = /^(jobs|careers|career|karriere|join|work|apply|hiring)\./i;
+/** Subdomains of a company's careers or about site, not the company itself. */
+const CAREERS_HOST = /^(jobs|careers|career|karriere|join|work|apply|hiring|about)\./i;
 /** Paths of a careers page on the company's own site. */
 const CAREERS_PATH = /career|job|join|karriere|stellen|emploi|recrut|hiring|vacanc|work-with-us/i;
 
@@ -136,6 +136,9 @@ export function parsePaste({ link, name, board }) {
  */
 export function findCompany(companies, { key, board }) {
 	if (key && companies.has(key)) return companies.get(key) || null;
+	// blog.acme.org → acme.org
+	const parent = key.split('.').slice(1).join('.');
+	if (parent.includes('.') && companies.has(parent)) return companies.get(parent) || null;
 	if (!board) return null;
 	const id = board.id.toLowerCase();
 	for (const company of companies.values()) {

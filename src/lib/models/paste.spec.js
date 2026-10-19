@@ -96,6 +96,9 @@ describe('findCompany', () => {
 	const companies = new Map([['acme.org', acme]]);
 	it('finds a company by domain or by job board', () => {
 		expect(findCompany(companies, parsePaste({ link: 'https://www.acme.org', name: '', board: '' }))).toBe(acme);
+		expect(findCompany(companies, parsePaste({ link: 'https://about.acme.org/team', name: '', board: '' }))).toBe(acme);
+		expect(findCompany(companies, parsePaste({ link: 'https://blog.acme.org/', name: '', board: '' }))).toBe(acme);
+		expect(findCompany(companies, parsePaste({ link: 'https://acme.org.uk/', name: '', board: '' }))).toBeNull();
 		expect(findCompany(companies, parsePaste({ link: 'https://jobs.lever.co/acme/1', name: '', board: '' }))).toBe(acme);
 		expect(findCompany(companies, parsePaste({ link: 'https://jobs.lever.co/other', name: '', board: '' }))).toBeNull();
 	});
