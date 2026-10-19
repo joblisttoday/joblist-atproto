@@ -1,0 +1,12 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "joblist-atproto",
+	"account_id": "561bb824be3c6da587401329eff1d81b",
+	"compatibility_date": "2026-10-01",
+	// A static site: no Worker code, only assets with SPA fallback.
+	"assets": {
+		"directory": "./build",
+		"not_found_handling": "single-page-application"
+	},
+	"routes": [{ "pattern": "atproto.joblist.today", "custom_domain": true }]
+}
