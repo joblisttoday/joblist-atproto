@@ -78,6 +78,7 @@
 	"jobs.intro": "Les offres de toutes les entreprises de joblist, lues en direct sur leurs sites d'offres.",
 
 	"map.none": "Aucun lieu sur la carte pour l'instant.",
+	"map.label": "Carte de {count} lieux",
 
 	"form.company.title": "Décrire une entreprise",
 	"form.company.edit": "Modifier l'entreprise",

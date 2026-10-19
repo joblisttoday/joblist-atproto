@@ -78,6 +78,7 @@
 	"jobs.intro": "Open jobs of every company in joblist, read live from their job boards.",
 
 	"map.none": "No locations on the map yet.",
+	"map.label": "Map of {count} locations",
 
 	"form.company.title": "Describe a company",
 	"form.company.edit": "Edit company",
