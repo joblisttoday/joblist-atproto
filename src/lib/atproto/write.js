@@ -18,13 +18,14 @@ export async function putRecord(collection, rkey, record) {
 }
 
 /**
- * Create a record with a generated key.
+ * Create a record, with a generated key unless one is given.
  * @param {string} collection
  * @param {Record<string, any>} record
+ * @param {string} [rkey]
  */
-export async function createRecord(collection, record) {
+export async function createRecord(collection, record, rkey) {
 	const { agent: a, repo } = agent();
-	const res = await a.com.atproto.repo.createRecord({ repo, collection, record });
+	const res = await a.com.atproto.repo.createRecord({ repo, collection, record, rkey });
 	return res.data;
 }
 

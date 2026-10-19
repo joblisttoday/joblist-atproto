@@ -13,10 +13,10 @@ export function readCache() {
 	}
 }
 
-/** @param {{loadedAt: string | null, companyRecords: any[], listRecords: any[], suggestionRecords: any[], profiles: Record<string, any>}} state */
-export function writeCache({ loadedAt, companyRecords, listRecords, suggestionRecords, profiles }) {
+/** @param {{loadedAt: string | null, companyRecords: any[], listRecords: any[], suggestionRecords: any[], jobRecords: any[], profiles: Record<string, any>}} state */
+export function writeCache({ loadedAt, companyRecords, listRecords, suggestionRecords, jobRecords, profiles }) {
 	try {
-		localStorage.setItem(KEY, JSON.stringify({ loadedAt, companyRecords, listRecords, suggestionRecords, profiles }));
+		localStorage.setItem(KEY, JSON.stringify({ loadedAt, companyRecords, listRecords, suggestionRecords, jobRecords, profiles }));
 	} catch {
 		// storage full or blocked: the app works without it
 	}
