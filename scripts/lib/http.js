@@ -22,7 +22,8 @@ const nativeFetch = globalThis.fetch;
  * @param {RequestInit} [init]
  */
 export async function politeFetch(input, init = {}) {
-	const headers = new Headers(init.headers);
+	// Keep a Request's own headers (e.g. Authorization from @atproto/api).
+	const headers = new Headers(init.headers ?? (input instanceof Request ? input.headers : undefined));
 	headers.set('user-agent', USER_AGENT);
 	const url = String(input instanceof Request ? input.url : input);
 	const log = hits.getStore();

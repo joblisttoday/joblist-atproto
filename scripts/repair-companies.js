@@ -92,7 +92,7 @@ const writes = fixes
 		return { $type: /** @type {const} */ ('com.atproto.repo.applyWrites#update'), collection: 'today.joblist.company', rkey: p.rkey, value: { ...record.value, ...p.changes } };
 	});
 console.log(`updating ${writes.length} records (others belong to other accounts or are low confidence)`);
-for (let i = 0; i < writes.length; i += 100) {
-	await agent.com.atproto.repo.applyWrites({ repo: agent.assertDid, writes: writes.slice(i, i + 100) });
-	console.log(`  wrote ${Math.min(i + 100, writes.length)}/${writes.length}`);
+for (let i = 0; i < writes.length; i += 20) {
+	await agent.com.atproto.repo.applyWrites({ repo: agent.assertDid, writes: writes.slice(i, i + 20) });
+	console.log(`  wrote ${Math.min(i + 20, writes.length)}/${writes.length}`);
 }
