@@ -2,6 +2,7 @@ import config from '../src/lib/data/config.json' with { type: 'json' };
 import { getJobs } from '../src/lib/ats/index.js';
 import { mapLimit } from '../src/lib/atproto/xrpc.js';
 import { hasJobsApi } from '../src/lib/models/company.js';
+import { isLive, placeNames, toPost } from '../src/lib/models/job-post.js';
 
 /**
  * @typedef {import('../src/lib/models/company.js').Company} Company
@@ -33,23 +34,23 @@ export async function fetchBoardJobs(companies) {
  * Jobs posted as today.joblist.job records, without the expired ones.
  * @param {RepoRecord[]} records
  * @param {Map<string, {handle: string}>} profiles
+ * @param {number} [now]
  */
-export function recordJobs(records, profiles) {
-	const now = new Date().toISOString();
+export function recordJobs(records, profiles, now = Date.now()) {
 	return records
-		.filter((r) => r.value?.title && r.value?.url && r.value?.company && String(r.value.expiresAt) > now)
+		.filter((r) => isLive(r.value, now))
 		.map((r) => {
-			const v = r.value;
+			const post = toPost(r, profiles);
 			/** @type {IndexedJob} */
 			const job = {
-				t: v.title,
-				u: v.url,
-				c: v.company,
-				l: (v.locations || []).map((/** @type {any} */ l) => l.name).filter(Boolean).join(', ') || v.remote || undefined,
-				p: v.createdAt,
-				s: r.uri
+				t: post.title,
+				u: post.url,
+				c: post.company,
+				l: placeNames(post.locations) || post.remote || undefined,
+				p: post.createdAt,
+				s: post.uri
 			};
-			if (profiles.get(r.did)?.handle === v.company) job.v = 1;
+			if (post.verified) job.v = 1;
 			return job;
 		});
 }

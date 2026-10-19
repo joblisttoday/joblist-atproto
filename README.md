@@ -14,7 +14,7 @@ crawler, no server.
 
 ## Records
 
-Three record types, defined in [`lexicons/`](lexicons/today/joblist):
+Four record types, defined in [`lexicons/`](lexicons/today/joblist):
 
 - **`today.joblist.company`**: one company, keyed by its domain
   (`at://did:…/today.joblist.company/example.org`). Name, website,
@@ -37,6 +37,36 @@ Three record types, defined in [`lexicons/`](lexicons/today/joblist):
 - **`today.joblist.suggestion`**: a company suggested for someone else's
   list (`list` at-uri, `company` key, optional `note`), written in the
   contributor's own account.
+- **`today.joblist.job`**: a job offer posted on joblist, in the poster's
+  own account: title, company key, description, places, remote, contract,
+  `url` (the full offer, or its joblist page), `apply` (a link, an email,
+  and/or "message me on Bluesky") and `expiresAt`.
+
+## Posting jobs
+
+Anyone signed in can post a job at `/jobs/new` (or "Post a job" on a company
+page). When the poster's handle is the company's domain, the offer is shown
+as **posted by the company** (✓); otherwise as **shared by @handle**. Offers
+show up in every job list with that company, merged with its job board's
+jobs (one per link), and get their own page at `/job/{did}/{rkey}`,
+prerendered with schema.org `JobPosting` data for search engines.
+
+Offers are shown for 60 days by default (120 at most, see `jobPost` in
+config); expired ones are hidden everywhere, in the app and the snapshot.
+Their poster can edit, renew or delete them from the offer, the company
+page or `/me`.
+
+**Applications never go through joblist.** joblist has no server and keeps
+nothing private: no tokens beyond the browser's own OAuth session, no
+passwords, no messages, no CVs. The offer only says where to apply: the
+company's form, an email (`mailto:`), or the poster's Bluesky profile to
+message them there (Bluesky has no public link that starts a conversation,
+and joblist never asks for chat access). What candidates send goes from
+them to the poster, outside joblist.
+
+Later, atproto's planned private data ("permissioned spaces") could hold
+things that should not be public, like an application shared only with the
+poster. Until that exists, nothing private is written.
 
 ## How it runs
 

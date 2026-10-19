@@ -40,6 +40,8 @@ export function getSnapshotJobs() {
 		/** @type {Map<string, import('#lib/ats/job.js').Job[]>} */
 		const jobs = new Map();
 		for (const j of data.jobs) {
+			// Posted jobs come from their records, read with the others (they may be edited or deleted since).
+			if (j.s?.startsWith('at://')) continue;
 			const list = jobs.get(j.c) || [];
 			list.push({ title: j.t, url: j.u, company: j.c, location: j.l, department: j.d, published: j.p });
 			jobs.set(j.c, list);

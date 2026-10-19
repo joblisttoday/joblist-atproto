@@ -6,6 +6,7 @@ import { session } from '#lib/auth/session.svelte.js';
 import { toCompany } from '#lib/models/company.js';
 import { membership, toList } from '#lib/models/list.js';
 import { toSuggestion } from '#lib/models/suggestion.js';
+import { isLive, toJob, toPost } from '#lib/models/job-post.js';
 import { readCache, writeCache } from './cache.js';
 import { getSnapshotRecords } from './snapshot.js';
 
@@ -18,7 +19,8 @@ import { getSnapshotRecords } from './snapshot.js';
 const TYPES = /** @type {const} */ ({
 	company: 'companyRecords',
 	list: 'listRecords',
-	suggestion: 'suggestionRecords'
+	suggestion: 'suggestionRecords',
+	job: 'jobRecords'
 });
 /** @typedef {keyof typeof TYPES} RecordType */
 
@@ -35,6 +37,8 @@ export const network = $state({
 	listRecords: [],
 	/** @type {RepoRecord[]} */
 	suggestionRecords: [],
+	/** @type {RepoRecord[]} */
+	jobRecords: [],
 	/** @type {Record<string, Profile>} */
 	profiles: {},
 	/** What a load has read so far. */
@@ -69,6 +73,25 @@ const suggestions = $derived(
 	network.suggestionRecords.filter((r) => r.value?.list && r.value?.company).map(toSuggestion)
 );
 
+/** Every job offer posted on joblist, also expired ones (their posters can renew them). */
+const posts = $derived(
+	network.jobRecords
+		.filter((r) => r.value?.title && r.value?.company)
+		.map((r) => toPost(r, profileMap))
+		.sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+);
+
+/** Posted jobs that can be shown now, by company key. */
+const postedJobs = $derived.by(() => {
+	/** @type {Map<string, import('#lib/ats/job.js').Job[]>} */
+	const byCompany = new Map();
+	for (const post of posts) {
+		if (!isLive(post.record.value)) continue;
+		byCompany.set(post.company, [...(byCompany.get(post.company) || []), toJob(post)]);
+	}
+	return byCompany;
+});
+
 export const data = {
 	get companies() {
 		return companies;
@@ -78,6 +101,12 @@ export const data = {
 	},
 	get suggestions() {
 		return suggestions;
+	},
+	get posts() {
+		return posts;
+	},
+	get postedJobs() {
+		return postedJobs;
 	},
 	get profiles() {
 		return profileMap;
@@ -123,6 +152,7 @@ export async function startNetwork() {
 			network.companyRecords = snapshot.companyRecords;
 			network.listRecords = snapshot.listRecords;
 			network.suggestionRecords = snapshot.suggestionRecords || [];
+			network.jobRecords = snapshot.jobRecords || [];
 			network.profiles = snapshot.profiles;
 			network.loadedAt = snapshot.loadedAt;
 		}

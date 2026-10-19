@@ -8,14 +8,17 @@
 	import { getSnapshotJobs } from '#lib/network/snapshot.js';
 	import { boardUrl, hasJobsApi } from '#lib/models/company.js';
 	import { byCompany, commonPlaces, filterJobs } from '#lib/models/job.js';
+	import { mergeJobs, postedFirst } from '#lib/models/job-post.js';
+	import { data } from '#lib/network/network.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/** @type {{companies: import('#lib/models/company.js').Company[]}} */
 	let { companies } = $props();
 	const PAGE = config.jobs.pageSize;
 
+	/** Jobs read from job boards (or their snapshot). */
 	/** @type {import('#lib/ats/job.js').Job[]} */
-	let jobs = $state.raw([]);
+	let boardJobs = $state.raw([]);
 	let answered = $state(0);
 	let filters = $state({ query: '', where: '', remote: false });
 	let grouped = $state(false);
@@ -25,8 +28,12 @@
 	const loading = $derived(answered < targets.length);
 	const single = $derived(companies.length === 1);
 	const names = $derived(new Map(companies.map((c) => [c.key, c.name])));
+	// Offers posted on joblist, for every company here (with a job board or not).
+	const posted = $derived(companies.flatMap((c) => data.postedJobs.get(c.key) || []));
+	const jobs = $derived(mergeJobs(posted, boardJobs));
 	const withoutApi = $derived(companies.filter((c) => !hasJobsApi(c) && boardUrl(c.jobBoard)));
-	const filtered = $derived(filterJobs(jobs, filters, names));
+	// On a company's page, the offers it posted come first.
+	const filtered = $derived(single ? postedFirst(filterJobs(jobs, filters, names)) : filterJobs(jobs, filters, names));
 	const groups = $derived(grouped ? byCompany(filtered) : []);
 	// Suggestions are computed once all boards answered, not on every answer.
 	const places = $derived(loading ? [] : commonPlaces(jobs));
@@ -35,12 +42,12 @@
 		const list = targets;
 		let cancelled = false;
 		const seen = new Set();
-		jobs = [];
+		boardJobs = [];
 		answered = 0;
 		/** @param {import('#lib/ats/job.js').Job[]} found */
 		const add = (found) => {
 			const fresh = found.filter((j) => !seen.has(j.url) && seen.add(j.url));
-			if (fresh.length) jobs = jobs.concat(fresh);
+			if (fresh.length) boardJobs = boardJobs.concat(fresh);
 		};
 		// Boards in the snapshot answer at once; only newer ones are asked live.
 		getSnapshotJobs().then((snapshot) => {

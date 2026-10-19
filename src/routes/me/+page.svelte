@@ -3,6 +3,7 @@
 	import config from '#lib/data/config.json';
 	import Companies from '#lib/components/Companies.svelte';
 	import ListItem from '#lib/components/ListItem.svelte';
+	import MyJobPosts from '#lib/components/MyJobPosts.svelte';
 	import ProfileHeader from '#lib/components/ProfileHeader.svelte';
 	import RequireSession from '#lib/components/RequireSession.svelte';
 	import { session, signOut } from '#lib/auth/session.svelte.js';
@@ -13,6 +14,8 @@
 	const companies = $derived(
 		[...data.companies.values()].filter((c) => c.versions.some((v) => v.did === session.did))
 	);
+
+	const posts = $derived(data.posts.filter((p) => p.did === session.did));
 
 	async function out() {
 		await signOut();
@@ -39,6 +42,12 @@
 			<p><small>{t('me.lists.empty')}</small></p>
 		{/if}
 		<menu><a href="/lists/new">+ {t('list.new')}</a></menu>
+	</section>
+
+	<section>
+		<h2>{t('post.mine')}</h2>
+		<MyJobPosts {posts} />
+		<menu><a href="/jobs/new">+ {t('post.title')}</a></menu>
 	</section>
 
 	<section>

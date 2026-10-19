@@ -53,7 +53,7 @@
 			"work from home",
 			"wfh",
 			"distributed",
-			"t\u00e9l\u00e9travail",
+			"télétravail",
 			"teletravail",
 			"fernarbeit",
 			"mobiles arbeiten"
@@ -92,6 +92,32 @@
 				"come work with us"
 			],
 			"pages": 5
+		}
+	},
+	"jobPost": {
+		"days": 60,
+		"maxDays": 120,
+		"titleMax": 200,
+		"descriptionMax": 10000,
+		"page": "/job/{did}/{rkey}",
+		"remote": [
+			"onsite",
+			"hybrid",
+			"remote"
+		],
+		"employment": [
+			"full-time",
+			"part-time",
+			"contract",
+			"internship",
+			"volunteer"
+		],
+		"schemaEmployment": {
+			"full-time": "FULL_TIME",
+			"part-time": "PART_TIME",
+			"contract": "CONTRACTOR",
+			"internship": "INTERN",
+			"volunteer": "VOLUNTEER"
 		}
 	}
 }

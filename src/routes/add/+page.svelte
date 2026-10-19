@@ -26,8 +26,14 @@
 	const title = $derived(company ? t('form.company.edit') : t('form.company.title'));
 	// Described from "suggest a company" on a list (?list=/handle/rkey): go back there with it.
 	const list = $derived(params.get('list') || '');
+	// Described from "post a job" (?next=/jobs/new): go back there with it.
+	const back = $derived(params.get('next') || '');
 	/** @param {string} key */
-	const next = (key) => (/^\/[\w.:-]+\/[\w.:~-]+$/.test(list) ? `${list}?suggest=${encodeURIComponent(key)}` : `/company/${key}`);
+	const next = (key) => {
+		if (/^\/[\w.:-]+\/[\w.:~-]+$/.test(list)) return `${list}?suggest=${encodeURIComponent(key)}`;
+		if (back === '/jobs/new') return `${back}?company=${encodeURIComponent(key)}`;
+		return `/company/${key}`;
+	};
 </script>
 
 <svelte:head><title>{title} · {config.name}</title></svelte:head>
@@ -35,7 +41,7 @@
 <h1>{title}</h1>
 
 {#if !key}
-	<AddLink value={input.link || input.name} {list} />
+	<AddLink value={input.link || input.name} {list} next={back} />
 {/if}
 
 {#if started}

@@ -1,6 +1,7 @@
 import webmcp from '#lib/data/webmcp.json';
 import { getSnapshotJobs } from '#lib/network/snapshot.js';
 import { loadList } from '#lib/network/load-list.js';
+import { mergeJobs } from '#lib/models/job-post.js';
 import { data, handleOf, membersOf } from '#lib/network/network.svelte.js';
 import { listSummary, parseListUrl, searchCompanies, searchJobs } from './webmcp-tools.js';
 
@@ -16,7 +17,9 @@ const handlers = {
 	search_jobs: async (args) => {
 		const snapshot = await getSnapshotJobs();
 		if (!snapshot) return { error: 'The jobs snapshot is not available right now; open /jobs to read job boards live.' };
-		return searchJobs([...snapshot.jobs.values()].flat(), data.companies, args);
+		// Offers posted on joblist are read from their records, not the snapshot.
+		const posted = [...data.postedJobs.values()].flat();
+		return searchJobs(mergeJobs(posted, [...snapshot.jobs.values()].flat()), data.companies, args);
 	},
 	get_list: async ({ url }) => {
 		const ref = parseListUrl(url);

@@ -20,3 +20,13 @@ export function ago(ms, locale, now = Date.now()) {
 	}
 	return format.format(0, 'day');
 }
+
+/**
+ * "19 December 2026", in the given language; '' for an unknown date.
+ * @param {string} value
+ * @param {string} locale
+ */
+export function longDate(value, locale) {
+	const ms = Date.parse(value);
+	return Number.isFinite(ms) ? new Intl.DateTimeFormat(locale, { dateStyle: 'long' }).format(ms) : '';
+}

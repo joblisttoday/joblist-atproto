@@ -1,5 +1,5 @@
 /**
- * Give every list and company its own HTML file, with a real title,
+ * Give every list, company and posted job its own HTML file, with a real title,
  * description and link-preview tags, and the content as plain HTML for
  * readers that do not run JavaScript (link previews, search engines, LLMs).
  * The app then starts as usual on top of it.
@@ -13,7 +13,9 @@ import en from '../src/lib/i18n/locales/en.json' with { type: 'json' };
 import { toCompany } from '../src/lib/models/company.js';
 import { membership, toList } from '../src/lib/models/list.js';
 import { toSuggestion } from '../src/lib/models/suggestion.js';
+import { postPath } from '../src/lib/models/job-post.js';
 import { escape, page } from './html.js';
+import { jobPages } from './job-pages.js';
 
 const [build = 'build', snapshot = 'static/snapshot'] = process.argv.slice(2);
 const template = readFileSync(join(build, 'index.html'), 'utf8');
@@ -21,6 +23,7 @@ const {
 	companyRecords,
 	listRecords,
 	suggestionRecords = [],
+	jobRecords = [],
 	profiles: profileObject
 } = JSON.parse(readFileSync(join(snapshot, 'records.json'), 'utf8'));
 const suggestions = suggestionRecords
@@ -40,10 +43,21 @@ const companies = new Map([...versionsByKey].map(([key, versions]) => [key, toCo
 const jobCounts = new Map();
 for (const job of jobs) jobCounts.set(job.c, (jobCounts.get(job.c) || 0) + 1);
 
+/**
+ * Posted jobs link to their page here, job board jobs to the board.
+ * @param {{u: string, s?: string}} job
+ */
+function jobLink(job) {
+	const [, did, , rkey] = (job.s || '').match(/^at:\/\/([^/]+)\/([^/]+)\/([^/]+)$/) || [];
+	return did ? postPath(did, rkey) : job.u;
+}
+
 /** @param {string} path @param {string} html */
 function write(path, html) {
-	mkdirSync(join(build, path), { recursive: true });
-	writeFileSync(join(build, path, 'index.html'), html);
+	// Files are named by the decoded path (job pages have encoded DIDs in their links).
+	const dir = join(build, decodeURIComponent(path));
+	mkdirSync(dir, { recursive: true });
+	writeFileSync(join(dir, 'index.html'), html);
 }
 
 let count = 0;
@@ -87,10 +101,15 @@ for (const company of companies.values()) {
 			}<ul>${jobs
 				.filter((/** @type {any} */ j) => j.c === company.key)
 				.slice(0, 200)
-				.map((/** @type {any} */ j) => `<li><a href="${escape(j.u)}">${escape(j.t)}</a> ${escape(j.l || '')}</li>`)
+				.map((/** @type {any} */ j) => `<li><a href="${escape(jobLink(j))}">${escape(j.t)}</a> ${escape(j.l || '')}</li>`)
 				.join('')}</ul>`
 		})
 	);
+	count++;
+}
+
+for (const { path, meta } of jobPages(jobRecords, companies, profiles)) {
+	write(path, page(template, meta));
 	count++;
 }
 
