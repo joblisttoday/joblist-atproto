@@ -29,27 +29,7 @@ export function planWrites({ repairs, discoveries, versionsByKey, profiles, ctx,
 	const skipped = [];
 	const room = () => writes.length < caps.maxWritesPerRun;
 
-	for (const repair of repairs) {
-		if (repair.confidence !== 'high') {
-			skipped.push({ key: repair.key, reason: 'low confidence: for a person to decide' });
-			continue;
-		}
-		const versions = versionsByKey.get(repair.key) || [];
-		if (!versions.length) continue;
-		const decision = decide(versions, profiles, ctx);
-		if ('skip' in decision) {
-			skipped.push({ key: repair.key, reason: decision.skip });
-			continue;
-		}
-		const value = botVersion(decision.base, repair.changes, decision.mine, now);
-		if (!value) continue;
-		if (!room()) {
-			skipped.push({ key: repair.key, reason: 'cap reached for this run' });
-			continue;
-		}
-		writes.push({ action: decision.mine ? 'update' : 'create', rkey: repair.key, value, kind: 'repair', notes: repair.notes || [] });
-	}
-
+	// New companies first, within their own cap, so repairs cannot crowd them out.
 	let added = 0;
 	const seen = new Set();
 	for (const found of discoveries) {
@@ -72,5 +52,28 @@ export function planWrites({ repairs, discoveries, versionsByKey, profiles, ctx,
 			notes: [`found by ${found.source}`, ...(found.notes || [])]
 		});
 	}
+	// Repairs that bring a job board back first, then websites.
+	const ordered = [...repairs].sort((a, b) => Number(Boolean(b.changes.jobBoard)) - Number(Boolean(a.changes.jobBoard)));
+	for (const repair of ordered) {
+		if (repair.confidence !== 'high') {
+			skipped.push({ key: repair.key, reason: 'low confidence: for a person to decide' });
+			continue;
+		}
+		const versions = versionsByKey.get(repair.key) || [];
+		if (!versions.length) continue;
+		const decision = decide(versions, profiles, ctx);
+		if ('skip' in decision) {
+			skipped.push({ key: repair.key, reason: decision.skip });
+			continue;
+		}
+		const value = botVersion(decision.base, repair.changes, decision.mine, now);
+		if (!value) continue;
+		if (!room()) {
+			skipped.push({ key: repair.key, reason: 'cap reached for this run' });
+			continue;
+		}
+		writes.push({ action: decision.mine ? 'update' : 'create', rkey: repair.key, value, kind: 'repair', notes: repair.notes || [] });
+	}
+
 	return { writes, skipped };
 }

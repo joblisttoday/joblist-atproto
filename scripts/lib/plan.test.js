@@ -34,15 +34,30 @@ describe('planWrites', () => {
 		caps,
 		now
 	});
-	it('creates a version for a human record, updates its own', () => {
-		assert.deepEqual(writes.map((w) => [w.action, w.rkey]), [['create', 'a.org'], ['update', 'c.org']]);
+	it('plans new companies first, so repairs cannot crowd them out', () => {
+		assert.deepEqual(writes.map((w) => [w.action, w.rkey, w.kind]), [['create', 'new.org', 'new'], ['create', 'a.org', 'repair']]);
 	});
 	it('skips human edits after the check, low confidence, and past the cap', () => {
 		const reasons = Object.fromEntries(skipped.map((s) => [s.key, s.reason]));
 		assert.match(reasons['b.org'], /after the health check/);
 		assert.match(reasons['x.org'], /low confidence/);
+		assert.match(reasons['c.org'], /cap/);
 		assert.match(reasons['d.org'], /cap/);
-		assert.match(reasons['new.org'], /cap/);
+	});
+	it('updates its own version, and puts board repairs before website repairs', () => {
+		const result = planWrites({
+			repairs: [
+				{ key: 'a.org', changes: change, confidence: 'high' },
+				{ key: 'c.org', changes: { jobBoard: { provider: 'ashby', id: 'c' } }, confidence: 'high' }
+			],
+			discoveries: [],
+			versionsByKey,
+			profiles: new Map(),
+			ctx,
+			caps: { maxWritesPerRun: 10, maxNewCompaniesPerRun: 0 },
+			now
+		});
+		assert.deepEqual(result.writes.map((w) => [w.action, w.rkey]), [['update', 'c.org'], ['create', 'a.org']]);
 	});
 	it('never deletes', () => {
 		assert.ok(writes.every((w) => w.action !== /** @type {any} */ ('delete')));
