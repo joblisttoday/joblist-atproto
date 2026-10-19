@@ -15,6 +15,7 @@ const words = (text) => text.toLowerCase().split(/\s+/).filter(Boolean);
  * @param {Job} job
  */
 export function isRemote(job) {
+	if (job.remote) return job.remote === 'remote';
 	const text = `${job.title} ${job.location || ''}`.toLowerCase();
 	return remoteWords.some((w) => text.includes(w));
 }

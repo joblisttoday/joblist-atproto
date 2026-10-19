@@ -5,8 +5,11 @@
  *   location?: string,
  *   department?: string,
  *   published?: string,
- *   company: string
+ *   company: string,
+ *   remote?: string,
+ *   posted?: {did: string, rkey: string, verified: boolean}
  * }} Job
+ *   remote and posted: only for offers posted on joblist (today.joblist.job records).
  */
 
 /**
