@@ -1,0 +1,33 @@
+# Rebuilds the AppView snapshot (records + live jobs) and deploys the site.
+# Free: runs on GitHub Actions, deploys static files to Cloudflare.
+# Needs the repository secret CLOUDFLARE_API_TOKEN (Workers Scripts: Edit).
+name: snapshot
+
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+concurrency:
+  group: snapshot
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: node indexer/index.js static/snapshot
+      - run: npm run build
+      - run: node indexer/prerender.js build static/snapshot
+      - run: npx wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
