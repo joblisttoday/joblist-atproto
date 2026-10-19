@@ -1,0 +1,5060 @@
+{
+	"checkedAt": "2026-10-19T16:55:53.172Z",
+	"crawler": "did:plc:jqaucxlucukeif3bltpuc7zx",
+	"summary": {
+		"companies": 959,
+		"checked": 959,
+		"health": {
+			"companies": 959,
+			"website": {
+				"none": 190,
+				"ok": 655,
+				"unreachable": 15,
+				"blocked": 96,
+				"missing": 1,
+				"error": 1,
+				"parked": 1,
+				"redirectedToOtherDomain": 67
+			},
+			"board": {
+				"none": 290,
+				"live": 351,
+				"dead": 231,
+				"empty": 87,
+				"openJobs": 29430,
+				"byProvider": {
+					"personio": {
+						"live": 24,
+						"dead": 28,
+						"empty": 8
+					},
+					"lever": {
+						"live": 46,
+						"dead": 68,
+						"empty": 4
+					},
+					"ashby": {
+						"live": 53,
+						"empty": 5,
+						"dead": 3
+					},
+					"recruitee": {
+						"dead": 13,
+						"live": 20,
+						"empty": 5
+					},
+					"greenhouse": {
+						"dead": 100,
+						"live": 175,
+						"empty": 12
+					},
+					"smartrecruiters": {
+						"live": 13,
+						"empty": 7,
+						"dead": 13
+					},
+					"workable": {
+						"empty": 46,
+						"dead": 5,
+						"live": 15
+					},
+					"rippling": {
+						"dead": 1,
+						"live": 5
+					}
+				}
+			},
+			"careersPage": {
+				"unreachable": 28,
+				"ok": 156,
+				"missing": 46,
+				"blocked": 26,
+				"error": 6
+			}
+		},
+		"repairs": {
+			"lookedAt": 640,
+			"newBoard": 7,
+			"newBoardFromOpenJobs": 6,
+			"newWebsite": 10,
+			"low": 18,
+			"likelyGone": 12,
+			"needsAPerson": 88
+		},
+		"discovery": {
+			"fromLists": {
+				"candidates": 0,
+				"found": 0
+			},
+			"fromHiringPosts": {
+				"via": "crawler session",
+				"posts": 3979,
+				"domainAccounts": 275,
+				"new": 274,
+				"found": 5
+			},
+			"openJobsBoards": 24897
+		},
+		"writes": {
+			"total": 22,
+			"repairs": 17,
+			"newCompanies": 5,
+			"create": 5,
+			"update": 17
+		},
+		"skipped": {
+			"low confidence: for a person to decide": 18
+		},
+		"seconds": 358
+	},
+	"writes": [
+		{
+			"action": "create",
+			"rkey": "protectdemocracy.org",
+			"value": {
+				"$type": "today.joblist.company",
+				"name": "Protect Democracy",
+				"url": "https://protectdemocracy.org",
+				"jobBoard": {
+					"provider": "recruitee",
+					"id": "protectdemocracy"
+				},
+				"createdAt": "2026-10-19T17:01:49.063Z",
+				"updatedAt": "2026-10-19T17:01:49.063Z"
+			},
+			"kind": "new",
+			"notes": [
+				"found by hiring posts of @protectdemocracy.org",
+				"board recruitee:protectdemocracy (5 jobs) linked from its website"
+			]
+		},
+		{
+			"action": "create",
+			"rkey": "technopolis-group.com",
+			"value": {
+				"$type": "today.joblist.company",
+				"name": "Technopolis Group",
+				"url": "https://technopolis-group.com",
+				"jobBoard": {
+					"provider": "personio",
+					"id": "technopolis-group"
+				},
+				"createdAt": "2026-10-19T17:01:49.063Z",
+				"updatedAt": "2026-10-19T17:01:49.063Z"
+			},
+			"kind": "new",
+			"notes": [
+				"found by hiring posts of @technopolis-group.com",
+				"board personio:technopolis-group (13 jobs) linked from its website"
+			]
+		},
+		{
+			"action": "create",
+			"rkey": "buffer.com",
+			"value": {
+				"$type": "today.joblist.company",
+				"name": "Buffer",
+				"url": "https://buffer.com",
+				"jobBoard": {
+					"provider": "ashby",
+					"id": "buffer"
+				},
+				"createdAt": "2026-10-19T17:01:49.063Z",
+				"updatedAt": "2026-10-19T17:01:49.063Z"
+			},
+			"kind": "new",
+			"notes": [
+				"found by hiring posts of @buffer.com",
+				"board ashby:buffer (1 jobs) Open Jobs, linking back to its website"
+			]
+		},
+		{
+			"action": "create",
+			"rkey": "tngtech.com",
+			"value": {
+				"$type": "today.joblist.company",
+				"name": "TNG Technology Consulting GmbH",
+				"url": "https://tngtech.com",
+				"jobBoard": {
+					"provider": "personio",
+					"id": "tngtech"
+				},
+				"createdAt": "2026-10-19T17:01:49.063Z",
+				"updatedAt": "2026-10-19T17:01:49.063Z"
+			},
+			"kind": "new",
+			"notes": [
+				"found by hiring posts of @tngtech.com",
+				"board personio:tngtech (17 jobs) linked from its website"
+			]
+		},
+		{
+			"action": "create",
+			"rkey": "aclu-nj.org",
+			"value": {
+				"$type": "today.joblist.company",
+				"name": "ACLU of New Jersey",
+				"url": "https://aclu-nj.org",
+				"jobBoard": {
+					"provider": "greenhouse",
+					"id": "aclunj"
+				},
+				"createdAt": "2026-10-19T17:01:49.063Z",
+				"updatedAt": "2026-10-19T17:01:49.063Z"
+			},
+			"kind": "new",
+			"notes": [
+				"found by hiring posts of @aclu-nj.org",
+				"board greenhouse:aclunj (11 jobs) Open Jobs, linking back to its website"
+			]
+		},
+		{
+			"action": "update",
+			"rkey": "worldcoin.org",
+			"value": {
+				"url": "https://world.org",
+				"name": "Worldcoin",
+				"tags": [
+					"web3",
+					"cryptocurrency",
+					"biometrics"
+				],
+				"$type": "today.joblist.company",
+				"links": [
+					"https://twitter.com/worldcoin",
+					"https://www.linkedin.com/company/worldcoinfoundation",
+					"https://www.facebook.com/Worldcoin-102231972238962",
+					"https://instagram.com/worldcoin/",
+					"https://www.youtube.com/channel/UCokOstyncOgi1VvhE-U7aXA",
+					"https://github.com/worldcoin"
+				],
+				"jobBoard": {
+					"provider": "ashby",
+					"id": "world-foundation"
+				},
+				"createdAt": "2026-10-19T11:17:54.828Z",
+				"description": "Worldcoin is a new, collectively owned global currency that will be distributed fairly to as many people as possible. Worldcoin will launch by giving a free share to everyone on Earth. We believe that this is an essential step to accelerate the transition towards a more inclusive global economy, providing new ways for everyone to share future prosperity.",
+				"updatedAt": "2026-10-19T17:01:49.063Z"
+			},
+			"kind": "repair",
+			"notes": [
+				"board ashby:world-foundation is live (1 jobs), was greenhouse:worldcoinorg dead (high)"
+			]
+		},
+		{
+			"action": "update",
+			"rkey": "wise.com",
+			"value": {
+				"url": "https://wise.com",
+				"name": "Wise",
+				"tags": [
+					"payments",
+					"banking"
+				],
+				"$type": "today.joblist.company",
+				"links": [
+					"https://twitter.com/wise",
+					"https://www.facebook.com/wise",
+					"https://www.instagram.com/wiseaccount",
+					"https://en.wikipedia.org/wiki/Wise_(company)"
+				],
+				"jobBoard": {
+					"provider": "smartrecruiters",
+					"id": "Wise"
+				},
+				"createdAt": "2026-10-19T11:17:54.828Z",
+				"description": "Wise (formerly TransferWise) is a UK-based foreign exchange financial technology company founded by Estonian businessmen Kristo Käärmann and Taavet Hinrikus in January 2011. Wise specializes in cross-border payment transfers. As of 2023, it offers three main products: Wise Account, Wise Business, and Wise Platform.",
+				"updatedAt": "2026-10-19T17:01:49.063Z"
+			},
+			"kind": "repair",
+			"notes": [
+				"board smartrecruiters:Wise (100 jobs) from Open Jobs, linking back to wise.com"
+			]
+		},
+		{
+			"action": "update",
+			"rkey": "uniswap.org",
+			"value": {
+				"url": "https://uniswap.org",
+				"name": "Uniswap Labs",
+				"tags": [
+					"trading",
+					"cryptocurrency",
+					"etherum"
+				],
+				"$type": "today.joblist.company",
+				"links": [
+					"https://twitter.com/Uniswap",
+					"https://github.com/Uniswap",
+					"https://en.wikipedia.org/wiki/Uniswap"
+				],
+				"jobBoard": {
+					"provider": "ashby",
+					"id": "uniswap"
+				},
+				"createdAt": "2026-10-19T11:17:54.828Z",
+				"description": "The Uniswap Protocol is the largest decentralized trading and automated market making protocol (often called a DEX, “Decentralized Exchange”) on Ethereum.",
+				"updatedAt": "2026-10-19T17:01:49.063Z"
+			},
+			"kind": "repair",
+			"notes": [
+				"board ashby:uniswap (6 jobs) from Open Jobs, linking back to uniswap.org"
+			]
+		},
+		{
+			"action": "update",
+			"rkey": "proximafusion.com",
+			"value": {
+				"url": "https://www.proximafusion.com",
+				"name": "Proxima Fusion",
+				"tags": [
+					"nuclear",
+					"fusion",
+					"energy",
+					"startup"
+				],
+				"$type": "today.joblist.company",
+				"links": [
+					"https://www.linkedin.com/company/proximafusion",
+					"http://instagram.com/proximafusion",
+					"https://www.youtube.com/@proximafusion"
+				],
+				"jobBoard": {
+					"provider": "ashby",
+					"id": "proxima-fusion"
+				},
+				"createdAt": "2026-10-19T11:17:54.828Z",
+				"locations": [
+					{
+						"name": "Munich",
+						"address": " Flößergasse 2, 81369",
+						"country": "Germany",
+						"latitude": "48.1064641",
+						"longitude": "11.5369288"
+					}
+				],
+				"description": "Building stellarator fusion power plants—the clearest, most robust path to commercial fusion energy.",
+				"updatedAt": "2026-10-19T17:01:49.063Z"
+			},
+			"kind": "repair",
+			"notes": [
+				"board ashby:proxima-fusion (52 jobs) from Open Jobs, linking back to proximafusion.com"
+			]
+		},
+		{
+			"action": "update",
+			"rkey": "perplexity.ai",
+			"value": {
+				"url": "https://www.perplexity.ai",
+				"name": "Perplexity",
+				"tags": [
+					"ai",
+					"llm",
+					"search-engine"
+				],
+				"$type": "today.joblist.company",
+				"links": [
+					"https://x.com/perplexity_ai",
+					"https://www.linkedin.com/company/perplexity-ai/",
+					"https://www.facebook.com/perplexityofficial/",
+					"https://www.instagram.com/perplexity.ai",
+					"https://www.youtube.com/@perplexity-ai",
+					"https://github.com/perplexityai",
+					"https://en.wikipedia.org/wiki/Perplexity_AI"
+				],
+				"jobBoard": {
+					"provider": "ashby",
+					"id": "Perplexity"
+				},
+				"createdAt": "2026-10-19T11:17:54.828Z",
+				"description": "Perplexity AI is a conversational search engine that uses large language models (LLMs) to answer queries using sources from the web and cites links within the text response.",
+				"updatedAt": "2026-10-19T17:01:49.063Z"
+			},
+			"kind": "repair",
+			"notes": [
+				"board ashby:Perplexity (133 jobs) from Open Jobs, linking back to perplexity.ai"
+			]
+		},
+		{
+			"action": "update",
+			"rkey": "gong.io",
+			"value": {
+				"url": "https://www.gong.io",
+				"name": "Gong",
+				"tags": [
+					"data"
+				],
+				"$type": "today.joblist.company",
+				"links": [
+					"https://twitter.com/gong_io",
+					"https://www.linkedin.com/company/gong-io",
+					"https://www.facebook.com/To.GongIO/",
+					"https://www.instagram.com/gong.io/",
+					"https://github.com/gong-io"
+				],
+				"jobBoard": {
+					"provider": "greenhouse",
+					"id": "gongio"
+				},
+				"createdAt": "2026-10-19T11:17:54.828Z",
+				"description": "Gong unlocks reality to help people and companies reach their full potential. The patented Gong Revenue Intelligence Platform™ empowers customer-facing teams to take advantage of their most valuable assets – customer interactions, which the Gong platform automatically captures and analyzes. Gong then delivers insights at scale, empowering revenue and go-to-market teams to determine the best actions for winning outcomes.",
+				"updatedAt": "2026-10-19T17:01:49.063Z"
+			},
+			"kind": "repair",
+			"notes": [
+				"board greenhouse:gongio (99 jobs) from Open Jobs, linking back to gong.io"
+			]
+		},
+		{
+			"action": "update",
+			"rkey": "duolingo.com",
+			"value": {
+				"url": "https://duolingo.com",
+				"name": "Duolingo",
+				"tags": [
+					"languages"
+				],
+				"$type": "today.joblist.company",
+				"links": [
+					"https://twitter.com/duolingo",
+					"https://www.linkedin.com/company/duolingo",
+					"https://facebook.com/duolingo",
+					"https://instagram.com/duolingo"
+				],
+				"jobBoard": {
+					"provider": "greenhouse",
+					"id": "duolingo"
+				},
+				"createdAt": "2026-10-19T11:17:54.828Z",
+				"description": "Duolingo is a language learning platform.",
+				"updatedAt": "2026-10-19T17:01:49.063Z"
+			},
+			"kind": "repair",
+			"notes": [
+				"board greenhouse:duolingo (63 jobs) from Open Jobs, linking back to duolingo.com"
+			]
+		},
+		{
+			"action": "update",
+			"rkey": "sustentio",
+			"value": {
+				"url": "https://sustentio.com",
+				"name": "Sustentio",
+				"tags": [
+					"communication",
+					"pr",
+					"agency"
+				],
+				"$type": "today.joblist.company",
+				"jobBoard": {
+					"id": "sustentio",
+					"provider": "personio"
+				},
+				"createdAt": "2026-10-19T11:17:54.828Z",
+				"locations": [
+					{
+						"name": "Berlin",
+						"country": "germany",
+						"latitude": "52.5008709",
+						"longitude": "13.4129852"
+					}
+				],
+				"description": "#communication and #pr #agency",
+				"updatedAt": "2026-10-19T17:01:49.063Z"
+			},
+			"kind": "repair",
+			"notes": [
+				"website now redirects to sustentio.com"
+			]
+		},
+		{
+			"action": "update",
+			"rkey": "sie.com",
+			"value": {
+				"url": "https://sonyinteractive.com",
+				"name": "Sony Interactive Entertainment Global",
+				"tags": [
+					"gaming",
+					"hardware",
+					"digital-services",
+					"entertainment"
+				],
+				"$type": "today.joblist.company",
+				"jobBoard": {
+					"id": "sonyinteractiveentertainmentglobal",
+					"provider": "greenhouse"
+				},
+				"createdAt": "2026-10-19T11:17:54.828Z",
+				"description": "We’re leading the way in developing the games, hardware, digital services and interactive entertainment that are defining the game industry.",
+				"updatedAt": "2026-10-19T17:01:49.063Z"
+			},
+			"kind": "repair",
+			"notes": [
+				"website now redirects to sonyinteractive.com"
+			]
+		},
+		{
+			"action": "update",
+			"rkey": "heimat",
+			"value": {
+				"url": "https://heimattbwa.de",
+				"name": "Heimat",
+				"tags": [
+					"pr",
+					"advertising",
+					"agency"
+				],
+				"$type": "today.joblist.company",
+				"jobBoard": {
+					"url": "http://www.heimat-berlin.com/jobs"
+				},
+				"createdAt": "2026-10-19T11:17:54.828Z",
+				"description": "#pr #advertising #agency",
+				"updatedAt": "2026-10-19T17:01:49.063Z"
+			},
+			"kind": "repair",
+			"notes": [
+				"website now redirects to heimattbwa.de"
+			]
+		},
+		{
+			"action": "update",
+			"rkey": "global-m",
+			"value": {
+				"url": "https://globalm.io",
+				"name": "Global-m",
+				"tags": [
+					"recruiting",
+					"technology",
+					"hr"
+				],
+				"$type": "today.joblist.company",
+				"jobBoard": {
+					"url": "http://global-m.co.uk/jobs/?country=all&location=berlin&role=all&sector=all&seniority=all&type=all&salaryRange=all"
+				},
+				"createdAt": "2026-10-19T11:17:54.828Z",
+				"description": "#recruiting agency specialists in #technology; #hr",
+				"updatedAt": "2026-10-19T17:01:49.063Z"
+			},
+			"kind": "repair",
+			"notes": [
+				"website now redirects to globalm.io"
+			]
+		},
+		{
+			"action": "update",
+			"rkey": "flyzipline.com",
+			"value": {
+				"url": "https://zipline.com",
+				"name": "Zipline",
+				"tags": [
+					"delivery",
+					"logistics",
+					"supply-chain",
+					"robotics",
+					"aviation"
+				],
+				"$type": "today.joblist.company",
+				"links": [
+					"https://twitter.com/zipline",
+					"https://www.linkedin.com/company/flyzipline/",
+					"https://www.instagram.com/zipline"
+				],
+				"jobBoard": {
+					"id": "flyzipline",
+					"provider": "greenhouse"
+				},
+				"createdAt": "2026-10-19T11:17:54.828Z",
+				"description": "Zipline was founded to create the first logistics system that serves all humans equally. Our aim is to solve the world’s most urgent and complex access challenges. Leveraging expertise in robotics and autonomy, Zipline designs, manufactures and operates the world’s largest automated delivery system. Zipline serves tens of millions of people around the world and is making good on the promise of building an equitable and more resilient global supply chain.",
+				"updatedAt": "2026-10-19T17:01:49.063Z"
+			},
+			"kind": "repair",
+			"notes": [
+				"website now redirects to zipline.com"
+			]
+		},
+		{
+			"action": "update",
+			"rkey": "eurofins.de",
+			"value": {
+				"url": "https://eurofins.com",
+				"name": "Eurofins",
+				"tags": [
+					"industry",
+					"pharmaceutical",
+					"testing",
+					"food",
+					"environment",
+					"agroscience"
+				],
+				"$type": "today.joblist.company",
+				"jobBoard": {
+					"id": "Eurofins",
+					"provider": "smartrecruiters"
+				},
+				"createdAt": "2026-10-19T11:17:54.828Z",
+				"locations": [
+					{
+						"name": "Berlin",
+						"address": "Rudower Chaussee 29, 12489",
+						"country": "germany",
+						"latitude": "52.428835",
+						"longitude": "13.528514"
+					}
+				],
+				"description": "World leader in food, environment, pharma product testing & agroscience CRO services",
+				"updatedAt": "2026-10-19T17:01:49.063Z"
+			},
+			"kind": "repair",
+			"notes": [
+				"website now redirects to eurofins.com"
+			]
+		},
+		{
+			"action": "update",
+			"rkey": "crate",
+			"value": {
+				"url": "https://cratedb.com",
+				"name": "Crate",
+				"tags": [
+					"open-source",
+					"database"
+				],
+				"$type": "today.joblist.company",
+				"jobBoard": {
+					"id": "crate-io",
+					"provider": "personio"
+				},
+				"createdAt": "2026-10-19T11:17:54.828Z",
+				"locations": [
+					{
+						"name": "Berlin",
+						"country": "germany",
+						"latitude": "52.503673",
+						"longitude": "13.407628"
+					}
+				],
+				"description": "CrateDB is an #open-source and distributed SQL #database management system.",
+				"updatedAt": "2026-10-19T17:01:49.063Z"
+			},
+			"kind": "repair",
+			"notes": [
+				"website now redirects to cratedb.com"
+			]
+		},
+		{
+			"action": "update",
+			"rkey": "consensys.net",
+			"value": {
+				"url": "https://consensys.com",
+				"name": "Consensys",
+				"tags": [
+					"blockchain",
+					"cryptocurrency",
+					"did",
+					"web3"
+				],
+				"$type": "today.joblist.company",
+				"links": [
+					"https://twitter.com/ConsenSys",
+					"https://www.linkedin.com/company/consensus-systems-consensys-",
+					"https://www.facebook.com/ConsenSysOfficial",
+					"https://www.instagram.com/consensysofficial",
+					"https://www.youtube.com/channel/UCBeLEwM-yhIKuIxHTx0VzdQ",
+					"https://github.com/ConsenSys",
+					"https://en.wikipedia.org/wiki/ConsenSys"
+				],
+				"jobBoard": {
+					"id": "consensys",
+					"provider": "greenhouse"
+				},
+				"createdAt": "2026-10-19T11:17:54.828Z",
+				"description": "ConsenSys is a blockchain software technology company, editor of Metamask.",
+				"updatedAt": "2026-10-19T17:01:49.063Z"
+			},
+			"kind": "repair",
+			"notes": [
+				"website now redirects to consensys.com"
+			]
+		},
+		{
+			"action": "update",
+			"rkey": "cognition.ai",
+			"value": {
+				"url": "https://cognition.com",
+				"name": "Cognition",
+				"tags": [
+					"ai",
+					"startup",
+					"llm"
+				],
+				"$type": "today.joblist.company",
+				"links": [
+					"https://x.com/cognition_labs",
+					"https://www.linkedin.com/company/cognition-ai-labs/",
+					"https://www.instagram.com/cognition_labs/",
+					"https://www.youtube.com/@Cognition-Labs",
+					"https://en.wikipedia.org/wiki/Cognition_AI"
+				],
+				"jobBoard": {
+					"id": "cognition",
+					"provider": "ashby"
+				},
+				"createdAt": "2026-10-19T11:17:54.828Z",
+				"description": "Cognition AI, Inc. (also known as Cognition Labs), doing business as Cognition, is an artificial intelligence (AI) company headquartered in San Francisco in the US State of California. The company developed Devin AI, an AI software developer.",
+				"updatedAt": "2026-10-19T17:01:49.063Z"
+			},
+			"kind": "repair",
+			"notes": [
+				"website now redirects to cognition.com"
+			]
+		},
+		{
+			"action": "update",
+			"rkey": "chimney",
+			"value": {
+				"url": "https://chimney.se",
+				"name": "Chimney",
+				"tags": [
+					"post-production",
+					"production",
+					"editorial",
+					"sound-design",
+					"analytics",
+					"content-strategy"
+				],
+				"$type": "today.joblist.company",
+				"jobBoard": {
+					"url": "http://www.chimneygroup.com/join-us"
+				},
+				"createdAt": "2026-10-19T11:17:54.828Z",
+				"locations": [
+					{
+						"name": "Berlin",
+						"country": "germany",
+						"latitude": "52.5247484",
+						"longitude": "13.3990322"
+					}
+				],
+				"description": "#post-production, #production, #editorial, #sound-design, live events, content distribution, performance #analytics and #content-strategy company",
+				"updatedAt": "2026-10-19T17:01:49.063Z"
+			},
+			"kind": "repair",
+			"notes": [
+				"website now redirects to chimney.se"
+			]
+		}
+	],
+	"skipped": [
+		{
+			"key": "stackbit.com",
+			"reason": "low confidence: for a person to decide"
+		},
+		{
+			"key": "savedo",
+			"reason": "low confidence: for a person to decide"
+		},
+		{
+			"key": "roobeo.com",
+			"reason": "low confidence: for a person to decide"
+		},
+		{
+			"key": "mercedes-benzio",
+			"reason": "low confidence: for a person to decide"
+		},
+		{
+			"key": "kkr.com",
+			"reason": "low confidence: for a person to decide"
+		},
+		{
+			"key": "grover",
+			"reason": "low confidence: for a person to decide"
+		},
+		{
+			"key": "exscientia.ai",
+			"reason": "low confidence: for a person to decide"
+		},
+		{
+			"key": "dentolo.de",
+			"reason": "low confidence: for a person to decide"
+		},
+		{
+			"key": "cityinnovate.com",
+			"reason": "low confidence: for a person to decide"
+		},
+		{
+			"key": "chal-tec",
+			"reason": "low confidence: for a person to decide"
+		},
+		{
+			"key": "canvas.io",
+			"reason": "low confidence: for a person to decide"
+		},
+		{
+			"key": "sandbox-interactive",
+			"reason": "low confidence: for a person to decide"
+		},
+		{
+			"key": "lila-backer",
+			"reason": "low confidence: for a person to decide"
+		},
+		{
+			"key": "kauferportal",
+			"reason": "low confidence: for a person to decide"
+		},
+		{
+			"key": "freien-universitat-berlin",
+			"reason": "low confidence: for a person to decide"
+		},
+		{
+			"key": "erdbar-gmbh-freche-freunde",
+			"reason": "low confidence: for a person to decide"
+		},
+		{
+			"key": "bmw",
+			"reason": "low confidence: for a person to decide"
+		},
+		{
+			"key": "bdi-beneficial-design-institute",
+			"reason": "low confidence: for a person to decide"
+		}
+	],
+	"repairs": [
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/zucker-kommunikation",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "zucker-kommunikation",
+			"name": "Zucker Kommunikation:",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "zucker-kommunikation",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/zucker-kommunikation"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/zizoo",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "zizoo",
+			"name": "Zizoo",
+			"changes": {},
+			"notes": [
+				"website now redirects to borrowaboat.com"
+			],
+			"key": "zizoo",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/zizoo"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/ziegert-immobilien.de",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "ziegert-immobilien.de",
+			"name": "Ziegert",
+			"changes": {},
+			"notes": [
+				"likely gone: its website, job board and careers page do not answer"
+			],
+			"gone": true,
+			"key": "ziegert-immobilien.de",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/ziegert-immobilien.de"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/worldcoin.org",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "worldcoin.org",
+			"name": "Worldcoin",
+			"changes": {
+				"jobBoard": {
+					"provider": "ashby",
+					"id": "world-foundation"
+				}
+			},
+			"notes": [
+				"board ashby:world-foundation is live (1 jobs), was greenhouse:worldcoinorg dead (high)"
+			],
+			"confidence": "high",
+			"key": "worldcoin.org",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/worldcoin.org"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/wise.com",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "wise.com",
+			"name": "Wise",
+			"changes": {
+				"jobBoard": {
+					"provider": "smartrecruiters",
+					"id": "Wise"
+				}
+			},
+			"notes": [
+				"board smartrecruiters:Wise (100 jobs) from Open Jobs, linking back to wise.com"
+			],
+			"confidence": "high",
+			"key": "wise.com",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/wise.com"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/wework",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "wework",
+			"name": "WeWork",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "wework",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/wework"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/wefox",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "wefox",
+			"name": "wefox",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "wefox",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/wefox"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/wayve",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "wayve",
+			"name": "Wayve",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "wayve",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/wayve"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/wayfair",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "wayfair",
+			"name": "Wayfair ",
+			"changes": {},
+			"notes": [
+				"website now redirects to aboutwayfair.com"
+			],
+			"key": "wayfair",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/wayfair"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/visual-meta",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "visual-meta",
+			"name": "Visual Meta",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "visual-meta",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/visual-meta"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/vinehealth",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "vinehealth",
+			"name": "Vinehealth",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "vinehealth",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/vinehealth"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/vertical-aerospace",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "vertical-aerospace",
+			"name": "Vertical Aerospace",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "vertical-aerospace",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/vertical-aerospace"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/veepee.com",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "veepee.com",
+			"name": "Veepee",
+			"changes": {},
+			"notes": [
+				"website now redirects to veepee.fr"
+			],
+			"key": "veepee.com",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/veepee.com"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/unu",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "unu",
+			"name": "Unu",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "unu",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/unu"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/uniswap.org",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "uniswap.org",
+			"name": "Uniswap Labs",
+			"changes": {
+				"jobBoard": {
+					"provider": "ashby",
+					"id": "uniswap"
+				}
+			},
+			"notes": [
+				"board ashby:uniswap (6 jobs) from Open Jobs, linking back to uniswap.org"
+			],
+			"confidence": "high",
+			"key": "uniswap.org",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/uniswap.org"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/unikrn",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "unikrn",
+			"name": "Unikrn",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "unikrn",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/unikrn"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/unicorn.de",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "unicorn.de",
+			"name": "Unicorn Workspaces",
+			"changes": {},
+			"notes": [
+				"website now redirects to scalingspaces.com"
+			],
+			"key": "unicorn.de",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/unicorn.de"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/twago.com",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "twago.com",
+			"name": "Twgao",
+			"changes": {},
+			"notes": [
+				"website now redirects to talent-pool.com"
+			],
+			"key": "twago.com",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/twago.com"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/truepill.com",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "truepill.com",
+			"name": "Truepill",
+			"changes": {},
+			"notes": [
+				"website now redirects to rx.fuzehealth.com"
+			],
+			"key": "truepill.com",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/truepill.com"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/travel-audience",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "travel-audience",
+			"name": "Travel Audience",
+			"changes": {},
+			"notes": [
+				"website now redirects to amadeus-hospitality.com"
+			],
+			"key": "travel-audience",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/travel-audience"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/toposens",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "toposens",
+			"name": "Toposens",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "toposens",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/toposens"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/tokamak-energy",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "tokamak-energy",
+			"name": "Tokamak Energy",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "tokamak-energy",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/tokamak-energy"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/thestudenthotel.com",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "thestudenthotel.com",
+			"name": "The Student Hotel",
+			"changes": {},
+			"notes": [
+				"website now redirects to thesocialhub.co"
+			],
+			"key": "thestudenthotel.com",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/thestudenthotel.com"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/thepowerhouse",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "thepowerhouse",
+			"name": "ThePowerHouse",
+			"changes": {},
+			"notes": [
+				"website now redirects to woodriverfinearts.com"
+			],
+			"key": "thepowerhouse",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/thepowerhouse"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/the-exploration-company",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "the-exploration-company",
+			"name": "The Exploration Company",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "the-exploration-company",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/the-exploration-company"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/tessian",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "tessian",
+			"name": "Tessian",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "tessian",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/tessian"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/takeoff.com",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "takeoff.com",
+			"name": "Takeoff Technologies",
+			"changes": {},
+			"notes": [
+				"likely gone: its website, job board and careers page do not answer"
+			],
+			"gone": true,
+			"key": "takeoff.com",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/takeoff.com"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/symbiont.io",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "symbiont.io",
+			"name": "Symbiont",
+			"changes": {},
+			"notes": [
+				"likely gone: its website, job board and careers page do not answer"
+			],
+			"gone": true,
+			"key": "symbiont.io",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/symbiont.io"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/sustentio",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "sustentio",
+			"name": "Sustentio",
+			"changes": {
+				"url": "https://sustentio.com"
+			},
+			"notes": [
+				"website now redirects to sustentio.com"
+			],
+			"confidence": "high",
+			"key": "sustentio",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/sustentio"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/stayfriends",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "stayfriends",
+			"name": "StayFriends",
+			"changes": {},
+			"notes": [
+				"website now redirects to stayfriends.de"
+			],
+			"key": "stayfriends",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/stayfriends"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/stackbit.com",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "stackbit.com",
+			"name": "Stackbit",
+			"changes": {
+				"jobBoard": {
+					"provider": "greenhouse",
+					"id": "netlify"
+				}
+			},
+			"notes": [
+				"board greenhouse:netlify is live (5 jobs), was lever:stackbit dead (low)",
+				"website now redirects to netlify.com"
+			],
+			"confidence": "low",
+			"key": "stackbit.com",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/stackbit.com"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/ssf-berlin.de",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "ssf-berlin.de",
+			"name": "SSF Telekommunikations-Management GmbH",
+			"changes": {},
+			"notes": [
+				"website now redirects to netzkontor-berlin.de"
+			],
+			"key": "ssf-berlin.de",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/ssf-berlin.de"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/spoton-connections",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "spoton-connections",
+			"name": "SpotOn Connections",
+			"changes": {},
+			"notes": [
+				"website now redirects to linklist.bio"
+			],
+			"key": "spoton-connections",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/spoton-connections"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/spotcap-global-services",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "spotcap-global-services",
+			"name": "Spotcap Global Services",
+			"changes": {},
+			"notes": [
+				"likely gone: its website, job board and careers page do not answer"
+			],
+			"gone": true,
+			"key": "spotcap-global-services",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/spotcap-global-services"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/spark.net",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "spark.net",
+			"name": "Spark Networks",
+			"changes": {},
+			"notes": [
+				"likely gone: its website, job board and careers page do not answer"
+			],
+			"gone": true,
+			"key": "spark.net",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/spark.net"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/solytic",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "solytic",
+			"name": "SOLYTIC",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "solytic",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/solytic"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/smartlane",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "smartlane",
+			"name": "Smartlane",
+			"changes": {},
+			"notes": [
+				"website now redirects to smartlane.ai"
+			],
+			"key": "smartlane",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/smartlane"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/simplesurance",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "simplesurance",
+			"name": "Simplesurance",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "simplesurance",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/simplesurance"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/simplaex",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "simplaex",
+			"name": "Simplaex",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "simplaex",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/simplaex"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/sie.com",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "sie.com",
+			"name": "Sony Interactive Entertainment Global",
+			"changes": {
+				"url": "https://sonyinteractive.com"
+			},
+			"notes": [
+				"website now redirects to sonyinteractive.com"
+			],
+			"confidence": "high",
+			"key": "sie.com",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/sie.com"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/si-labs",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "si-labs",
+			"name": "SI Labs",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "si-labs",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/si-labs"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/sentiance",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "sentiance",
+			"name": "Sentiance",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "sentiance",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/sentiance"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/sellics.com",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "sellics.com",
+			"name": "Sellics",
+			"changes": {},
+			"notes": [
+				"website now redirects to perpetua.io"
+			],
+			"key": "sellics.com",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/sellics.com"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/seldon",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "seldon",
+			"name": "Seldon",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "seldon",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/seldon"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/savedo",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "savedo",
+			"name": "Savedo",
+			"changes": {
+				"url": "https://savedo.de",
+				"jobBoard": {
+					"provider": "greenhouse",
+					"id": "raisin"
+				}
+			},
+			"notes": [
+				"website from careers page address (high)",
+				"board greenhouse:raisin is live (40 jobs), was careers page ok (low)"
+			],
+			"confidence": "low",
+			"key": "savedo",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/savedo"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/sano-genetics",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "sano-genetics",
+			"name": "Sano Genetics",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "sano-genetics",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/sano-genetics"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/sandbox-interactive",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "sandbox-interactive",
+			"name": "Sandbox Interactive",
+			"changes": {
+				"url": "https://albiononline.com"
+			},
+			"notes": [
+				"website from careers page address (low)"
+			],
+			"confidence": "low",
+			"key": "sandbox-interactive",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/sandbox-interactive"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/rsg-group-gmbh-mc-fit",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "rsg-group-gmbh-mc-fit",
+			"name": " RSG Group GmbH (Mc Fit)",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "rsg-group-gmbh-mc-fit",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/rsg-group-gmbh-mc-fit"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/roobeo.com",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "roobeo.com",
+			"name": "Roobeo",
+			"changes": {
+				"jobBoard": {
+					"provider": "personio",
+					"id": "bobbie"
+				}
+			},
+			"notes": [
+				"board personio:bobbie is live (1 jobs), was personio:roobeo dead (low)",
+				"website now redirects to bobbie.de"
+			],
+			"confidence": "low",
+			"key": "roobeo.com",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/roobeo.com"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/robinhoodberlin",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "robinhoodberlin",
+			"name": "robinhood.berlin",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "robinhoodberlin",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/robinhoodberlin"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/relayr",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "relayr",
+			"name": "Relayr",
+			"changes": {},
+			"notes": [
+				"website now redirects to buffalo-technology.com"
+			],
+			"key": "relayr",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/relayr"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/reachhero",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "reachhero",
+			"name": "ReachHero",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "reachhero",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/reachhero"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/qubit9.com",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "qubit9.com",
+			"name": "Qubit9",
+			"changes": {},
+			"notes": [
+				"likely gone: its website, job board and careers page do not answer"
+			],
+			"gone": true,
+			"key": "qubit9.com",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/qubit9.com"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/quantinuum",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "quantinuum",
+			"name": "Quantinuum",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "quantinuum",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/quantinuum"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/pureganic",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "pureganic",
+			"name": "Pureganic",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "pureganic",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/pureganic"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/proximafusion.com",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "proximafusion.com",
+			"name": "Proxima Fusion",
+			"changes": {
+				"jobBoard": {
+					"provider": "ashby",
+					"id": "proxima-fusion"
+				}
+			},
+			"notes": [
+				"board ashby:proxima-fusion (52 jobs) from Open Jobs, linking back to proximafusion.com"
+			],
+			"confidence": "high",
+			"key": "proximafusion.com",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/proximafusion.com"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/protocol.ai",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "protocol.ai",
+			"name": "Protocol Labs",
+			"changes": {},
+			"notes": [
+				"website now redirects to pl.xyz"
+			],
+			"key": "protocol.ai",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/protocol.ai"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/prosiebensat1",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "prosiebensat1",
+			"name": "ProSiebenSat.1",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "prosiebensat1",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/prosiebensat1"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/project-a.com",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "project-a.com",
+			"name": " Project A Ventures",
+			"changes": {},
+			"notes": [
+				"website now redirects to project-a.vc"
+			],
+			"key": "project-a.com",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/project-a.com"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/preligens",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "preligens",
+			"name": "Preligens",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "preligens",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/preligens"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/planetly.org",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "planetly.org",
+			"name": "Planetly",
+			"changes": {},
+			"notes": [
+				"website now redirects to onetrust.com"
+			],
+			"key": "planetly.org",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/planetly.org"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/perplexity.ai",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "perplexity.ai",
+			"name": "Perplexity",
+			"changes": {
+				"jobBoard": {
+					"provider": "ashby",
+					"id": "Perplexity"
+				}
+			},
+			"notes": [
+				"board ashby:Perplexity (133 jobs) from Open Jobs, linking back to perplexity.ai"
+			],
+			"confidence": "high",
+			"key": "perplexity.ai",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/perplexity.ai"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/perceptual-robotics",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "perceptual-robotics",
+			"name": "Perceptual Robotics",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "perceptual-robotics",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/perceptual-robotics"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/pear-bio",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "pear-bio",
+			"name": "Pear Bio",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "pear-bio",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/pear-bio"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/paypal",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "paypal",
+			"name": "PayPal",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "paypal",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/paypal"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/pauaventures.com",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "pauaventures.com",
+			"name": "Paua Ventures",
+			"changes": {},
+			"notes": [
+				"website now redirects to squareone.vc"
+			],
+			"key": "pauaventures.com",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/pauaventures.com"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/orbem",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "orbem",
+			"name": "Orbem",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "orbem",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/orbem"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/optimal",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "optimal",
+			"name": "Optimal",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "optimal",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/optimal"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/oni",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "oni",
+			"name": "ONI",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "oni",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/oni"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/onfido",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "onfido",
+			"name": "Onfido",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "onfido",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/onfido"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/oneweb",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "oneweb",
+			"name": "OneWeb",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "oneweb",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/oneweb"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/nu-quantum",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "nu-quantum",
+			"name": "Nu Quantum",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "nu-quantum",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/nu-quantum"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/novoic",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "novoic",
+			"name": "Novoic",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "novoic",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/novoic"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/naska.ai",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "naska.ai",
+			"name": "Naska.AI",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "naska.ai",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/naska.ai"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/musictribe.com",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "musictribe.com",
+			"name": "Music Tribe",
+			"changes": {},
+			"notes": [
+				"website now redirects to creator.empowertribe.com"
+			],
+			"key": "musictribe.com",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/musictribe.com"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/muotech",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "muotech",
+			"name": "Muotech",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "muotech",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/muotech"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/moyyn.com",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "moyyn.com",
+			"name": "Moyyn",
+			"changes": {},
+			"notes": [
+				"likely gone: its website, job board and careers page do not answer"
+			],
+			"gone": true,
+			"key": "moyyn.com",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/moyyn.com"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/mosaicml.com",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "mosaicml.com",
+			"name": "MosaicML",
+			"changes": {},
+			"notes": [
+				"website now redirects to databricks.com"
+			],
+			"key": "mosaicml.com",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/mosaicml.com"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/monoqi",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "monoqi",
+			"name": "Monoqi",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "monoqi",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/monoqi"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/mobisol",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "mobisol",
+			"name": "Mobisol",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "mobisol",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/mobisol"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/misterspex.com",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "misterspex.com",
+			"name": "Mister Spex",
+			"changes": {},
+			"notes": [
+				"website now redirects to misterspex.de"
+			],
+			"key": "misterspex.com",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/misterspex.com"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/meritocracy",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "meritocracy",
+			"name": "Meritocracy",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "meritocracy",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/meritocracy"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/mercedes-benzio",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "mercedes-benzio",
+			"name": "Mercedes-Benz.io",
+			"changes": {
+				"url": "https://mercedes-benz.io",
+				"jobBoard": {
+					"provider": "recruitee",
+					"id": "mbio"
+				}
+			},
+			"notes": [
+				"website from careers page address (high)",
+				"board recruitee:mbio is live (5 jobs), was careers page ok (low)"
+			],
+			"confidence": "low",
+			"key": "mercedes-benzio",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/mercedes-benzio"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/medici-living-group",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "medici-living-group",
+			"name": "Medici Living Group",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "medici-living-group",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/medici-living-group"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/mapify",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "mapify",
+			"name": "Mapify",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "mapify",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/mapify"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/makersdo",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "makersdo",
+			"name": "Makers.do",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "makersdo",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/makersdo"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/lufthansa",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "lufthansa",
+			"name": "Lufthansa",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "lufthansa",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/lufthansa"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/lilium",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "lilium",
+			"name": "Lilium",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "lilium",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/lilium"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/lila-backer",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "lila-backer",
+			"name": "Lila Bäcker",
+			"changes": {
+				"url": "https://lila-world.com"
+			},
+			"notes": [
+				"website from careers page address (low)"
+			],
+			"confidence": "low",
+			"key": "lila-backer",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/lila-backer"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/liefery.com",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "liefery.com",
+			"name": "Liefery",
+			"changes": {},
+			"notes": [
+				"likely gone: its website, job board and careers page do not answer"
+			],
+			"gone": true,
+			"key": "liefery.com",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/liefery.com"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/lacework.com",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "lacework.com",
+			"name": "Lacework",
+			"changes": {},
+			"notes": [
+				"likely gone: its website, job board and careers page do not answer"
+			],
+			"gone": true,
+			"key": "lacework.com",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/lacework.com"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/kw-commerce",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "kw-commerce",
+			"name": "KW-Commerce",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "kw-commerce",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/kw-commerce"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/klimametrix",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "klimametrix",
+			"name": "Klima.Metrix",
+			"changes": {},
+			"notes": [
+				"website now redirects to climcycle.com"
+			],
+			"key": "klimametrix",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/klimametrix"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/kkr.com",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "kkr.com",
+			"name": "KKR",
+			"changes": {
+				"jobBoard": {
+					"provider": "greenhouse",
+					"id": "stage"
+				}
+			},
+			"notes": [
+				"board greenhouse:stage is live (131 jobs), was greenhouse:kkr dead (low)"
+			],
+			"confidence": "low",
+			"key": "kkr.com",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/kkr.com"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/kheiron-medical",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "kheiron-medical",
+			"name": "Kheiron Medical",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "kheiron-medical",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/kheiron-medical"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/kauferportal",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "kauferportal",
+			"name": "Käuferportal",
+			"changes": {
+				"url": "https://kaeuferportal.de"
+			},
+			"notes": [
+				"website from careers page address (low)"
+			],
+			"confidence": "low",
+			"key": "kauferportal",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/kauferportal"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/kapilendo",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "kapilendo",
+			"name": "Kapilendo",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "kapilendo",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/kapilendo"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/kandji.io",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "kandji.io",
+			"name": "Kandji",
+			"changes": {},
+			"notes": [
+				"website now redirects to iru.com"
+			],
+			"key": "kandji.io",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/kandji.io"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/kaia-health",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "kaia-health",
+			"name": "Kaia Health",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "kaia-health",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/kaia-health"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/kaeuferportal",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "kaeuferportal",
+			"name": "Kaeuferportal",
+			"changes": {},
+			"notes": [
+				"website now redirects to aroundhome.de"
+			],
+			"key": "kaeuferportal",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/kaeuferportal"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/journee.live",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "journee.live",
+			"name": "Journee",
+			"changes": {},
+			"notes": [
+				"website now redirects to journee.ai"
+			],
+			"key": "journee.live",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/journee.live"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/joblift",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "joblift",
+			"name": "Joblift",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "joblift",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/joblift"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/iohk.io",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "iohk.io",
+			"name": "IOHK",
+			"changes": {},
+			"notes": [
+				"website now redirects to iog.io"
+			],
+			"key": "iohk.io",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/iohk.io"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/instafreight",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "instafreight",
+			"name": "InstaFreight",
+			"changes": {},
+			"notes": [
+				"website now redirects to cargomotion.io"
+			],
+			"key": "instafreight",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/instafreight"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/infopark",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "infopark",
+			"name": "Infopark",
+			"changes": {},
+			"notes": [
+				"website now redirects to justrelate.com"
+			],
+			"key": "infopark",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/infopark"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/imusician",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "imusician",
+			"name": "iMusician",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "imusician",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/imusician"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/improbable",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "improbable",
+			"name": "Improbable",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "improbable",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/improbable"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/hyperspace.xyz",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "hyperspace.xyz",
+			"name": "Hyperspace",
+			"changes": {},
+			"notes": [
+				"website now redirects to joinearlybird.com"
+			],
+			"key": "hyperspace.xyz",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/hyperspace.xyz"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/honeypot",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "honeypot",
+			"name": "Honeypot",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "honeypot",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/honeypot"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/heimat",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "heimat",
+			"name": "Heimat",
+			"changes": {
+				"url": "https://heimattbwa.de"
+			},
+			"notes": [
+				"website now redirects to heimattbwa.de"
+			],
+			"confidence": "high",
+			"key": "heimat",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/heimat"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/hardt-hyperloop",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "hardt-hyperloop",
+			"name": "Hardt Hyperloop",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "hardt-hyperloop",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/hardt-hyperloop"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/halodi-robotics",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "halodi-robotics",
+			"name": "Halodi Robotics",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "halodi-robotics",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/halodi-robotics"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/gruenderszene",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "gruenderszene",
+			"name": "Gruenderszene",
+			"changes": {},
+			"notes": [
+				"website now redirects to businessinsider.de"
+			],
+			"key": "gruenderszene",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/gruenderszene"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/grover",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "grover",
+			"name": "Grover",
+			"changes": {
+				"url": "https://getgrover.com",
+				"jobBoard": {
+					"provider": "greenhouse",
+					"id": "grover"
+				}
+			},
+			"notes": [
+				"website from careers page address (low)",
+				"board greenhouse:grover is live (6 jobs), was careers page ok (high)"
+			],
+			"confidence": "low",
+			"key": "grover",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/grover"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/gong.io",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "gong.io",
+			"name": "Gong",
+			"changes": {
+				"jobBoard": {
+					"provider": "greenhouse",
+					"id": "gongio"
+				}
+			},
+			"notes": [
+				"board greenhouse:gongio (99 jobs) from Open Jobs, linking back to gong.io"
+			],
+			"confidence": "high",
+			"key": "gong.io",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/gong.io"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/global-m",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "global-m",
+			"name": "Global-m",
+			"changes": {
+				"url": "https://globalm.io"
+			},
+			"notes": [
+				"website now redirects to globalm.io"
+			],
+			"confidence": "high",
+			"key": "global-m",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/global-m"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/getdivvy.com",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "getdivvy.com",
+			"name": "Divvy",
+			"changes": {},
+			"notes": [
+				"website now redirects to bill.com"
+			],
+			"key": "getdivvy.com",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/getdivvy.com"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/german-bionic",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "german-bionic",
+			"name": "German Bionic",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "german-bionic",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/german-bionic"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/genomics-plc",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "genomics-plc",
+			"name": "Genomics plc",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "genomics-plc",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/genomics-plc"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/gegessen-wird-immer",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "gegessen-wird-immer",
+			"name": "Gegessen Wird Immer",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "gegessen-wird-immer",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/gegessen-wird-immer"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/fyber",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "fyber",
+			"name": "Fyber",
+			"changes": {},
+			"notes": [
+				"website now redirects to digitalturbine.com"
+			],
+			"key": "fyber",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/fyber"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/freien-universitat-berlin",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "freien-universitat-berlin",
+			"name": "Freien Universität Berlin",
+			"changes": {
+				"url": "https://fu-berlin.de"
+			},
+			"notes": [
+				"website from careers page address (low)"
+			],
+			"confidence": "low",
+			"key": "freien-universitat-berlin",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/freien-universitat-berlin"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/formant.io",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "formant.io",
+			"name": "Formant",
+			"changes": {},
+			"notes": [
+				"website now redirects to formant.ai"
+			],
+			"key": "formant.io",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/formant.io"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/forem.com",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "forem.com",
+			"name": "Forem",
+			"changes": {},
+			"notes": [
+				"website now redirects to dev.to"
+			],
+			"key": "forem.com",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/forem.com"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/fontpit-androidpit",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "fontpit-androidpit",
+			"name": "Fontpit / Androidpit",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "fontpit-androidpit",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/fontpit-androidpit"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/focalpoint",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "focalpoint",
+			"name": "FocalPoint",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "focalpoint",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/focalpoint"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/flyzipline.com",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "flyzipline.com",
+			"name": "Zipline",
+			"changes": {
+				"url": "https://zipline.com"
+			},
+			"notes": [
+				"website now redirects to zipline.com"
+			],
+			"confidence": "high",
+			"key": "flyzipline.com",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/flyzipline.com"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/flyiin",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "flyiin",
+			"name": "flyiin",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "flyiin",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/flyiin"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/five",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "five",
+			"name": "Five",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "five",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/five"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/fit-analytics",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "fit-analytics",
+			"name": "Fit Analytics",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "fit-analytics",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/fit-analytics"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/facebook",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "facebook",
+			"name": "Facebook",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "facebook",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/facebook"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/exscientia.ai",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "exscientia.ai",
+			"name": "Exscientia",
+			"changes": {
+				"jobBoard": {
+					"provider": "greenhouse",
+					"id": "recursionpharmaceuticals"
+				}
+			},
+			"notes": [
+				"board greenhouse:recursionpharmaceuticals is live (13 jobs), was workable:exscientia empty (low)",
+				"website now redirects to recursion.com"
+			],
+			"confidence": "low",
+			"key": "exscientia.ai",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/exscientia.ai"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/evisort.com",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "evisort.com",
+			"name": "Evisort",
+			"changes": {},
+			"notes": [
+				"website now redirects to workday.com"
+			],
+			"key": "evisort.com",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/evisort.com"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/eurosky.social",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "eurosky.social",
+			"name": "Eurosky Social",
+			"changes": {},
+			"notes": [
+				"website now redirects to portal.eurosky.tech"
+			],
+			"key": "eurosky.social",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/eurosky.social"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/eurofins.de",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "eurofins.de",
+			"name": "Eurofins",
+			"changes": {
+				"url": "https://eurofins.com"
+			},
+			"notes": [
+				"website now redirects to eurofins.com"
+			],
+			"confidence": "high",
+			"key": "eurofins.de",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/eurofins.de"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/erdbar-gmbh-freche-freunde",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "erdbar-gmbh-freche-freunde",
+			"name": " Erdbär GmbH Freche Freunde",
+			"changes": {
+				"url": "https://frechefreunde.de"
+			},
+			"notes": [
+				"website from careers page address (low)"
+			],
+			"confidence": "low",
+			"key": "erdbar-gmbh-freche-freunde",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/erdbar-gmbh-freche-freunde"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/elliptic",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "elliptic",
+			"name": "Elliptic",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "elliptic",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/elliptic"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/einride",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "einride",
+			"name": "Einride",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "einride",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/einride"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/eigen-technologies",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "eigen-technologies",
+			"name": "Eigen Technologies",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "eigen-technologies",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/eigen-technologies"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/duolingo.com",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "duolingo.com",
+			"name": "Duolingo",
+			"changes": {
+				"jobBoard": {
+					"provider": "greenhouse",
+					"id": "duolingo"
+				}
+			},
+			"notes": [
+				"board greenhouse:duolingo (63 jobs) from Open Jobs, linking back to duolingo.com"
+			],
+			"confidence": "high",
+			"key": "duolingo.com",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/duolingo.com"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/ducktrain",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "ducktrain",
+			"name": "Ducktrain",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "ducktrain",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/ducktrain"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/dhl",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "dhl",
+			"name": "DHL",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "dhl",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/dhl"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/dentolo.de",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "dentolo.de",
+			"name": "Dentolo",
+			"changes": {
+				"jobBoard": {
+					"provider": "workable",
+					"id": "getolo"
+				}
+			},
+			"notes": [
+				"board workable:getolo is live (9 jobs), was personio:dentolo dead (low)"
+			],
+			"confidence": "low",
+			"key": "dentolo.de",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/dentolo.de"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/dentalxr.ai",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "dentalxr.ai",
+			"name": "dentalxr.ai",
+			"changes": {},
+			"notes": [
+				"website now redirects to alignxrayinsights.com"
+			],
+			"key": "dentalxr.ai",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/dentalxr.ai"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/deepmind",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "deepmind",
+			"name": "DeepMind",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "deepmind",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/deepmind"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/daimler",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "daimler",
+			"name": "Daimler",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "daimler",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/daimler"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/daedalean-ai",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "daedalean-ai",
+			"name": "Daedalean AI",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "daedalean-ai",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/daedalean-ai"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/cybereason.com",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "cybereason.com",
+			"name": "Cybereason",
+			"changes": {},
+			"notes": [
+				"website now redirects to levelblue.com"
+			],
+			"key": "cybereason.com",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/cybereason.com"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/crystalblockchain.com",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "crystalblockchain.com",
+			"name": "Crystal Blockchain Analytics",
+			"changes": {},
+			"notes": [
+				"website now redirects to crystalintelligence.com"
+			],
+			"key": "crystalblockchain.com",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/crystalblockchain.com"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/crate",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "crate",
+			"name": "Crate",
+			"changes": {
+				"url": "https://cratedb.com"
+			},
+			"notes": [
+				"website now redirects to cratedb.com"
+			],
+			"confidence": "high",
+			"key": "crate",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/crate"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/coya.com",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "coya.com",
+			"name": "Coya",
+			"changes": {},
+			"notes": [
+				"likely gone: its website, job board and careers page do not answer"
+			],
+			"gone": true,
+			"key": "coya.com",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/coya.com"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/continuum.be",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "continuum.be",
+			"name": "Continuum",
+			"changes": {},
+			"notes": [
+				"website now redirects to we-plus.be"
+			],
+			"key": "continuum.be",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/continuum.be"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/consensys.net",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "consensys.net",
+			"name": "Consensys",
+			"changes": {
+				"url": "https://consensys.com"
+			},
+			"notes": [
+				"website now redirects to consensys.com"
+			],
+			"confidence": "high",
+			"key": "consensys.net",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/consensys.net"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/connecterra",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "connecterra",
+			"name": "Connecterra",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "connecterra",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/connecterra"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/comtravo",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "comtravo",
+			"name": "Comtravo",
+			"changes": {},
+			"notes": [
+				"website now redirects to navan.com"
+			],
+			"key": "comtravo",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/comtravo"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/commehr",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "commehr",
+			"name": "commehr",
+			"changes": {},
+			"notes": [
+				"website now redirects to netgo.de"
+			],
+			"key": "commehr",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/commehr"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/coinmetrics.io",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "coinmetrics.io",
+			"name": "Coin Metrics",
+			"changes": {},
+			"notes": [
+				"website now redirects to talos.com"
+			],
+			"key": "coinmetrics.io",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/coinmetrics.io"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/cognition.ai",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "cognition.ai",
+			"name": "Cognition",
+			"changes": {
+				"url": "https://cognition.com"
+			},
+			"notes": [
+				"website now redirects to cognition.com"
+			],
+			"confidence": "high",
+			"key": "cognition.ai",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/cognition.ai"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/cognite",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "cognite",
+			"name": "Cognite",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "cognite",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/cognite"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/cmr-surgical",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "cmr-surgical",
+			"name": "CMR Surgical",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "cmr-surgical",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/cmr-surgical"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/cloudreach",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "cloudreach",
+			"name": "Cloudreach",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "cloudreach",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/cloudreach"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/cloudnc",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "cloudnc",
+			"name": "CloudNC",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "cloudnc",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/cloudnc"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/cityinnovate.com",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "cityinnovate.com",
+			"name": "City Innovate",
+			"changes": {
+				"jobBoard": {
+					"provider": "ashby",
+					"id": "authorium"
+				}
+			},
+			"notes": [
+				"board ashby:authorium is live (6 jobs), was workable:city-innovate dead (low)",
+				"website now redirects to authorium.com"
+			],
+			"confidence": "low",
+			"key": "cityinnovate.com",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/cityinnovate.com"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/chimney",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "chimney",
+			"name": "Chimney",
+			"changes": {
+				"url": "https://chimney.se"
+			},
+			"notes": [
+				"website now redirects to chimney.se"
+			],
+			"confidence": "high",
+			"key": "chimney",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/chimney"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/chal-tec",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "chal-tec",
+			"name": "Chal-Tec",
+			"changes": {
+				"url": "https://chal-tec.com",
+				"jobBoard": {
+					"provider": "greenhouse",
+					"id": "berlinbrands"
+				}
+			},
+			"notes": [
+				"website from careers page address (high)",
+				"board greenhouse:berlinbrands is live (10 jobs), was careers page ok (low)"
+			],
+			"confidence": "low",
+			"key": "chal-tec",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/chal-tec"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/cervest",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "cervest",
+			"name": "Cervest",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "cervest",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/cervest"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/centre.io",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "centre.io",
+			"name": "Centre",
+			"changes": {},
+			"notes": [
+				"website now redirects to usdc.com"
+			],
+			"key": "centre.io",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/centre.io"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/celeraone",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "celeraone",
+			"name": "Celeraone",
+			"changes": {},
+			"notes": [
+				"website now redirects to piano.io"
+			],
+			"key": "celeraone",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/celeraone"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/caterer",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "caterer",
+			"name": "Caterer",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "caterer",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/caterer"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/careship",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "careship",
+			"name": "Careship",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "careship",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/careship"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/car2godaimler",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "car2godaimler",
+			"name": "Car2go/Daimler",
+			"changes": {},
+			"notes": [
+				"website now redirects to free2move.com"
+			],
+			"key": "car2godaimler",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/car2godaimler"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/canvas.io",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "canvas.io",
+			"name": "Canvas",
+			"changes": {
+				"jobBoard": {
+					"provider": "greenhouse",
+					"id": "twindo"
+				}
+			},
+			"notes": [
+				"board greenhouse:twindo is live (8 jobs), was greenhouse:canvas dead (low)",
+				"website now redirects to twindo.com"
+			],
+			"confidence": "low",
+			"key": "canvas.io",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/canvas.io"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/candy.com",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "candy.com",
+			"name": "Candy",
+			"changes": {},
+			"notes": [
+				"website now redirects to hilcodigital.com"
+			],
+			"key": "candy.com",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/candy.com"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/brighthealthcare.com",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "brighthealthcare.com",
+			"name": "Bright Healthcare",
+			"changes": {},
+			"notes": [
+				"website now redirects to neuehealth.com"
+			],
+			"key": "brighthealthcare.com",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/brighthealthcare.com"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/bosch-software-innovations",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "bosch-software-innovations",
+			"name": "Bosch Software Innovations",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "bosch-software-innovations",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/bosch-software-innovations"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/bolt.com",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "bolt.com",
+			"name": "Bolt",
+			"changes": {},
+			"notes": [
+				"website now redirects to atmholdings.com"
+			],
+			"key": "bolt.com",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/bolt.com"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/bmw",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "bmw",
+			"name": "BMW",
+			"changes": {
+				"url": "https://bmwgroup.com"
+			},
+			"notes": [
+				"website from careers page address (low)"
+			],
+			"confidence": "low",
+			"key": "bmw",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/bmw"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/blackshark.ai",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "blackshark.ai",
+			"name": "blackshark.ai",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "blackshark.ai",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/blackshark.ai"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/bdi-beneficial-design-institute",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "bdi-beneficial-design-institute",
+			"name": "BDI (Beneficial Design Institute)",
+			"changes": {
+				"url": "https://bd-i.de"
+			},
+			"notes": [
+				"website from careers page address (low)"
+			],
+			"confidence": "low",
+			"key": "bdi-beneficial-design-institute",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/bdi-beneficial-design-institute"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/basecase",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "basecase",
+			"name": "BaseCase",
+			"changes": {},
+			"notes": [
+				"website now redirects to certara.com"
+			],
+			"key": "basecase",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/basecase"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/aztec-protocol",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "aztec-protocol",
+			"name": "Aztec Protocol",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "aztec-protocol",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/aztec-protocol"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/axelera-ai",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "axelera-ai",
+			"name": "Axelera AI",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "axelera-ai",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/axelera-ai"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/axel-springer-plug-and-play",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "axel-springer-plug-and-play",
+			"name": "Axel Springer Plug And Play",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "axel-springer-plug-and-play",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/axel-springer-plug-and-play"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/asana-rebel",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "asana-rebel",
+			"name": "Asana Rebel",
+			"changes": {},
+			"notes": [
+				"needs a person: no website known, and its job board or careers page does not answer"
+			],
+			"stale": true,
+			"key": "asana-rebel",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/asana-rebel"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/arrival.com",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "arrival.com",
+			"name": "Arrival",
+			"changes": {},
+			"notes": [
+				"likely gone: its website, job board and careers page do not answer"
+			],
+			"gone": true,
+			"key": "arrival.com",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/arrival.com"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/alpineimmunesciences.com",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "alpineimmunesciences.com",
+			"name": "Alpine Immune Sciences",
+			"changes": {},
+			"notes": [
+				"likely gone: its website, job board and careers page do not answer"
+			],
+			"gone": true,
+			"key": "alpineimmunesciences.com",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/alpineimmunesciences.com"
+		},
+		{
+			"uri": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/1047games.com",
+			"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+			"rkey": "1047games.com",
+			"name": "1047 games",
+			"changes": {},
+			"notes": [
+				"website now redirects to playempulse.com"
+			],
+			"key": "1047games.com",
+			"version": "at://did:plc:jqaucxlucukeif3bltpuc7zx/today.joblist.company/1047games.com"
+		}
+	],
+	"discovery": [
+		{
+			"domain": "workwithindies.com",
+			"name": "Work With Indies",
+			"source": "hiring posts of @workwithindies.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "ippr.org",
+			"name": "Institute for Public Policy Research",
+			"source": "hiring posts of @ippr.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "rpa.org",
+			"name": "Regional Plan Association",
+			"source": "hiring posts of @rpa.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "texasobserver.org",
+			"name": "Texas Observer",
+			"source": "hiring posts of @texasobserver.org",
+			"reason": "website blocked"
+		},
+		{
+			"domain": "iop.org",
+			"name": "Institute of Physics",
+			"source": "hiring posts of @iop.org",
+			"reason": "website blocked"
+		},
+		{
+			"domain": "golangprojects.com",
+			"name": "Golang Jobs - golangprojects.com",
+			"source": "hiring posts of @golangprojects.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "digitalsungames.com",
+			"name": "Digital Sun - Wishlist ReVamp!",
+			"source": "hiring posts of @digitalsungames.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "larajobs.com",
+			"name": "Larajobs",
+			"source": "hiring posts of @larajobs.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "fredhutch.org",
+			"name": "Fred Hutch",
+			"source": "hiring posts of @fredhutch.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "wmata.com",
+			"name": "Metro",
+			"source": "hiring posts of @wmata.com",
+			"reason": "website unreachable"
+		},
+		{
+			"domain": "yorkshiredales.org.uk",
+			"name": "Yorkshire Dales National Park",
+			"source": "hiring posts of @yorkshiredales.org.uk",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "steve-elardo.com",
+			"name": "Steve Elardo",
+			"source": "hiring posts of @steve-elardo.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "applydubjob.com",
+			"name": "Dubai Vulai",
+			"source": "hiring posts of @applydubjob.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "flatironinstitute.org",
+			"name": "Flatiron Institute",
+			"source": "hiring posts of @flatironinstitute.org",
+			"reason": "website redirects to www.simonsfoundation.org"
+		},
+		{
+			"domain": "ucanr.edu",
+			"name": "UC Agriculture & Natural Resources",
+			"source": "hiring posts of @ucanr.edu",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "bai.group",
+			"name": "",
+			"source": "hiring posts of @bai.group",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "slimdude.ca",
+			"name": "The Slim Dude 🇨🇦",
+			"source": "hiring posts of @slimdude.ca",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "sightline.org",
+			"name": "Sightline Institute",
+			"source": "hiring posts of @sightline.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "vido.org",
+			"name": "VIDO - USask",
+			"source": "hiring posts of @vido.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "mulderbatflip.net",
+			"name": "Spooky Mulder Bat Flip",
+			"source": "hiring posts of @mulderbatflip.net",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "cgdev.org",
+			"name": "Center for Global Development",
+			"source": "hiring posts of @cgdev.org",
+			"reason": "website blocked"
+		},
+		{
+			"domain": "thdxr.com",
+			"name": "dax",
+			"source": "hiring posts of @thdxr.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "asheeshks.org",
+			"name": "Asheesh Kapur Siddique",
+			"source": "hiring posts of @asheeshks.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "bellingcat.com",
+			"name": "Bellingcat",
+			"source": "hiring posts of @bellingcat.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "themullanyfund.org",
+			"name": "The Mullany Fund",
+			"source": "hiring posts of @themullanyfund.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "ajordannafa.com",
+			"name": "Jordan Nafa",
+			"source": "hiring posts of @ajordannafa.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "goodenergysolutions.com",
+			"name": "Good Energy Solutions",
+			"source": "hiring posts of @goodenergysolutions.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "akpress.org",
+			"name": "AK Press",
+			"source": "hiring posts of @akpress.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "19thnews.org",
+			"name": "19thnews",
+			"source": "hiring posts of @19thnews.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "adata.org",
+			"name": "ADA National Network",
+			"source": "hiring posts of @adata.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "roll20.net",
+			"name": "Roll20",
+			"source": "hiring posts of @roll20.net",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "railstotrails.org",
+			"name": "Rails to Trails Conservancy",
+			"source": "hiring posts of @railstotrails.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "gamegenic.com",
+			"name": "Gamegenic",
+			"source": "hiring posts of @gamegenic.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "eortc.org",
+			"name": "European Organisation for Research and Treatment of Cancer ",
+			"source": "hiring posts of @eortc.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "athenainfonomics.com",
+			"name": "Athena Infonomics",
+			"source": "hiring posts of @athenainfonomics.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "sarcoma.org.uk",
+			"name": "Sarcoma UK",
+			"source": "hiring posts of @sarcoma.org.uk",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "fusegames.com",
+			"name": "Fuse Games",
+			"source": "hiring posts of @fusegames.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "innertemple.org.uk",
+			"name": "The Inner Temple",
+			"source": "hiring posts of @innertemple.org.uk",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "hype.aero",
+			"name": "Hype",
+			"source": "hiring posts of @hype.aero",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "homelinemn.org",
+			"name": "HOME Line",
+			"source": "hiring posts of @homelinemn.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "littler.com",
+			"name": "Littler",
+			"source": "hiring posts of @littler.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "cbgoodman.co",
+			"name": "Chris Goodman",
+			"source": "hiring posts of @cbgoodman.co",
+			"reason": "website redirects to www.cgoodman.com"
+		},
+		{
+			"domain": "csldf.org",
+			"name": "Climate Science Legal Defense Fund",
+			"source": "hiring posts of @csldf.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "andrewliptak.com",
+			"name": "Andrew Liptak",
+			"source": "hiring posts of @andrewliptak.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "fullstackdrip.com",
+			"name": "Lee Flannery",
+			"source": "hiring posts of @fullstackdrip.com",
+			"reason": "website blocked"
+		},
+		{
+			"domain": "shayneufeld.ca",
+			"name": "Shay Neufeld",
+			"source": "hiring posts of @shayneufeld.ca",
+			"reason": "website redirects to shayneufeld.com"
+		},
+		{
+			"domain": "maas.engineering",
+			"name": "Magic as a Service",
+			"source": "hiring posts of @maas.engineering",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "evanminto.com",
+			"name": "Evan Minto",
+			"source": "hiring posts of @evanminto.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "sjoy.lol",
+			"name": "Sara Joy ☠️",
+			"source": "hiring posts of @sjoy.lol",
+			"reason": "website unreachable"
+		},
+		{
+			"domain": "stefanendress.com",
+			"name": "",
+			"source": "hiring posts of @stefanendress.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "riverkeeper.org",
+			"name": "Riverkeeper",
+			"source": "hiring posts of @riverkeeper.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "tdido.eu",
+			"name": "Tomás Di Domenico",
+			"source": "hiring posts of @tdido.eu",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "justrightscotland.org.uk",
+			"name": "JustRight Scotland ",
+			"source": "hiring posts of @justrightscotland.org.uk",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "chdi.org",
+			"name": "Child Health and Development Institute (CHDI)",
+			"source": "hiring posts of @chdi.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "newslit.org",
+			"name": "News Literacy Project",
+			"source": "hiring posts of @newslit.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "ejfoundation.org",
+			"name": "Environmental Justice Foundation",
+			"source": "hiring posts of @ejfoundation.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "smilepolitely.com",
+			"name": "Smile Politely",
+			"source": "hiring posts of @smilepolitely.com",
+			"reason": "website blocked"
+		},
+		{
+			"domain": "dahliaiterations.com",
+			"name": "Zelnut 🍉👾",
+			"source": "hiring posts of @dahliaiterations.com",
+			"reason": "website blocked"
+		},
+		{
+			"domain": "hopedv.org",
+			"name": "HOPE of Ogle County",
+			"source": "hiring posts of @hopedv.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "hellblazer.com",
+			"name": "Dan Sylveste",
+			"source": "hiring posts of @hellblazer.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "skyislandalliance.org",
+			"name": "Sky Island Alliance ",
+			"source": "hiring posts of @skyislandalliance.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "microbiologysociety.org",
+			"name": "Microbiology Society",
+			"source": "hiring posts of @microbiologysociety.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "danny.page",
+			"name": "Danny Page",
+			"source": "hiring posts of @danny.page",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "jbenmenachem.com",
+			"name": "jon ben-menachem",
+			"source": "hiring posts of @jbenmenachem.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "economist.com",
+			"name": "The Economist",
+			"source": "hiring posts of @economist.com",
+			"reason": "website blocked"
+		},
+		{
+			"domain": "njschooljobs.com",
+			"name": "NJSchoolJobs.com",
+			"source": "hiring posts of @njschooljobs.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "sterlingsmith.fyi",
+			"name": "Sterling",
+			"source": "hiring posts of @sterlingsmith.fyi",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "clojurejobboard.com",
+			"name": "Clojure Jobs - ClojureJobboard.com",
+			"source": "hiring posts of @clojurejobboard.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "poetrysociety.org.uk",
+			"name": "The Poetry Society",
+			"source": "hiring posts of @poetrysociety.org.uk",
+			"reason": "website blocked"
+		},
+		{
+			"domain": "eua.eu",
+			"name": "European University Association (EUA)",
+			"source": "hiring posts of @eua.eu",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "e2ccb.org",
+			"name": "Erie 2-Chautauqua-Cattaraugus BOCES",
+			"source": "hiring posts of @e2ccb.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "moneyandmentalhealth.org",
+			"name": "Money and Mental Health",
+			"source": "hiring posts of @moneyandmentalhealth.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "moonphase.tv",
+			"name": "Worlds Only Hazuki Kinnie",
+			"source": "hiring posts of @moonphase.tv",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "apievangelist.com",
+			"name": "API Evangelist",
+			"source": "hiring posts of @apievangelist.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "elixir-radar.com",
+			"name": "Elixir Radar",
+			"source": "hiring posts of @elixir-radar.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "david-schindler.de",
+			"name": "David Schindler ",
+			"source": "hiring posts of @david-schindler.de",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "centralcalasthma.org",
+			"name": "Central California Asthma Collaborative",
+			"source": "hiring posts of @centralcalasthma.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "roastthepost.show",
+			"name": "Roast the Post Podcast",
+			"source": "hiring posts of @roastthepost.show",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "michaelfrom.uk",
+			"name": "Mike from the UK. True.",
+			"source": "hiring posts of @michaelfrom.uk",
+			"reason": "website unreachable"
+		},
+		{
+			"domain": "gesis.org",
+			"name": "GESIS - Leibniz-Institut für Sozialwissenschaften",
+			"source": "hiring posts of @gesis.org",
+			"reason": "website blocked"
+		},
+		{
+			"domain": "davidsirota.com",
+			"name": "David Sirota",
+			"source": "hiring posts of @davidsirota.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "cldc.org",
+			"name": "Civil Liberties Defense Center",
+			"source": "hiring posts of @cldc.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "aurelius.quest",
+			"name": "T.C. Aurelius ",
+			"source": "hiring posts of @aurelius.quest",
+			"reason": "website unreachable"
+		},
+		{
+			"domain": "cybersecurity.page",
+			"name": "Best of r/cybersecurity",
+			"source": "hiring posts of @cybersecurity.page",
+			"reason": "website blocked"
+		},
+		{
+			"domain": "towardsdatascience.com",
+			"name": "Towards Data Science",
+			"source": "hiring posts of @towardsdatascience.com",
+			"reason": "website blocked"
+		},
+		{
+			"domain": "protectdemocracy.org",
+			"name": "Protect Democracy",
+			"source": "hiring posts of @protectdemocracy.org",
+			"found": {
+				"key": "protectdemocracy.org",
+				"value": {
+					"name": "Protect Democracy",
+					"url": "https://protectdemocracy.org",
+					"jobBoard": {
+						"provider": "recruitee",
+						"id": "protectdemocracy"
+					}
+				},
+				"confidence": "high",
+				"source": "hiring posts of @protectdemocracy.org",
+				"notes": [
+					"board recruitee:protectdemocracy (5 jobs) linked from its website"
+				]
+			}
+		},
+		{
+			"domain": "coloradosun.com",
+			"name": "The Colorado Sun ☀️",
+			"source": "hiring posts of @coloradosun.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "pogo.org",
+			"name": "Project On Government Oversight",
+			"source": "hiring posts of @pogo.org",
+			"reason": "website blocked"
+		},
+		{
+			"domain": "levernews.com",
+			"name": "The Lever",
+			"source": "hiring posts of @levernews.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "mathewiantorno.com",
+			"name": "Mathew Iantorno (he/him)",
+			"source": "hiring posts of @mathewiantorno.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "sei.org",
+			"name": "Stockholm Environment Institute",
+			"source": "hiring posts of @sei.org",
+			"reason": "website blocked"
+		},
+		{
+			"domain": "theglobeandmail.com",
+			"name": "The Globe and Mail",
+			"source": "hiring posts of @theglobeandmail.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "blaugranagram.com",
+			"name": "Blaugranagram",
+			"source": "hiring posts of @blaugranagram.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "localnewsfeed.org",
+			"name": "DC Newsfeed",
+			"source": "hiring posts of @localnewsfeed.org",
+			"reason": "website unreachable"
+		},
+		{
+			"domain": "slipstreaminc.org",
+			"name": "Slipstream",
+			"source": "hiring posts of @slipstreaminc.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "transport-community.org",
+			"name": "Transport Community",
+			"source": "hiring posts of @transport-community.org",
+			"reason": "website unreachable"
+		},
+		{
+			"domain": "corinnelow.com",
+			"name": "Corinne Low",
+			"source": "hiring posts of @corinnelow.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "remotegamejobs.com",
+			"name": "Remote Game Jobs",
+			"source": "hiring posts of @remotegamejobs.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "germanydevjobs.com",
+			"name": "Germany Dev Jobs",
+			"source": "hiring posts of @germanydevjobs.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "francedevjobs.com",
+			"name": "France Dev Jobs",
+			"source": "hiring posts of @francedevjobs.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "poland-devjobs.com",
+			"name": "Poland Dev Jobs",
+			"source": "hiring posts of @poland-devjobs.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "spain-devjobs.com",
+			"name": "Spain Dev Jobs",
+			"source": "hiring posts of @spain-devjobs.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "gulfdevjobs.com",
+			"name": "Gulf Dev Jobs",
+			"source": "hiring posts of @gulfdevjobs.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "footballactionnetwork.com",
+			"name": "Football Action Network",
+			"source": "hiring posts of @footballactionnetwork.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "microrainbow.org",
+			"name": "Micro Rainbow",
+			"source": "hiring posts of @microrainbow.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "openassignments.com",
+			"name": "Open Assignments",
+			"source": "hiring posts of @openassignments.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "wizworldlive.com",
+			"name": "WizWorldLIVE",
+			"source": "hiring posts of @wizworldlive.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "mikemcbrideonline.com",
+			"name": "Mike McBride",
+			"source": "hiring posts of @mikemcbrideonline.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "wipperoz.com",
+			"name": "Wipperoz — Virtual CVs",
+			"source": "hiring posts of @wipperoz.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "ajsteinmetz.com",
+			"name": "Andrew J. Steinmetz",
+			"source": "hiring posts of @ajsteinmetz.com",
+			"reason": "website unreachable"
+		},
+		{
+			"domain": "pml.ac.uk",
+			"name": "Plymouth Marine Laboratory",
+			"source": "hiring posts of @pml.ac.uk",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "embo.org",
+			"name": "EMBO",
+			"source": "hiring posts of @embo.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "raap.nl",
+			"name": "RAAP",
+			"source": "hiring posts of @raap.nl",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "hiringradarjobs.com",
+			"name": "HiringRadar",
+			"source": "hiring posts of @hiringradarjobs.com",
+			"reason": "website blocked"
+		},
+		{
+			"domain": "iact.ngo",
+			"name": "iACT",
+			"source": "hiring posts of @iact.ngo",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "unidir.org",
+			"name": "United Nations Institute for Disarmament Research",
+			"source": "hiring posts of @unidir.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "teamworkonline.com",
+			"name": "TeamWork Online",
+			"source": "hiring posts of @teamworkonline.com",
+			"reason": "website blocked"
+		},
+		{
+			"domain": "codastory.com",
+			"name": "Coda Story",
+			"source": "hiring posts of @codastory.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "outagamiedems.org",
+			"name": "Outagamie Dems",
+			"source": "hiring posts of @outagamiedems.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "lupus.org",
+			"name": "Lupus Foundation of America",
+			"source": "hiring posts of @lupus.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "technopolis-group.com",
+			"name": "Technopolis Group",
+			"source": "hiring posts of @technopolis-group.com",
+			"found": {
+				"key": "technopolis-group.com",
+				"value": {
+					"name": "Technopolis Group",
+					"url": "https://technopolis-group.com",
+					"jobBoard": {
+						"provider": "personio",
+						"id": "technopolis-group"
+					}
+				},
+				"confidence": "high",
+				"source": "hiring posts of @technopolis-group.com",
+				"notes": [
+					"board personio:technopolis-group (13 jobs) linked from its website"
+				]
+			}
+		},
+		{
+			"domain": "claptoncfc.co.uk",
+			"name": "Clapton CFC",
+			"source": "hiring posts of @claptoncfc.co.uk",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "ieep.eu",
+			"name": "Institute for European Environmental Policy (IEEP)",
+			"source": "hiring posts of @ieep.eu",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "jobrxiv.org",
+			"name": "jobRxiv",
+			"source": "hiring posts of @jobrxiv.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "maggiefornh.com",
+			"name": "Maggie Goodlander",
+			"source": "hiring posts of @maggiefornh.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "thexylom.com",
+			"name": "The Xylom",
+			"source": "hiring posts of @thexylom.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "ethicalstl.org",
+			"name": "Ethical Society of St. Louis",
+			"source": "hiring posts of @ethicalstl.org",
+			"reason": "website blocked"
+		},
+		{
+			"domain": "ibercon.org",
+			"name": "Ibercon",
+			"source": "hiring posts of @ibercon.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "milezero.live",
+			"name": "Mile Zero",
+			"source": "hiring posts of @milezero.live",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "silive.com",
+			"name": "Staten Island Advance/SILive.com",
+			"source": "hiring posts of @silive.com",
+			"reason": "website blocked"
+		},
+		{
+			"domain": "loveballymena.online",
+			"name": "Love Ballymena",
+			"source": "hiring posts of @loveballymena.online",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "stadiumscene.tv",
+			"name": "Stadium Scene",
+			"source": "hiring posts of @stadiumscene.tv",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "qualbert.com",
+			"name": "Qualbert.com @ GCAP 🔜 PAX",
+			"source": "hiring posts of @qualbert.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "warframe.com",
+			"name": "PlayWarframe",
+			"source": "hiring posts of @warframe.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "zeldathon.com",
+			"name": "Zeldathon",
+			"source": "hiring posts of @zeldathon.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "mentalhealthscot.land",
+			"name": "MHScot Workplace Wellbeing CIC",
+			"source": "hiring posts of @mentalhealthscot.land",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "class507.org.uk",
+			"name": "Class 507 Preservation",
+			"source": "hiring posts of @class507.org.uk",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "rosecityriveters.org",
+			"name": "Rose City Riveters",
+			"source": "hiring posts of @rosecityriveters.org",
+			"reason": "website redirects to 107ist.org"
+		},
+		{
+			"domain": "nookgaming.com",
+			"name": "NookGaming.com",
+			"source": "hiring posts of @nookgaming.com",
+			"reason": "website blocked"
+		},
+		{
+			"domain": "animenebraskon.com",
+			"name": "Anime NebrasKon",
+			"source": "hiring posts of @animenebraskon.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "ag-grid.com",
+			"name": "AG Grid",
+			"source": "hiring posts of @ag-grid.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "skiffyandfanty.com",
+			"name": "The Skiffy and Fanty Show",
+			"source": "hiring posts of @skiffyandfanty.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "fairless.xyz",
+			"name": "Jonty",
+			"source": "hiring posts of @fairless.xyz",
+			"reason": "website unreachable"
+		},
+		{
+			"domain": "winejobs.uk",
+			"name": "Wine Jobs UK",
+			"source": "hiring posts of @winejobs.uk",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "youthscotland.org.uk",
+			"name": "Youth Scotland",
+			"source": "hiring posts of @youthscotland.org.uk",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "bigearthdata.ai",
+			"name": "Climate, Ecology, War & More: Dr. Glen Barry BigEarthData.ai",
+			"source": "hiring posts of @bigearthdata.ai",
+			"reason": "website blocked"
+		},
+		{
+			"domain": "distributeaid.org",
+			"name": "Distribute Aid",
+			"source": "hiring posts of @distributeaid.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "dianaforqueens.com",
+			"name": "Diana Moreno",
+			"source": "hiring posts of @dianaforqueens.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "mngislis.org",
+			"name": "Minnesota GIS/LIS Consortium",
+			"source": "hiring posts of @mngislis.org",
+			"reason": "website blocked"
+		},
+		{
+			"domain": "nationaldmo.org",
+			"name": "Democratic Municipal Officials",
+			"source": "hiring posts of @nationaldmo.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "truckersmp.com",
+			"name": "TruckersMP",
+			"source": "hiring posts of @truckersmp.com",
+			"reason": "website blocked"
+		},
+		{
+			"domain": "blender.org",
+			"name": "Blender",
+			"source": "hiring posts of @blender.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "buffer.com",
+			"name": "Buffer",
+			"source": "hiring posts of @buffer.com",
+			"found": {
+				"key": "buffer.com",
+				"value": {
+					"name": "Buffer",
+					"url": "https://buffer.com",
+					"jobBoard": {
+						"provider": "ashby",
+						"id": "buffer"
+					}
+				},
+				"confidence": "high",
+				"source": "hiring posts of @buffer.com",
+				"notes": [
+					"board ashby:buffer (1 jobs) Open Jobs, linking back to its website"
+				]
+			}
+		},
+		{
+			"domain": "today.je",
+			"name": "The feed from https://today.je - Jersey, Channel Islands.",
+			"source": "hiring posts of @today.je",
+			"reason": "website blocked"
+		},
+		{
+			"domain": "tngtech.com",
+			"name": "TNG Technology Consulting GmbH",
+			"source": "hiring posts of @tngtech.com",
+			"found": {
+				"key": "tngtech.com",
+				"value": {
+					"name": "TNG Technology Consulting GmbH",
+					"url": "https://tngtech.com",
+					"jobBoard": {
+						"provider": "personio",
+						"id": "tngtech"
+					}
+				},
+				"confidence": "high",
+				"source": "hiring posts of @tngtech.com",
+				"notes": [
+					"board personio:tngtech (17 jobs) linked from its website"
+				]
+			}
+		},
+		{
+			"domain": "teamjunkfish.com",
+			"name": "Team Junkfish",
+			"source": "hiring posts of @teamjunkfish.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "vexra.events",
+			"name": "VEXRA",
+			"source": "hiring posts of @vexra.events",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "montanademocrats.org",
+			"name": "Montana Democrats",
+			"source": "hiring posts of @montanademocrats.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "repower.org",
+			"name": "re:power",
+			"source": "hiring posts of @repower.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "amyklobuchar.com",
+			"name": "Amy Klobuchar",
+			"source": "hiring posts of @amyklobuchar.com",
+			"reason": "website blocked"
+		},
+		{
+			"domain": "nhm.org",
+			"name": "Natural History Museum of Los Angeles County",
+			"source": "hiring posts of @nhm.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "nonprofitwa.org",
+			"name": "Nonprofit Association of Washington",
+			"source": "hiring posts of @nonprofitwa.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "rnc.ac.uk",
+			"name": "The Royal National College for the Blind",
+			"source": "hiring posts of @rnc.ac.uk",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "mayflowerucc.org",
+			"name": "Mayflower Congregational UCC Church",
+			"source": "hiring posts of @mayflowerucc.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "theneedlenews.com",
+			"name": "The Needle",
+			"source": "hiring posts of @theneedlenews.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "locaihost.org",
+			"name": "locaihost data",
+			"source": "hiring posts of @locaihost.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "imathi.eu",
+			"name": "imath",
+			"source": "hiring posts of @imathi.eu",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "bizjournals.com",
+			"name": "American City Business Journals",
+			"source": "hiring posts of @bizjournals.com",
+			"reason": "website blocked"
+		},
+		{
+			"domain": "alienrick.xyz",
+			"name": "Alien Rick",
+			"source": "hiring posts of @alienrick.xyz",
+			"reason": "website blocked"
+		},
+		{
+			"domain": "kanejamison.com",
+			"name": "Kane Jamison",
+			"source": "hiring posts of @kanejamison.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "salestopinc.com",
+			"name": "Sales Top, Inc",
+			"source": "hiring posts of @salestopinc.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "blitsgames.com",
+			"name": "BLits Games",
+			"source": "hiring posts of @blitsgames.com",
+			"reason": "website blocked"
+		},
+		{
+			"domain": "justbritish.com",
+			"name": "JustBritish",
+			"source": "hiring posts of @justbritish.com",
+			"reason": "website blocked"
+		},
+		{
+			"domain": "hkweeks.com",
+			"name": "Human Kapital Weeks",
+			"source": "hiring posts of @hkweeks.com",
+			"reason": "website blocked"
+		},
+		{
+			"domain": "scootr.ca",
+			"name": "scootR",
+			"source": "hiring posts of @scootr.ca",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "fortune.com",
+			"name": "Fortune ",
+			"source": "hiring posts of @fortune.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "aamc.org",
+			"name": "AAMC",
+			"source": "hiring posts of @aamc.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "independent.ie",
+			"name": "Irish Independent",
+			"source": "hiring posts of @independent.ie",
+			"reason": "website blocked"
+		},
+		{
+			"domain": "finleyfactor.com",
+			"name": "Michael Finley ~!",
+			"source": "hiring posts of @finleyfactor.com",
+			"reason": "website unreachable"
+		},
+		{
+			"domain": "acen.org",
+			"name": "Anime Central",
+			"source": "hiring posts of @acen.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "satyamvishwakarma.link",
+			"name": "Satyam Vishwakarma (Satya)",
+			"source": "hiring posts of @satyamvishwakarma.link",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "aclu.org",
+			"name": "ACLU",
+			"source": "hiring posts of @aclu.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "frontendmentor.io",
+			"name": "Frontend Mentor",
+			"source": "hiring posts of @frontendmentor.io",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "maetangwriter.com",
+			"name": "Mae Tang 董美妍",
+			"source": "hiring posts of @maetangwriter.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "remoteur.com",
+			"name": "Remoteur",
+			"source": "hiring posts of @remoteur.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "cookywook.com",
+			"name": "Richard Cook",
+			"source": "hiring posts of @cookywook.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "smarterarticles.co.uk",
+			"name": "Tim Green",
+			"source": "hiring posts of @smarterarticles.co.uk",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "mouredev.com",
+			"name": "Brais Moure | Programador",
+			"source": "hiring posts of @mouredev.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "dubsports.io",
+			"source": "hiring posts of @dubsports.io",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "rcn.org.uk",
+			"name": "Royal College of Nursing",
+			"source": "hiring posts of @rcn.org.uk",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "betterstreetsforbirmingham.org",
+			"name": "Better Streets for Birmingham",
+			"source": "hiring posts of @betterstreetsforbirmingham.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "keithwilson.eu",
+			"name": "Dr Keith 🎃 Wilson",
+			"source": "hiring posts of @keithwilson.eu",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "d20.coach",
+			"name": "d20-nick",
+			"source": "hiring posts of @d20.coach",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "mobilewarsaw.pl",
+			"name": "Mobile Warsaw",
+			"source": "hiring posts of @mobilewarsaw.pl",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "musedin.com",
+			"name": "MusedIn",
+			"source": "hiring posts of @musedin.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "centerforcooperativemedia.org",
+			"name": "Center for Cooperative Media",
+			"source": "hiring posts of @centerforcooperativemedia.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "vrcbark.club",
+			"name": "Club Bark!",
+			"source": "hiring posts of @vrcbark.club",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "kxan.com",
+			"name": "KXAN News",
+			"source": "hiring posts of @kxan.com",
+			"reason": "website blocked"
+		},
+		{
+			"domain": "influxdb.com",
+			"name": "InfluxDB",
+			"source": "hiring posts of @influxdb.com",
+			"reason": "website redirects to www.influxdata.com"
+		},
+		{
+			"domain": "confuzzled.org.uk",
+			"name": "ConFuzzled",
+			"source": "hiring posts of @confuzzled.org.uk",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "martincid.com",
+			"name": "Martin Cid Magazine",
+			"source": "hiring posts of @martincid.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "botmutiny.com",
+			"name": "BotMutiny",
+			"source": "hiring posts of @botmutiny.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "thekenyatimes.com",
+			"name": "The Kenya Times",
+			"source": "hiring posts of @thekenyatimes.com",
+			"reason": "website blocked"
+		},
+		{
+			"domain": "pghcitypaper.com",
+			"name": "Pittsburgh City Paper",
+			"source": "hiring posts of @pghcitypaper.com",
+			"reason": "website blocked"
+		},
+		{
+			"domain": "shilohskye.com",
+			"name": "Shiloh Skye",
+			"source": "hiring posts of @shilohskye.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "eliasisquith.blog",
+			"name": "elias isquith",
+			"source": "hiring posts of @eliasisquith.blog",
+			"reason": "website unreachable"
+		},
+		{
+			"domain": "diversifytech.com",
+			"name": "Diversify Tech",
+			"source": "hiring posts of @diversifytech.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "trueachievements.com",
+			"name": "TrueAchievements",
+			"source": "hiring posts of @trueachievements.com",
+			"reason": "website blocked"
+		},
+		{
+			"domain": "revolutio.si",
+			"name": "Revolutio",
+			"source": "hiring posts of @revolutio.si",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "sipirtu.com",
+			"name": "Sipirtu",
+			"source": "hiring posts of @sipirtu.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "steelyourcase.com",
+			"name": "Steel & Associates, A Professional Law Corporation",
+			"source": "hiring posts of @steelyourcase.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "deninet.com",
+			"name": "socketwench",
+			"source": "hiring posts of @deninet.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "cnbc.com",
+			"name": "CNBC",
+			"source": "hiring posts of @cnbc.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "rachelleecherry.com",
+			"name": "Rachel Lee 👻 SCARY 🎃",
+			"source": "hiring posts of @rachelleecherry.com",
+			"reason": "website redirects to www.lastsyllable.net"
+		},
+		{
+			"domain": "ajfidalgo.com",
+			"name": "AJ Fidalgo",
+			"source": "hiring posts of @ajfidalgo.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "jobsthathelp.com",
+			"name": "Jobs That Help",
+			"source": "hiring posts of @jobsthathelp.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "gradientdescent.net",
+			"name": "gradientdescent",
+			"source": "hiring posts of @gradientdescent.net",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "moshville.co.uk",
+			"name": "Moshville Times",
+			"source": "hiring posts of @moshville.co.uk",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "gastlichu.com",
+			"name": "Gastlichu",
+			"source": "hiring posts of @gastlichu.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "spazzfox.com",
+			"name": "SpazzFox",
+			"source": "hiring posts of @spazzfox.com",
+			"reason": "website unreachable"
+		},
+		{
+			"domain": "mearn.me",
+			"name": "Mearn (postseason)",
+			"source": "hiring posts of @mearn.me",
+			"reason": "website unreachable"
+		},
+		{
+			"domain": "editsinthemargins.com",
+			"name": "Kayleigh | Developmental Editor ✍🏻📚",
+			"source": "hiring posts of @editsinthemargins.com",
+			"reason": "website blocked"
+		},
+		{
+			"domain": "locatejobsnetwork.com",
+			"name": "locatejobsnetwork.com",
+			"source": "hiring posts of @locatejobsnetwork.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "footballcountry.com",
+			"name": "FootballCountry",
+			"source": "hiring posts of @footballcountry.com",
+			"reason": "website blocked"
+		},
+		{
+			"domain": "lapremierleague.com",
+			"name": "Premier League    ⚽ 🏴󠁧󠁢󠁥󠁮󠁧󠁿 🇬🇧🦁",
+			"source": "hiring posts of @lapremierleague.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "mapcenter.com",
+			"name": "The Map Center",
+			"source": "hiring posts of @mapcenter.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "rotster.net",
+			"name": "Rob 🏳️‍🌈",
+			"source": "hiring posts of @rotster.net",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "totallyjackearl.com",
+			"name": "Jack Earl | Trans Rights",
+			"source": "hiring posts of @totallyjackearl.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "vermonthistory.org",
+			"name": "The Vermont Historical Society",
+			"source": "hiring posts of @vermonthistory.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "twink.men",
+			"name": "rain",
+			"source": "hiring posts of @twink.men",
+			"reason": "website redirects to meowing.men"
+		},
+		{
+			"domain": "fsf.org",
+			"name": "Free Software Foundation",
+			"source": "hiring posts of @fsf.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "fastcompany.com",
+			"name": "Fast Company",
+			"source": "hiring posts of @fastcompany.com",
+			"reason": "website blocked"
+		},
+		{
+			"domain": "whisper-lines.com",
+			"name": "Whisper Lines",
+			"source": "hiring posts of @whisper-lines.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "chroniclelive.co.uk",
+			"name": "ChronicleLive - The Chronicle",
+			"source": "hiring posts of @chroniclelive.co.uk",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "hemmingway.io",
+			"name": "Hemmingway",
+			"source": "hiring posts of @hemmingway.io",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "thejobhackers.org",
+			"name": "The Job Hackers",
+			"source": "hiring posts of @thejobhackers.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "bot-tan.com",
+			"name": "全肯定botたん",
+			"source": "hiring posts of @bot-tan.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "broberts.lol",
+			"name": "Brendan",
+			"source": "hiring posts of @broberts.lol",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "cristofol.org",
+			"name": "Tòfol",
+			"source": "hiring posts of @cristofol.org",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "smidg3n.art",
+			"name": "Mike 🎃👻",
+			"source": "hiring posts of @smidg3n.art",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "beta.nyc",
+			"name": "BetaNYC, a partner project of the Fund for the City of New York",
+			"source": "hiring posts of @beta.nyc",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "peterschweyer.com",
+			"name": "Peter Schweyer",
+			"source": "hiring posts of @peterschweyer.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "bridgend.gov.uk",
+			"name": "Bridgend County Borough Council",
+			"source": "hiring posts of @bridgend.gov.uk",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "veelpoot.com",
+			"name": "Veelpoot",
+			"source": "hiring posts of @veelpoot.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "deerfriend.live",
+			"name": "RadiumDesu 🦌 🔜 Howloween",
+			"source": "hiring posts of @deerfriend.live",
+			"reason": "website redirects to www.twitch.tv"
+		},
+		{
+			"domain": "hopefullyawesome.com",
+			"name": "Hopefully Awesome",
+			"source": "hiring posts of @hopefullyawesome.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "duckprintspress.com",
+			"name": "unforth | Claire Houck | Duck Prints Press",
+			"source": "hiring posts of @duckprintspress.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "bikegridnow.org",
+			"name": "Chicago, Bike Grid Now!",
+			"source": "hiring posts of @bikegridnow.org",
+			"reason": "website blocked"
+		},
+		{
+			"domain": "recurse.com",
+			"name": "Recurse Center",
+			"source": "hiring posts of @recurse.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "emilyjourney.com",
+			"name": "Emily Journey",
+			"source": "hiring posts of @emilyjourney.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "littlepinksquid.gay",
+			"name": "Pank 🦑",
+			"source": "hiring posts of @littlepinksquid.gay",
+			"reason": "website redirects to bsky.app"
+		},
+		{
+			"domain": "hologramghost.com",
+			"name": "Hologram Ghost",
+			"source": "hiring posts of @hologramghost.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "motorcityadam.com",
+			"name": "Adam Cook",
+			"source": "hiring posts of @motorcityadam.com",
+			"reason": "website unreachable"
+		},
+		{
+			"domain": "spokes.org.uk",
+			"name": "SpokesLothian",
+			"source": "hiring posts of @spokes.org.uk",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "avilewis.ca",
+			"name": "Avi Lewis",
+			"source": "hiring posts of @avilewis.ca",
+			"reason": "website redirects to lewisisleader.ca"
+		},
+		{
+			"domain": "unburntwitch.com",
+			"name": "Zoë “Baddie Proctor” Quinn",
+			"source": "hiring posts of @unburntwitch.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "speculative.tech",
+			"name": "Jeff Tao",
+			"source": "hiring posts of @speculative.tech",
+			"reason": "website unreachable"
+		},
+		{
+			"domain": "caprosser.com",
+			"name": "Chris Prosser",
+			"source": "hiring posts of @caprosser.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "subletteweather.com",
+			"name": "Sean Sublette",
+			"source": "hiring posts of @subletteweather.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "jnavas.com",
+			"name": "John Navas ⛵🌉",
+			"source": "hiring posts of @jnavas.com",
+			"reason": "website unreachable"
+		},
+		{
+			"domain": "marcuskwame.com",
+			"name": "Marcus Kwame",
+			"source": "hiring posts of @marcuskwame.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "rb-illustration.co.uk",
+			"name": "Bex | Comms on waitlist!",
+			"source": "hiring posts of @rb-illustration.co.uk",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "codingconduct.cc",
+			"name": "Sebastian Deterding",
+			"source": "hiring posts of @codingconduct.cc",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "teaberryblue.net",
+			"name": "A Tea Walks Home Alone at Night",
+			"source": "hiring posts of @teaberryblue.net",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "gregpak.net",
+			"name": "Greg Pak",
+			"source": "hiring posts of @gregpak.net",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "lexroman.com",
+			"name": "Lex Roman",
+			"source": "hiring posts of @lexroman.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "switch-is.online",
+			"name": "sWitch, the Pallid Pillow Princess",
+			"source": "hiring posts of @switch-is.online",
+			"reason": "website unreachable"
+		},
+		{
+			"domain": "bithuman.ai",
+			"name": "bitHuman",
+			"source": "hiring posts of @bithuman.ai",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "lauren-urban.com",
+			"name": "OboeLauren🔜PAXUnplugged",
+			"source": "hiring posts of @lauren-urban.com",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "naughtyniche.art",
+			"name": "Naughty Niche",
+			"source": "hiring posts of @naughtyniche.art",
+			"reason": "website blocked"
+		},
+		{
+			"domain": "image.coop",
+			"name": "Image Cooperative",
+			"source": "hiring posts of @image.coop",
+			"reason": "no live job board found"
+		},
+		{
+			"domain": "aclu-nj.org",
+			"name": "ACLU of New Jersey",
+			"source": "hiring posts of @aclu-nj.org",
+			"found": {
+				"key": "aclu-nj.org",
+				"value": {
+					"name": "ACLU of New Jersey",
+					"url": "https://aclu-nj.org",
+					"jobBoard": {
+						"provider": "greenhouse",
+						"id": "aclunj"
+					}
+				},
+				"confidence": "high",
+				"source": "hiring posts of @aclu-nj.org",
+				"notes": [
+					"board greenhouse:aclunj (11 jobs) Open Jobs, linking back to its website"
+				]
+			}
+		},
+		{
+			"domain": "soundcloud.dev",
+			"name": "SoundCloud Engineering",
+			"source": "hiring posts of @soundcloud.dev",
+			"reason": "website redirects to developers.soundcloud.com"
+		},
+		{
+			"domain": "sweetveggieamai.com",
+			"name": "SweetVeggieAmai (Violet)",
+			"source": "hiring posts of @sweetveggieamai.com",
+			"reason": "website redirects to sweetveggieamai.carrd.co"
+		}
+	]
+}
