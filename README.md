@@ -14,7 +14,7 @@ crawler, no server.
 
 ## Records
 
-Two record types, defined in [`lexicons/`](lexicons/today/joblist):
+Three record types, defined in [`lexicons/`](lexicons/today/joblist):
 
 - **`today.joblist.company`**: one company, keyed by its domain
   (`at://did:…/today.joblist.company/example.org`). Name, website,
@@ -31,6 +31,12 @@ Two record types, defined in [`lexicons/`](lexicons/today/joblist):
   "not checked by a person yet" until a person saves or confirms a newer one.
 - **`today.joblist.list`**: a named list of companies (by domain), in the
   curator's order. Lists can be copied; the copy keeps a `copiedFrom` link.
+  An `open` list takes contributions: companies others suggest appear in it
+  at once, credited to them, and its author can hide any (`hidden`). For
+  other lists, the author accepts or dismisses each suggestion.
+- **`today.joblist.suggestion`**: a company suggested for someone else's
+  list (`list` at-uri, `company` key, optional `note`), written in the
+  contributor's own account.
 
 ## How it runs
 
@@ -42,7 +48,7 @@ Everything happens in the browser:
 | Find all records | the relay's `com.atproto.sync.listReposByCollection`, then `com.atproto.repo.listRecords` on each author's PDS |
 | Names and verified handles | the public Bluesky AppView (`app.bsky.actor.getProfiles`) |
 | Open jobs | each job board's public API (Ashby, Greenhouse, Lever, Personio, Recruitee, Rippling, SmartRecruiters, Workable) |
-| Sign in and write | atproto OAuth (`@atproto/oauth-client-browser`), asking only for the two record types |
+| Sign in and write | atproto OAuth (`@atproto/oauth-client-browser`), asking only for the app's record types |
 | Map | MapLibre with OpenFreeMap tiles |
 
 The last network load is kept in `localStorage` so pages show at once. Loading
