@@ -33,7 +33,7 @@
 	"list.tab.companies": "Companies",
 	"list.tab.jobs": "Jobs",
 	"list.tab.map": "Map",
-	"list.copy": "Copy",
+	"list.copy": "Make a copy",
 	"list.edit": "Edit",
 	"list.delete": "Delete",
 	"list.share": "Share",
@@ -42,6 +42,8 @@
 	"list.missing": "{count} companies of this list are not described yet.",
 	"list.new": "New list",
 	"list.confirmDelete": "Delete this list?",
+	"list.tabs": "View",
+	"list.notFoundTitle": "List not found",
 
 	"company.website": "Website",
 	"company.jobBoard": "Job board",
@@ -136,5 +138,10 @@
 	"about.data": "All data is public atproto records.",
 
 	"locale.en": "English",
-	"locale.fr": "Français"
+	"locale.fr": "Français",
+
+	"companies.found": "{count} found",
+	"companies.more": "Show {count} more ({left} left)",
+	"companies.title": "Companies",
+	"companies.intro": "Every company described by someone in the network."
 }

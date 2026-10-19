@@ -33,7 +33,7 @@
 	"list.tab.companies": "Entreprises",
 	"list.tab.jobs": "Offres",
 	"list.tab.map": "Carte",
-	"list.copy": "Copier",
+	"list.copy": "Faire une copie",
 	"list.edit": "Modifier",
 	"list.delete": "Supprimer",
 	"list.share": "Partager",
@@ -42,6 +42,8 @@
 	"list.missing": "{count} entreprises de cette liste ne sont pas encore décrites.",
 	"list.new": "Nouvelle liste",
 	"list.confirmDelete": "Supprimer cette liste ?",
+	"list.tabs": "Affichage",
+	"list.notFoundTitle": "Liste introuvable",
 
 	"company.website": "Site web",
 	"company.jobBoard": "Offres d'emploi",
@@ -136,5 +138,10 @@
 	"about.data": "Toutes les données sont des fiches atproto publiques.",
 
 	"locale.en": "English",
-	"locale.fr": "Français"
+	"locale.fr": "Français",
+
+	"companies.found": "{count} trouvées",
+	"companies.more": "Afficher {count} de plus ({left} restantes)",
+	"companies.title": "Entreprises",
+	"companies.intro": "Toutes les entreprises décrites par quelqu'un sur le réseau."
 }

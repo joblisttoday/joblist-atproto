@@ -46,5 +46,8 @@
 			"fernarbeit",
 			"mobiles arbeiten"
 		]
+	},
+	"companies": {
+		"pageSize": 100
 	}
 }

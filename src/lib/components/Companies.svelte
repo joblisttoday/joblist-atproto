@@ -1,12 +1,13 @@
 <script>
+	import config from '#lib/data/config.json';
 	import CompanyItem from './CompanyItem.svelte';
 	import { searchText } from '#lib/models/company.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
-	/** @type {{companies: import('#lib/models/company.js').Company[], searchable?: boolean}} */
-	let { companies, searchable = true } = $props();
-	let query = $state('');
-	let shown = $state(100);
+	/** @type {{companies: import('#lib/models/company.js').Company[], searchable?: boolean, query?: string}} */
+	let { companies, searchable = true, query = $bindable('') } = $props();
+	const PAGE = config.companies.pageSize;
+	let shown = $state(PAGE);
 
 	const filtered = $derived.by(() => {
 		const words = query.toLowerCase().split(/\s+/).filter(Boolean);
@@ -20,21 +21,35 @@
 
 <jl-companies>
 	{#if searchable}
-		<input type="search" bind:value={query} placeholder={t('search.companies')} aria-label={t('search.companies')} />
+		<input
+			type="search"
+			bind:value={query}
+			oninput={() => (shown = PAGE)}
+			placeholder={t('search.companies')}
+			aria-label={t('search.companies')}
+			enterkeyhint="search"
+		/>
+		{#if query}<p aria-live="polite"><small>{t('companies.found', { count: filtered.length })}</small></p>{/if}
 	{/if}
 	<ul>
 		{#each filtered.slice(0, shown) as company (company.key)}
 			<li><CompanyItem {company} /></li>
 		{/each}
 	</ul>
+	{#if query && !filtered.length}<p>{t('search.none')}</p>{/if}
 	{#if filtered.length > shown}
-		<button type="button" onclick={() => (shown += 100)}>{filtered.length - shown} +</button>
+		<button type="button" onclick={() => (shown += PAGE)}>
+			{t('companies.more', { count: Math.min(PAGE, filtered.length - shown), left: filtered.length - shown })}
+		</button>
 	{/if}
 </jl-companies>
 
 <style>
 	jl-companies {
 		display: block;
+	}
+	p {
+		margin: var(--space-s) 0 0;
 	}
 	ul {
 		margin: var(--space-s) 0;
