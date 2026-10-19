@@ -37,8 +37,11 @@ export function page(template, { title, description, url, body, type = 'website'
 	]
 		.filter(Boolean)
 		.join('\n\t\t');
+	// Marked blocks are replaced, not added again, so prerendering twice is harmless.
 	return template
+		.replace(/\s*<!-- jl:head -->[\s\S]*?<!-- \/jl:head -->/, '')
+		.replace(/\s*<!-- jl:body -->[\s\S]*?<!-- \/jl:body -->/, '')
 		.replace(/<title>[\s\S]*?<\/title>\s*/, '')
-		.replace('</head>', `\t${head}\n\t</head>`)
-		.replace(/(<body[^>]*>)/, body ? `$1\n\t\t<noscript>${body}</noscript>` : '$1');
+		.replace('</head>', `\t<!-- jl:head -->\n\t\t${head}\n\t\t<!-- /jl:head -->\n\t</head>`)
+		.replace(/(<body[^>]*>)/, body ? `$1\n\t\t<!-- jl:body --><noscript>${body}</noscript><!-- /jl:body -->` : '$1');
 }
