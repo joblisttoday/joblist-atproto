@@ -121,6 +121,13 @@
 	"form.list.down": "Move down",
 	"form.list.unknown": "not described yet",
 	"form.ownVersion": "You are editing your own version. Other people's versions stay as they are.",
+	"form.section.jobs": "Where they post jobs",
+	"form.section.more": "Tags, locations, links",
+	"form.location": "Location {number}",
+	"form.list.name.placeholder": "e.g. Co-ops in Lyon",
+	"form.list.add.help": "Type a name, tag or place, then tap a company to add it.",
+	"form.list.noMatch": "Nobody has described it yet.",
+	"form.list.suggestions": "Companies to add",
 
 	"signin.title": "Sign in",
 	"signin.intro": "Use your Bluesky or any atproto account. Your companies and lists are saved in your own account.",

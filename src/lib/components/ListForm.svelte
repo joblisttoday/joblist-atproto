@@ -81,7 +81,7 @@
 <jl-list-form>
 	<form onsubmit={submit}>
 		<label for="list-name">{t('form.list.name')}</label>
-		<input id="list-name" bind:value={form.name} required maxlength="100" />
+		<input id="list-name" bind:value={form.name} required maxlength="100" placeholder={t('form.list.name.placeholder')} />
 
 		<label for="list-description">{t('form.list.description')}</label>
 		<textarea id="list-description" bind:value={form.description} maxlength="3000"></textarea>
@@ -89,13 +89,26 @@
 		<fieldset>
 			<legend>{t('form.list.companies')} ({form.companies.length})</legend>
 			<label for="list-add">{t('form.list.add')}</label>
-			<input id="list-add" type="search" bind:value={query} placeholder={t('search.companies')} />
+			<input
+				id="list-add"
+				type="search"
+				bind:value={query}
+				placeholder={t('search.companies')}
+				autocomplete="off"
+				enterkeyhint="search"
+				aria-describedby="list-add-help"
+			/>
+			{#if query && !suggestions.length}
+				<small id="list-add-help">{t('form.list.noMatch')} <a href="/add?url={encodeURIComponent(query)}">{t('company.describe')}</a></small>
+			{:else}
+				<small id="list-add-help">{t('form.list.add.help')}</small>
+			{/if}
 			{#if suggestions.length}
-				<ul>
+				<ul aria-label={t('form.list.suggestions')}>
 					{#each suggestions as company (company.key)}
 						<li>
 							<button type="button" onclick={() => (form.companies.unshift(company.key), (query = ''))}>
-								+ {company.name} <small>{company.key}</small>
+								<span>+ {company.name}</span> <small>{company.key}</small>
 							</button>
 						</li>
 					{/each}
@@ -129,12 +142,26 @@
 </jl-list-form>
 
 <style>
+	ul {
+		margin: var(--space-s) 0;
+		border: var(--border);
+		border-radius: var(--radius);
+		overflow: hidden;
+	}
 	ul button {
 		width: 100%;
+		justify-content: space-between;
 		text-align: left;
 		border: none;
 		border-bottom: var(--border);
 		border-radius: 0;
+	}
+	ul li:last-child button {
+		border-bottom: none;
+	}
+	ol {
+		margin-top: var(--space-m);
+		counter-reset: company;
 	}
 	ol li {
 		display: flex;
@@ -142,9 +169,14 @@
 		gap: var(--space-xs);
 		padding: var(--space-xs) 0;
 		border-bottom: var(--border);
+		counter-increment: company;
 	}
 	ol span {
 		flex: 1;
+	}
+	ol span::before {
+		content: counter(company) '. ';
+		color: var(--color-muted);
 	}
 	ol small {
 		display: block;
@@ -152,5 +184,6 @@
 	ol button {
 		min-width: var(--tap-size);
 		padding: 0;
+		border-color: transparent;
 	}
 </style>

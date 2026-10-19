@@ -121,6 +121,13 @@
 	"form.list.down": "Descendre",
 	"form.list.unknown": "pas encore décrite",
 	"form.ownVersion": "Vous modifiez votre propre version. Celles des autres restent inchangées.",
+	"form.section.jobs": "Où elle publie ses offres",
+	"form.section.more": "Tags, lieux, liens",
+	"form.location": "Lieu {number}",
+	"form.list.name.placeholder": "ex. Coopératives à Lyon",
+	"form.list.add.help": "Tapez un nom, un tag ou un lieu, puis touchez une entreprise pour l'ajouter.",
+	"form.list.noMatch": "Personne ne l'a encore décrite.",
+	"form.list.suggestions": "Entreprises à ajouter",
 
 	"signin.title": "Connexion",
 	"signin.intro": "Utilisez votre compte Bluesky ou tout compte atproto. Vos entreprises et listes sont enregistrées dans votre propre compte.",
