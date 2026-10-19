@@ -22,6 +22,7 @@
 
 <svelte:head><title>{t('nav.me')} · {config.name}</title></svelte:head>
 
+{#if session.ready && !session.did}<h1>{t('signin.title')}</h1>{/if}
 <RequireSession>
 	<ProfileHeader did={session.did || undefined} handle={session.handle || ''}>
 		<menu>
