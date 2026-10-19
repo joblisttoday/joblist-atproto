@@ -17,7 +17,7 @@
 	<h1>{t('home.title')}</h1>
 	<p>{t('home.intro')}</p>
 	<menu>
-		<a href={session.did ? '/lists/new' : '/signin'}>+ {t('list.new')}</a>
+		<a href={'/lists/new'}>+ {t('list.new')}</a>
 	</menu>
 </header>
 

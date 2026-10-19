@@ -4,6 +4,10 @@
 	"nav.add": "Add",
 	"nav.me": "Me",
 	"nav.signin": "Sign in",
+	"nav.jobs": "Jobs",
+	"nav.label": "Main",
+	"nav.back": "Back",
+	"nav.skip": "Skip to content",
 
 	"home.title": "Lists of companies",
 	"home.intro": "Companies that hire, curated by people. Anyone can add a company or make a list; every record belongs to its author.",
@@ -112,5 +116,8 @@
 	"profile.empty": "Nothing here yet.",
 
 	"about.source": "Source code",
-	"about.data": "All data is public atproto records."
+	"about.data": "All data is public atproto records.",
+
+	"locale.en": "English",
+	"locale.fr": "Français"
 }

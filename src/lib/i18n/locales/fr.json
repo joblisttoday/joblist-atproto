@@ -4,6 +4,10 @@
 	"nav.add": "Ajouter",
 	"nav.me": "Moi",
 	"nav.signin": "Connexion",
+	"nav.jobs": "Offres",
+	"nav.label": "Principal",
+	"nav.back": "Retour",
+	"nav.skip": "Aller au contenu",
 
 	"home.title": "Listes d'entreprises",
 	"home.intro": "Des entreprises qui recrutent, choisies par des gens. Chacun peut ajouter une entreprise ou créer une liste ; chaque fiche appartient à son auteur.",
@@ -112,5 +116,8 @@
 	"profile.empty": "Rien ici pour l'instant.",
 
 	"about.source": "Code source",
-	"about.data": "Toutes les données sont des fiches atproto publiques."
+	"about.data": "Toutes les données sont des fiches atproto publiques.",
+
+	"locale.en": "English",
+	"locale.fr": "Français"
 }

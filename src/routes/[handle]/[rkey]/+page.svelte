@@ -72,7 +72,7 @@
 			{#if list.description}<p>{list.description}</p>{/if}
 			<menu>
 				<button type="button" onclick={share}>{copied ? t('list.linkCopied') : t('list.share')}</button>
-				<a href={session.did ? `/lists/new?copy=${encodeURIComponent(list.uri)}` : '/signin'}>{t('list.copy')}</a>
+				<a href={`/lists/new?copy=${encodeURIComponent(list.uri)}`}>{t('list.copy')}</a>
 				{#if mine}
 					<a href="/{handle}/{list.rkey}/edit">{t('list.edit')}</a>
 					<button type="button" onclick={remove}>{t('list.delete')}</button>

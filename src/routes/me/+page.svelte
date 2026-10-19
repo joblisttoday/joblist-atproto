@@ -1,12 +1,11 @@
 <script>
 	import { goto } from '$app/navigation';
-	import config from '#lib/data/config.json';
-	import Companies from '#lib/components/Companies.svelte';
+		import Companies from '#lib/components/Companies.svelte';
 	import ListItem from '#lib/components/ListItem.svelte';
 	import RequireSession from '#lib/components/RequireSession.svelte';
 	import { session, signOut } from '#lib/auth/session.svelte.js';
 	import { data } from '#lib/network/network.svelte.js';
-	import { i18n, setLocale, t } from '#lib/i18n/index.svelte.js';
+	import { t } from '#lib/i18n/index.svelte.js';
 
 	const lists = $derived(data.lists.filter((l) => l.did === session.did));
 	const companies = $derived(
@@ -38,13 +37,3 @@
 		<p><a href="/add">+ {t('form.company.title')}</a></p>
 	</section>
 </RequireSession>
-
-<section>
-	<label for="locale">{t('me.language')}</label>
-	<select id="locale" value={i18n.locale} onchange={(e) => setLocale(e.currentTarget.value)}>
-		{#each config.locales as locale (locale)}<option value={locale}>{locale}</option>{/each}
-	</select>
-	<p>
-		<small>{t('about.data')} <a href={config.source}>{t('about.source')}</a></small>
-	</p>
-</section>

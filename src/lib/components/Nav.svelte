@@ -1,26 +1,28 @@
 <script>
 	import { page } from '$app/state';
+	import links from '#lib/data/nav.json';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
-	const links = $derived([
-		{ href: '/', label: t('nav.lists') },
-		{ href: '/companies', label: t('nav.companies') },
-		{ href: session.did ? '/add' : '/signin', label: t('nav.add') },
-		{ href: session.did ? '/me' : '/signin', label: session.did ? t('nav.me') : t('nav.signin') }
-	]);
+	const items = $derived(
+		links.map((link) => {
+			const { href, label } = !session.did && link.signedOut ? link.signedOut : link;
+			return { href, label: t(label) };
+		})
+	);
 
 	/** @param {string} href */
 	function current(href) {
 		const path = page.url.pathname;
-		return href === '/' ? path === '/' : path.startsWith(href);
+		if (href === '/') return path === '/';
+		return path === href || path.startsWith(`${href}/`);
 	}
 </script>
 
 <jl-nav>
-	<nav>
-		{#each links as link (link.label)}
-			<a href={link.href} aria-current={current(link.href) ? 'page' : undefined}>{link.label}</a>
+	<nav aria-label={t('nav.label')}>
+		{#each items as item (item.href)}
+			<a href={item.href} aria-current={current(item.href) ? 'page' : undefined}>{item.label}</a>
 		{/each}
 	</nav>
 </jl-nav>
@@ -30,13 +32,14 @@
 		position: fixed;
 		inset: auto 0 0 0;
 		z-index: 10;
-		background: var(--color-bg);
+		background: var(--color-overlay);
 		border-top: var(--border);
 		padding-bottom: env(safe-area-inset-bottom);
 	}
 	nav {
 		display: grid;
-		grid-template-columns: repeat(4, 1fr);
+		grid-auto-flow: column;
+		grid-auto-columns: 1fr;
 		max-width: var(--page-width);
 		margin: 0 auto;
 	}
@@ -45,11 +48,43 @@
 		align-items: center;
 		justify-content: center;
 		min-height: var(--nav-height);
+		padding: 0 var(--space-xs);
+		font-size: var(--font-size-small);
 		text-decoration: none;
+		text-align: center;
 		color: var(--color-muted);
+		border-top: var(--border-width) solid transparent;
+	}
+	a:hover {
+		color: var(--color-fg);
 	}
 	a[aria-current='page'] {
 		color: var(--color-fg);
-		font-weight: 600;
+		font-weight: var(--font-weight-strong);
+		border-top-color: var(--color-fg);
+	}
+
+	@media (min-width: 48rem) {
+		jl-nav {
+			position: static;
+			background: none;
+			border: 0;
+			padding: 0;
+		}
+		nav {
+			display: flex;
+			gap: var(--space-xs);
+			margin: 0;
+		}
+		a {
+			min-height: var(--header-height);
+			padding: 0 var(--space-s);
+			font-size: var(--font-size);
+			border-top: 0;
+			border-bottom: var(--border-width) solid transparent;
+		}
+		a[aria-current='page'] {
+			border-bottom-color: var(--color-fg);
+		}
 	}
 </style>

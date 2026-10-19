@@ -50,7 +50,7 @@
 				</small>
 			</p>
 			<menu>
-				<a href={session.did ? `/add?key=${encodeURIComponent(key)}` : '/signin'}>{t('company.edit')}</a>
+				<a href={`/add?key=${encodeURIComponent(key)}`}>{t('company.edit')}</a>
 				{#if own}<button type="button" onclick={remove}>{t('company.delete')}</button>{/if}
 			</menu>
 		</header>
@@ -98,7 +98,7 @@
 {:else if !network.loading}
 	<h1>{key}</h1>
 	<p>{t('company.notFound', { key })}</p>
-	<menu><a href={session.did ? `/add?url=${encodeURIComponent(key)}` : '/signin'}>{t('company.describe')}</a></menu>
+	<menu><a href={`/add?url=${encodeURIComponent(key)}`}>{t('company.describe')}</a></menu>
 {/if}
 
 <style>
