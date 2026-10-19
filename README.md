@@ -70,8 +70,9 @@ poster. Until that exists, nothing private is written.
 
 ## How it runs
 
-A static SvelteKit app, served by a Cloudflare Worker (assets only, no code).
-Everything happens in the browser:
+A static SvelteKit app, served by a Cloudflare Worker. Everything happens in
+the browser; the Worker's only code answers `/api/*` for featured jobs
+(see [Paying for joblist](#paying-for-joblist)):
 
 | What | How |
 |---|---|
@@ -88,6 +89,15 @@ staying the source of truth.
 
 Cost: €0/month.
 
+## Paying for joblist
+
+Posting stays free. An employer (or anyone) can pay to show a job for 30 days
+in a block labelled "Featured · paid by the employer", above the job lists
+that already include its company; it changes no list and no order. Anyone
+can also support joblist, paying what they want at `/support`. Payments go
+through Stripe Payment Links; joblist stores only which job is featured and
+until when. See [docs/revenue.md](docs/revenue.md).
+
 ## Develop
 
 Node 24 (see `.nvmrc`) and npm 11.
@@ -103,6 +113,7 @@ Configuration lives in data files, not code:
 
 - [`src/lib/data/config.json`](src/lib/data/config.json): services, map, limits, locales
 - [`src/lib/data/providers.json`](src/lib/data/providers.json): job board providers
+- [`src/lib/data/revenue.json`](src/lib/data/revenue.json): featured jobs and support (prices, Payment Links)
 - [`src/lib/i18n/locales/`](src/lib/i18n/locales): interface text (English, French)
 - [`scripts/starter-lists.json`](scripts/starter-lists.json): lists created by the import
 
