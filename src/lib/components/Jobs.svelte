@@ -1,5 +1,6 @@
 <script>
 	import config from '#lib/data/config.json';
+	import FeaturedJobs from './FeaturedJobs.svelte';
 	import JobFilters from './JobFilters.svelte';
 	import JobGroup from './JobGroup.svelte';
 	import JobItem from './JobItem.svelte';
@@ -72,6 +73,7 @@
 	{#if loading}
 		<progress value={answered} max={targets.length} aria-label={t('jobs.loading')}></progress>
 	{/if}
+	<FeaturedJobs {jobs} {names} {single} />
 	<p aria-live="polite">
 		<small>
 			{#if loading}
