@@ -277,6 +277,7 @@
 	"post.mine": "Vos offres",
 	"post.mine.empty": "Vous n'avez pas encore publié d'offre.",
 	"post.renew": "Prolonger de {count} jours",
+	"post.change": "Modifier",
 	"post.renewed": "Prolongée.",
 	"post.delete": "Supprimer",
 	"post.confirmDelete": "Supprimer cette offre ?",
