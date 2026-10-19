@@ -1,5 +1,6 @@
 <script>
 	import MyJobPosts from './MyJobPosts.svelte';
+	import revenue from '#lib/data/revenue.json';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { data } from '#lib/network/network.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
@@ -16,7 +17,10 @@
 </script>
 
 <jl-company-hiring own={own || undefined}>
-	<menu><a {href}>{own ? t('company.post.own') : `+ ${t('company.post')}`}</a></menu>
+	<menu>
+		<a {href}>{own ? t('company.post.own') : `+ ${t('company.post')}`}</a>
+		{#if revenue.featured.paymentLink}<a href="/featured?company={encodeURIComponent(company.key)}">{t('featured.title')}</a>{/if}
+	</menu>
 	{#if mine.length}
 		<details>
 			<summary>{t('post.mine')} <small>{mine.length}</small></summary>

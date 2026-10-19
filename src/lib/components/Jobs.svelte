@@ -13,8 +13,11 @@
 	import { data } from '#lib/network/network.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
-	/** @type {{companies: import('#lib/models/company.js').Company[]}} */
-	let { companies } = $props();
+	/**
+	 * featuring: each job links to the page to feature it.
+	 * @type {{companies: import('#lib/models/company.js').Company[], featuring?: boolean}}
+	 */
+	let { companies, featuring = false } = $props();
 	const PAGE = config.jobs.pageSize;
 
 	/** Jobs read from job boards (or their snapshot). */
@@ -99,7 +102,7 @@
 	{:else}
 		<ul>
 			{#each filtered.slice(0, shown) as job (job.url)}
-				<li><JobItem {job} company={single ? undefined : names.get(job.company)} /></li>
+				<li><JobItem {job} {featuring} company={single ? undefined : names.get(job.company)} /></li>
 			{/each}
 		</ul>
 		{#if filtered.length > shown}

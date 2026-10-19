@@ -137,3 +137,41 @@ export function checkoutUrl(paymentLink, id) {
 	url.searchParams.set('client_reference_id', id);
 	return url.href;
 }
+
+/**
+ * The page to feature a job (title only for showing it there).
+ * @param {FeatureJob} job
+ * @param {string} [title]
+ */
+export function featurePath(job, title = '') {
+	const params = new URLSearchParams(job.kind === 'record' ? { uri: job.uri } : { company: job.company, url: job.url });
+	if (title) params.set('title', title);
+	return `/featured?${params}`;
+}
+
+/**
+ * The job a /featured page is for, from its query; null when none.
+ * @param {{get(name: string): string | null}} params
+ */
+export function fromSearch(params) {
+	const uri = params.get('uri');
+	return toFeatureJob(uri ? { kind: 'record', uri } : { kind: 'board', url: params.get('url'), company: params.get('company') });
+}
+
+/**
+ * The job to feature for a job in a job list.
+ * @param {import('#lib/ats/job.js').Job} job
+ * @returns {FeatureJob}
+ */
+export function jobOf(job) {
+	return job.posted ? recordJob(job.posted.did, job.posted.rkey) : { kind: 'board', url: job.url, company: job.company };
+}
+
+/**
+ * The account and record key of a featured offer.
+ * @param {RecordJob} job
+ */
+export function recordParts(job) {
+	const [, did = '', rkey = ''] = job.uri.match(/^at:\/\/([^/]+)\/[^/]+\/(.+)$/) || [];
+	return { did, rkey };
+}

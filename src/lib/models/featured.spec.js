@@ -3,11 +3,15 @@ import {
 	addPaid,
 	checkoutUrl,
 	featuredId,
+	featurePath,
+	fromSearch,
 	isActive,
 	isJob,
+	jobOf,
 	jobKey,
 	pickFeatured,
 	recordJob,
+	recordParts,
 	toFeatureJob
 } from './featured.js';
 
@@ -21,6 +25,7 @@ describe('jobKey and featuredId', () => {
 	it('keys records by at-uri, board jobs by company and link', () => {
 		expect(jobKey(RECORD)).toBe('at://did:plc:abc/today.joblist.job/3abc');
 		expect(jobKey(BOARD)).toBe('example.org https://jobs.example.org/1');
+		expect(recordParts(RECORD)).toEqual({ did: 'did:plc:abc', rkey: '3abc' });
 	});
 
 	it('makes a stable id Stripe accepts as client_reference_id', async () => {
@@ -92,9 +97,22 @@ describe('isJob', () => {
 		expect(isJob(RECORD, board)).toBe(false);
 		expect(isJob(BOARD, board)).toBe(true);
 		expect(isJob(BOARD, { ...board, company: 'other.org' })).toBe(false);
+		expect(jobOf(posted)).toEqual(RECORD);
+		expect(jobOf(board)).toEqual(BOARD);
 	});
 });
 
 it('passes the id to the Payment Link', () => {
 	expect(checkoutUrl('https://buy.stripe.com/test_123', 'abc_-1')).toBe('https://buy.stripe.com/test_123?client_reference_id=abc_-1');
+});
+
+it('links to the page to feature a job, and reads it back', () => {
+	for (const job of [RECORD, BOARD]) {
+		const path = featurePath(job, 'Designer');
+		const params = new URL(path, 'https://x.org').searchParams;
+		expect(path.startsWith('/featured?')).toBe(true);
+		expect(params.get('title')).toBe('Designer');
+		expect(fromSearch(params)).toEqual(job);
+	}
+	expect(fromSearch(new URLSearchParams('company=x.org'))).toBe(null);
 });
