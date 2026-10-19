@@ -94,7 +94,7 @@ const repairs = await mapLimit(todo, settings.concurrency, async (record) => {
 const repairsByKey = new Map(repairs.map((p) => [p.key, p]));
 step(`repairs done: looked at ${todo.length}`);
 
-// (c) New companies: keys in lists and jobs without a record, and domain accounts posting about hiring.
+// (c) New companies: keys in lists, suggestions and jobs without a record, and domain accounts posting about hiring.
 const fromLists = suggest(
 	[...versionsByKey.keys()].map((key) => /** @type {any} */ ({ key })),
 	records
@@ -107,7 +107,7 @@ try {
 }
 /** @type {{domain: string, name?: string, source: string}[]} */
 const candidates = [
-	...fromLists.map((s) => ({ domain: s.key, source: `lists (${s.mentions} mentions)` })),
+	...fromLists.map((s) => ({ domain: s.key, source: `lists and suggestions (${s.mentions} mentions)` })),
 	...hiring.accounts.map((a) => ({ domain: a.handle, name: a.displayName, source: `hiring posts of @${a.handle}` }))
 ].filter((c) => !versionsByKey.has(c.domain));
 const looked = await mapLimit(candidates, settings.concurrency, async (c) => ({ ...c, ...(await discoverCompany(c.domain, { name: c.name, source: c.source, openJobs })) }));
