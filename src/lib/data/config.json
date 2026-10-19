@@ -32,7 +32,7 @@
 	"limits": {
 		"concurrency": 6,
 		"jobsConcurrency": 6,
-		"pagesPerRepo": 20,
+		"pagesPerRepo": 100,
 		"indexerConcurrency": 8
 	},
 	"locales": [
@@ -51,7 +51,7 @@
 			"work from home",
 			"wfh",
 			"distributed",
-			"télétravail",
+			"t\u00e9l\u00e9travail",
 			"teletravail",
 			"fernarbeit",
 			"mobiles arbeiten"
