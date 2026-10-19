@@ -121,6 +121,8 @@ function buildLists(companies) {
 			name: spec.name,
 			description: spec.description,
 			companies: matches.map((c) => c.rkey),
+			// Starter lists are open: anyone can add a company to them.
+			open: true,
 			createdAt: now
 		};
 	});
@@ -191,7 +193,13 @@ await applyInBatches(
 	agent,
 	lists.map((value) =>
 		listKeys.has(value.name)
-			? { $type: 'com.atproto.repo.applyWrites#update', collection: LIST, rkey: listKeys.get(value.name), value }
+			? {
+					$type: 'com.atproto.repo.applyWrites#update',
+					collection: LIST,
+					rkey: listKeys.get(value.name),
+					// keep the companies the list's author hid since the last import
+					value: { ...value, hidden: knownLists.get(listKeys.get(value.name))?.hidden }
+				}
 			: { $type: 'com.atproto.repo.applyWrites#create', collection: LIST, value }
 	)
 );
