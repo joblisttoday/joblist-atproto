@@ -19,11 +19,16 @@ Two record types, defined in [`lexicons/`](lexicons/today/joblist):
 - **`today.joblist.company`**: one company, keyed by its domain
   (`at://did:…/today.joblist.company/example.org`). Name, website,
   description, tags, locations, and where it hires (a job board provider and
-  id, or a careers page). Anyone can write one about any company; when several
-  people do, the app shows:
+  id, or a careers page). Companies work like wiki pages: anyone can edit one,
+  and each person's edit is a record in their own account (with `updatedAt`).
+  The app shows:
   1. the company's own record, if the author's handle is that domain (verified),
-  2. otherwise the viewer's own version,
-  3. otherwise the oldest one.
+  2. otherwise the most recently edited version, by anyone.
+
+  The company page shows the history (every author's version); anyone can
+  restore an older one, which saves its content as their own new version.
+  Accounts listed in `bots` (config) are crawlers: their versions are marked
+  "not checked by a person yet" until a person saves or confirms a newer one.
 - **`today.joblist.list`**: a named list of companies (by domain), in the
   curator's order. Lists can be copied; the copy keeps a `copiedFrom` link.
 
