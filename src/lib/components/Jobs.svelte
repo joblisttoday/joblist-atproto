@@ -1,71 +1,110 @@
 <script>
 	import config from '#lib/data/config.json';
+	import JobFilters from './JobFilters.svelte';
+	import JobGroup from './JobGroup.svelte';
+	import JobItem from './JobItem.svelte';
 	import { getJobs } from '#lib/ats/index.js';
 	import { mapLimit } from '#lib/atproto/xrpc.js';
 	import { boardUrl, hasJobsApi } from '#lib/models/company.js';
+	import { byCompany, commonPlaces, filterJobs } from '#lib/models/job.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/** @type {{companies: import('#lib/models/company.js').Company[]}} */
 	let { companies } = $props();
+	const PAGE = config.jobs.pageSize;
 
 	/** @type {import('#lib/ats/job.js').Job[]} */
-	let jobs = $state([]);
-	let loading = $state(false);
-	let query = $state('');
+	let jobs = $state.raw([]);
+	let answered = $state(0);
+	let filters = $state({ query: '', where: '', remote: false });
+	let grouped = $state(false);
+	let shown = $state(PAGE);
 
+	const targets = $derived(companies.filter(hasJobsApi));
+	const loading = $derived(answered < targets.length);
+	const single = $derived(companies.length === 1);
 	const names = $derived(new Map(companies.map((c) => [c.key, c.name])));
 	const withoutApi = $derived(companies.filter((c) => !hasJobsApi(c) && boardUrl(c.jobBoard)));
+	const filtered = $derived(filterJobs(jobs, filters, names));
+	const groups = $derived(grouped ? byCompany(filtered) : []);
+	// Suggestions are computed once all boards answered, not on every answer.
+	const places = $derived(loading ? [] : commonPlaces(jobs));
 
 	$effect(() => {
-		const targets = companies.filter(hasJobsApi);
+		const list = targets;
 		let cancelled = false;
-		loading = true;
+		const seen = new Set();
 		jobs = [];
-		mapLimit(targets, config.limits.jobsConcurrency, async (company) => {
-			const found = await getJobs(company);
-			if (!cancelled) jobs = [...jobs, ...found];
-		}).finally(() => {
-			if (!cancelled) loading = false;
+		answered = 0;
+		mapLimit(list, config.limits.jobsConcurrency, async (company) => {
+			const found = (await getJobs(company)).filter((j) => !seen.has(j.url) && seen.add(j.url));
+			if (cancelled) return;
+			if (found.length) jobs = jobs.concat(found);
+			answered++;
 		});
 		return () => (cancelled = true);
-	});
-
-	const filtered = $derived.by(() => {
-		const words = query.toLowerCase().split(/\s+/).filter(Boolean);
-		return jobs
-			.filter((j) => {
-				const text = `${j.title} ${j.location || ''} ${j.department || ''} ${names.get(j.company) || ''}`.toLowerCase();
-				return words.every((w) => text.includes(w));
-			})
-			.sort((a, b) => String(b.published || '').localeCompare(String(a.published || '')));
 	});
 </script>
 
 <jl-jobs loading={loading || undefined}>
-	<input type="search" bind:value={query} placeholder={t('jobs.filter')} aria-label={t('jobs.filter')} />
-	<small>{loading ? t('jobs.loading') : t('jobs.count', { count: filtered.length })}</small>
-	{#if !loading && !jobs.length && !withoutApi.length}
-		<p>{t('jobs.none')}</p>
+	{#if loading}
+		<progress value={answered} max={targets.length} aria-label={t('jobs.loading')}></progress>
 	{/if}
-	<ul>
-		{#each filtered.slice(0, 300) as job (job.url)}
-			<li>
-				<a href={job.url} target="_blank" rel="noopener">{job.title}</a>
-				<small>
-					{#if companies.length > 1}<a href="/company/{job.company}">{names.get(job.company)}</a>{job.location ? ' · ' : ''}{/if}{job.location || ''}
-				</small>
-			</li>
-		{/each}
-	</ul>
-	{#if withoutApi.length}
+	<p aria-live="polite">
+		<small>
+			{#if loading}
+				{t('jobs.progress', { answered, total: targets.length, count: jobs.length })}
+			{:else if filtered.length === jobs.length}
+				{t('jobs.count', { count: jobs.length })}
+			{:else}
+				{t('jobs.countFiltered', { count: filtered.length, total: jobs.length })}
+			{/if}
+		</small>
+	</p>
+
+	{#if jobs.length > 10}
+		<JobFilters bind:filters bind:grouped {places} onchange={() => (shown = PAGE)} />
+	{/if}
+
+	{#if grouped}
 		<ul>
-			{#each withoutApi as company (company.key)}
-				<li>
-					<a href={boardUrl(company.jobBoard)} target="_blank" rel="noopener">{company.name}</a>
-					<small>{t('jobs.noBoard')}</small>
-				</li>
+			{#each groups as [key, list] (key)}
+				<li><JobGroup {key} name={names.get(key) || key} jobs={list} /></li>
 			{/each}
 		</ul>
+	{:else}
+		<ul>
+			{#each filtered.slice(0, shown) as job (job.url)}
+				<li><JobItem {job} company={single ? undefined : names.get(job.company)} /></li>
+			{/each}
+		</ul>
+		{#if filtered.length > shown}
+			<button type="button" onclick={() => (shown += PAGE)}>
+				{t('jobs.more', { count: Math.min(PAGE, filtered.length - shown), left: filtered.length - shown })}
+			</button>
+		{/if}
+	{/if}
+
+	{#if !loading && !filtered.length}
+		<p>{jobs.length ? t('search.none') : t('jobs.none')}</p>
+	{/if}
+
+	{#if withoutApi.length}
+		{#if single}
+			<p>
+				<a href={boardUrl(withoutApi[0].jobBoard)} target="_blank" rel="noopener">{t('jobs.careersPage')}</a>
+				<small>{t('jobs.noBoard')}</small>
+			</p>
+		{:else}
+			<details>
+				<summary>{t('jobs.withoutBoard', { count: withoutApi.length })}</summary>
+				<ul>
+					{#each withoutApi as company (company.key)}
+						<li><a href={boardUrl(company.jobBoard)} target="_blank" rel="noopener">{company.name}</a></li>
+					{/each}
+				</ul>
+			</details>
+		{/if}
 	{/if}
 </jl-jobs>
 
@@ -73,19 +112,25 @@
 	jl-jobs {
 		display: block;
 	}
-	li {
-		padding: var(--space-s) 0;
+	jl-jobs > p {
+		margin: var(--space-s) 0;
+	}
+	ul {
+		margin: var(--space-s) 0;
+	}
+	details {
 		border-bottom: var(--border);
 	}
-	li > a {
-		font-weight: 600;
-		text-decoration: none;
+	details li > a {
+		display: flex;
+		align-items: center;
+		min-height: var(--tap-size);
 	}
-	li small {
-		display: block;
-	}
-	small {
-		display: block;
+	button {
+		width: 100%;
 		margin: var(--space-s) 0;
+	}
+	progress {
+		margin-top: var(--space-s);
 	}
 </style>

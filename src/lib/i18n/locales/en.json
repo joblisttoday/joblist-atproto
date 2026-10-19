@@ -60,9 +60,20 @@
 
 	"jobs.loading": "Asking job boards…",
 	"jobs.none": "No open jobs found.",
-	"jobs.count": "Open jobs: {count}",
-	"jobs.filter": "Filter jobs",
-	"jobs.noBoard": "No job board connected. See their careers page.",
+	"jobs.count": "{count} open jobs",
+	"jobs.noBoard": "No job board connected: open jobs are on their careers page.",
+	"jobs.progress": "Asking job boards… {answered} of {total} answered, {count} jobs so far",
+	"jobs.countFiltered": "{count} of {total} open jobs",
+	"jobs.filter.what": "Job title, team or company",
+	"jobs.filter.where": "City or country",
+	"jobs.filter.remote": "Remote only",
+	"jobs.filter.grouped": "Group by company",
+	"jobs.more": "Show {count} more ({left} left)",
+	"jobs.aboutCompany": "About {name}",
+	"jobs.careersPage": "Careers page",
+	"jobs.withoutBoard": "{count} companies list their jobs on their own careers page",
+	"jobs.title": "All jobs",
+	"jobs.intro": "Open jobs of every company in joblist, read live from their job boards.",
 
 	"map.none": "No locations on the map yet.",
 

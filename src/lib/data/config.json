@@ -14,14 +14,37 @@
 	},
 	"map": {
 		"style": "https://tiles.openfreemap.org/styles/positron",
-		"center": [13.405, 52.52],
+		"center": [
+			13.405,
+			52.52
+		],
 		"zoom": 2
 	},
 	"limits": {
 		"concurrency": 6,
-		"jobsConcurrency": 4,
+		"jobsConcurrency": 6,
 		"pagesPerRepo": 20
 	},
-	"locales": ["en", "fr"],
-	"defaultLocale": "en"
+	"locales": [
+		"en",
+		"fr"
+	],
+	"defaultLocale": "en",
+	"jobs": {
+		"pageSize": 50,
+		"placesSuggested": 30,
+		"remoteWords": [
+			"remote",
+			"anywhere",
+			"home office",
+			"homeoffice",
+			"work from home",
+			"wfh",
+			"distributed",
+			"télétravail",
+			"teletravail",
+			"fernarbeit",
+			"mobiles arbeiten"
+		]
+	}
 }
