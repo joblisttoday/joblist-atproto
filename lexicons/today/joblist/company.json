@@ -1,0 +1,61 @@
+{
+	"lexicon": 1,
+	"id": "today.joblist.company",
+	"description": "A company or organization, described by anyone. The record key is the organization's domain (e.g. 'example.org'). When the author's handle equals that domain, the record is the organization's own.",
+	"defs": {
+		"main": {
+			"type": "record",
+			"key": "any",
+			"record": {
+				"type": "object",
+				"required": ["name", "createdAt"],
+				"properties": {
+					"name": { "type": "string", "maxLength": 1000, "maxGraphemes": 100 },
+					"url": { "type": "string", "format": "uri", "description": "The organization's website." },
+					"description": { "type": "string", "maxLength": 30000, "maxGraphemes": 3000 },
+					"tags": {
+						"type": "array",
+						"maxLength": 20,
+						"items": { "type": "string", "maxLength": 640, "maxGraphemes": 64 }
+					},
+					"locations": {
+						"type": "array",
+						"maxLength": 50,
+						"items": { "type": "ref", "ref": "#location" }
+					},
+					"jobBoard": { "type": "ref", "ref": "#jobBoard" },
+					"links": {
+						"type": "array",
+						"maxLength": 20,
+						"description": "Other public pages of the organization (social profiles, wikipedia, etc.).",
+						"items": { "type": "string", "format": "uri" }
+					},
+					"createdAt": { "type": "string", "format": "datetime" }
+				}
+			}
+		},
+		"location": {
+			"type": "object",
+			"properties": {
+				"name": { "type": "string", "maxLength": 1000, "maxGraphemes": 100, "description": "City or place name." },
+				"address": { "type": "string", "maxLength": 2000, "maxGraphemes": 200 },
+				"country": { "type": "string", "maxLength": 1000, "maxGraphemes": 100 },
+				"latitude": { "type": "string", "maxLength": 32, "description": "Decimal degrees, as a string." },
+				"longitude": { "type": "string", "maxLength": 32, "description": "Decimal degrees, as a string." }
+			}
+		},
+		"jobBoard": {
+			"type": "object",
+			"description": "Where the organization publishes its jobs.",
+			"properties": {
+				"provider": {
+					"type": "string",
+					"maxLength": 64,
+					"knownValues": ["ashby", "greenhouse", "lever", "personio", "recruitee", "rippling", "smartrecruiters", "workable"]
+				},
+				"id": { "type": "string", "maxLength": 256, "description": "The organization's identifier at the provider." },
+				"url": { "type": "string", "format": "uri", "description": "Careers page, when there is no supported provider." }
+			}
+		}
+	}
+}
