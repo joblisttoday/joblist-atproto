@@ -73,9 +73,11 @@ const openJobs = await loadOpenJobs(settings.openJobs).catch((error) => {
 });
 const todo = shown.filter((r) => !r.value.url || checkByKey.get(r.rkey)?.board?.state !== 'live' || checkByKey.get(r.rkey)?.website?.redirectedTo);
 done = 0;
+/** @type {any[]} repair proposals (scripts/lib/repair.js) with their company key */
 const repairs = await mapLimit(todo, settings.concurrency, async (record) => {
-	const check = checkByKey.get(record.rkey);
-	const proposal = await proposeRepair(structuredClone(record), check);
+	const check = /** @type {any} */ (checkByKey.get(record.rkey));
+	/** @type {Record<string, any>} */
+	const proposal = await proposeRepair(structuredClone(/** @type {any} */ (record)), check);
 	const boardBroken = record.value.jobBoard?.provider && ['dead', 'empty'].includes(check.board?.state);
 	if (openJobs && boardBroken && !proposal.changes.jobBoard && record.value.url && check.website?.state === 'ok') {
 		const site = siteOf(new URL(record.value.url).hostname);
@@ -87,7 +89,7 @@ const repairs = await mapLimit(todo, settings.concurrency, async (record) => {
 		}
 	}
 	if (++done % 100 === 0) step(`repairs ${done}/${todo.length}`);
-	return { ...proposal, key: record.rkey, version: record.uri };
+	return Object.assign(proposal, { key: record.rkey, version: record.uri });
 });
 const repairsByKey = new Map(repairs.map((p) => [p.key, p]));
 step(`repairs done: looked at ${todo.length}`);
@@ -103,6 +105,7 @@ try {
 } catch (error) {
 	console.warn(`hiring posts unavailable: ${/** @type {Error} */ (error).message}`);
 }
+/** @type {{domain: string, name?: string, source: string}[]} */
 const candidates = [
 	...fromLists.map((s) => ({ domain: s.key, source: `lists (${s.mentions} mentions)` })),
 	...hiring.accounts.map((a) => ({ domain: a.handle, name: a.displayName, source: `hiring posts of @${a.handle}` }))
@@ -122,7 +125,7 @@ const { writes, skipped } = planWrites({
 	now: new Date().toISOString()
 });
 
-const count = (/** @type {any[]} */ items, /** @type {(x: any) => boolean} */ test) => items.filter(test).length;
+const count = (/** @type {any[]} */ items, /** @type {(x: any) => unknown} */ test) => items.filter(test).length;
 const summary = {
 	companies: versionsByKey.size,
 	checked: checks.length,
@@ -130,7 +133,7 @@ const summary = {
 	repairs: {
 		lookedAt: todo.length,
 		newBoard: count(repairs, (p) => p.changes.jobBoard && p.confidence === 'high'),
-		newBoardFromOpenJobs: count(repairs, (p) => p.notes.some((/** @type {string} */ n) => n.includes('from Open Jobs'))),
+		newBoardFromOpenJobs: count(repairs, (p) => p.notes?.some((/** @type {string} */ n) => n.includes('from Open Jobs'))),
 		newWebsite: count(repairs, (p) => p.changes.url && p.confidence === 'high'),
 		low: count(repairs, (p) => Object.keys(p.changes).length && p.confidence !== 'high'),
 		likelyGone: count(repairs, (p) => p.gone),
@@ -150,15 +153,15 @@ mkdirSync(out, { recursive: true });
 writeFileSync(join(out, 'health.json'), JSON.stringify(healthFile(checkedAt, checks, repairsByKey)));
 writeFileSync(
 	join(out, 'proposals.json'),
-	JSON.stringify({ checkedAt, crawler: did, summary, writes, skipped, repairs: repairs.filter((p) => p.notes.length), discovery: looked }, null, '\t')
+	JSON.stringify({ checkedAt, crawler: did, summary, writes, skipped, repairs: repairs.filter((p) => p.notes?.length), discovery: looked }, null, '\t')
 );
 for (const w of writes) console.log(`${w.action} ${w.rkey} [${w.kind}] ${w.notes.join('; ')}`);
 console.log(JSON.stringify(summary, null, 2));
 step(`saved to ${out}/health.json and ${out}/proposals.json`);
 
-if (!agent) {
+if (agent) {
+	await applyWrites(agent, writes, settings);
+	step(`wrote ${writes.length} records as ${did}`);
+} else {
 	console.log('Dry run. Add --write with CRAWLER_HANDLE and CRAWLER_APP_PASSWORD to write the crawler’s versions.');
-	process.exit(0);
 }
-await applyWrites(agent, writes, settings);
-step(`wrote ${writes.length} records as ${did}`);

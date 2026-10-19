@@ -36,7 +36,7 @@ export async function applyWrites(agent, writes, { batchSize, pauseSeconds }) {
 	const collection = config.collections.company;
 	for (let i = 0; i < writes.length; i += batchSize) {
 		const batch = writes.slice(i, i + batchSize).map((w) => ({
-			$type: `com.atproto.repo.applyWrites#${w.action}`,
+			$type: w.action === 'create' ? /** @type {const} */ ('com.atproto.repo.applyWrites#create') : /** @type {const} */ ('com.atproto.repo.applyWrites#update'),
 			collection,
 			rkey: w.rkey,
 			value: w.value

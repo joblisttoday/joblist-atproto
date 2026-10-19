@@ -22,9 +22,11 @@ export async function hiringAccounts(search, agent) {
 	let posts = 0;
 	let via = 'public search, first page of each query';
 	for (const q of search.queries) {
+		/** @type {string | undefined} */
 		let cursor;
 		for (let page = 0; page < search.pages; page++) {
 			const params = { q, limit: 100, sort: 'latest', cursor };
+			/** @type {{posts?: any[], cursor?: string}} */
 			let result;
 			if (agent) {
 				via = 'crawler session';
@@ -38,7 +40,7 @@ export async function hiringAccounts(search, agent) {
 				posts++;
 				const { did, handle, displayName } = post.author;
 				if (!isDomainHandle(handle)) continue;
-				const account = accounts.get(handle) || { did, handle, displayName, posts: [] };
+				const account = accounts.get(handle) || { did, handle, displayName, posts: /** @type {string[]} */ ([]) };
 				account.posts.push(post.uri);
 				accounts.set(handle, account);
 			}
