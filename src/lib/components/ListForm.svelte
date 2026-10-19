@@ -1,5 +1,6 @@
 <script>
 	import config from '#lib/data/config.json';
+	import webmcp from '#lib/data/webmcp.json';
 	import { createRecord, putRecord } from '#lib/atproto/write.js';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { data, upsertLocal } from '#lib/network/network.svelte.js';
@@ -28,6 +29,8 @@
 		hidden: [...(list?.hidden ?? [])]
 	});
 	let form = $state(initialForm());
+	// WebMCP: an AI assistant may name and describe the list; the person picks companies and saves.
+	const tool = webmcp.forms.list;
 	let query = $state('');
 	let busy = $state(false);
 	/** @type {string | null} */
@@ -82,12 +85,12 @@
 </script>
 
 <jl-list-form>
-	<form onsubmit={submit}>
+	<form onsubmit={submit} toolname={tool.toolname} tooldescription={tool.tooldescription}>
 		<label for="list-name">{t('form.list.name')}</label>
-		<input id="list-name" bind:value={form.name} required maxlength="100" placeholder={t('form.list.name.placeholder')} />
+		<input id="list-name" name="name" toolparamdescription={tool.params.name} bind:value={form.name} required maxlength="100" placeholder={t('form.list.name.placeholder')} />
 
 		<label for="list-description">{t('form.list.description')}</label>
-		<textarea id="list-description" bind:value={form.description} maxlength="3000"></textarea>
+		<textarea id="list-description" name="description" toolparamdescription={tool.params.description} bind:value={form.description} maxlength="3000"></textarea>
 
 		<label><input type="checkbox" bind:checked={form.open} aria-describedby="list-open-help" /> {t('form.list.open')}</label>
 		<small id="list-open-help">{t('form.list.open.help')}</small>
