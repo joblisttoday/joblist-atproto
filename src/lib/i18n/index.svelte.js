@@ -37,5 +37,9 @@ export function setLocale(locale) {
  */
 export function t(key, vars = {}) {
 	const text = messages[i18n.locale]?.[key] ?? messages[config.defaultLocale][key] ?? key;
-	return text.replace(/\{(\w+)\}/g, (_, name) => String(vars[name] ?? `{${name}}`));
+	return text.replace(/\{(\w+)\}/g, (_, name) => {
+		const value = vars[name];
+		if (typeof value === 'number') return value.toLocaleString(i18n.locale);
+		return String(value ?? `{${name}}`);
+	});
 }
