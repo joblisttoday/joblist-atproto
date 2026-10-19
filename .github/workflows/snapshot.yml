@@ -1,7 +1,9 @@
-# Rebuilds the AppView snapshot (records + live jobs) and deploys the site.
-# Free: runs on GitHub Actions, deploys static files to Cloudflare.
-# Needs the repository secret CLOUDFLARE_API_TOKEN (Workers Scripts: Edit).
-# Also publishes the last crawl (branch `crawl`) under /snapshot/crawl/.
+# Rebuilds the AppView snapshot (records + open jobs) every 6 hours and
+# publishes it to the public repo joblisttoday/joblist-snapshot (GitHub Pages),
+# which the app reads. Free, and needs no Cloudflare credentials.
+# Secrets: SNAPSHOT_DEPLOY_KEY (write deploy key of joblist-snapshot).
+# Optional: CLOUDFLARE_API_TOKEN also redeploys the site with fresh prerendered pages.
+# Also publishes the last crawl (branch `crawl`) under crawl/.
 name: snapshot
 
 on:
@@ -16,9 +18,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-and-deploy:
+  build-and-publish:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -31,8 +35,18 @@ jobs:
           mkdir -p static/snapshot/crawl
           if git fetch --depth=1 origin crawl; then git archive FETCH_HEAD | tar -x -C static/snapshot/crawl; fi
       - run: node indexer/index.js static/snapshot
-      - run: npm run build
-      - run: node indexer/prerender.js build static/snapshot
-      - run: npx wrangler deploy
+      - name: Publish to joblisttoday/joblist-snapshot (one commit, no history)
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          DEPLOY_KEY: ${{ secrets.SNAPSHOT_DEPLOY_KEY }}
+        run: |
+          mkdir -p ~/.ssh && echo "$DEPLOY_KEY" > ~/.ssh/snapshot && chmod 600 ~/.ssh/snapshot
+          ssh-keyscan github.com >> ~/.ssh/known_hosts 2>/dev/null
+          cd static/snapshot
+          printf '# joblist snapshot\n\nRebuilt %s by joblist-atproto. Records belong to their authors.\n' "$(date -u +%FT%TZ)" > README.md
+          touch .nojekyll
+          git init -q -b gh-pages
+          git add -A
+          git -c user.name=joblist -c user.email=1502484+4www@users.noreply.github.com commit -qm "Snapshot $(date -u +%FT%TZ)"
+          GIT_SSH_COMMAND="ssh -i ~/.ssh/snapshot" git push -qf git@github.com:joblisttoday/joblist-snapshot.git gh-pages
+      - if: env.CLOUDFLARE_API_TOKEN != ''
+        run: npm run build && node indexer/prerender.js build static/snapshot && npx wrangler deploy

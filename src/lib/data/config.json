@@ -8,7 +8,9 @@
 		"job": "today.joblist.job",
 		"suggestion": "today.joblist.suggestion"
 	},
-	"bots": [],
+	"bots": [
+		"did:plc:jqaucxlucukeif3bltpuc7zx"
+	],
 	"services": {
 		"relay": "https://relay1.us-east.bsky.network",
 		"appview": "https://public.api.bsky.app",
@@ -65,7 +67,7 @@
 		"profile": "https://bsky.app/profile/{handle}"
 	},
 	"snapshot": {
-		"path": "/snapshot",
+		"path": "https://joblisttoday.github.io/joblist-snapshot",
 		"maxAgeHours": 12
 	},
 	"crawler": {
