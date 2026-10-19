@@ -1,4 +1,4 @@
-import config from '#lib/data/config.json';
+import config from '#lib/data/config.json' with { type: 'json' };
 import { xrpcGet } from './xrpc.js';
 
 /** @type {Map<string, Promise<string>>} */
