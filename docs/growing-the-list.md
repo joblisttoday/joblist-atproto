@@ -62,12 +62,11 @@ Precision, checked by hand on random samples:
 `--write` applies only high-confidence changes to records of the signed-in
 account and never deletes. Run it once, after a look at the dry run.
 
-**Weekly health check, for free.** A scheduled GitHub Action can run
-`node scripts/check-companies.js health.json` every week (about 2.5 minutes,
-about 2,000 polite requests) and publish `health.json` as a static file
-(GitHub Pages, or committed to a `health` branch). Not built yet: it is
-one workflow file with a cron, `actions/setup-node`, the script, and an
-upload step. No secrets are needed because it only reads.
+**Weekly health check, for free.** Built: the crawler
+([crawler.md](crawler.md)) runs the health check and the repair every
+week on GitHub Actions, keeps its report on the `crawl` branch and
+publishes it at `/snapshot/crawl/health.json`. With its own account's
+secrets it also writes its high-confidence repairs, as its own versions.
 
 **Re-key old records.** The 390 slug-keyed records cannot be claimed by
 their company (a company's own record is keyed by its domain). Once the
@@ -160,4 +159,6 @@ The records stay the source of truth; health is a hint next to them.
 3. Add claiming for domain-handle accounts and board URL recognition in
    the add-company form.
 4. Re-key the slug records that now have a website.
-5. Suggested companies from hiring posts and the Open Jobs board list.
+5. Suggested companies from hiring posts and the Open Jobs board list
+   (the crawler adds those with a live board linked from their own
+   website, see [crawler.md](crawler.md)).

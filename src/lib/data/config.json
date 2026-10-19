@@ -67,5 +67,29 @@
 	"snapshot": {
 		"path": "/snapshot",
 		"maxAgeHours": 12
+	},
+	"crawler": {
+		"service": "https://bsky.social",
+		"maxWritesPerRun": 200,
+		"maxNewCompaniesPerRun": 25,
+		"batchSize": 50,
+		"pauseSeconds": 10,
+		"concurrency": 8,
+		"out": "static/snapshot/crawl",
+		"openJobs": "https://raw.githubusercontent.com/elliottdehn/open-jobs/a6bb3ab9a96d87d02e4369cb97f55a8399e2d965/slugs.json",
+		"search": {
+			"service": "https://api.bsky.app",
+			"queries": [
+				"we're hiring",
+				"we are hiring",
+				"#hiring",
+				"join our team",
+				"open roles",
+				"now hiring",
+				"job opening",
+				"come work with us"
+			],
+			"pages": 5
+		}
 	}
 }

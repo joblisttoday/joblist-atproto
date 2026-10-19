@@ -1,7 +1,7 @@
 /**
  * Heuristics proposing fixes for one company, from its health check:
  * - a new job board, found in links on its website or careers page;
- * - a website, for companies that have none;
+ * - a website, for companies that have none, or whose website moved to a domain with the same name;
  * - a "likely gone" mark when nothing about it answers any more.
  * Every proposed board is checked live before it is proposed.
  */
@@ -73,7 +73,7 @@ async function readPages(urls) {
  * @param {any} check the company's health check
  * @param {string[]} names
  */
-async function findBoard(record, check, names) {
+export async function findBoard(record, check, names) {
 	const current = record.jobBoard || {};
 	const urls = [current.url, check.website?.state === 'ok' ? record.url : null].filter(Boolean);
 	/** @type {{provider: string, id: string, count: number}[]} */
@@ -171,7 +171,15 @@ export async function proposeRepair(record, check) {
 		}
 	}
 
-	if (check.website?.redirectedTo) proposal.notes.push(`website now redirects to ${check.website.redirectedTo}`);
+	const movedTo = check.website?.state === 'ok' ? check.website.redirectedTo : undefined;
+	if (movedTo) {
+		proposal.notes.push(`website now redirects to ${movedTo}`);
+		// A new domain carrying the same name is a move (acme.de → acme.com); another name is a person's call (acquired, renamed).
+		if (!proposal.changes.url && isMove(v.url, movedTo) && matchesName(siteOf(movedTo).split('.')[0], names)) {
+			proposal.changes.url = `https://${movedTo}`;
+			proposal.confidence = proposal.confidence || 'high';
+		}
+	}
 
 	// Without a website we cannot tell a closed company from a moved careers page.
 	// "Gone" needs two signals: a board or careers page that existed and stopped answering, and a dead website.
@@ -184,6 +192,21 @@ export async function proposeRepair(record, check) {
 		proposal.notes.push('needs a person: no website known, and its job board or careers page does not answer');
 	}
 	return proposal;
+}
+
+/**
+ * Whether a redirect is a move of the whole site: to a registered domain
+ * (not a portal.x.com page), and not just to a country's version of it
+ * (acme.com → acme.fr depends on where the visitor is).
+ * @param {string} from the website
+ * @param {string} to the host it redirects to
+ */
+export function isMove(from, to) {
+	if (siteOf(to) !== to) return false;
+	const [fromLabel, ...fromTld] = siteOf(new URL(from).hostname).split('.');
+	const [toLabel, ...toTld] = to.split('.');
+	const countryOnly = fromLabel === toLabel && toTld.join('.') !== 'com' && toTld.at(-1)?.length === 2;
+	return !countryOnly || fromTld.join('.') === toTld.join('.');
 }
 
 /** @param {any} jobBoard @param {any} check */
