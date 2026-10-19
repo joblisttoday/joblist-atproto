@@ -100,12 +100,13 @@ export function canApply(apply) {
 }
 
 /**
- * The offer's page on joblist.
+ * The offer's page on joblist. The DID's colons are encoded, as the static
+ * host serves it (it redirects the unencoded form).
  * @param {string} did
  * @param {string} rkey
  */
 export function postPath(did, rkey) {
-	return config.jobPost.page.replace('{did}', did).replace('{rkey}', rkey);
+	return config.jobPost.page.replace('{did}', encodeURIComponent(did)).replace('{rkey}', encodeURIComponent(rkey));
 }
 
 /**
@@ -227,11 +228,13 @@ export function mergeJobs(posted, board) {
 }
 
 /**
- * Posted jobs before the others, keeping each group's order.
+ * Jobs the company posted itself, then those others posted, then the rest,
+ * keeping each group's order.
  * @param {Job[]} jobs
  */
 export function postedFirst(jobs) {
-	return [...jobs.filter((j) => j.posted), ...jobs.filter((j) => !j.posted)];
+	const rank = (/** @type {Job} */ j) => (j.posted ? (j.posted.verified ? 0 : 1) : 2);
+	return [...jobs].sort((a, b) => rank(a) - rank(b));
 }
 
 /** @param {string} url */

@@ -16,7 +16,7 @@ import {
 
 const NOW = Date.parse('2026-10-19T12:00:00Z');
 const DAY = 24 * 3600 * 1000;
-const PAGE = 'https://atproto.joblist.today/job/did:plc:a/3abc';
+const PAGE = 'https://atproto.joblist.today/job/did%3Aplc%3Aa/3abc';
 
 /** @param {Partial<import('./job-post.js').JobForm>} values */
 const form = (values = {}) => ({
@@ -130,7 +130,11 @@ describe('verified and merge', () => {
 			['https://acme.org/jobs/2', 'did:plc:b'],
 			['https://acme.org/jobs/3', undefined]
 		]);
-		expect(postedFirst([board[1], other]).map((j) => j.url)).toEqual(['https://acme.org/jobs/2', 'https://acme.org/jobs/3']);
+		expect(postedFirst([board[1], other, own]).map((j) => j.url)).toEqual([
+			'https://acme.org/jobs/1',
+			'https://acme.org/jobs/2',
+			'https://acme.org/jobs/3'
+		]);
 		expect(isRemote(own)).toBe(true);
 	});
 });

@@ -54,8 +54,10 @@ function jobLink(job) {
 
 /** @param {string} path @param {string} html */
 function write(path, html) {
-	mkdirSync(join(build, path), { recursive: true });
-	writeFileSync(join(build, path, 'index.html'), html);
+	// Files are named by the decoded path (job pages have encoded DIDs in their links).
+	const dir = join(build, decodeURIComponent(path));
+	mkdirSync(dir, { recursive: true });
+	writeFileSync(join(dir, 'index.html'), html);
 }
 
 let count = 0;

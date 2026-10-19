@@ -7,7 +7,7 @@ import { toPost } from '../src/lib/models/job-post.js';
 const value = {
 	title: 'Engineer </script>',
 	company: 'acme.org',
-	url: 'https://atproto.joblist.today/job/did:plc:acme/3abc',
+	url: 'https://atproto.joblist.today/job/did%3Aplc%3Aacme/3abc',
 	description: 'Build things.\nWith us.',
 	locations: [{ name: 'Berlin', country: 'DE' }],
 	remote: 'remote',
@@ -34,7 +34,7 @@ test('jobPages makes one page per live offer, with safe structured data', () => 
 	const expired = { ...record, rkey: '3old', uri: 'at://did:plc:acme/today.joblist.job/3old', value: { ...value, expiresAt: '2020-01-01T00:00:00Z' } };
 	const pages = jobPages([record, expired], companies, profiles);
 	assert.equal(pages.length, 1);
-	assert.equal(pages[0].path, '/job/did:plc:acme/3abc');
+	assert.equal(pages[0].path, '/job/did%3Aplc%3Aacme/3abc');
 	assert.ok(!pages[0].meta.head.slice(0, -'</script>'.length).includes('</script>'));
 	assert.match(pages[0].meta.body, /Build things\.<br>With us\./);
 	assert.match(pages[0].meta.body, /mailto:jobs@acme\.org/);
