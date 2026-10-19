@@ -2,8 +2,8 @@
 	import { goto } from '$app/navigation';
 	import { t } from '#lib/i18n/index.svelte.js';
 
-	/** @type {{value?: string}} */
-	let { value = '' } = $props();
+	/** @type {{value?: string, list?: string}} the list to go back to, kept across pastes */
+	let { value = '', list = '' } = $props();
 
 	// Reading the clipboard needs a user gesture and is not offered everywhere.
 	const canPaste = typeof navigator !== 'undefined' && Boolean(navigator.clipboard?.readText);
@@ -11,7 +11,7 @@
 	async function paste() {
 		try {
 			const text = (await navigator.clipboard.readText()).trim();
-			if (text) await goto(`/add?url=${encodeURIComponent(text)}`);
+			if (text) await goto(`/add?${new URLSearchParams(list ? { url: text, list } : { url: text })}`);
 		} catch {
 			// permission refused: the field still takes a normal paste
 		}
@@ -36,6 +36,7 @@
 			required
 			aria-describedby="add-url-help"
 		/>
+		{#if list}<input type="hidden" name="list" value={list} />{/if}
 		<small id="add-url-help">{t('add.link.help')}</small>
 		<menu>
 			<button type="submit">{t('add.continue')}</button>

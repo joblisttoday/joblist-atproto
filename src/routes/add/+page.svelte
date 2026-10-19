@@ -24,6 +24,10 @@
 	const board = $derived(key ? null : pasted.board);
 	const check = $derived(board ? checkBoard(board) : Promise.resolve(null));
 	const title = $derived(company ? t('form.company.edit') : t('form.company.title'));
+	// Described from "suggest a company" on a list (?list=/handle/rkey): go back there with it.
+	const list = $derived(params.get('list') || '');
+	/** @param {string} key */
+	const next = (key) => (/^\/[\w.:-]+\/[\w.:~-]+$/.test(list) ? `${list}?suggest=${encodeURIComponent(key)}` : `/company/${key}`);
 </script>
 
 <svelte:head><title>{title} · {config.name}</title></svelte:head>
@@ -31,7 +35,7 @@
 <h1>{title}</h1>
 
 {#if !key}
-	<AddLink value={input.link || input.name} />
+	<AddLink value={input.link || input.name} {list} />
 {/if}
 
 {#if started}
@@ -44,7 +48,7 @@
 				<CompanyForm
 					{company}
 					prefill={toPrefill(pasted, found?.name)}
-					onsaved={(saved) => goto(`/company/${saved}`)}
+					onsaved={(saved) => goto(next(saved))}
 					oncancel={() => history.back()}
 				/>
 			{/key}
