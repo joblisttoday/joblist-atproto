@@ -175,7 +175,7 @@ export async function proposeRepair(record, check) {
 	if (movedTo) {
 		proposal.notes.push(`website now redirects to ${movedTo}`);
 		// A new domain carrying the same name is a move (acme.de → acme.com); another name is a person's call (acquired, renamed).
-		if (!proposal.changes.url && matchesName(siteOf(movedTo).split('.')[0], names)) {
+		if (!proposal.changes.url && isMove(v.url, movedTo) && matchesName(siteOf(movedTo).split('.')[0], names)) {
 			proposal.changes.url = `https://${movedTo}`;
 			proposal.confidence = proposal.confidence || 'high';
 		}
@@ -192,6 +192,21 @@ export async function proposeRepair(record, check) {
 		proposal.notes.push('needs a person: no website known, and its job board or careers page does not answer');
 	}
 	return proposal;
+}
+
+/**
+ * Whether a redirect is a move of the whole site: to a registered domain
+ * (not a portal.x.com page), and not just to a country's version of it
+ * (acme.com → acme.fr depends on where the visitor is).
+ * @param {string} from the website
+ * @param {string} to the host it redirects to
+ */
+export function isMove(from, to) {
+	if (siteOf(to) !== to) return false;
+	const [fromLabel, ...fromTld] = siteOf(new URL(from).hostname).split('.');
+	const [toLabel, ...toTld] = to.split('.');
+	const countryOnly = fromLabel === toLabel && toTld.join('.') !== 'com' && toTld.at(-1)?.length === 2;
+	return !countryOnly || fromTld.join('.') === toTld.join('.');
 }
 
 /** @param {any} jobBoard @param {any} check */
