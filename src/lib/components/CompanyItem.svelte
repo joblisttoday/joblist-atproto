@@ -1,8 +1,8 @@
 <script>
 	import { t } from '#lib/i18n/index.svelte.js';
 
-	/** @type {{company: import('#lib/models/company.js').Company}} */
-	let { company } = $props();
+	/** @type {{company: import('#lib/models/company.js').Company, children?: import('svelte').Snippet}} */
+	let { company, children } = $props();
 	const places = $derived(
 		[...new Set(company.locations.map((l) => l.name).filter(Boolean))].slice(0, 3).join(', ')
 	);
@@ -13,6 +13,7 @@
 	<a href="/company/{company.key}">{company.name}</a>
 	{#if company.verified}<span role="img" aria-label={t('company.verified', { domain: company.key })} title={t('company.verified', { domain: company.key })}>✓</span>{/if}
 	{#if about}<small>{about}</small>{/if}
+	{#if children}<jl-company-aside>{@render children()}</jl-company-aside>{/if}
 </jl-company>
 
 <style>
@@ -40,5 +41,11 @@
 	}
 	small {
 		display: block;
+	}
+	/* Above the row link, so its own links and buttons stay usable. */
+	jl-company-aside {
+		display: block;
+		position: relative;
+		z-index: 1;
 	}
 </style>

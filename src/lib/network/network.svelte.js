@@ -4,7 +4,7 @@ import { listRecords, listRepos } from '#lib/atproto/records.js';
 import { mapLimit } from '#lib/atproto/xrpc.js';
 import { session } from '#lib/auth/session.svelte.js';
 import { toCompany } from '#lib/models/company.js';
-import { toList } from '#lib/models/list.js';
+import { membership, toList } from '#lib/models/list.js';
 import { toSuggestion } from '#lib/models/suggestion.js';
 import { readCache, writeCache } from './cache.js';
 import { getSnapshotRecords } from './snapshot.js';
@@ -90,11 +90,19 @@ export function handleOf(did) {
 }
 
 /**
- * Lists that include a company.
+ * A list's companies, with what others suggested for it.
+ * @param {import('#lib/models/list.js').List} list
+ */
+export function membersOf(list) {
+	return membership(list, suggestions);
+}
+
+/**
+ * Lists that include a company (also as an accepted suggestion of an open list).
  * @param {string} key
  */
 export function listsWith(key) {
-	return lists.filter((l) => l.companies.includes(key));
+	return lists.filter((l) => membersOf(l).members.some((m) => m.key === key));
 }
 
 let started = false;

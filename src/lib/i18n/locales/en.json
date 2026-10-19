@@ -45,6 +45,7 @@
 	"list.tabs": "View",
 	"list.notFoundTitle": "List not found",
 	"list.companies.one": "1 company",
+	"list.open": "anyone can add companies",
 
 	"company.website": "Website",
 	"company.jobBoard": "Job board",
@@ -135,6 +136,8 @@
 	"form.list.add.help": "Type a name, tag or place, then tap a company to add it.",
 	"form.list.noMatch": "Nobody has described it yet.",
 	"form.list.suggestions": "Companies to add",
+	"form.list.open": "Anyone can add companies",
+	"form.list.open.help": "Companies others suggest appear in the list at once, credited to them. You can hide any. Otherwise you accept or dismiss each one.",
 
 	"signin.title": "Sign in",
 	"signin.intro": "Use your Bluesky or any atproto account. Your companies and lists are saved in your own account.",
@@ -172,5 +175,23 @@
 	"companies.found": "{count} found",
 	"companies.more": "Show {count} more ({left} left)",
 	"companies.title": "Companies",
-	"companies.intro": "Every company described by someone in the network."
+	"companies.intro": "Every company described by someone in the network.",
+
+	"suggestion.title": "Suggest a company",
+	"suggestion.search": "Which company?",
+	"suggestion.help": "The list's author will see your suggestion and can add it.",
+	"suggestion.help.open": "This list is open: the company appears in it at once, credited to you.",
+	"suggestion.chosen": "Suggest {name} for this list",
+	"suggestion.note": "Why it belongs here (optional)",
+	"suggestion.send": "Suggest",
+	"suggestion.sent": "Sent. The list's author will see it.",
+	"suggestion.sent.open": "Added to the list, credited to you.",
+	"suggestion.addedBy": "added by",
+	"suggestion.by": "suggested by",
+	"suggestion.hide": "Hide",
+	"suggestion.withdraw": "Take back",
+	"suggestion.pending": "{count} companies suggested by others",
+	"suggestion.pending.one": "1 company suggested by others",
+	"suggestion.accept": "Add to the list",
+	"suggestion.dismiss": "Dismiss"
 }

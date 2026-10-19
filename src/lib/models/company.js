@@ -186,6 +186,25 @@ export function searchText(company) {
 }
 
 /**
+ * Companies matching every word of a query, by name, domain, tag or place.
+ * @param {Iterable<Company>} companies
+ * @param {string} query
+ * @param {number} limit
+ */
+export function searchCompanies(companies, query, limit) {
+	const words = query.toLowerCase().split(/\s+/).filter(Boolean);
+	if (!words.length) return [];
+	/** @type {Company[]} */
+	const found = [];
+	for (const company of companies) {
+		const text = searchText(company);
+		if (words.every((w) => text.includes(w))) found.push(company);
+		if (found.length >= limit) break;
+	}
+	return found;
+}
+
+/**
  * A company record from form values.
  * @param {{name: string, url: string, description: string, tags: string, provider: string, boardId: string, careersUrl: string, locations: Location[], links: string}} form
  * @param {string} [createdAt] when this person first described the company

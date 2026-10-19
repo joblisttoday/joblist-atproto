@@ -1,17 +1,18 @@
 <script>
 	import Author from './Author.svelte';
-	import { handleOf } from '#lib/network/network.svelte.js';
+	import { handleOf, membersOf } from '#lib/network/network.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/** @type {{list: import('#lib/models/list.js').List, author?: boolean}} */
 	let { list, author = true } = $props();
+	const count = $derived(membersOf(list).members.length);
 </script>
 
 <jl-list>
 	<a href="/{handleOf(list.did)}/{list.rkey}">{list.name}</a>
 	{#if list.description}<p>{list.description}</p>{/if}
 	<small>
-		{t('list.companies', { count: list.companies.length })}{#if author}{' · '}{t('list.by')} <Author did={list.did} />{/if}
+		{t('list.companies', { count })}{#if author}{' · '}{t('list.by')} <Author did={list.did} />{/if}
 	</small>
 </jl-list>
 

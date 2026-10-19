@@ -5,9 +5,13 @@
 	import CompanyMap from '#lib/components/CompanyMap.svelte';
 	import Jobs from '#lib/components/Jobs.svelte';
 	import ListHeader from '#lib/components/ListHeader.svelte';
+	import ListPending from '#lib/components/ListPending.svelte';
+	import ListSuggest from '#lib/components/ListSuggest.svelte';
 	import NetworkStatus from '#lib/components/NetworkStatus.svelte';
+	import SuggestionCredit from '#lib/components/SuggestionCredit.svelte';
 	import Tabs from '#lib/components/Tabs.svelte';
-	import { data, handleOf, network } from '#lib/network/network.svelte.js';
+	import { session } from '#lib/auth/session.svelte.js';
+	import { data, handleOf, membersOf, network } from '#lib/network/network.svelte.js';
 	import { loadList } from '#lib/network/load-list.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
@@ -28,17 +32,28 @@
 	});
 
 	const tab = $derived(page.url.searchParams.get('tab') || 'companies');
+	const membership = $derived(list ? membersOf(list) : { members: [], pending: [] });
 	const companies = $derived(
-		(list?.companies || []).map((key) => data.companies.get(key)).filter((c) => c !== undefined)
+		membership.members.map((m) => data.companies.get(m.key)).filter((c) => c !== undefined)
 	);
-	const missing = $derived((list?.companies.length || 0) - companies.length);
+	const missing = $derived(membership.members.length - companies.length);
+	/** Who suggested each company added to an open list. */
+	const credits = $derived(new Map(membership.members.flatMap((m) => (m.suggestion ? [[m.key, m.suggestion]] : []))));
+	const mine = $derived(Boolean(list && session.did === list.did));
+	/** Companies that cannot be suggested again: in the list, waiting, or hidden by its author. */
+	const taken = $derived(
+		new Set([...membership.members.map((m) => m.key), ...membership.pending.map((s) => s.company), ...(list?.hidden || [])])
+	);
 </script>
 
 <svelte:head><title>{list?.name || rkey} · {config.name}</title></svelte:head>
 
 {#if list}
 	<jl-list-page>
-		<ListHeader {list} />
+		<ListHeader {list} count={membership.members.length} />
+
+		{#if mine && membership.pending.length}<ListPending {list} pending={membership.pending} />{/if}
+		{#if session.ready && !mine}<ListSuggest {list} {taken} />{/if}
 
 		<Tabs
 			label={t('list.tabs')}
@@ -55,7 +70,12 @@
 		{:else if tab === 'map'}
 			<CompanyMap {companies} />
 		{:else}
-			<Companies {companies} searchable={companies.length > 10} />
+			<Companies {companies} searchable={companies.length > 10}>
+				{#snippet aside(company)}
+					{@const suggestion = credits.get(company.key)}
+					{#if suggestion}<SuggestionCredit {list} {suggestion} />{/if}
+				{/snippet}
+			</Companies>
 		{/if}
 		{#if missing > 0}<p><small>{t('list.missing', { count: missing })}</small></p>{/if}
 	</jl-list-page>

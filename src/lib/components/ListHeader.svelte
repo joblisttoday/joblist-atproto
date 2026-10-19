@@ -8,8 +8,8 @@
 	import { parseUri } from '#lib/models/list.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
-	/** @type {{list: import('#lib/models/list.js').List}} */
-	let { list } = $props();
+	/** @type {{list: import('#lib/models/list.js').List, count?: number}} */
+	let { list, count } = $props();
 
 	let copied = $state(false);
 	/** @type {string | null} */
@@ -40,13 +40,14 @@
 	}
 </script>
 
-<jl-list-header mine={mine || undefined}>
+<jl-list-header mine={mine || undefined} open={list.open || undefined}>
 	<header>
 		<h1>{list.name}</h1>
 		{#if list.description}<p>{list.description}</p>{/if}
 		<p>
 			<small>
-				{t('list.companies', { count: list.companies.length })} · {t('list.by')} <Author did={list.did} />
+				{t('list.companies', { count: count ?? list.companies.length })} · {t('list.by')} <Author did={list.did} />
+					{#if list.open}· {t('list.open')}{/if}
 				{#if source}
 					· {t('list.copiedFrom')} <a href="/{handleOf(source.did)}/{source.rkey}">@{handleOf(source.did)}</a>
 				{/if}

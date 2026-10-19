@@ -1,7 +1,7 @@
 {
 	"lexicon": 1,
 	"id": "today.joblist.list",
-	"description": "A list of companies curated by its author.",
+	"description": "A list of companies curated by its author, who can let others add to it.",
 	"defs": {
 		"main": {
 			"type": "record",
@@ -19,6 +19,13 @@
 						"items": { "type": "string", "maxLength": 512 }
 					},
 					"copiedFrom": { "type": "string", "format": "at-uri", "description": "The list this one was copied from." },
+					"open": { "type": "boolean", "description": "Anyone can add companies: companies suggested for this list (today.joblist.suggestion records) are shown in it at once, credited to who suggested them. Otherwise the author accepts or dismisses each one." },
+					"hidden": {
+						"type": "array",
+						"maxLength": 2000,
+						"description": "Company record keys suggested by others that the author hid or dismissed.",
+						"items": { "type": "string", "maxLength": 512 }
+					},
 					"createdAt": { "type": "string", "format": "datetime" }
 				}
 			}

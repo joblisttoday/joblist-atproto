@@ -1,9 +1,7 @@
 <script>
-	import config from '#lib/data/config.json';
-	import { putRecord } from '#lib/atproto/write.js';
 	import { session } from '#lib/auth/session.svelte.js';
-	import { data, upsertLocal } from '#lib/network/network.svelte.js';
-	import { toRecord } from '#lib/models/list.js';
+	import { data } from '#lib/network/network.svelte.js';
+	import { updateList } from '#lib/network/save-list.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/** @type {{key: string}} */
@@ -22,9 +20,7 @@
 			const companies = list.companies.includes(key)
 				? list.companies.filter((k) => k !== key)
 				: [...list.companies, key];
-			const record = toRecord({ ...list, description: list.description || '', companies }, list.createdAt);
-			const res = await putRecord(config.collections.list, list.rkey, record);
-			upsertLocal('list', { did: list.did, rkey: list.rkey, uri: res.uri, cid: res.cid, value: record });
+			await updateList(list, { companies });
 		} catch (err) {
 			error = err instanceof Error ? err.message : String(err);
 		} finally {

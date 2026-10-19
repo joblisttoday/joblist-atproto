@@ -4,8 +4,15 @@
 	import { searchText } from '#lib/models/company.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
-	/** @type {{companies: import('#lib/models/company.js').Company[], searchable?: boolean, query?: string}} */
-	let { companies, searchable = true, query = $bindable('') } = $props();
+	/**
+	 * @type {{
+	 *   companies: import('#lib/models/company.js').Company[],
+	 *   searchable?: boolean,
+	 *   query?: string,
+	 *   aside?: import('svelte').Snippet<[import('#lib/models/company.js').Company]>
+	 * }}
+	 */
+	let { companies, searchable = true, query = $bindable(''), aside } = $props();
 	const PAGE = config.companies.pageSize;
 	let shown = $state(PAGE);
 
@@ -33,7 +40,9 @@
 	{/if}
 	<ul>
 		{#each filtered.slice(0, shown) as company (company.key)}
-			<li><CompanyItem {company} /></li>
+			<li>
+				{#if aside}<CompanyItem {company}>{@render aside(company)}</CompanyItem>{:else}<CompanyItem {company} />{/if}
+			</li>
 		{/each}
 	</ul>
 	{#if query && !filtered.length}<p>{t('search.none')}</p>{/if}

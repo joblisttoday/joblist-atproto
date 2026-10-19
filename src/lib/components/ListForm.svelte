@@ -10,7 +10,7 @@
 	/**
 	 * @type {{
 	 *   list?: import('#lib/models/list.js').List | null,
-	 *   initial?: {name?: string, description?: string, companies?: string[], copiedFrom?: string},
+	 *   initial?: {name?: string, description?: string, companies?: string[], copiedFrom?: string, open?: boolean},
 	 *   onsaved: (rkey: string) => void,
 	 *   oncancel?: () => void
 	 * }}
@@ -22,7 +22,10 @@
 		name: list?.name ?? initial.name ?? '',
 		description: list?.description ?? initial.description ?? '',
 		companies: [...(list?.companies ?? initial.companies ?? [])],
-		copiedFrom: list?.copiedFrom ?? initial.copiedFrom
+		copiedFrom: list?.copiedFrom ?? initial.copiedFrom,
+		// New lists are open to contributions; their author can still hide any.
+		open: list?.open ?? initial.open ?? true,
+		hidden: [...(list?.hidden ?? [])]
 	});
 	let form = $state(initialForm());
 	let query = $state('');
@@ -85,6 +88,9 @@
 
 		<label for="list-description">{t('form.list.description')}</label>
 		<textarea id="list-description" bind:value={form.description} maxlength="3000"></textarea>
+
+		<label><input type="checkbox" bind:checked={form.open} aria-describedby="list-open-help" /> {t('form.list.open')}</label>
+		<small id="list-open-help">{t('form.list.open.help')}</small>
 
 		<fieldset>
 			<legend>{t('form.list.companies')} ({form.companies.length})</legend>

@@ -45,6 +45,7 @@
 	"list.tabs": "Affichage",
 	"list.notFoundTitle": "Liste introuvable",
 	"list.companies.one": "1 entreprise",
+	"list.open": "tout le monde peut ajouter des entreprises",
 
 	"company.website": "Site web",
 	"company.jobBoard": "Offres d'emploi",
@@ -135,6 +136,8 @@
 	"form.list.add.help": "Tapez un nom, un tag ou un lieu, puis touchez une entreprise pour l'ajouter.",
 	"form.list.noMatch": "Personne ne l'a encore décrite.",
 	"form.list.suggestions": "Entreprises à ajouter",
+	"form.list.open": "Tout le monde peut ajouter des entreprises",
+	"form.list.open.help": "Les entreprises suggérées par d'autres apparaissent aussitôt dans la liste, avec leur nom. Vous pouvez masquer chacune. Sinon, vous acceptez ou refusez chaque suggestion.",
 
 	"signin.title": "Connexion",
 	"signin.intro": "Utilisez votre compte Bluesky ou tout compte atproto. Vos entreprises et listes sont enregistrées dans votre propre compte.",
@@ -172,5 +175,23 @@
 	"companies.found": "{count} trouvées",
 	"companies.more": "Afficher {count} de plus ({left} restantes)",
 	"companies.title": "Entreprises",
-	"companies.intro": "Toutes les entreprises décrites par quelqu'un sur le réseau."
+	"companies.intro": "Toutes les entreprises décrites par quelqu'un sur le réseau.",
+
+	"suggestion.title": "Suggérer une entreprise",
+	"suggestion.search": "Quelle entreprise ?",
+	"suggestion.help": "L'auteur de la liste verra votre suggestion et pourra l'ajouter.",
+	"suggestion.help.open": "Cette liste est ouverte : l'entreprise y apparaît aussitôt, avec votre nom.",
+	"suggestion.chosen": "Suggérer {name} pour cette liste",
+	"suggestion.note": "Pourquoi elle a sa place ici (facultatif)",
+	"suggestion.send": "Suggérer",
+	"suggestion.sent": "Envoyé. L'auteur de la liste la verra.",
+	"suggestion.sent.open": "Ajoutée à la liste, avec votre nom.",
+	"suggestion.addedBy": "ajoutée par",
+	"suggestion.by": "suggérée par",
+	"suggestion.hide": "Masquer",
+	"suggestion.withdraw": "Retirer",
+	"suggestion.pending": "{count} entreprises suggérées par d'autres",
+	"suggestion.pending.one": "1 entreprise suggérée par d'autres",
+	"suggestion.accept": "Ajouter à la liste",
+	"suggestion.dismiss": "Refuser"
 }

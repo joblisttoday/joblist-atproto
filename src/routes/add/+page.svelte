@@ -10,6 +10,10 @@
 	const key = $derived(page.url.searchParams.get('key'));
 	const company = $derived(key ? data.companies.get(key) || null : null);
 	const url = $derived(page.url.searchParams.get('url') || '');
+	// Described from "suggest a company" on a list (?list=/handle/rkey): go back there with it.
+	const list = $derived(page.url.searchParams.get('list') || '');
+	/** @param {string} key */
+	const next = (key) => (/^\/[\w.:-]+\/[\w.:~-]+$/.test(list) ? `${list}?suggest=${encodeURIComponent(key)}` : `/company/${key}`);
 </script>
 
 <svelte:head><title>{company ? t('form.company.edit') : t('form.company.title')} · {config.name}</title></svelte:head>
@@ -20,7 +24,7 @@
 		<CompanyForm
 			{company}
 			initialUrl={url}
-			onsaved={(saved) => goto(`/company/${saved}`)}
+			onsaved={(saved) => goto(next(saved))}
 			oncancel={() => history.back()}
 		/>
 	{/key}
