@@ -3,12 +3,25 @@
 	"name": "joblist-atproto",
 	"account_id": "561bb824be3c6da587401329eff1d81b",
 	"compatibility_date": "2026-10-01",
-	// A static site: no Worker code, only assets with SPA fallback.
+	// A static site; the Worker only answers /api/* (featured jobs, see docs/revenue.md).
+	"main": "src/worker/index.js",
 	"assets": {
 		"directory": "./build",
 		"not_found_handling": "single-page-application",
 		// Prerendered pages live at /path/index.html but are served at /path.
-		"html_handling": "drop-trailing-slash"
+		"html_handling": "drop-trailing-slash",
+		// Everything else is served as assets, without running the Worker.
+		"run_worker_first": ["/api/*"]
 	},
+	"kv_namespaces": [
+		{
+			"binding": "FEATURED",
+			// Placeholder: replace with the id printed by `npx wrangler kv namespace create FEATURED`.
+			// `wrangler dev` uses a local namespace and ignores it.
+			"id": "00000000000000000000000000000000"
+		}
+	],
+	// Secret (not in this file): STRIPE_WEBHOOK_SECRET, set with
+	// `npx wrangler secret put STRIPE_WEBHOOK_SECRET`; locally in .dev.vars (not committed).
 	"routes": [{ "pattern": "atproto.joblist.today", "custom_domain": true }]
 }

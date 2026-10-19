@@ -10,7 +10,8 @@ import revenue from '../data/revenue.json' with { type: 'json' };
  * A featured job is only an id, the job it stands for, and dates: no name,
  * no email, nothing about who paid.
  *
- * @typedef {{kind: 'record', uri: string} | {kind: 'board', url: string, company: string}} FeatureJob
+ * @typedef {{kind: 'record', uri: string}} RecordJob
+ * @typedef {RecordJob | {kind: 'board', url: string, company: string}} FeatureJob
  *   record: a today.joblist.job record; board: a job board's job, by its link and company key.
  * @typedef {{id: string, job: FeatureJob, until: string, paidAt: string}} Featured
  */
@@ -65,7 +66,7 @@ export function toFeatureJob(input) {
  * The job to feature for a posted offer.
  * @param {string} did
  * @param {string} rkey
- * @returns {FeatureJob}
+ * @returns {RecordJob}
  */
 export function recordJob(did, rkey) {
 	return { kind: 'record', uri: `at://${did}/${config.collections.job}/${rkey}` };
