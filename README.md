@@ -87,6 +87,18 @@ JOBLIST_HANDLE=joblist.today JOBLIST_APP_PASSWORD=… \
 
 Re-running updates the records instead of duplicating them.
 
+## Check and repair companies
+
+Job boards and websites change; these scripts find what broke
+(see [docs/growing-the-list.md](docs/growing-the-list.md)):
+
+```sh
+node scripts/check-companies.js health.json            # read-only health report
+node scripts/repair-companies.js health.json            # proposed fixes, dry run
+JOBLIST_HANDLE=joblist.today JOBLIST_APP_PASSWORD=… \
+  node scripts/repair-companies.js health.json --write  # apply high-confidence fixes
+```
+
 ## License
 
 Code: GPL-3.0-or-later, like the rest of joblist. Records belong to their authors.
