@@ -53,7 +53,7 @@
 		},
 		{
 			"name": "search_jobs",
-			"description": "Search open jobs at companies on joblist (as of the last snapshot, refreshed every few hours). Returns up to 20 jobs, newest first, with title, company, location and link to apply.",
+			"description": "Search open jobs at companies on joblist (job boards as of the last snapshot, refreshed every few hours, and offers posted on joblist). Returns up to 20 jobs, newest first, with title, company, location and link to apply.",
 			"inputSchema": {
 				"type": "object",
 				"properties": {
