@@ -87,6 +87,7 @@ export async function probe(url, { body = false } = {}) {
  * ok: answers; blocked: exists but refuses robots (403, 429, …);
  * missing: 404/410; error: other server errors.
  * @param {number} status
+ * @returns {'ok' | 'blocked' | 'missing' | 'error'}
  */
 function pageState(status) {
 	if (status < 400) return 'ok';
