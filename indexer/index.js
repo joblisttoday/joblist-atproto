@@ -67,5 +67,5 @@ function groupCompanies(companyRecords, profiles) {
 		if (!r.value?.name) continue;
 		byKey.set(r.rkey, [...(byKey.get(r.rkey) || []), r]);
 	}
-	return [...byKey.values()].map((versions) => toCompany(versions, profiles, null));
+	return [...byKey.values()].map((versions) => toCompany(versions, profiles));
 }

@@ -1,7 +1,7 @@
 {
 	"lexicon": 1,
 	"id": "today.joblist.company",
-	"description": "A company or organization, described by anyone. The record key is the organization's domain (e.g. 'example.org'). When the author's handle equals that domain, the record is the organization's own.",
+	"description": "A company or organization, described by anyone, like a wiki page: each author's record is one version. The record key is the organization's domain (e.g. 'example.org'). When the author's handle equals that domain, the record is the organization's own.",
 	"defs": {
 		"main": {
 			"type": "record",
@@ -30,7 +30,8 @@
 						"description": "Other public pages of the organization (social profiles, wikipedia, etc.).",
 						"items": { "type": "string", "format": "uri" }
 					},
-					"createdAt": { "type": "string", "format": "datetime" }
+					"createdAt": { "type": "string", "format": "datetime", "description": "When this author first described the organization." },
+					"updatedAt": { "type": "string", "format": "datetime", "description": "When this author last saved this version. The most recently edited version is the one shown, unless the organization publishes its own." }
 				}
 			}
 		},

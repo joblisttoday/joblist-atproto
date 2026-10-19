@@ -28,7 +28,7 @@ const versionsByKey = new Map();
 for (const r of companyRecords) {
 	if (r.value?.name) versionsByKey.set(r.rkey, [...(versionsByKey.get(r.rkey) || []), r]);
 }
-const companies = new Map([...versionsByKey].map(([key, versions]) => [key, toCompany(versions, profiles, null)]));
+const companies = new Map([...versionsByKey].map(([key, versions]) => [key, toCompany(versions, profiles)]));
 /** @type {Map<string, number>} */
 const jobCounts = new Map();
 for (const job of jobs) jobCounts.set(job.c, (jobCounts.get(job.c) || 0) + 1);

@@ -45,7 +45,7 @@ const companies = $derived.by(() => {
 		byKey.set(r.rkey, versions);
 	}
 	return new Map(
-		[...byKey].map(([key, versions]) => [key, toCompany(versions, profileMap, session.did)])
+		[...byKey].map(([key, versions]) => [key, toCompany(versions, profileMap)])
 	);
 });
 

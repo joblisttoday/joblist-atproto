@@ -7,6 +7,7 @@
 		"list": "today.joblist.list",
 		"job": "today.joblist.job"
 	},
+	"bots": [],
 	"services": {
 		"relay": "https://relay1.us-east.bsky.network",
 		"appview": "https://public.api.bsky.app",
@@ -49,7 +50,7 @@
 			"work from home",
 			"wfh",
 			"distributed",
-			"t\u00e9l\u00e9travail",
+			"télétravail",
 			"teletravail",
 			"fernarbeit",
 			"mobiles arbeiten"

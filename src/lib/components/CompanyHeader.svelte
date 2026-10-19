@@ -1,6 +1,7 @@
 <script>
 	import { goto } from '$app/navigation';
 	import config from '#lib/data/config.json';
+	import CompanyEdited from './CompanyEdited.svelte';
 	import { deleteRecord } from '#lib/atproto/write.js';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { data, removeLocal } from '#lib/network/network.svelte.js';
@@ -35,6 +36,7 @@
 				{#if company.verified}· <span>✓ {t('company.verified', { domain: company.key })}</span>{/if}
 			</small>
 		</p>
+		<CompanyEdited {company} />
 		{#if company.description}<p>{company.description}</p>{/if}
 		{#if company.tags.length}
 			<ul aria-label={t('form.tags')}>
@@ -44,7 +46,7 @@
 		<menu>
 			{#if board}<a href={board} target="_blank" rel="noopener">{t('company.jobBoard')} ↗</a>{/if}
 			{#if company.url}<a href={company.url} target="_blank" rel="noopener">{t('company.website')} ↗</a>{/if}
-			<a href="/add?key={encodeURIComponent(company.key)}">{own ? t('company.edit') : t('company.improve')}</a>
+			<a href="/add?key={encodeURIComponent(company.key)}">{t('company.edit')}</a>
 			{#if own}<button type="button" onclick={remove}>{t('company.delete')}</button>{/if}
 		</menu>
 		{#if error}<p role="alert">{error}</p>{/if}

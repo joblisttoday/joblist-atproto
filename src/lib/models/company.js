@@ -1,3 +1,4 @@
+import config from '#lib/data/config.json' with { type: 'json' };
 import providers from '#lib/data/providers.json' with { type: 'json' };
 
 /**
@@ -14,6 +15,8 @@ import providers from '#lib/data/providers.json' with { type: 'json' };
  *   jobBoard?: JobBoard,
  *   links: string[],
  *   verified: boolean,
+ *   unchecked: boolean,
+ *   editedAt: string,
  *   record: RepoRecord,
  *   versions: RepoRecord[]
  * }} Company
@@ -45,30 +48,83 @@ export function isOwnRecord(record, profiles) {
 }
 
 /**
- * Pick the version shown for a company:
- * the organization's own record, then the viewer's, then the oldest.
+ * When a version was last edited.
+ * @param {RepoRecord} record
+ */
+export function editedAt(record) {
+	return String(record.value.updatedAt || record.value.createdAt || '');
+}
+
+/**
+ * Versions, most recently edited first (one per author: the record key is the domain).
+ * @param {RepoRecord[]} versions
+ */
+export function byRecent(versions) {
+	return [...versions].sort((a, b) => editedAt(b).localeCompare(editedAt(a)));
+}
+
+/**
+ * Pick the version shown for a company, like a wiki page:
+ * the organization's own record, otherwise the most recent edit by anyone.
  * @param {RepoRecord[]} versions
  * @param {Map<string, {handle: string}>} profiles
- * @param {string | null} viewer
  */
-export function pickVersion(versions, profiles, viewer) {
-	return (
-		versions.find((v) => isOwnRecord(v, profiles)) ||
-		versions.find((v) => v.did === viewer) ||
-		[...versions].sort((a, b) =>
-			String(a.value.createdAt).localeCompare(String(b.value.createdAt))
-		)[0]
+export function pickVersion(versions, profiles) {
+	return versions.find((v) => isOwnRecord(v, profiles)) || byRecent(versions)[0];
+}
+
+/**
+ * Whether a version was written by a bot (config.bots) and no person
+ * has saved a newer version since: nobody has checked it yet.
+ * @param {RepoRecord} version
+ * @param {RepoRecord[]} versions
+ * @param {string[]} [bots]
+ */
+export function isUnchecked(version, versions, bots = config.bots) {
+	if (!bots.includes(version.did)) return false;
+	return !versions.some((v) => !bots.includes(v.did) && editedAt(v) > editedAt(version));
+}
+
+/** Fields of a company record compared between versions, with their form label. */
+export const FIELDS = /** @type {const} */ ([
+	['name', 'form.name'],
+	['url', 'form.website'],
+	['description', 'form.description'],
+	['tags', 'form.tags'],
+	['locations', 'form.locations'],
+	['jobBoard', 'form.section.jobs'],
+	['links', 'form.links']
+]);
+
+/**
+ * Which fields differ between two versions (as form label keys).
+ * @param {RepoRecord} a
+ * @param {RepoRecord} b
+ */
+export function changedFields(a, b) {
+	return FIELDS.filter(([field]) => JSON.stringify(a.value[field]) !== JSON.stringify(b.value[field])).map(
+		([, label]) => label
 	);
+}
+
+/**
+ * A version's content saved again as the signed-in person's own version
+ * (restore an older version, or confirm a bot's one).
+ * @param {Record<string, any>} value the content to save
+ * @param {string} [createdAt] when this person first described the company
+ * @param {string} [now]
+ */
+export function copyRecord(value, createdAt, now = new Date().toISOString()) {
+	return { ...value, $type: 'today.joblist.company', createdAt: createdAt || now, updatedAt: now };
 }
 
 /**
  * @param {RepoRecord[]} versions all records sharing one key
  * @param {Map<string, {handle: string}>} profiles
- * @param {string | null} viewer
  * @returns {Company}
  */
-export function toCompany(versions, profiles, viewer) {
-	const record = pickVersion(versions, profiles, viewer);
+export function toCompany(versions, profiles) {
+	const record = pickVersion(versions, profiles);
 	const v = record.value;
 	return {
 		key: record.rkey,
@@ -80,8 +136,10 @@ export function toCompany(versions, profiles, viewer) {
 		jobBoard: v.jobBoard,
 		links: v.links || [],
 		verified: isOwnRecord(record, profiles),
+		unchecked: isUnchecked(record, versions),
+		editedAt: editedAt(record),
 		record,
-		versions
+		versions: byRecent(versions)
 	};
 }
 
@@ -130,14 +188,16 @@ export function searchText(company) {
 /**
  * A company record from form values.
  * @param {{name: string, url: string, description: string, tags: string, provider: string, boardId: string, careersUrl: string, locations: Location[], links: string}} form
- * @param {string} [createdAt]
+ * @param {string} [createdAt] when this person first described the company
+ * @param {string} [now]
  */
-export function toRecord(form, createdAt) {
+export function toRecord(form, createdAt, now = new Date().toISOString()) {
 	/** @type {Record<string, any>} */
 	const record = {
 		$type: 'today.joblist.company',
 		name: form.name.trim(),
-		createdAt: createdAt || new Date().toISOString()
+		createdAt: createdAt || now,
+		updatedAt: now
 	};
 	if (form.url.trim()) record.url = withScheme(form.url);
 	if (form.description.trim()) record.description = form.description.trim();
