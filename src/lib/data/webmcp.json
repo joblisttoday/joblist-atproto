@@ -23,6 +23,20 @@
 				"name": "The list's name, e.g. 'Co-ops in Lyon'.",
 				"description": "What the list is about and who it is for."
 			}
+		},
+		"job": {
+			"toolname": "post_job",
+			"tooldescription": "Fill in a job offer for the signed-in person to check and post on joblist, from their own account. The company must already be chosen on the page. Applications go to the poster directly, never through joblist.",
+			"params": {
+				"title": "The job title, e.g. 'Frontend engineer'.",
+				"description": "The offer as plain text: the job, who they look for, salary if known.",
+				"remote": "Where the work happens: onsite, hybrid or remote.",
+				"employment": "The kind of contract: full-time, part-time, contract, internship or volunteer.",
+				"offerUrl": "Link to the full offer on the company's site, if there is one.",
+				"applyTo": "Where to apply: an application form link (https://…) or an email address.",
+				"bluesky": "Whether candidates may apply by Bluesky direct message to the poster.",
+				"days": "How many days to show the offer, from 1 to 120 (default 60)."
+			}
 		}
 	},
 	"tools": [
