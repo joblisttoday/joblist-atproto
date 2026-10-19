@@ -8,23 +8,35 @@ export function escape(value) {
 }
 
 /**
+ * Structured data for search engines, safe inside a script tag.
+ * @param {Record<string, any>} data
+ */
+export function jsonLd(data) {
+	return `<script type="application/ld+json">${JSON.stringify(data).replace(/</g, '\\u003c')}</script>`;
+}
+
+/**
  * The app's HTML shell with page-specific head tags and a no-JavaScript body.
  * @param {string} template build/index.html
- * @param {{title: string, description: string, url: string, body: string}} meta
+ * @param {{title: string, description: string, url: string, body: string, type?: string, head?: string}} meta
+ *   type: the og:type (default website); head: more tags, like jsonLd()
  */
-export function page(template, { title, description, url, body }) {
+export function page(template, { title, description, url, body, type = 'website', head: extra = '' }) {
 	const text = description.slice(0, 300);
 	const head = [
 		`<title>${escape(title)}</title>`,
 		`<meta name="description" content="${escape(text)}">`,
 		`<link rel="canonical" href="${escape(url)}">`,
-		`<meta property="og:type" content="website">`,
+		`<meta property="og:type" content="${escape(type)}">`,
 		`<meta property="og:site_name" content="joblist">`,
 		`<meta property="og:title" content="${escape(title)}">`,
 		`<meta property="og:description" content="${escape(text)}">`,
 		`<meta property="og:url" content="${escape(url)}">`,
-		`<meta name="twitter:card" content="summary">`
-	].join('\n\t\t');
+		`<meta name="twitter:card" content="summary">`,
+		extra
+	]
+		.filter(Boolean)
+		.join('\n\t\t');
 	return template
 		.replace(/<title>[\s\S]*?<\/title>\s*/, '')
 		.replace('</head>', `\t${head}\n\t</head>`)
