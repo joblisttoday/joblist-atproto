@@ -14,6 +14,7 @@ import { toDomain } from '../src/lib/models/company.js';
 import { installPoliteFetch, probe, USER_AGENT } from './lib/http.js';
 import { loadCompanyRecords } from './lib/network.js';
 import { checkBoard } from './lib/boards.js';
+import { siteOf } from './lib/match.js';
 
 const CONCURRENCY = 8;
 const PARKED = /(^|\.)(hugedomains|sedo|dan|afternic|parkingcrew|bodis|undeveloped|godaddy)\.(com|net|org)$/;
@@ -28,22 +29,18 @@ const limit = flags.includes('--limit') ? Number(flags[flags.indexOf('--limit') 
 installPoliteFetch();
 
 /**
- * The part of a host name a company registers ('www2.acme.co.uk' → 'acme.co.uk'),
- * so moving between subdomains does not count as a redirect.
- * @param {string} host
- */
-function siteOf(host) {
-	const labels = host.split('.');
-	const keep = labels.length > 2 && ['co', 'com', 'org', 'net', 'ac', 'gov'].includes(labels.at(-2) || '') && labels.at(-1)?.length === 2 ? 3 : 2;
-	return labels.slice(-keep).join('.');
-}
-
-/**
  * A page check, with where it ended up when it moved to another domain.
  * @param {string} url
  */
 async function checkPage(url) {
-	const page = await probe(url);
+	let page = await probe(url);
+	if (page.state === 'unreachable') {
+		// Some sites answer only with (or only without) www.
+		const other = new URL(url);
+		other.hostname = other.hostname.startsWith('www.') ? other.hostname.slice(4) : `www.${other.hostname}`;
+		const retry = await probe(other.href);
+		if (retry.state !== 'unreachable') page = { ...retry, url };
+	}
 	const from = toDomain(url);
 	const to = page.finalUrl ? toDomain(page.finalUrl) : '';
 	/** @type {Record<string, any>} */
