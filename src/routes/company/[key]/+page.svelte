@@ -3,6 +3,7 @@
 	import config from '#lib/data/config.json';
 	import AddToList from '#lib/components/AddToList.svelte';
 	import CompanyHeader from '#lib/components/CompanyHeader.svelte';
+	import CompanyHiring from '#lib/components/CompanyHiring.svelte';
 	import CompanyMap from '#lib/components/CompanyMap.svelte';
 	import CompanyVersions from '#lib/components/CompanyVersions.svelte';
 	import Jobs from '#lib/components/Jobs.svelte';
@@ -15,6 +16,8 @@
 	const key = $derived(page.params.key || '');
 	const company = $derived(data.companies.get(key));
 	const lists = $derived(listsWith(key));
+	// Jobs come from its job board, or were posted here (by the company or anyone).
+	const hasJobs = $derived(Boolean(company && (boardUrl(company.jobBoard) || data.postedJobs.has(key))));
 	const places = $derived(
 		(company?.locations || []).map((l) => [l.name, l.address, l.country].filter(Boolean).join(', ')).filter(Boolean)
 	);
@@ -26,12 +29,11 @@
 	<jl-company-page verified={company.verified || undefined}>
 		<CompanyHeader {company} />
 
-		{#if boardUrl(company.jobBoard)}
-			<section aria-labelledby="company-jobs">
-				<h2 id="company-jobs">{t('list.tab.jobs')}</h2>
-				<Jobs companies={[company]} />
-			</section>
-		{/if}
+		<section aria-labelledby="company-jobs">
+			<h2 id="company-jobs">{t('list.tab.jobs')}</h2>
+			<CompanyHiring {company} />
+			{#if hasJobs}<Jobs companies={[company]} />{/if}
+		</section>
 
 		{#if places.length}
 			<section aria-labelledby="company-places">
