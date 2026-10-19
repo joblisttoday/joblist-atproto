@@ -1,7 +1,7 @@
 /**
  * Heuristics proposing fixes for one company, from its health check:
  * - a new job board, found in links on its website or careers page;
- * - a website, for companies that have none;
+ * - a website, for companies that have none, or whose website moved to a domain with the same name;
  * - a "likely gone" mark when nothing about it answers any more.
  * Every proposed board is checked live before it is proposed.
  */
@@ -73,7 +73,7 @@ async function readPages(urls) {
  * @param {any} check the company's health check
  * @param {string[]} names
  */
-async function findBoard(record, check, names) {
+export async function findBoard(record, check, names) {
 	const current = record.jobBoard || {};
 	const urls = [current.url, check.website?.state === 'ok' ? record.url : null].filter(Boolean);
 	/** @type {{provider: string, id: string, count: number}[]} */
@@ -171,7 +171,15 @@ export async function proposeRepair(record, check) {
 		}
 	}
 
-	if (check.website?.redirectedTo) proposal.notes.push(`website now redirects to ${check.website.redirectedTo}`);
+	const movedTo = check.website?.state === 'ok' ? check.website.redirectedTo : undefined;
+	if (movedTo) {
+		proposal.notes.push(`website now redirects to ${movedTo}`);
+		// A new domain carrying the same name is a move (acme.de → acme.com); another name is a person's call (acquired, renamed).
+		if (!proposal.changes.url && matchesName(siteOf(movedTo).split('.')[0], names)) {
+			proposal.changes.url = `https://${movedTo}`;
+			proposal.confidence = proposal.confidence || 'high';
+		}
+	}
 
 	// Without a website we cannot tell a closed company from a moved careers page.
 	// "Gone" needs two signals: a board or careers page that existed and stopped answering, and a dead website.
