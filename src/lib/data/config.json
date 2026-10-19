@@ -4,7 +4,8 @@
 	"source": "https://github.com/joblisttoday/joblist-atproto",
 	"collections": {
 		"company": "today.joblist.company",
-		"list": "today.joblist.list"
+		"list": "today.joblist.list",
+		"job": "today.joblist.job"
 	},
 	"services": {
 		"relay": "https://relay1.us-east.bsky.network",
@@ -29,7 +30,8 @@
 	"limits": {
 		"concurrency": 6,
 		"jobsConcurrency": 6,
-		"pagesPerRepo": 20
+		"pagesPerRepo": 20,
+		"indexerConcurrency": 8
 	},
 	"locales": [
 		"en",
@@ -47,7 +49,7 @@
 			"work from home",
 			"wfh",
 			"distributed",
-			"télétravail",
+			"t\u00e9l\u00e9travail",
 			"teletravail",
 			"fernarbeit",
 			"mobiles arbeiten"
@@ -59,5 +61,9 @@
 	"links": {
 		"signup": "https://bsky.app",
 		"profile": "https://bsky.app/profile/{handle}"
+	},
+	"snapshot": {
+		"path": "/snapshot",
+		"maxAgeHours": 12
 	}
 }

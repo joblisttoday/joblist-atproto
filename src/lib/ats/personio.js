@@ -4,17 +4,39 @@ export default async function personio(id) {
 	try {
 		const res = await fetch(`${base}/xml?language=en`);
 		if (!res.ok) return [];
-		const xml = new DOMParser().parseFromString(await res.text(), 'text/xml');
-		/** @param {Element} el @param {string} tag */
-		const text = (el, tag) => el.getElementsByTagName(tag)[0]?.textContent?.trim() || undefined;
-		return [...xml.getElementsByTagName('position')].map((p) => ({
-			title: text(p, 'name') || '',
-			url: `${base}/job/${text(p, 'id')}`,
-			location: text(p, 'office'),
-			department: text(p, 'department'),
-			published: text(p, 'createdAt')
+		return positions(await res.text()).map((p) => ({
+			title: p.name || '',
+			url: `${base}/job/${p.id}`,
+			location: p.office,
+			department: p.department,
+			published: p.createdAt
 		}));
 	} catch {
 		return [];
 	}
+}
+
+/**
+ * The <position> entries of a Personio XML feed, as plain objects.
+ * Text-based, so it runs in browsers and in Node (for the indexer).
+ * @param {string} xml
+ * @returns {Record<string, string>[]}
+ */
+function positions(xml) {
+	return [...xml.matchAll(/<position>([\s\S]*?)<\/position>/g)].map(([, body]) => {
+		/** @type {Record<string, string>} */
+		const fields = {};
+		for (const [, tag, value] of body.matchAll(/<(\w+)>([^<]*)<\/\1>/g)) fields[tag] = decode(value.trim());
+		return fields;
+	});
+}
+
+/** @param {string} text */
+function decode(text) {
+	return text
+		.replace(/&lt;/g, '<')
+		.replace(/&gt;/g, '>')
+		.replace(/&quot;/g, '"')
+		.replace(/&#39;|&apos;/g, "'")
+		.replace(/&amp;/g, '&');
 }

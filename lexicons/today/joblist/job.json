@@ -1,0 +1,36 @@
+{
+	"lexicon": 1,
+	"id": "today.joblist.job",
+	"description": "A job offer, posted by anyone. When the author's handle equals the company key (its domain), it is the company's own offer. Offers expire; re-post to extend.",
+	"defs": {
+		"main": {
+			"type": "record",
+			"key": "tid",
+			"record": {
+				"type": "object",
+				"required": ["title", "company", "url", "createdAt", "expiresAt"],
+				"properties": {
+					"title": { "type": "string", "maxLength": 2000, "maxGraphemes": 200 },
+					"company": { "type": "string", "maxLength": 512, "description": "Company record key (its domain)." },
+					"url": { "type": "string", "format": "uri", "description": "Where to read the offer and apply." },
+					"description": { "type": "string", "maxLength": 100000, "maxGraphemes": 10000 },
+					"locations": {
+						"type": "array",
+						"maxLength": 20,
+						"items": { "type": "ref", "ref": "today.joblist.company#location" }
+					},
+					"remote": {
+						"type": "string",
+						"knownValues": ["onsite", "hybrid", "remote"]
+					},
+					"employment": {
+						"type": "string",
+						"knownValues": ["full-time", "part-time", "contract", "internship", "volunteer"]
+					},
+					"createdAt": { "type": "string", "format": "datetime" },
+					"expiresAt": { "type": "string", "format": "datetime", "description": "After this date the offer is no longer shown." }
+				}
+			}
+		}
+	}
+}
