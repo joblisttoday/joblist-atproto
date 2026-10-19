@@ -1,5 +1,6 @@
 <script>
 	import config from '#lib/data/config.json';
+	import revenue from '#lib/data/revenue.json';
 	import { i18n, setLocale, t } from '#lib/i18n/index.svelte.js';
 </script>
 
@@ -7,6 +8,7 @@
 	<footer>
 		<p>
 			<small>{t('about.data')} <a href={config.source}>{t('about.source')}</a></small>
+			{#if revenue.support.paymentLink}<small>· <a href="/support">{t('support.title')}</a></small>{/if}
 		</p>
 		<label>
 			<small>{t('me.language')}</small>
