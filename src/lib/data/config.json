@@ -55,5 +55,9 @@
 	},
 	"companies": {
 		"pageSize": 100
+	},
+	"links": {
+		"signup": "https://bsky.app",
+		"profile": "https://bsky.app/profile/{handle}"
 	}
 }

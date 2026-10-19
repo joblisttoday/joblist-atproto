@@ -1,4 +1,5 @@
 <script>
+	import config from '#lib/data/config.json';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import ListForm from '#lib/components/ListForm.svelte';
@@ -11,6 +12,8 @@
 	const list = $derived(data.lists.find((l) => l.did === session.did && l.rkey === rkey));
 	const back = $derived(`/${page.params.handle}/${rkey}`);
 </script>
+
+<svelte:head><title>{t('form.list.edit')} · {config.name}</title></svelte:head>
 
 <h1>{t('form.list.edit')}</h1>
 <RequireSession>

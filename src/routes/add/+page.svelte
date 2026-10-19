@@ -1,4 +1,5 @@
 <script>
+	import config from '#lib/data/config.json';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import CompanyForm from '#lib/components/CompanyForm.svelte';
@@ -10,6 +11,8 @@
 	const company = $derived(key ? data.companies.get(key) || null : null);
 	const url = $derived(page.url.searchParams.get('url') || '');
 </script>
+
+<svelte:head><title>{company ? t('form.company.edit') : t('form.company.title')} · {config.name}</title></svelte:head>
 
 <h1>{company ? t('form.company.edit') : t('form.company.title')}</h1>
 <RequireSession>

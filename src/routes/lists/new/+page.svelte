@@ -1,4 +1,5 @@
 <script>
+	import config from '#lib/data/config.json';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import ListForm from '#lib/components/ListForm.svelte';
@@ -16,6 +17,8 @@
 			: { companies: add ? [add] : [] }
 	);
 </script>
+
+<svelte:head><title>{t('form.list.title')} · {config.name}</title></svelte:head>
 
 <h1>{t('form.list.title')}</h1>
 <RequireSession>

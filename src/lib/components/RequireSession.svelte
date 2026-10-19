@@ -8,7 +8,7 @@
 </script>
 
 {#if !session.ready}
-	<p><small>…</small></p>
+	<p aria-live="polite"><small>{t('signin.checking')}</small></p>
 {:else if session.did}
 	{@render children()}
 {:else}
