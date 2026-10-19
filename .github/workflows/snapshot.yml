@@ -1,6 +1,7 @@
 # Rebuilds the AppView snapshot (records + live jobs) and deploys the site.
 # Free: runs on GitHub Actions, deploys static files to Cloudflare.
 # Needs the repository secret CLOUDFLARE_API_TOKEN (Workers Scripts: Edit).
+# Also publishes the last crawl (branch `crawl`) under /snapshot/crawl/.
 name: snapshot
 
 on:
@@ -25,6 +26,10 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      - name: Restore the last crawl (health and proposals, see docs/crawler.md)
+        run: |
+          mkdir -p static/snapshot/crawl
+          if git fetch --depth=1 origin crawl; then git archive FETCH_HEAD | tar -x -C static/snapshot/crawl; fi
       - run: node indexer/index.js static/snapshot
       - run: npm run build
       - run: node indexer/prerender.js build static/snapshot
