@@ -45,6 +45,7 @@
 	"jobs": {
 		"pageSize": 50,
 		"placesSuggested": 30,
+		"placesShown": 3,
 		"remoteWords": [
 			"remote",
 			"anywhere",

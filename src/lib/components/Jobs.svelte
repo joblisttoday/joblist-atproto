@@ -7,23 +7,40 @@
 	import { mapLimit } from '#lib/atproto/xrpc.js';
 	import { getSnapshotJobs } from '#lib/network/snapshot.js';
 	import { boardUrl, hasJobsApi } from '#lib/models/company.js';
-	import { byCompany, commonPlaces, filterJobs } from '#lib/models/job.js';
+	import { byCompany, commonPlaces, filterJobs, sameOffers, time } from '#lib/models/job.js';
 	import { mergeJobs, postedFirst } from '#lib/models/job-post.js';
 	import { data } from '#lib/network/network.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
 	 * careers: also link the companies whose jobs are only on their own careers page.
-	 * @type {{companies: import('#lib/models/company.js').Company[], careers?: boolean}}
+	 * filters: the search, when the page keeps it (in its address).
+	 * since: jobs published after it are marked new.
+	 * jobs: every job read, for the page.
+	 * actions: shown under the filters.
+	 * @type {{
+	 *   companies: import('#lib/models/company.js').Company[],
+	 *   careers?: boolean,
+	 *   filters?: import('#lib/models/job.js').JobFilters,
+	 *   since?: string,
+	 *   jobs?: import('#lib/ats/job.js').Job[],
+	 *   actions?: import('svelte').Snippet
+	 * }}
 	 */
-	let { companies, careers = true } = $props();
+	let {
+		companies,
+		careers = true,
+		filters = $bindable({ query: '', where: '', remote: '' }),
+		since = '',
+		jobs: all = $bindable([]),
+		actions
+	} = $props();
 	const PAGE = config.jobs.pageSize;
 
 	/** Jobs read from job boards (or their snapshot). */
 	/** @type {import('#lib/ats/job.js').Job[]} */
 	let boardJobs = $state.raw([]);
 	let answered = $state(0);
-	let filters = $state({ query: '', where: '', remote: false });
 	let grouped = $state(false);
 	let shown = $state(PAGE);
 
@@ -34,9 +51,15 @@
 	// Offers posted on joblist, for every company here (with a job board or not).
 	const posted = $derived(companies.flatMap((c) => data.postedJobs.get(c.key) || []));
 	const jobs = $derived(mergeJobs(posted, boardJobs));
+	$effect(() => {
+		all = jobs;
+	});
+	const sinceTime = $derived(time(since));
 	const withoutApi = $derived(careers ? companies.filter((c) => !hasJobsApi(c) && boardUrl(c.jobBoard)) : []);
 	// On a company's page, the offers it posted come first.
-	const filtered = $derived(single ? postedFirst(filterJobs(jobs, filters, names)) : filterJobs(jobs, filters, names));
+	const matching = $derived(sameOffers(filterJobs(jobs, filters, names)));
+	const filtered = $derived(single ? postedFirst(matching) : matching);
+	const offers = $derived(sameOffers(jobs).length);
 	const groups = $derived(grouped ? byCompany(filtered) : []);
 	// Suggestions are computed once all boards answered, not on every answer.
 	const places = $derived(loading ? [] : commonPlaces(jobs));
@@ -79,17 +102,18 @@
 		<small>
 			{#if loading}
 				{t('jobs.progress', { answered, total: targets.length, count: jobs.length })}
-			{:else if filtered.length === jobs.length}
-				{t('jobs.count', { count: jobs.length })}
+			{:else if filtered.length === offers}
+				{t('jobs.count', { count: offers })}
 			{:else}
-				{t('jobs.countFiltered', { count: filtered.length, total: jobs.length })}
+				{t('jobs.countFiltered', { count: filtered.length, total: offers })}
 			{/if}
 		</small>
 	</p>
 
-	{#if jobs.length > 10}
+	{#if jobs.length > 10 || actions}
 		<JobFilters bind:filters bind:grouped {places} onchange={() => (shown = PAGE)} />
 	{/if}
+	{@render actions?.()}
 
 	{#if grouped}
 		<ul>
@@ -100,7 +124,7 @@
 	{:else}
 		<ul>
 			{#each filtered.slice(0, shown) as job (job.url)}
-				<li><JobItem {job} company={single ? undefined : names.get(job.company)} /></li>
+				<li><JobItem {job} company={single ? undefined : names.get(job.company)} fresh={sinceTime > 0 && time(job.published) > sinceTime} /></li>
 			{/each}
 		</ul>
 		{#if filtered.length > shown}

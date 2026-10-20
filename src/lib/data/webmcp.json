@@ -59,7 +59,8 @@
 				"properties": {
 					"query": { "type": "string", "description": "Words in the job title, department or company name, e.g. 'frontend engineer'." },
 					"place": { "type": "string", "description": "A city or country the job location must mention, e.g. 'Berlin'." },
-					"remote": { "type": "boolean", "description": "Only jobs that say they can be done remotely." }
+					"remote": { "type": "boolean", "description": "Only jobs done remotely. With a place: remote jobs open to that place, or naming no limit." },
+					"anywhere": { "type": "boolean", "description": "Only remote jobs that name no country or region they are limited to." }
 				},
 				"required": ["query"]
 			}

@@ -1,6 +1,6 @@
 import webmcp from '#lib/data/webmcp.json' with { type: 'json' };
 import { boardUrl, searchText } from '#lib/models/company.js';
-import { filterJobs } from '#lib/models/job.js';
+import { filterJobs, workplace } from '#lib/models/job.js';
 
 /**
  * Answers of the read-only WebMCP tools, from data already in the browser.
@@ -50,17 +50,18 @@ export function searchCompanies(companies, { query = '' }, origin) {
 /**
  * @param {Job[]} jobs
  * @param {Map<string, Company>} companies
- * @param {{query?: string, place?: string, remote?: boolean}} args
+ * @param {{query?: string, place?: string, remote?: boolean, anywhere?: boolean}} args
  */
-export function searchJobs(jobs, companies, { query = '', place = '', remote = false }) {
+export function searchJobs(jobs, companies, { query = '', place = '', remote = false, anywhere = false }) {
 	const names = new Map([...companies.values()].map((c) => [c.key, c.name]));
-	const found = filterJobs(jobs, { query, where: place, remote: Boolean(remote) }, names);
+	const found = filterJobs(jobs, { query, where: place, remote: anywhere ? 'anywhere' : remote ? 'remote' : '' }, names);
 	return {
 		total: found.length,
 		jobs: found.slice(0, limit).map((j) => ({
 			title: j.title,
 			company: names.get(j.company) || j.company,
 			location: j.location,
+			workplace: workplace(j),
 			department: j.department,
 			published: j.published,
 			url: j.url

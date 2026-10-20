@@ -1,0 +1,327 @@
+{
+	"same": [
+		[
+			"united states",
+			"us",
+			"usa",
+			"u.s.",
+			"u.s.a.",
+			"united states of america",
+			"america"
+		],
+		[
+			"united kingdom",
+			"uk",
+			"u.k.",
+			"great britain",
+			"england",
+			"scotland",
+			"wales"
+		],
+		[
+			"germany",
+			"deutschland"
+		],
+		[
+			"france"
+		],
+		[
+			"spain",
+			"españa",
+			"espana"
+		],
+		[
+			"netherlands",
+			"nederland",
+			"holland"
+		],
+		[
+			"switzerland",
+			"schweiz",
+			"suisse"
+		],
+		[
+			"austria",
+			"österreich",
+			"osterreich"
+		],
+		[
+			"canada"
+		],
+		[
+			"new york",
+			"nyc",
+			"ny"
+		],
+		[
+			"san francisco",
+			"sf",
+			"bay area",
+			"sf bay area"
+		],
+		[
+			"munich",
+			"münchen",
+			"munchen"
+		],
+		[
+			"cologne",
+			"köln",
+			"koln"
+		],
+		[
+			"vienna",
+			"wien"
+		],
+		[
+			"zurich",
+			"zürich"
+		],
+		[
+			"lisbon",
+			"lisboa"
+		]
+	],
+	"regions": {
+		"europe": [
+			"europe",
+			"eu",
+			"emea",
+			"eea",
+			"european union"
+		],
+		"americas": [
+			"americas",
+			"amer",
+			"the americas",
+			"north america",
+			"latam",
+			"latin america",
+			"south america"
+		],
+		"asia": [
+			"asia",
+			"apac",
+			"asia pacific"
+		]
+	},
+	"countries": {
+		"europe": [
+			"germany",
+			"france",
+			"spain",
+			"netherlands",
+			"switzerland",
+			"austria",
+			"united kingdom",
+			"ireland",
+			"italy",
+			"portugal",
+			"belgium",
+			"poland",
+			"sweden",
+			"denmark",
+			"norway",
+			"finland",
+			"czechia",
+			"czech republic",
+			"greece",
+			"romania",
+			"hungary",
+			"estonia",
+			"latvia",
+			"lithuania",
+			"croatia",
+			"slovenia",
+			"slovakia",
+			"bulgaria",
+			"luxembourg",
+			"serbia",
+			"ukraine",
+			"berlin",
+			"paris",
+			"london",
+			"amsterdam",
+			"barcelona",
+			"madrid",
+			"munich",
+			"hamburg",
+			"cologne",
+			"vienna",
+			"zurich",
+			"lisbon",
+			"dublin",
+			"warsaw",
+			"prague",
+			"stockholm",
+			"copenhagen"
+		],
+		"americas": [
+			"united states",
+			"canada",
+			"mexico",
+			"brazil",
+			"argentina",
+			"colombia",
+			"chile",
+			"peru",
+			"new york",
+			"san francisco",
+			"toronto",
+			"montreal"
+		],
+		"asia": [
+			"india",
+			"japan",
+			"singapore",
+			"china",
+			"korea",
+			"south korea",
+			"indonesia",
+			"philippines",
+			"vietnam",
+			"thailand",
+			"malaysia",
+			"pakistan",
+			"australia",
+			"new zealand"
+		]
+	},
+	"cities": {
+		"germany": [
+			"berlin",
+			"munich",
+			"hamburg",
+			"cologne",
+			"frankfurt",
+			"stuttgart",
+			"leipzig",
+			"dusseldorf",
+			"düsseldorf"
+		],
+		"france": [
+			"paris",
+			"lyon",
+			"marseille",
+			"toulouse",
+			"bordeaux",
+			"nantes",
+			"lille"
+		],
+		"united kingdom": [
+			"london",
+			"manchester",
+			"edinburgh",
+			"bristol",
+			"cardiff",
+			"glasgow",
+			"cambridge",
+			"oxford"
+		],
+		"netherlands": [
+			"amsterdam",
+			"rotterdam",
+			"utrecht",
+			"eindhoven",
+			"the hague"
+		],
+		"spain": [
+			"barcelona",
+			"madrid",
+			"valencia",
+			"seville"
+		],
+		"austria": [
+			"vienna",
+			"graz",
+			"linz"
+		],
+		"switzerland": [
+			"zurich",
+			"geneva",
+			"basel",
+			"lausanne",
+			"bern"
+		],
+		"portugal": [
+			"lisbon",
+			"porto"
+		],
+		"ireland": [
+			"dublin",
+			"cork"
+		],
+		"poland": [
+			"warsaw",
+			"krakow",
+			"kraków",
+			"wroclaw",
+			"wrocław",
+			"gdansk"
+		],
+		"sweden": [
+			"stockholm",
+			"gothenburg",
+			"malmo",
+			"malmö"
+		],
+		"denmark": [
+			"copenhagen",
+			"aarhus"
+		],
+		"czechia": [
+			"prague",
+			"brno"
+		],
+		"united states": [
+			"new york",
+			"san francisco",
+			"seattle",
+			"austin",
+			"boston",
+			"chicago",
+			"los angeles",
+			"denver",
+			"miami",
+			"atlanta",
+			"washington dc",
+			"portland"
+		],
+		"canada": [
+			"toronto",
+			"montreal",
+			"vancouver",
+			"ottawa",
+			"calgary"
+		]
+	},
+	"anywhere": [
+		"anywhere",
+		"worldwide",
+		"global",
+		"international",
+		"any location",
+		"all locations",
+		"earth",
+		"world"
+	],
+	"remoteNoise": [
+		"only",
+		"based",
+		"eligible",
+		"friendly",
+		"first",
+		"optional",
+		"possible",
+		"hub cities",
+		"or",
+		"and",
+		"in",
+		"from",
+		"job",
+		"location",
+		"position",
+		"fully",
+		"100%"
+	]
+}

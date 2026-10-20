@@ -1,16 +1,37 @@
 import { describe, expect, it } from 'vitest';
-import { byCompany, commonPlaces, filterJobs, isRemote, time } from './job.js';
+import { byCompany, commonPlaces, filterJobs, isRemote, offerPlaces, remoteLimit, sameOffers, time, workplace } from './job.js';
 
 /** @param {Partial<import('#lib/ats/job.js').Job>} job */
 const job = (job) => ({ title: 'Engineer', url: 'https://x', company: 'acme.org', ...job });
 const names = new Map([['acme.org', 'Acme']]);
-const none = { query: '', where: '', remote: false };
+/** @type {import('./job.js').JobFilters} */
+const none = { query: '', where: '', remote: '' };
 
 describe('isRemote', () => {
 	it('finds remote words in title or location', () => {
 		expect(isRemote(job({ location: 'Remote, Germany' }))).toBe(true);
 		expect(isRemote(job({ title: 'Designer (Homeoffice)' }))).toBe(true);
 		expect(isRemote(job({ location: 'Berlin' }))).toBe(false);
+	});
+	it('trusts the job board, and ignores remote as a plain title word', () => {
+		expect(workplace(job({ location: 'Remote', remote: 'hybrid' }))).toBe('hybrid');
+		expect(isRemote(job({ title: 'Remote Sensing Engineer', location: 'Munich' }))).toBe(false);
+		expect(isRemote(job({ title: 'Engineer - Remote' }))).toBe(true);
+	});
+});
+
+describe('remoteLimit', () => {
+	it('reads the place a remote job is limited to', () => {
+		expect(remoteLimit(job({ location: 'Remote - USA' }))).toBe('united states');
+		expect(remoteLimit(job({ location: 'United States | Remote' }))).toBe('united states');
+		expect(remoteLimit(job({ location: 'Remote (UK)' }))).toBe('united kingdom');
+		expect(remoteLimit(job({ location: 'Berlin', remote: 'remote' }))).toBe('berlin');
+	});
+	it('is empty when no place is named', () => {
+		expect(remoteLimit(job({ location: 'Remote' }))).toBe('');
+		expect(remoteLimit(job({ location: 'Remote job' }))).toBe('');
+		expect(remoteLimit(job({ location: 'Remote, Global' }))).toBe('');
+		expect(remoteLimit(job({ remote: 'remote' }))).toBe('');
 	});
 });
 
@@ -26,7 +47,20 @@ describe('filterJobs', () => {
 	it('filters by words, place and remote', () => {
 		expect(filterJobs(jobs, { ...none, query: 'acme engineer' }, names)).toHaveLength(2);
 		expect(filterJobs(jobs, { ...none, where: 'berlin' }, names)).toHaveLength(1);
-		expect(filterJobs(jobs, { ...none, remote: true }, names)).toHaveLength(1);
+		expect(filterJobs(jobs, { ...none, remote: 'remote' }, names)).toHaveLength(1);
+	});
+	it('keeps remote jobs open to the place, or to anywhere', () => {
+		const remote = [
+			job({ location: 'Remote - USA', url: 'us' }),
+			job({ location: 'Remote (EMEA)', url: 'emea' }),
+			job({ location: 'Remote', url: 'any' }),
+			job({ location: 'Austin, TX', url: 'austin' })
+		];
+		const urls = (/** @type {Partial<import('./job.js').JobFilters>} */ f) => filterJobs(remote, { ...none, ...f }, names).map((j) => j.url);
+		expect(urls({ remote: 'remote', where: 'germany' })).toEqual(['emea', 'any']);
+		expect(urls({ remote: 'remote', where: 'us' })).toEqual(['us', 'any']);
+		expect(urls({ remote: 'anywhere' })).toEqual(['any']);
+		expect(urls({ where: 'us' })).toEqual(['us']);
 	});
 });
 
@@ -49,5 +83,20 @@ describe('time', () => {
 		expect(time('2024-01-01 10:00:00 UTC')).toBe(Date.parse('2024-01-01T10:00:00Z'));
 		expect(time('nope')).toBe(0);
 		expect(time(undefined)).toBe(0);
+	});
+});
+
+describe('sameOffers', () => {
+	it('keeps one job per company and title, with its other places', () => {
+		const jobs = [
+			job({ title: 'Engineer', location: 'Sweden', url: '1' }),
+			job({ title: 'engineer ', location: 'Nigeria', url: '2' }),
+			job({ title: 'Designer', url: '3' }),
+			job({ title: 'Engineer', company: 'other.org', url: '4' })
+		];
+		const merged = sameOffers(jobs);
+		expect(merged.map((j) => j.url)).toEqual(['1', '3', '4']);
+		expect(offerPlaces(merged[0])).toEqual(['Sweden', 'Nigeria']);
+		expect(jobs[0].also).toBeUndefined();
 	});
 });

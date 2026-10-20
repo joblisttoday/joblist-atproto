@@ -33,8 +33,12 @@
 		<datalist id="{id}-places">
 			{#each places as place (place)}<option value={place}></option>{/each}
 		</datalist>
+		<select bind:value={filters.remote} aria-label={t('jobs.filter.workplace')}>
+			<option value="">{t('jobs.filter.workplace.any')}</option>
+			<option value="remote">{t('jobs.filter.workplace.remote')}</option>
+			<option value="anywhere">{t('jobs.filter.workplace.anywhere')}</option>
+		</select>
 		<fieldset>
-			<label><input type="checkbox" bind:checked={filters.remote} /> {t('jobs.filter.remote')}</label>
 			<label><input type="checkbox" bind:checked={grouped} /> {t('jobs.filter.grouped')}</label>
 		</fieldset>
 	</form>

@@ -1,23 +1,57 @@
 import config from '#lib/data/config.json' with { type: 'json' };
+import { inPlace, remoteRegion } from './place.js';
 
 /**
  * @typedef {import('#lib/ats/job.js').Job} Job
- * @typedef {{query: string, where: string, remote: boolean}} JobFilters
+ * @typedef {'' | 'remote' | 'anywhere'} RemoteFilter
+ *   remote: jobs done remotely; anywhere: remote jobs that name no country or region they are limited to.
+ * @typedef {{query: string, where: string, remote: RemoteFilter}} JobFilters
  */
 
 const remoteWords = config.jobs.remoteWords;
+const remoteText = new RegExp(`\\b(${remoteWords.join('|')})\\b`, 'i');
+// In a title, only a marked remote counts: "Designer (Remote)", "Engineer – Remote", not "Remote Sensing Engineer".
+const remoteTitle = new RegExp(`([(\\[|,]|\\s[-–]\\s)\\s*(${remoteWords.join('|')})\\b`, 'i');
 
 /** @param {string} text */
 const words = (text) => text.toLowerCase().split(/\s+/).filter(Boolean);
 
 /**
- * Whether a job says it can be done remotely.
+ * Where the work happens: what the job board or the poster says, else what the location or title says.
+ * @param {Job} job
+ * @returns {'onsite' | 'hybrid' | 'remote' | undefined}
+ */
+export function workplace(job) {
+	if (job.remote === 'onsite' || job.remote === 'hybrid' || job.remote === 'remote') return job.remote;
+	if (remoteText.test(job.location || '') || remoteTitle.test(job.title)) return 'remote';
+	if (/\bhybrid\b/i.test(`${job.location || ''} ${job.title}`)) return 'hybrid';
+	return undefined;
+}
+
+/** @param {Job} job */
+export function isRemote(job) {
+	return workplace(job) === 'remote';
+}
+
+/**
+ * The place a remote job is limited to ("united states" for "Remote - USA"), '' when it names none.
  * @param {Job} job
  */
-export function isRemote(job) {
-	if (job.remote) return job.remote === 'remote';
-	const text = `${job.title} ${job.location || ''}`.toLowerCase();
-	return remoteWords.some((w) => text.includes(w));
+export function remoteLimit(job) {
+	return isRemote(job) ? remoteRegion(job.location, remoteWords) : '';
+}
+
+/**
+ * Whether a job is in the place someone typed. A remote job matches when its
+ * limit is that place, or when it names no limit.
+ * @param {Job} job
+ * @param {string} where
+ * @param {RemoteFilter} remote
+ */
+function matchesPlace(job, where, remote) {
+	if (!where.trim()) return true;
+	if (remote && !remoteLimit(job)) return true;
+	return inPlace(job.location, where, isRemote(job));
 }
 
 /**
@@ -28,19 +62,50 @@ export function isRemote(job) {
  */
 export function filterJobs(jobs, { query, where, remote }, names) {
 	const what = words(query);
-	const place = words(where);
 	return jobs
 		.filter((job) => {
 			if (remote && !isRemote(job)) return false;
-			if (place.length) {
-				const location = (job.location || '').toLowerCase();
-				if (!place.every((w) => location.includes(w))) return false;
-			}
+			if (remote === 'anywhere' && remoteLimit(job)) return false;
+			if (!matchesPlace(job, where, remote)) return false;
 			if (!what.length) return true;
 			const text = `${job.title} ${job.department || ''} ${names.get(job.company) || ''}`.toLowerCase();
 			return what.every((w) => text.includes(w));
 		})
 		.sort((a, b) => time(b.published) - time(a.published));
+}
+
+/**
+ * One job per offer: a company posting the same title for several places
+ * ("Frontend Engineer" in Sweden, in Nigeria…) gets one job, the first,
+ * with the others in `also`. Order is kept; posted offers are never merged.
+ * @param {Job[]} jobs
+ * @returns {Job[]}
+ */
+export function sameOffers(jobs) {
+	/** @type {Map<string, Job>} */
+	const first = new Map();
+	/** @type {Job[]} */
+	const out = [];
+	for (const job of jobs) {
+		const key = `${job.company}\n${job.title.trim().toLowerCase()}`;
+		const kept = job.posted ? undefined : first.get(key);
+		if (kept) {
+			kept.also = [...(kept.also || []), job];
+			continue;
+		}
+		const copy = { ...job, also: undefined };
+		if (!job.posted) first.set(key, copy);
+		out.push(copy);
+	}
+	return out;
+}
+
+/**
+ * Every place of an offer, once: its own and those of the same offer elsewhere.
+ * @param {Job} job
+ */
+export function offerPlaces(job) {
+	return [...new Set([job, ...(job.also || [])].map((j) => j.location).filter(Boolean))];
 }
 
 /**
