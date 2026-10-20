@@ -136,7 +136,8 @@ export function toCompany(versions, profiles) {
 		jobBoard: v.jobBoard,
 		links: v.links || [],
 		verified: isOwnRecord(record, profiles),
-		unchecked: isUnchecked(record, versions),
+		// A company's own record is never "the crawler's", even from a bot account.
+		unchecked: !isOwnRecord(record, profiles) && isUnchecked(record, versions),
 		editedAt: editedAt(record),
 		record,
 		versions: byRecent(versions)

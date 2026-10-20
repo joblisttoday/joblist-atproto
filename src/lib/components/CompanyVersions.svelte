@@ -36,14 +36,14 @@
 			{@const current = version.uri === company.record.uri}
 			{@const changes = current ? [] : changedFields(version, company.record)}
 			<li>
-				<jl-version current={current || undefined} unchecked={isUnchecked(version, company.versions) || undefined}>
+				<jl-version current={current || undefined} unchecked={(!isOwnRecord(version, data.profiles) && isUnchecked(version, company.versions)) || undefined}>
 					<p>
 						<Author did={version.did} /> · <EditTime datetime={editedAt(version)} />
 						{#if current}· <strong>{t('company.version.current')}</strong>{/if}
 					</p>
 					<small>
 						{#if isOwnRecord(version, data.profiles)}✓ {t('company.version.own')} · {/if}
-						{#if isUnchecked(version, company.versions)}{t('company.unchecked')} · {/if}
+						{#if !isOwnRecord(version, data.profiles) && isUnchecked(version, company.versions)}{t('company.unchecked')} · {/if}
 						{#if current}{version.value.name}{:else if changes.length}{t('company.version.changes', {
 								fields: changes.map((label) => t(label)).join(', ')
 							})}{:else}{t('company.version.same')}{/if}

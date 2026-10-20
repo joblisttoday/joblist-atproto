@@ -1,3 +1,4 @@
+import config from '#lib/data/config.json';
 import { describe, expect, it } from 'vitest';
 import { boardUrl, changedFields, copyRecord, editedAt, isUnchecked, pickVersion, toCompany, toDomain, toForm, toRecord } from './company.js';
 
@@ -25,6 +26,16 @@ describe('pickVersion', () => {
 		const edited = { ...version('did:a', '2026-01-01'), value: { name: 'a', createdAt: '2026-01-01', updatedAt: '2026-03-01' } };
 		expect(editedAt(edited)).toBe('2026-03-01');
 		expect(pickVersion([versions[0], edited], new Map()).did).toBe('did:a');
+	});
+});
+
+describe('own records', () => {
+	it('are never labelled as unchecked crawler work', () => {
+		const bot = config.bots[0];
+		const own = { ...version(bot, '2026-01-01'), rkey: 'acme.org' };
+		const company = toCompany([own], new Map([[bot, { handle: 'acme.org' }]]));
+		expect(company.verified).toBe(true);
+		expect(company.unchecked).toBe(false);
 	});
 });
 
