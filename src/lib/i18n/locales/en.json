@@ -47,11 +47,9 @@
 	"search.none": "Nothing matches.",
 
 	"network.loading": "Reading the network…",
-	"network.refresh": "Refresh",
-	"network.counts": "{companies} companies · {lists} lists",
 	"network.progress": "Reading the network… {records} records from {accounts} of {total} accounts",
-	"network.updating": "updating…",
 	"network.error": "The network did not answer.",
+	"network.retry": "Retry",
 
 	"list.companies": "{count} companies",
 	"list.by": "by",

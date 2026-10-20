@@ -47,11 +47,9 @@
 	"search.none": "Aucun résultat.",
 
 	"network.loading": "Lecture du réseau…",
-	"network.refresh": "Actualiser",
-	"network.counts": "{companies} entreprises · {lists} listes",
 	"network.progress": "Lecture du réseau… {records} fiches de {accounts} comptes sur {total}",
-	"network.updating": "mise à jour…",
 	"network.error": "Le réseau n'a pas répondu.",
+	"network.retry": "Réessayer",
 
 	"list.companies": "{count} entreprises",
 	"list.by": "par",

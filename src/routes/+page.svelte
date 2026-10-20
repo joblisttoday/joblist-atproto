@@ -1,6 +1,5 @@
 <script>
 	import ListItem from '#lib/components/ListItem.svelte';
-	import NetworkStatus from '#lib/components/NetworkStatus.svelte';
 	import { data, network } from '#lib/network/network.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
@@ -32,7 +31,6 @@
 		{#if data.lists.length > 6}
 			<input type="search" bind:value={query} placeholder={t('search.lists')} aria-label={t('search.lists')} />
 		{/if}
-		<NetworkStatus />
 		{#if lists.length}
 			<ul>
 				{#each lists as list (list.uri)}

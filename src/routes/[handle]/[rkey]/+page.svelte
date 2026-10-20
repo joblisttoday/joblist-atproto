@@ -7,7 +7,7 @@
 	import ListHeader from '#lib/components/ListHeader.svelte';
 	import ListPending from '#lib/components/ListPending.svelte';
 	import ListSuggest from '#lib/components/ListSuggest.svelte';
-	import NetworkStatus from '#lib/components/NetworkStatus.svelte';
+	import Pending from '#lib/components/Pending.svelte';
 	import SuggestionCredit from '#lib/components/SuggestionCredit.svelte';
 	import Tabs from '#lib/components/Tabs.svelte';
 	import { session } from '#lib/auth/session.svelte.js';
@@ -84,7 +84,7 @@
 	<p>{t('list.notFound')}</p>
 	<menu><a href="/">{t('nav.lists')}</a></menu>
 {:else}
-	<NetworkStatus />
+	<Pending />
 {/if}
 
 <style>

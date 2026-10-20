@@ -8,7 +8,7 @@
 	import CompanyVersions from '#lib/components/CompanyVersions.svelte';
 	import Jobs from '#lib/components/Jobs.svelte';
 	import ListItem from '#lib/components/ListItem.svelte';
-	import NetworkStatus from '#lib/components/NetworkStatus.svelte';
+	import Pending from '#lib/components/Pending.svelte';
 	import { data, listsWith, network } from '#lib/network/network.svelte.js';
 	import { boardUrl, mapPoints } from '#lib/models/company.js';
 	import { t } from '#lib/i18n/index.svelte.js';
@@ -56,7 +56,7 @@
 		<CompanyVersions {company} />
 	</jl-company-page>
 {:else if network.loading}
-	<NetworkStatus />
+	<Pending />
 {:else}
 	<h1>{key}</h1>
 	<p>{t('company.notFound', { key })}</p>

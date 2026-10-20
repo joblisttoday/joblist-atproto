@@ -3,7 +3,7 @@
 	import { goto } from '$app/navigation';
 	import config from '#lib/data/config.json';
 	import JobForm from '#lib/components/JobForm.svelte';
-	import NetworkStatus from '#lib/components/NetworkStatus.svelte';
+	import Pending from '#lib/components/Pending.svelte';
 	import RequireSession from '#lib/components/RequireSession.svelte';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { postPath } from '#lib/models/job-post.js';
@@ -29,7 +29,7 @@
 			/>
 		{/key}
 	{:else if post === undefined}
-		<NetworkStatus />
+		<Pending />
 	{:else}
 		<p>{t('job.notFound')}</p>
 	{/if}

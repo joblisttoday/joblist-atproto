@@ -3,10 +3,11 @@
 	import config from '#lib/data/config.json';
 	import links from '#lib/data/nav.json';
 	import Nav from './Nav.svelte';
+	import NetworkStatus from './NetworkStatus.svelte';
 	import { history } from '#lib/navigation/history.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
-	// Top-level pages show the app name; deeper pages show a way back.
+	// The app name is always there; deeper pages also get a way back.
 	const topLevel = $derived(
 		[...links.map((l) => l.href), '/signin'].includes(page.url.pathname)
 	);
@@ -21,13 +22,11 @@
 
 <jl-header>
 	<header>
-		{#if topLevel}
-			<a href="/" aria-current={page.url.pathname === '/' ? 'page' : undefined}><b>{config.name}</b></a>
-		{:else}
-			<a href="/" onclick={back}>← {t('nav.back')}</a>
-		{/if}
+		<a href="/" aria-current={page.url.pathname === '/' ? 'page' : undefined}><b>{config.name}</b></a>
+		{#if !topLevel}<a href="/" onclick={back}>← {t('nav.back')}</a>{/if}
 		<Nav />
 	</header>
+	<NetworkStatus />
 </jl-header>
 
 <style>
@@ -38,7 +37,6 @@
 	header {
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
 		gap: var(--space-m);
 		max-width: var(--page-width);
 		min-height: var(--header-height);
@@ -50,6 +48,13 @@
 		align-items: center;
 		min-height: var(--tap-size);
 		text-decoration: none;
+	}
+	header > a + a {
+		color: var(--color-muted);
+		font-size: var(--font-size-small);
+	}
+	header > :global(jl-nav) {
+		margin-left: auto;
 	}
 
 	@media (min-width: 48rem) {

@@ -4,7 +4,6 @@
 	import Companies from '#lib/components/Companies.svelte';
 	import JobItem from '#lib/components/JobItem.svelte';
 	import ListItem from '#lib/components/ListItem.svelte';
-	import NetworkStatus from '#lib/components/NetworkStatus.svelte';
 	import ProfileHeader from '#lib/components/ProfileHeader.svelte';
 	import { resolveDid } from '#lib/atproto/identity.js';
 	import { data } from '#lib/network/network.svelte.js';
@@ -19,7 +18,6 @@
 
 {#await did}
 	<ProfileHeader {handle} />
-	<NetworkStatus />
 {:then did}
 	{@const lists = data.lists.filter((l) => l.did === did)}
 	{@const companies = [...data.companies.values()].filter((c) => c.versions.some((v) => v.did === did))}

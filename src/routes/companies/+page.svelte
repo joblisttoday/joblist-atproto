@@ -3,7 +3,6 @@
 	import config from '#lib/data/config.json';
 	import Companies from '#lib/components/Companies.svelte';
 	import CompanyMap from '#lib/components/CompanyMap.svelte';
-	import NetworkStatus from '#lib/components/NetworkStatus.svelte';
 	import Tabs from '#lib/components/Tabs.svelte';
 	import { data } from '#lib/network/network.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
@@ -18,7 +17,6 @@
 
 <h1>{t('companies.title')}</h1>
 <p>{t('companies.intro')}</p>
-<NetworkStatus />
 <Tabs
 	label={t('list.tabs')}
 	tabs={[
