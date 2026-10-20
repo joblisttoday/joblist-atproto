@@ -6,10 +6,15 @@
  *   department?: string,
  *   published?: string,
  *   company: string,
+ *   id?: string,
  *   remote?: string,
- *   posted?: {did: string, rkey: string, verified: boolean}
+ *   posted?: {did: string, rkey: string, verified: boolean},
+ *   also?: Job[]
  * }} Job
- *   remote and posted: only for offers posted on joblist (today.joblist.job records).
+ *   id: the job's id at its job board, to read its description.
+ *   remote: where the work happens (onsite, hybrid or remote), when the board or the poster says.
+ *   posted: only for offers posted on joblist (today.joblist.job records).
+ *   also: the same offer (same company and title) at its other places, see sameOffers().
  */
 
 /**
@@ -28,4 +33,30 @@ export async function getJson(url) {
 /** @param {...(string | undefined | null)} parts */
 export function joinPlace(...parts) {
 	return parts.filter(Boolean).join(', ');
+}
+
+/**
+ * A job board's work place value ('Remote', 'ON_SITE', 'OnSite'…) as onsite, hybrid or remote.
+ * @param {unknown} value
+ */
+export function toWorkplace(value) {
+	const text = String(value || '').toLowerCase().replace(/[^a-z]/g, '');
+	if (text === 'remote') return 'remote';
+	if (text === 'hybrid') return 'hybrid';
+	if (text === 'onsite' || text === 'inoffice' || text === 'office') return 'onsite';
+	return undefined;
+}
+
+/**
+ * A function of one id that runs once per id; later calls share its promise.
+ * @template T
+ * @param {(id: string) => Promise<T>} load
+ */
+export function onceFor(load) {
+	/** @type {Map<string, Promise<T>>} */
+	const cache = new Map();
+	return (/** @type {string} */ id) => {
+		if (!cache.has(id)) cache.set(id, load(id));
+		return /** @type {Promise<T>} */ (cache.get(id));
+	};
 }

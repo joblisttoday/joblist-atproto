@@ -7,8 +7,9 @@ import { isLive, placeNames, toPost } from '../src/lib/models/job-post.js';
 /**
  * @typedef {import('../src/lib/models/company.js').Company} Company
  * @typedef {import('../src/lib/atproto/records.js').RepoRecord} RepoRecord
- * @typedef {{t: string, u: string, c: string, l?: string, d?: string, p?: string, s: string, v?: 1}} IndexedJob
- *   Compact job: title, url, company key, location, department, published, source ('ats' or a record uri), verified.
+ * @typedef {{t: string, u: string, c: string, l?: string, d?: string, p?: string, i?: string, r?: string, s: string, v?: 1}} IndexedJob
+ *   Compact job: title, url, company key, location, department, published, id at its board,
+ *   where the work happens (onsite, hybrid, remote), source ('ats' or a record uri), verified.
  */
 
 /**
@@ -24,7 +25,17 @@ export async function fetchBoardJobs(companies) {
 		const found = await getJobs(company);
 		health[company.key] = { status: found.length ? 'live' : 'empty', jobs: found.length };
 		for (const j of found) {
-			jobs.push({ t: j.title, u: j.url, c: company.key, l: j.location || undefined, d: j.department || undefined, p: j.published || undefined, s: 'ats' });
+			jobs.push({
+				t: j.title,
+				u: j.url,
+				c: company.key,
+				l: j.location || undefined,
+				d: j.department || undefined,
+				p: j.published || undefined,
+				i: j.id || undefined,
+				r: j.remote || undefined,
+				s: 'ats'
+			});
 		}
 	});
 	return { jobs, health };

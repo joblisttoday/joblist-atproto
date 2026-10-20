@@ -1,4 +1,5 @@
-import { getJson } from './job.js';
+import { getJson, toWorkplace } from './job.js';
+import { htmlToText } from './text.js';
 
 /** @type {import('./index.js').Fetcher} */
 export default async function rippling(id) {
@@ -11,9 +12,19 @@ export default async function rippling(id) {
 		if (!data || page + 1 >= (data.totalPages || 0)) break;
 	}
 	return jobs.map((/** @type {any} */ j) => ({
+		id: j.id,
 		title: j.name,
 		url: j.url,
 		location: (j.locations || []).map((/** @type {any} */ l) => l.name).join(', '),
-		department: j.department?.name
+		department: j.department?.name,
+		remote: toWorkplace(j.locations?.[0]?.workplaceType)
 	}));
+}
+
+/** @type {import('./index.js').Describer} */
+export async function describe(id, jobId) {
+	const job = await getJson(
+		`https://api.rippling.com/platform/api/ats/v2/board/${encodeURIComponent(id)}/jobs/${encodeURIComponent(jobId)}`
+	);
+	return htmlToText(`${job?.description?.role || ''}${job?.description?.company || ''}`);
 }
