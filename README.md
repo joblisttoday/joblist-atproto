@@ -54,7 +54,7 @@ prerendered with schema.org `JobPosting` data for search engines.
 Offers are shown for 60 days by default (120 at most, see `jobPost` in
 config); expired ones are hidden everywhere, in the app and the snapshot.
 Their poster can edit, renew or delete them from the offer, the company
-page or `/me`.
+page or their profile.
 
 **Applications never go through joblist.** joblist has no server and keeps
 nothing private: no tokens beyond the browser's own OAuth session, no

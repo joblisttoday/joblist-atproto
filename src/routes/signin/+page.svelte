@@ -6,7 +6,7 @@
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	$effect(() => {
-		if (session.did) goto('/me', { replace: true });
+		if (session.handle) goto(`/${session.handle}`, { replace: true });
 	});
 </script>
 

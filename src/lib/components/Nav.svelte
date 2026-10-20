@@ -1,15 +1,10 @@
 <script>
 	import { page } from '$app/state';
-	import links from '#lib/data/nav.json';
 	import { session } from '#lib/auth/session.svelte.js';
+	import { navLinks } from '#lib/navigation/nav.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
-	const items = $derived(
-		links.map((link) => {
-			const { href, label } = !session.did && link.signedOut ? link.signedOut : link;
-			return { href, label: t(label) };
-		})
-	);
+	const items = $derived(navLinks(session.handle));
 
 	/** @param {string} href */
 	function current(href) {
@@ -22,7 +17,7 @@
 <jl-nav>
 	<nav aria-label={t('nav.label')}>
 		{#each items as item (item.href)}
-			<a href={item.href} aria-current={current(item.href) ? 'page' : undefined}>{item.label}</a>
+			<a href={item.href} aria-current={current(item.href) ? 'page' : undefined}>{t(item.label)}</a>
 		{/each}
 	</nav>
 </jl-nav>

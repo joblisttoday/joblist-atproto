@@ -173,11 +173,8 @@
 	"signin.create": "Create one on Bluesky",
 	"signin.checking": "Checking your session…",
 
-	"me.lists": "Your lists",
-	"me.companies": "Companies you described",
 	"me.signout": "Sign out",
-	"me.language": "Language",
-	"me.public": "Public profile",
+	"about.language": "Language",
 	"me.lists.empty": "You have no lists yet. Make one, or copy a list you like.",
 	"me.companies.empty": "You have not described a company yet.",
 

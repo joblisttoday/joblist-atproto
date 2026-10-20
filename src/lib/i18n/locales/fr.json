@@ -173,11 +173,8 @@
 	"signin.create": "Créez-en un sur Bluesky",
 	"signin.checking": "Vérification de la session…",
 
-	"me.lists": "Vos listes",
-	"me.companies": "Entreprises que vous avez décrites",
 	"me.signout": "Se déconnecter",
-	"me.language": "Langue",
-	"me.public": "Profil public",
+	"about.language": "Langue",
 	"me.lists.empty": "Vous n'avez pas encore de liste. Créez-en une, ou copiez une liste qui vous plaît.",
 	"me.companies.empty": "Vous n'avez encore décrit aucune entreprise.",
 

@@ -1,17 +1,25 @@
 <script>
 	import { page } from '$app/state';
+	import { goto } from '$app/navigation';
 	import config from '#lib/data/config.json';
 	import Companies from '#lib/components/Companies.svelte';
 	import JobItem from '#lib/components/JobItem.svelte';
 	import ListItem from '#lib/components/ListItem.svelte';
+	import MyJobPosts from '#lib/components/MyJobPosts.svelte';
 	import ProfileHeader from '#lib/components/ProfileHeader.svelte';
 	import { resolveDid } from '#lib/atproto/identity.js';
+	import { session, signOut } from '#lib/auth/session.svelte.js';
 	import { data } from '#lib/network/network.svelte.js';
 	import { isLive, toJob } from '#lib/models/job-post.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	const handle = $derived(page.params.handle || '');
 	const did = $derived(resolveDid(handle));
+
+	async function out() {
+		await signOut();
+		await goto('/');
+	}
 </script>
 
 <svelte:head><title>@{handle} · {config.name}</title></svelte:head>
@@ -19,37 +27,59 @@
 {#await did}
 	<ProfileHeader {handle} />
 {:then did}
+	{@const self = session.did === did}
 	{@const lists = data.lists.filter((l) => l.did === did)}
 	{@const companies = [...data.companies.values()].filter((c) => c.versions.some((v) => v.did === did))}
-	{@const jobs = data.posts.filter((p) => p.did === did && isLive(p.record.value)).map(toJob)}
-	<ProfileHeader {did} {handle} />
-	<section>
-		<h2>{t('profile.lists')}</h2>
-		{#if lists.length}
-			<ul>{#each lists as list (list.uri)}<li><ListItem {list} author={false} /></li>{/each}</ul>
-		{:else}
-			<p><small>{t('profile.empty')}</small></p>
-		{/if}
-	</section>
-	{#if jobs.length}
-		<section>
-			<h2>{t('profile.jobs')} <small>{jobs.length}</small></h2>
-			<ul>
-				{#each jobs as job (job.url)}
-					<li><JobItem {job} company={data.companies.get(job.company)?.name || job.company} /></li>
-				{/each}
-			</ul>
+	<!-- Their own page shows expired offers too, to renew or delete them. -->
+	{@const posts = data.posts.filter((p) => p.did === did && (self || isLive(p.record.value)))}
+	<jl-profile self={self || undefined}>
+		<ProfileHeader {did} {handle}>
+			{#if self}<menu><button type="button" onclick={out}>{t('me.signout')}</button></menu>{/if}
+		</ProfileHeader>
+
+		<section aria-labelledby="profile-lists">
+			<h2 id="profile-lists">{t('profile.lists')} <small>{lists.length || ''}</small></h2>
+			{#if lists.length}
+				<ul>{#each lists as list (list.uri)}<li><ListItem {list} author={false} /></li>{/each}</ul>
+			{:else}
+				<p><small>{self ? t('me.lists.empty') : t('profile.empty')}</small></p>
+			{/if}
+			{#if self}<menu><a href="/lists/new">+ {t('list.new')}</a></menu>{/if}
 		</section>
-	{/if}
-	<section>
-		<h2>{t('profile.companies')} <small>{companies.length || ''}</small></h2>
-		{#if companies.length}
-			<Companies {companies} searchable={companies.length > 10} />
-		{:else}
-			<p><small>{t('profile.empty')}</small></p>
+
+		{#if self || posts.length}
+			<section aria-labelledby="profile-jobs">
+				<h2 id="profile-jobs">{t('profile.jobs')} <small>{posts.length || ''}</small></h2>
+				{#if self}
+					<MyJobPosts {posts} />
+					<menu><a href="/jobs/new">+ {t('post.title')}</a></menu>
+				{:else}
+					<ul>
+						{#each posts.map(toJob) as job (job.url)}
+							<li><JobItem {job} company={data.companies.get(job.company)?.name || job.company} /></li>
+						{/each}
+					</ul>
+				{/if}
+			</section>
 		{/if}
-	</section>
+
+		<section aria-labelledby="profile-companies">
+			<h2 id="profile-companies">{t('profile.companies')} <small>{companies.length || ''}</small></h2>
+			{#if companies.length}
+				<Companies {companies} searchable={companies.length > 10} />
+			{:else}
+				<p><small>{self ? t('me.companies.empty') : t('profile.empty')}</small></p>
+			{/if}
+			{#if self}<menu><a href="/add">+ {t('form.company.title')}</a></menu>{/if}
+		</section>
+	</jl-profile>
 {:catch}
 	<h1>@{handle}</h1>
 	<p role="alert">{t('profile.notFound')}</p>
 {/await}
+
+<style>
+	jl-profile {
+		display: block;
+	}
+</style>

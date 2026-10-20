@@ -3,5 +3,5 @@
 	{ "href": "/jobs", "label": "nav.jobs" },
 	{ "href": "/companies", "label": "nav.companies" },
 	{ "href": "/add", "label": "nav.add" },
-	{ "href": "/me", "label": "nav.me", "signedOut": { "href": "/signin", "label": "nav.signin" } }
+	{ "href": "/{handle}", "label": "nav.me", "signedOut": { "href": "/signin", "label": "nav.signin" } }
 ]

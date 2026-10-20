@@ -9,7 +9,7 @@
 			<small>{t('about.data')} <a href={config.source}>{t('about.source')}</a></small>
 		</p>
 		<label>
-			<small>{t('me.language')}</small>
+			<small>{t('about.language')}</small>
 			<select value={i18n.locale} onchange={(e) => setLocale(e.currentTarget.value)}>
 				{#each config.locales as locale (locale)}<option value={locale}>{t(`locale.${locale}`)}</option>{/each}
 			</select>
