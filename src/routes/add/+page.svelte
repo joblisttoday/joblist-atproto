@@ -2,6 +2,7 @@
 	import config from '#lib/data/config.json';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
+	import AddAnywhere from '#lib/components/AddAnywhere.svelte';
 	import AddFound from '#lib/components/AddFound.svelte';
 	import AddLink from '#lib/components/AddLink.svelte';
 	import CompanyForm from '#lib/components/CompanyForm.svelte';
@@ -62,5 +63,12 @@
 	{/await}
 {:else}
 	<p><small><a href="/add?name=">{t('add.manual')}</a></small></p>
-	<p><small><a href="/tools">{t('add.tools')}</a></small></p>
+	<section aria-labelledby="add-more">
+		<h2 id="add-more">{t('add.more')}</h2>
+		<menu>
+			<a href="/lists/new">+ {t('list.new')}</a>
+			<a href="/jobs/new">+ {t('post.title')}</a>
+		</menu>
+	</section>
+	<AddAnywhere />
 {/if}
