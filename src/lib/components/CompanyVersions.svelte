@@ -29,35 +29,37 @@
 </script>
 
 <jl-company-versions>
-	<h2 id="company-history">{t('company.history')}</h2>
-	<p><small>{t('company.history.help')}</small></p>
-	<ol aria-labelledby="company-history">
-		{#each company.versions as version (version.uri)}
-			{@const current = version.uri === company.record.uri}
-			{@const changes = current ? [] : changedFields(version, company.record)}
-			<li>
-				<jl-version current={current || undefined} unchecked={(!isOwnRecord(version, data.profiles) && isUnchecked(version, company.versions)) || undefined}>
-					<p>
-						<Author did={version.did} /> · <EditTime datetime={editedAt(version)} />
-						{#if current}· <strong>{t('company.version.current')}</strong>{/if}
-					</p>
-					<small>
-						{#if isOwnRecord(version, data.profiles)}✓ {t('company.version.own')} · {/if}
-						{#if !isOwnRecord(version, data.profiles) && isUnchecked(version, company.versions)}{t('company.unchecked')} · {/if}
-						{#if current}{version.value.name}{:else if changes.length}{t('company.version.changes', {
-								fields: changes.map((label) => t(label)).join(', ')
-							})}{:else}{t('company.version.same')}{/if}
-					</small>
-					{#if !current && session.did}
-						<button type="button" onclick={() => restore(version)} disabled={busy !== null}>
-							{busy === version.uri ? t('form.saving') : t('company.restore')}
-						</button>
-					{/if}
-				</jl-version>
-			</li>
-		{/each}
-	</ol>
-	{#if error}<p role="alert">{error}</p>{/if}
+	<details>
+		<summary id="company-history">{t('company.history')} <small>{t('company.history.count', { count: company.versions.length })}</small></summary>
+		<p><small>{t('company.history.help')}</small></p>
+		<ol aria-labelledby="company-history">
+			{#each company.versions as version (version.uri)}
+				{@const current = version.uri === company.record.uri}
+				{@const changes = current ? [] : changedFields(version, company.record)}
+				<li>
+					<jl-version current={current || undefined} unchecked={(!isOwnRecord(version, data.profiles) && isUnchecked(version, company.versions)) || undefined}>
+						<p>
+							<Author did={version.did} /> · <EditTime datetime={editedAt(version)} />
+							{#if current}· <strong>{t('company.version.current')}</strong>{/if}
+						</p>
+						<small>
+							{#if isOwnRecord(version, data.profiles)}✓ {t('company.version.own')} · {/if}
+							{#if !isOwnRecord(version, data.profiles) && isUnchecked(version, company.versions)}{t('company.unchecked')} · {/if}
+							{#if current}{version.value.name}{:else if changes.length}{t('company.version.changes', {
+									fields: changes.map((label) => t(label)).join(', ')
+								})}{:else}{t('company.version.same')}{/if}
+						</small>
+						{#if !current && session.did}
+							<button type="button" onclick={() => restore(version)} disabled={busy !== null}>
+								{busy === version.uri ? t('form.saving') : t('company.restore')}
+							</button>
+						{/if}
+					</jl-version>
+				</li>
+			{/each}
+		</ol>
+		{#if error}<p role="alert">{error}</p>{/if}
+	</details>
 </jl-company-versions>
 
 <style>
@@ -67,8 +69,8 @@
 		padding-top: var(--space-m);
 		border-top: var(--border);
 	}
-	h2 {
-		margin-top: 0;
+	summary small {
+		font-weight: normal;
 	}
 	jl-version {
 		display: block;

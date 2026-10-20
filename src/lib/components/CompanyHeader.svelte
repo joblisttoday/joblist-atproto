@@ -32,7 +32,7 @@
 		<h1>{company.name}</h1>
 		<p>
 			<small>
-				{#if company.url}<a href={company.url} target="_blank" rel="noopener">{company.key}</a>{:else}{company.key}{/if}
+				{#if company.url}<a href={company.url} target="_blank" rel="noopener">{company.key} ↗</a>{:else}{company.key}{/if}
 				{#if company.verified}· <span>✓ {t('company.verified', { domain: company.key })}</span>{/if}
 			</small>
 		</p>
@@ -45,7 +45,6 @@
 		{/if}
 		<menu>
 			{#if board}<a href={board} target="_blank" rel="noopener">{t('company.jobBoard')} ↗</a>{/if}
-			{#if company.url}<a href={company.url} target="_blank" rel="noopener">{t('company.website')} ↗</a>{/if}
 			<a href="/add?key={encodeURIComponent(company.key)}">{t('company.edit')}</a>
 			{#if own}<button type="button" onclick={remove}>{t('company.delete')}</button>{/if}
 		</menu>

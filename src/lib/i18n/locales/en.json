@@ -69,7 +69,6 @@
 	"list.open": "anyone can add companies",
 	"list.closed": "the author picks the companies",
 
-	"company.website": "Website",
 	"company.jobBoard": "Job board",
 	"company.verified": "Verified: published by {domain} itself",
 	"company.inLists": "In lists",
@@ -86,7 +85,9 @@
 	"company.confirm": "Confirm it is right",
 	"company.confirm.help": "Checked it? Confirming saves this version in your account, as checked by a person.",
 	"company.history": "History",
-	"company.history.help": "Anyone can edit a company. Each person's edit is saved in their own account; the most recent one is shown, unless the company publishes its own.",
+	"company.history.count": "{count} versions",
+	"company.history.count.one": "1 version",
+	"company.history.help": "Anyone can edit a company: each edit stays in its author's account, and the latest one is shown unless the company publishes its own.",
 	"company.version.current": "shown",
 	"company.version.own": "by the company itself",
 	"company.version.changes": "Differs in: {fields}",

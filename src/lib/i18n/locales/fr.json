@@ -69,7 +69,6 @@
 	"list.open": "tout le monde peut ajouter des entreprises",
 	"list.closed": "l'auteur choisit les entreprises",
 
-	"company.website": "Site web",
 	"company.jobBoard": "Offres d'emploi",
 	"company.verified": "Vérifiée : publiée par {domain} elle-même",
 	"company.inLists": "Dans les listes",
@@ -86,7 +85,9 @@
 	"company.confirm": "Confirmer qu'elle est juste",
 	"company.confirm.help": "Vous avez vérifié ? Confirmer enregistre cette version dans votre compte, vérifiée par une personne.",
 	"company.history": "Historique",
-	"company.history.help": "Tout le monde peut modifier une entreprise. Chaque modification est enregistrée dans le compte de son auteur ; la plus récente est affichée, sauf si l'entreprise publie la sienne.",
+	"company.history.count": "{count} versions",
+	"company.history.count.one": "1 version",
+	"company.history.help": "Tout le monde peut modifier une entreprise : chaque modification reste dans le compte de son auteur, et la plus récente est affichée, sauf si l'entreprise publie la sienne.",
 	"company.version.current": "affichée",
 	"company.version.own": "par l'entreprise elle-même",
 	"company.version.changes": "Diffère par : {fields}",

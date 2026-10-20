@@ -11,6 +11,7 @@
 	import Pending from '#lib/components/Pending.svelte';
 	import { data, listsWith, network } from '#lib/network/network.svelte.js';
 	import { boardUrl, mapPoints } from '#lib/models/company.js';
+	import { mixedAuthors } from '#lib/models/list.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	const key = $derived(page.params.key || '');
@@ -35,6 +36,16 @@
 			{#if hasJobs}<Jobs companies={[company]} />{/if}
 		</section>
 
+		<section aria-labelledby="company-lists">
+			<h2 id="company-lists">{t('company.inLists')}</h2>
+			{#if lists.length}
+				<ul>{#each lists as list (list.uri)}<li><ListItem {list} author={mixedAuthors(lists)} /></li>{/each}</ul>
+			{:else}
+				<p><small>{t('company.noLists')}</small></p>
+			{/if}
+			<AddToList {key} />
+		</section>
+
 		{#if places.length}
 			<section aria-labelledby="company-places">
 				<h2 id="company-places">{t('form.locations')}</h2>
@@ -42,16 +53,6 @@
 				{#if mapPoints(company).length}<CompanyMap companies={[company]} small />{/if}
 			</section>
 		{/if}
-
-		<section aria-labelledby="company-lists">
-			<h2 id="company-lists">{t('company.inLists')}</h2>
-			{#if lists.length}
-				<ul>{#each lists as list (list.uri)}<li><ListItem {list} /></li>{/each}</ul>
-			{:else}
-				<p><small>{t('company.noLists')}</small></p>
-			{/if}
-			<AddToList {key} />
-		</section>
 
 		<CompanyVersions {company} />
 	</jl-company-page>
