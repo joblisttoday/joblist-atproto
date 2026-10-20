@@ -36,10 +36,8 @@
 	"tools.agents.text": "Dans les navigateurs avec WebMCP, un assistant IA peut chercher ici des entreprises, des offres et des listes, et remplir le formulaire d'ajout pour que vous le vérifiiez et l'enregistriez.",
 
 	"home.title": "Des entreprises qui recrutent, choisies par des gens",
-	"home.intro": "Des listes d'entreprises par ville ou par domaine, faites par toute personne ayant un compte Bluesky. Chaque liste est aussi un tableau d'offres en direct.",
+	"home.intro": "Des listes d'entreprises par ville ou par domaine, faites par toute personne ayant un compte Bluesky : chacune est aussi un tableau d'offres en direct.",
 	"home.empty": "Aucune liste pour l'instant.",
-	"home.jobs": "Chercher une offre",
-	"home.companies": "Toutes les entreprises",
 
 	"search.placeholder": "Rechercher",
 	"search.lists": "Rechercher des listes",

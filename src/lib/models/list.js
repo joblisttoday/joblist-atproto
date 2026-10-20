@@ -90,3 +90,11 @@ export function parseUri(uri) {
 	const [did, collection, rkey] = uri.replace('at://', '').split('/');
 	return { did, collection, rkey };
 }
+
+/**
+ * Whether lists shown together need their author on each row: not when one person made them all.
+ * @param {List[]} lists
+ */
+export function mixedAuthors(lists) {
+	return new Set(lists.map((l) => l.did)).size > 1;
+}

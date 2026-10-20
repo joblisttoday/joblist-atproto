@@ -36,10 +36,8 @@
 	"tools.agents.text": "In browsers with WebMCP, an AI assistant can search companies, jobs and lists here, and fill in the add form for you to check and save.",
 
 	"home.title": "Companies that hire, chosen by people",
-	"home.intro": "Lists of companies by city or field, made by anyone with a Bluesky account. Every list is also a live job board.",
+	"home.intro": "Lists of companies by city or field, made by anyone with a Bluesky account: each one is also a live job board.",
 	"home.empty": "No lists yet.",
-	"home.jobs": "Search all jobs",
-	"home.companies": "All companies",
 
 	"search.placeholder": "Search",
 	"search.lists": "Search lists",

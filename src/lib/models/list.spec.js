@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { membership, toList, toRecord } from './list.js';
+import { membership, mixedAuthors, toList, toRecord } from './list.js';
 
 const LIST = 'at://did:owner/today.joblist.list/1';
 
@@ -39,5 +39,16 @@ describe('toRecord', () => {
 		expect(toRecord({ name: 'L', description: '', companies: [] }, 'now')).not.toHaveProperty('open');
 		const record = toRecord({ name: 'L', description: '', companies: ['a', 'a'], open: true, hidden: ['x', 'x'] }, 'now');
 		expect(record).toMatchObject({ companies: ['a'], open: true, hidden: ['x'] });
+	});
+});
+
+describe('mixedAuthors', () => {
+	it('is false when one person made every list', () => {
+		expect(mixedAuthors([list({}), list({ name: 'M' })])).toBe(false);
+		expect(mixedAuthors([])).toBe(false);
+	});
+	it('is true when lists come from several people', () => {
+		const other = toList({ did: 'did:other', rkey: '2', uri: 'at://did:other/today.joblist.list/2', cid: '', value: { name: 'O', createdAt: '' } });
+		expect(mixedAuthors([list({}), other])).toBe(true);
 	});
 });
