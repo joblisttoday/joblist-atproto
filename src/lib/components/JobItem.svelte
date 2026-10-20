@@ -1,14 +1,12 @@
 <script>
-	import FeatureLink from './FeatureLink.svelte';
-	import { jobOf } from '#lib/models/featured.js';
 	import { time } from '#lib/models/job.js';
 	import { postPath } from '#lib/models/job-post.js';
 	import { handleOf } from '#lib/network/network.svelte.js';
 	import { ago } from '#lib/i18n/dates.js';
 	import { i18n, t } from '#lib/i18n/index.svelte.js';
 
-	/** @type {{job: import('#lib/ats/job.js').Job, company?: string, featuring?: boolean}} */
-	let { job, company, featuring = false } = $props();
+	/** @type {{job: import('#lib/ats/job.js').Job, company?: string}} */
+	let { job, company } = $props();
 	const posted = $derived(job.posted);
 	const meta = $derived(
 		[job.location, job.department, job.remote && t(`job.remote.${job.remote}`), ago(time(job.published), i18n.locale)]
@@ -31,7 +29,6 @@
 	{:else if posted}
 		<small>{t('job.sharedBy')} <a href="/{handleOf(posted.did)}">@{handleOf(posted.did)}</a></small>
 	{/if}
-	{#if featuring}<menu><FeatureLink job={jobOf(job)} title={job.title} /></menu>{/if}
 </jl-job>
 
 <style>
@@ -56,9 +53,6 @@
 	}
 	small a {
 		color: var(--color-fg);
-	}
-	menu {
-		margin: var(--space-xs) 0 0;
 	}
 	mark {
 		background: none;

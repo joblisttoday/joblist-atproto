@@ -1,9 +1,7 @@
 <script>
-	import FeatureLink from './FeatureLink.svelte';
 	import JobApply from './JobApply.svelte';
 	import JobPostMenu from './JobPostMenu.svelte';
 	import { data, handleOf } from '#lib/network/network.svelte.js';
-	import { recordJob } from '#lib/models/featured.js';
 	import { isLive, placeNames, postPageUrl } from '#lib/models/job-post.js';
 	import { time } from '#lib/models/job.js';
 	import { ago, longDate } from '#lib/i18n/dates.js';
@@ -47,7 +45,6 @@
 			</small>
 		</p>
 		<JobPostMenu {post} {ondeleted} />
-		{#if live}<p><small><FeatureLink job={recordJob(post.did, post.rkey)} title={post.title} /></small></p>{/if}
 	</header>
 
 	{#if post.description}<p>{post.description}</p>{/if}

@@ -1,6 +1,5 @@
 <script>
 	import config from '#lib/data/config.json';
-	import FeaturedJobs from './FeaturedJobs.svelte';
 	import JobFilters from './JobFilters.svelte';
 	import JobGroup from './JobGroup.svelte';
 	import JobItem from './JobItem.svelte';
@@ -13,11 +12,8 @@
 	import { data } from '#lib/network/network.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
-	/**
-	 * featuring: each job links to the page to feature it.
-	 * @type {{companies: import('#lib/models/company.js').Company[], featuring?: boolean}}
-	 */
-	let { companies, featuring = false } = $props();
+	/** @type {{companies: import('#lib/models/company.js').Company[]}} */
+	let { companies } = $props();
 	const PAGE = config.jobs.pageSize;
 
 	/** Jobs read from job boards (or their snapshot). */
@@ -76,7 +72,6 @@
 	{#if loading}
 		<progress value={answered} max={targets.length} aria-label={t('jobs.loading')}></progress>
 	{/if}
-	<FeaturedJobs {jobs} {names} {single} />
 	<p aria-live="polite">
 		<small>
 			{#if loading}
@@ -102,7 +97,7 @@
 	{:else}
 		<ul>
 			{#each filtered.slice(0, shown) as job (job.url)}
-				<li><JobItem {job} {featuring} company={single ? undefined : names.get(job.company)} /></li>
+				<li><JobItem {job} company={single ? undefined : names.get(job.company)} /></li>
 			{/each}
 		</ul>
 		{#if filtered.length > shown}

@@ -10,7 +10,7 @@ with a supported job board, open jobs are read live from that board.
 It started as a hand-made spreadsheet of Berlin companies (joblistberlin), and
 grew into joblist.today. This version keeps the part that worked, the
 crowd-curated list of companies, and drops everything else: no database, no
-crawler, no server (besides a tiny Worker that only records paid featured jobs).
+crawler, no server.
 
 ## Records
 
@@ -56,7 +56,7 @@ config); expired ones are hidden everywhere, in the app and the snapshot.
 Their poster can edit, renew or delete them from the offer, the company
 page or `/me`.
 
-**Applications never go through joblist.** joblist has no application server and keeps
+**Applications never go through joblist.** joblist has no server and keeps
 nothing private: no tokens beyond the browser's own OAuth session, no
 passwords, no messages, no CVs. The offer only says where to apply: the
 company's form, an email (`mailto:`), or the poster's Bluesky profile to
@@ -70,9 +70,8 @@ poster. Until that exists, nothing private is written.
 
 ## How it runs
 
-A static SvelteKit app, served by a Cloudflare Worker. Everything happens in
-the browser; the Worker's only code answers `/api/*` for featured jobs
-(see [Paying for joblist](#paying-for-joblist)):
+A static SvelteKit app, served by a Cloudflare Worker (assets only, no code).
+Everything happens in the browser:
 
 | What | How |
 |---|---|
@@ -89,15 +88,6 @@ staying the source of truth.
 
 Cost: €0/month.
 
-## Paying for joblist
-
-Posting stays free. An employer (or anyone) can pay to show a job for 30 days
-in a block labelled "Featured · paid by the employer", above the job lists
-that already include its company; it changes no list and no order. Anyone
-can also support joblist, paying what they want at `/support`. Payments go
-through Stripe Payment Links; joblist stores only which job is featured and
-until when. See [docs/revenue.md](docs/revenue.md).
-
 ## Develop
 
 Node 24 (see `.nvmrc`) and npm 11.
@@ -113,7 +103,6 @@ Configuration lives in data files, not code:
 
 - [`src/lib/data/config.json`](src/lib/data/config.json): services, map, limits, locales
 - [`src/lib/data/providers.json`](src/lib/data/providers.json): job board providers
-- [`src/lib/data/revenue.json`](src/lib/data/revenue.json): featured jobs and support (prices, Payment Links)
 - [`src/lib/i18n/locales/`](src/lib/i18n/locales): interface text (English, French)
 - [`scripts/starter-lists.json`](scripts/starter-lists.json): lists created by the import
 
