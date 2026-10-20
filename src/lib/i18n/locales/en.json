@@ -38,7 +38,6 @@
 	"home.intro": "Lists of companies by city or field, made by anyone with a Bluesky account: each one is also a live job board.",
 	"home.empty": "No lists yet.",
 
-	"search.placeholder": "Search",
 	"search.lists": "Search lists",
 	"search.companies": "Search companies, tags, places",
 	"search.none": "Nothing matches.",
