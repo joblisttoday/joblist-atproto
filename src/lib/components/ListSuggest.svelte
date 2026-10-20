@@ -1,6 +1,5 @@
 <script>
 	import { page } from '$app/state';
-	import RequireSession from './RequireSession.svelte';
 	import { data, handleOf } from '#lib/network/network.svelte.js';
 	import { suggest } from '#lib/network/save-suggestion.js';
 	import { searchCompanies } from '#lib/models/company.js';
@@ -9,10 +8,10 @@
 	const RESULTS = 8;
 
 	/**
-	 * "Suggest a company" for someone else's list.
-	 * @type {{list: import('#lib/models/list.js').List, taken: Set<string>}}
+	 * "Suggest a company" for someone else's list, for a signed-in person.
+	 * @type {{list: import('#lib/models/list.js').List, taken: Set<string>, onclose: () => void}}
 	 */
-	let { list, taken } = $props();
+	let { list, taken, onclose } = $props();
 
 	// Back from describing a new company: it comes preselected (?suggest=key).
 	const preselected = page.url.searchParams.get('suggest') || '';
@@ -53,54 +52,52 @@
 </script>
 
 <jl-list-suggest open={list.open || undefined}>
-	<details open={Boolean(preselected)}>
-		<summary>{t('suggestion.title')}</summary>
-		<RequireSession>
-			{#if chosen}
-				<form onsubmit={send}>
-					<p>{t('suggestion.chosen', { name: data.companies.get(chosen)?.name || chosen })}</p>
-					<label for="suggest-note">{t('suggestion.note')}</label>
-					<textarea id="suggest-note" bind:value={note} maxlength="300"></textarea>
-					{#if error}<p role="alert">{error}</p>{/if}
-					<menu>
-						<button type="submit" disabled={busy}>{busy ? t('form.saving') : t('suggestion.send')}</button>
-						<button type="button" onclick={() => (chosen = '')}>{t('form.cancel')}</button>
-					</menu>
-				</form>
+	<section aria-label={t('suggestion.title')}>
+		{#if chosen}
+			<form onsubmit={send}>
+				<p>{t('suggestion.chosen', { name: data.companies.get(chosen)?.name || chosen })}</p>
+				<label for="suggest-note">{t('suggestion.note')}</label>
+				<textarea id="suggest-note" bind:value={note} maxlength="300"></textarea>
+				{#if error}<p role="alert">{error}</p>{/if}
+				<menu>
+					<button type="submit" disabled={busy}>{busy ? t('form.saving') : t('suggestion.send')}</button>
+					<button type="button" onclick={() => (chosen = '')}>{t('form.cancel')}</button>
+				</menu>
+			</form>
+		{:else}
+			{#if sent}<p role="status">{list.open ? t('suggestion.sent.open') : t('suggestion.sent')}</p>{/if}
+			<label for="suggest-search">{t('suggestion.search')}</label>
+			<input
+				id="suggest-search"
+				type="search"
+				bind:value={query}
+				placeholder={t('search.companies')}
+				autocomplete="off"
+				enterkeyhint="search"
+				aria-describedby="suggest-help"
+			/>
+			{#if query && !results.length}
+				<small id="suggest-help">
+					{t('form.list.noMatch')}
+					<a href="/add?url={encodeURIComponent(query)}&list={encodeURIComponent(path)}">{t('company.describe')}</a>
+				</small>
 			{:else}
-				{#if sent}<p role="status">{list.open ? t('suggestion.sent.open') : t('suggestion.sent')}</p>{/if}
-				<label for="suggest-search">{t('suggestion.search')}</label>
-				<input
-					id="suggest-search"
-					type="search"
-					bind:value={query}
-					placeholder={t('search.companies')}
-					autocomplete="off"
-					enterkeyhint="search"
-					aria-describedby="suggest-help"
-				/>
-				{#if query && !results.length}
-					<small id="suggest-help">
-						{t('form.list.noMatch')}
-						<a href="/add?url={encodeURIComponent(query)}&list={encodeURIComponent(path)}">{t('company.describe')}</a>
-					</small>
-				{:else}
-					<small id="suggest-help">{list.open ? t('suggestion.help.open') : t('suggestion.help')}</small>
-				{/if}
-				{#if results.length}
-					<ul aria-label={t('form.list.suggestions')}>
-						{#each results as company (company.key)}
-							<li>
-								<button type="button" onclick={() => (chosen = company.key)}>
-									<span>+ {company.name}</span> <small>{company.key}</small>
-								</button>
-							</li>
-						{/each}
-					</ul>
-				{/if}
+				<small id="suggest-help">{list.open ? t('suggestion.help.open') : t('suggestion.help')}</small>
 			{/if}
-		</RequireSession>
-	</details>
+			{#if results.length}
+				<ul aria-label={t('form.list.suggestions')}>
+					{#each results as company (company.key)}
+						<li>
+							<button type="button" onclick={() => (chosen = company.key)}>
+								<span>+ {company.name}</span> <small>{company.key}</small>
+							</button>
+						</li>
+					{/each}
+				</ul>
+			{/if}
+			<menu><button type="button" onclick={onclose}>{t('suggestion.close')}</button></menu>
+		{/if}
+	</section>
 </jl-list-suggest>
 
 <style>
@@ -111,8 +108,11 @@
 		border: var(--border);
 		border-radius: var(--radius);
 	}
-	details[open] {
-		padding-bottom: var(--space-m);
+	section {
+		padding: var(--space-s) 0 0;
+	}
+	label:first-of-type {
+		margin-top: var(--space-s);
 	}
 	ul {
 		margin: var(--space-s) 0 0;

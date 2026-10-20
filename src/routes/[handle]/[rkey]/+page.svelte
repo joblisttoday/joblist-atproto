@@ -31,6 +31,8 @@
 			.catch(() => (fetched = null));
 	});
 
+	// ?suggest opens "Suggest a company" (?suggest=key: back from describing it, or from signing in).
+	let suggesting = $state(page.url.searchParams.has('suggest'));
 	const tab = $derived(page.url.searchParams.get('tab') || 'companies');
 	const membership = $derived(list ? membersOf(list) : { members: [], pending: [] });
 	const companies = $derived(
@@ -50,15 +52,15 @@
 
 {#if list}
 	<jl-list-page>
-		<ListHeader {list} count={membership.members.length} />
+		<ListHeader {list} count={membership.members.length} bind:suggesting />
 
 		{#if mine && membership.pending.length}<ListPending {list} pending={membership.pending} />{/if}
-		{#if session.ready && !mine}<ListSuggest {list} {taken} />{/if}
+		{#if suggesting && session.did && !mine}<ListSuggest {list} {taken} onclose={() => (suggesting = false)} />{/if}
 
 		<Tabs
 			label={t('list.tabs')}
 			tabs={[
-				{ id: 'companies', label: t('list.tab.companies'), count: companies.length },
+				{ id: 'companies', label: t('list.tab.companies') },
 				{ id: 'jobs', label: t('list.tab.jobs') },
 				{ id: 'map', label: t('list.tab.map') }
 			]}

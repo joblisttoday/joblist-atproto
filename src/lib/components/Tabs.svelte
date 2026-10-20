@@ -4,7 +4,7 @@
 	/**
 	 * Tabs as links: the open tab is in the URL (?tab=…), so it survives
 	 * reloads, back navigation and sharing.
-	 * @type {{tabs: {id: string, label: string, count?: number}[], current: string, label: string}}
+	 * @type {{tabs: {id: string, label: string}[], current: string, label: string}}
 	 */
 	let { tabs, current, label } = $props();
 
@@ -22,7 +22,7 @@
 	<nav aria-label={label} data-sveltekit-replacestate data-sveltekit-noscroll data-sveltekit-keepfocus>
 		{#each tabs as tab (tab.id)}
 			<a href={href(tab.id)} aria-current={current === tab.id ? 'page' : undefined}>
-				{tab.label}{#if tab.count !== undefined}<small>{tab.count.toLocaleString()}</small>{/if}
+				{tab.label}
 			</a>
 		{/each}
 	</nav>
@@ -40,7 +40,6 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		gap: var(--space-xs);
 		min-height: var(--tap-size);
 		text-decoration: none;
 		color: var(--color-muted);
@@ -54,8 +53,5 @@
 		color: var(--color-fg);
 		font-weight: var(--font-weight-strong);
 		border-bottom-color: var(--color-fg);
-	}
-	small {
-		font-weight: normal;
 	}
 </style>

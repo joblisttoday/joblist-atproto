@@ -67,6 +67,7 @@
 	"list.notFoundTitle": "Liste introuvable",
 	"list.companies.one": "1 entreprise",
 	"list.open": "tout le monde peut ajouter des entreprises",
+	"list.closed": "l'auteur choisit les entreprises",
 
 	"company.website": "Site web",
 	"company.jobBoard": "Offres d'emploi",
@@ -212,6 +213,7 @@
 	"suggestion.pending.one": "1 entreprise suggérée par d'autres",
 	"suggestion.accept": "Ajouter à la liste",
 	"suggestion.dismiss": "Refuser",
+	"suggestion.close": "Fermer",
 
 	"job.verified": "publiée par l'entreprise",
 	"job.sharedBy": "partagée par",

@@ -1,5 +1,6 @@
 import { goto } from '$app/navigation';
 import { getProfiles } from '#lib/atproto/identity.js';
+import { nextPath } from '#lib/navigation/next.js';
 
 // The OAuth and API libraries are large: load them after the first paint.
 const auth = () => import('./client.js');
@@ -42,11 +43,10 @@ export async function initSession() {
 export async function signIn(handle) {
 	const { loadClient, SCOPE } = await auth();
 	if (!client) client = await loadClient(clear);
-	const back = window.location.pathname + window.location.search;
-	await client.signIn(handle.trim().replace(/^@/, ''), {
-		scope: SCOPE,
-		state: back === '/signin' ? '/' : back
-	});
+	// Back to the page signing in started from (/signin?next=… names it).
+	const { pathname, search } = window.location;
+	const back = pathname === '/signin' ? nextPath(new URLSearchParams(search)) || '/' : pathname + search;
+	await client.signIn(handle.trim().replace(/^@/, ''), { scope: SCOPE, state: back });
 }
 
 export async function signOut() {

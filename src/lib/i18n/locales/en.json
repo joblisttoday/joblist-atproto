@@ -67,6 +67,7 @@
 	"list.notFoundTitle": "List not found",
 	"list.companies.one": "1 company",
 	"list.open": "anyone can add companies",
+	"list.closed": "the author picks the companies",
 
 	"company.website": "Website",
 	"company.jobBoard": "Job board",
@@ -212,6 +213,7 @@
 	"suggestion.pending.one": "1 company suggested by others",
 	"suggestion.accept": "Add to the list",
 	"suggestion.dismiss": "Dismiss",
+	"suggestion.close": "Close",
 
 	"job.verified": "posted by the company",
 	"job.sharedBy": "shared by",

@@ -8,14 +8,21 @@
 	import { parseUri } from '#lib/models/list.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
-	/** @type {{list: import('#lib/models/list.js').List, count?: number}} */
-	let { list, count } = $props();
+	/**
+	 * The list's one header: what it is, one meta line, one row of actions.
+	 * suggesting: whether "Suggest a company" is open below (for others than the author).
+	 * @type {{list: import('#lib/models/list.js').List, count?: number, suggesting?: boolean}}
+	 */
+	let { list, count, suggesting = $bindable(false) } = $props();
 
 	let copied = $state(false);
 	/** @type {string | null} */
 	let error = $state(null);
 	const mine = $derived(list.did === session.did);
 	const source = $derived(list.copiedFrom ? parseUri(list.copiedFrom) : null);
+	const path = $derived(`/${handleOf(list.did)}/${list.rkey}`);
+	// Signed out, "Suggest" signs in first and comes back here with it open.
+	const signin = $derived(`/signin?${new URLSearchParams({ next: `${path}?suggest` })}`);
 
 	async function share() {
 		const url = window.location.origin + window.location.pathname;
@@ -47,7 +54,7 @@
 		<p>
 			<small>
 				{t('list.companies', { count: count ?? list.companies.length })} · {t('list.by')} <Author did={list.did} />
-					{#if list.open}· {t('list.open')}{/if}
+				· {list.open ? t('list.open') : t('list.closed')}
 				{#if source}
 					· {t('list.copiedFrom')} <a href="/{handleOf(source.did)}/{source.rkey}">@{handleOf(source.did)}</a>
 				{/if}
@@ -55,11 +62,14 @@
 		</p>
 		<menu>
 			<button type="button" onclick={share}>{copied ? t('list.linkCopied') : t('list.share')}</button>
+			<a href="/lists/new?copy={encodeURIComponent(list.uri)}">{t('list.copy')}</a>
 			{#if mine}
-				<a href="/{handleOf(list.did)}/{list.rkey}/edit">{t('list.edit')}</a>
+				<a href="{path}/edit">{t('list.edit')}</a>
 				<button type="button" onclick={remove}>{t('list.delete')}</button>
-			{:else}
-				<a href="/lists/new?copy={encodeURIComponent(list.uri)}">{t('list.copy')}</a>
+			{:else if session.did}
+				<button type="button" aria-expanded={suggesting} onclick={() => (suggesting = !suggesting)}>{t('suggestion.title')}</button>
+			{:else if session.ready}
+				<a href={signin}>{t('suggestion.title')}</a>
 			{/if}
 		</menu>
 		{#if error}<p role="alert">{error}</p>{/if}
@@ -83,5 +93,8 @@
 		min-height: var(--tap-size);
 		padding: 0 var(--space-m);
 		font-size: var(--font-size-small);
+	}
+	button[aria-expanded='true'] {
+		background: var(--color-soft);
 	}
 </style>
