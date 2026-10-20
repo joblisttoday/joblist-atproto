@@ -12,4 +12,4 @@
 <h1>{t('jobs.title')}</h1>
 <p>{t('jobs.intro')}</p>
 <menu><a href="/jobs/new">+ {t('post.title')}</a></menu>
-{#if companies.length}<Jobs {companies} />{/if}
+{#if companies.length}<Jobs {companies} careers={false} />{/if}

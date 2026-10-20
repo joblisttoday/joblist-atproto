@@ -12,8 +12,11 @@
 	import { data } from '#lib/network/network.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
-	/** @type {{companies: import('#lib/models/company.js').Company[]}} */
-	let { companies } = $props();
+	/**
+	 * careers: also link the companies whose jobs are only on their own careers page.
+	 * @type {{companies: import('#lib/models/company.js').Company[], careers?: boolean}}
+	 */
+	let { companies, careers = true } = $props();
 	const PAGE = config.jobs.pageSize;
 
 	/** Jobs read from job boards (or their snapshot). */
@@ -31,7 +34,7 @@
 	// Offers posted on joblist, for every company here (with a job board or not).
 	const posted = $derived(companies.flatMap((c) => data.postedJobs.get(c.key) || []));
 	const jobs = $derived(mergeJobs(posted, boardJobs));
-	const withoutApi = $derived(companies.filter((c) => !hasJobsApi(c) && boardUrl(c.jobBoard)));
+	const withoutApi = $derived(careers ? companies.filter((c) => !hasJobsApi(c) && boardUrl(c.jobBoard)) : []);
 	// On a company's page, the offers it posted come first.
 	const filtered = $derived(single ? postedFirst(filterJobs(jobs, filters, names)) : filterJobs(jobs, filters, names));
 	const groups = $derived(grouped ? byCompany(filtered) : []);
