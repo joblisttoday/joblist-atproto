@@ -198,7 +198,6 @@
 	"companies.found": "{count} found",
 	"companies.more": "Show {count} more ({left} left)",
 	"companies.title": "Companies",
-	"companies.intro": "Every company described by someone in the network.",
 
 	"suggestion.title": "Suggest a company",
 	"suggestion.search": "Which company?",

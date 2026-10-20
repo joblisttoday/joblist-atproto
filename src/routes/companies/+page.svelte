@@ -16,7 +16,6 @@
 <svelte:head><title>{t('companies.title')} · {config.name}</title></svelte:head>
 
 <h1>{t('companies.title')}</h1>
-<p>{t('companies.intro')}</p>
 <Tabs
 	label={t('list.tabs')}
 	tabs={[
