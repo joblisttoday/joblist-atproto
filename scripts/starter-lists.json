@@ -1,12 +1,12 @@
 [
-	{ "name": "Berlin", "city": "Berlin", "description": "Companies hiring in Berlin, from joblist (born as the joblistberlin spreadsheet)." },
-	{ "name": "London", "city": "London", "description": "Companies hiring in London, from joblist." },
-	{ "name": "Cambridge", "city": "Cambridge", "description": "Companies hiring in Cambridge, from joblist." },
-	{ "name": "Munich", "city": "Munich", "description": "Companies hiring in Munich, from joblist." },
-	{ "name": "Paris", "city": "Paris", "description": "Companies hiring in Paris, from joblist." },
-	{ "name": "Open source", "tag": "open-source", "description": "Companies building open source, from joblist." },
-	{ "name": "Music", "tag": "music", "description": "Music companies, from joblist." },
-	{ "name": "Energy", "tag": "energy", "description": "Energy companies, from joblist." },
-	{ "name": "Food", "tag": "food", "description": "Food companies, from joblist." },
-	{ "name": "Robotics", "tag": "robotics", "description": "Robotics companies, from joblist." }
+	{ "name": "Berlin", "city": "Berlin", "description": "Where joblist started, as the joblistberlin spreadsheet: companies hiring in Berlin." },
+	{ "name": "London", "city": "London" },
+	{ "name": "Cambridge", "city": "Cambridge" },
+	{ "name": "Munich", "city": "Munich" },
+	{ "name": "Paris", "city": "Paris" },
+	{ "name": "Open source", "tag": "open-source" },
+	{ "name": "Music", "tag": "music" },
+	{ "name": "Energy", "tag": "energy" },
+	{ "name": "Food", "tag": "food" },
+	{ "name": "Robotics", "tag": "robotics" }
 ]

@@ -119,7 +119,7 @@ function buildLists(companies) {
 		return {
 			$type: LIST,
 			name: spec.name,
-			description: spec.description,
+			...(spec.description && { description: spec.description }),
 			companies: matches.map((c) => c.rkey),
 			// Starter lists are open: anyone can add a company to them.
 			open: true,
