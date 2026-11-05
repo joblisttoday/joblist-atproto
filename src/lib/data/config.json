@@ -1,6 +1,6 @@
 {
 	"name": "joblist",
-	"url": "https://atproto.joblist.today",
+	"url": "https://joblist.today",
 	"source": "https://github.com/joblisttoday/joblist-atproto",
 	"collections": {
 		"company": "today.joblist.company",

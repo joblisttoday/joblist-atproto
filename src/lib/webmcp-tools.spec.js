@@ -36,7 +36,7 @@ describe('search_jobs', () => {
 
 describe('get_list', () => {
 	it('reads list links and at:// URIs', () => {
-		expect(parseListUrl('https://atproto.joblist.today/joblist.today/3my7zpwloir2s')).toEqual({ actor: 'joblist.today', rkey: '3my7zpwloir2s' });
+		expect(parseListUrl('https://joblist.today/joblist.today/3my7zpwloir2s')).toEqual({ actor: 'joblist.today', rkey: '3my7zpwloir2s' });
 		expect(parseListUrl('at://did:plc:abc/today.joblist.list/3abc')).toEqual({ actor: 'did:plc:abc', rkey: '3abc' });
 		expect(parseListUrl('nope')).toBeNull();
 	});

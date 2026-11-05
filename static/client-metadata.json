@@ -1,8 +1,8 @@
 {
-	"client_id": "https://atproto.joblist.today/client-metadata.json",
+	"client_id": "https://joblist.today/client-metadata.json",
 	"client_name": "joblist",
-	"client_uri": "https://atproto.joblist.today",
-	"redirect_uris": ["https://atproto.joblist.today/"],
+	"client_uri": "https://joblist.today",
+	"redirect_uris": ["https://joblist.today/"],
 	"scope": "atproto repo:today.joblist.company repo:today.joblist.list repo:today.joblist.job repo:today.joblist.suggestion",
 	"grant_types": ["authorization_code", "refresh_token"],
 	"response_types": ["code"],

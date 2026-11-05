@@ -7,7 +7,7 @@ import { toPost } from '../src/lib/models/job-post.js';
 const value = {
 	title: 'Engineer </script>',
 	company: 'acme.org',
-	url: 'https://atproto.joblist.today/job/did%3Aplc%3Aacme/3abc',
+	url: 'https://joblist.today/job/did%3Aplc%3Aacme/3abc',
 	description: 'Build things.\nWith us.',
 	locations: [{ name: 'Berlin', country: 'DE' }],
 	remote: 'remote',

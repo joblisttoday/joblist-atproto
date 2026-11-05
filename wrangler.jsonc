@@ -10,5 +10,5 @@
 		// Prerendered pages live at /path/index.html but are served at /path.
 		"html_handling": "drop-trailing-slash"
 	},
-	"routes": [{ "pattern": "atproto.joblist.today", "custom_domain": true }]
+	"routes": [{ "pattern": "joblist.today", "custom_domain": true }]
 }

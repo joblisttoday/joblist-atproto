@@ -16,7 +16,7 @@ import {
 
 const NOW = Date.parse('2026-10-19T12:00:00Z');
 const DAY = 24 * 3600 * 1000;
-const PAGE = 'https://atproto.joblist.today/job/did%3Aplc%3Aa/3abc';
+const PAGE = 'https://joblist.today/job/did%3Aplc%3Aa/3abc';
 
 /** @param {Partial<import('./job-post.js').JobForm>} values */
 const form = (values = {}) => ({
