@@ -44,6 +44,14 @@ describe('filterJobs', () => {
 	it('sorts newest first, undated last', () => {
 		expect(filterJobs(jobs, none, names).map((j) => j.location)).toEqual(['Paris', 'Berlin, Germany', 'Remote']);
 	});
+	it('near someone: newest first among jobs about as close', () => {
+		const near = /** @type {[number, number]} */ ([13.405, 52.52]);
+		const located = [
+			job({ title: 'Old next door', url: 'o', point: [13.406, 52.52], published: '2022-01-01' }),
+			job({ title: 'New a bit further', url: 'n', point: [13.41, 52.521], published: '2026-01-01' })
+		];
+		expect(filterJobs(located, { ...none, near }, names).map((j) => j.title)).toEqual(['New a bit further', 'Old next door']);
+	});
 	it('near someone: only located jobs, nearest first, within the travel time', () => {
 		const located = [
 			job({ title: 'Far', location: 'Potsdam', url: 'p', point: [13.0645, 52.3906] }),

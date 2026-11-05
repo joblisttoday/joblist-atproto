@@ -58,8 +58,8 @@ function matchesPlace(job, where, remote) {
 }
 
 /**
- * Jobs matching the filters, newest first; nearest first when searching near someone,
- * then only the jobs with a known place, each with its distance.
+ * Jobs matching the filters, newest first. Near someone: only the jobs with a known place,
+ * each with its distance, by travel time in bands (a few minutes more do not matter), newest first in each.
  * @param {Job[]} jobs
  * @param {JobFilters} filters
  * @param {Map<string, string>} names company names by key
@@ -81,7 +81,12 @@ export function filterJobs(jobs, { query, where, remote, near, within = 0 }, nam
 		.filter((job) => job.point)
 		.map((job) => ({ ...job, km: distanceKm(near, /** @type {[number, number]} */ (job.point)) }))
 		.filter((job) => !within || travelMinutes(job.km) <= within)
-		.sort((a, b) => a.km - b.km);
+		.sort((a, b) => band(a.km) - band(b.km) || time(b.published) - time(a.published) || a.km - b.km);
+}
+
+/** @param {number} km */
+function band(km) {
+	return Math.floor(travelMinutes(km) / config.travel.bandMinutes);
 }
 
 /**
