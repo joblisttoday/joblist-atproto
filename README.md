@@ -109,7 +109,7 @@ Configuration lives in data files, not code:
 ## Deploy
 
 ```sh
-npm run deploy   # vite build && wrangler deploy → https://atproto.joblist.today
+npm run deploy   # vite build && wrangler deploy → https://joblist.today
 ```
 
 [`static/client-metadata.json`](static/client-metadata.json) must match the
@@ -127,6 +127,13 @@ JOBLIST_HANDLE=joblist.today JOBLIST_APP_PASSWORD=… \
 ```
 
 Re-running updates the records instead of duplicating them.
+
+The old site's company pages (`/<slug>`) redirect to `/company/<key>` through
+[`static/_redirects`](static/_redirects), generated from the same folders:
+
+```sh
+node scripts/legacy-redirects.js <companies-dir>
+```
 
 ## Check and repair companies
 
