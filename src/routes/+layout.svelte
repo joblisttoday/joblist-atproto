@@ -30,7 +30,6 @@
 <svelte:head>
 	<link rel="icon" href={favicon} />
 	<title>{config.name}</title>
-	<meta name="description" content={t('home.intro')} />
 </svelte:head>
 
 <a href="#main">{t('nav.skip')}</a>
