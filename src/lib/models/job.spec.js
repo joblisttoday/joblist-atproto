@@ -44,6 +44,18 @@ describe('filterJobs', () => {
 	it('sorts newest first, undated last', () => {
 		expect(filterJobs(jobs, none, names).map((j) => j.location)).toEqual(['Paris', 'Berlin, Germany', 'Remote']);
 	});
+	it('near someone: only located jobs, nearest first, within the travel time', () => {
+		const located = [
+			job({ title: 'Far', location: 'Potsdam', url: 'p', point: [13.0645, 52.3906] }),
+			job({ title: 'Close', location: 'Berlin', url: 'b', point: [13.41, 52.52] }),
+			job({ title: 'Nowhere', location: 'Remote', url: 'r' })
+		];
+		const near = /** @type {[number, number]} */ ([13.405, 52.52]);
+		const found = filterJobs(located, { ...none, near }, names);
+		expect(found.map((j) => j.title)).toEqual(['Close', 'Far']);
+		expect(found[0].km).toBeLessThan(1);
+		expect(filterJobs(located, { ...none, near, within: 30 }, names).map((j) => j.title)).toEqual(['Close']);
+	});
 	it('filters by words, place and remote', () => {
 		expect(filterJobs(jobs, { ...none, query: 'acme engineer' }, names)).toHaveLength(2);
 		expect(filterJobs(jobs, { ...none, where: 'berlin' }, names)).toHaveLength(1);

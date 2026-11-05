@@ -10,7 +10,11 @@ import { filterJobs, sameOffers, time } from './job.js';
 /** @type {JobFilters} */
 export const noFilters = { query: '', where: '', remote: '' };
 
-/** @type {Record<keyof JobFilters, string>} */
+/**
+ * The filters kept in the page address. Where someone is (near) never is: a shared link must not tell it.
+ * @typedef {'query' | 'where' | 'remote'} AddressFilter
+ * @type {Record<AddressFilter, string>}
+ */
 const params = { query: 'q', where: 'where', remote: 'remote' };
 
 /**
@@ -34,7 +38,7 @@ export function fromParams(search) {
 export function toParams(filters) {
 	const search = new URLSearchParams();
 	for (const [field, name] of Object.entries(params)) {
-		const value = filters[/** @type {keyof JobFilters} */ (field)].trim();
+		const value = filters[/** @type {AddressFilter} */ (field)].trim();
 		if (value) search.set(name, value);
 	}
 	const text = search.toString();

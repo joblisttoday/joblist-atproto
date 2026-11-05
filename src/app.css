@@ -38,6 +38,8 @@
 	--column-min: 20rem;
 	--column-gap: var(--gutter);
 	--columns: repeat(auto-fill, minmax(min(100%, var(--column-min)), 1fr));
+	--explore-list-width: 40rem;
+	--shadow: 0 2px 8px rgb(0 0 0 / 0.25);
 	--tap-size: 2.75rem;
 	--avatar-size: 4rem;
 	--nav-height: 3.5rem;

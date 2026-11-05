@@ -9,12 +9,16 @@
  *   id?: string,
  *   remote?: string,
  *   posted?: {did: string, rkey: string, verified: boolean},
- *   also?: Job[]
+ *   also?: Job[],
+ *   point?: [number, number],
+ *   km?: number
  * }} Job
  *   id: the job's id at its job board, to read its description.
  *   remote: where the work happens (onsite, hybrid or remote), when the board or the poster says.
  *   posted: only for offers posted on joblist (today.joblist.job records).
  *   also: the same offer (same company and title) at its other places, see sameOffers().
+ *   point: where it is ([longitude, latitude]), from the snapshot.
+ *   km: how far it is from someone, when they search near them.
  */
 
 /**

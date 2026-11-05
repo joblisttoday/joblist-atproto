@@ -2,6 +2,7 @@
 	import config from '#lib/data/config.json';
 	import JobDescription from './JobDescription.svelte';
 	import { offerPlaces, time, workplace } from '#lib/models/job.js';
+	import { travelMinutes } from '#lib/models/distance.js';
 	import { postPath } from '#lib/models/job-post.js';
 	import { handleOf } from '#lib/network/network.svelte.js';
 	import { ago } from '#lib/i18n/dates.js';
@@ -22,7 +23,16 @@
 	const location = $derived(
 		places.length > MAX_PLACES ? `${places.slice(0, MAX_PLACES).join('; ')} ${t('job.places.more', { count: places.length - MAX_PLACES })}` : places.join('; ')
 	);
-	const meta = $derived([location, place, job.department, ago(time(job.published), i18n.locale)].filter(Boolean).join(' · '));
+	// How far, when the person searches near them.
+	const distance = $derived(
+		job.km === undefined
+			? ''
+			: t(`job.distance.${config.travel.mode}`, {
+					km: job.km < 10 ? job.km.toFixed(1) : Math.round(job.km),
+					minutes: travelMinutes(job.km)
+				})
+	);
+	const meta = $derived([distance, location, place, job.department, ago(time(job.published), i18n.locale)].filter(Boolean).join(' · '));
 	let open = $state(false);
 </script>
 

@@ -1,4 +1,5 @@
 <script>
+	import config from '#lib/data/config.json';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
@@ -11,6 +12,32 @@
 	 */
 	let { filters = $bindable(), grouped = $bindable(), places, onchange } = $props();
 	const id = $props.id();
+	const mode = config.travel.mode;
+	/** @type {'' | 'locating' | 'denied'} */
+	let locating = $state('');
+
+	// Asked only when the person wants jobs near them; kept in this page, never sent anywhere.
+	function nearMe() {
+		if (filters.near) {
+			filters.near = null;
+			onchange();
+			return;
+		}
+		if (!navigator.geolocation) {
+			locating = 'denied';
+			return;
+		}
+		locating = 'locating';
+		navigator.geolocation.getCurrentPosition(
+			({ coords }) => {
+				locating = '';
+				filters.near = [coords.longitude, coords.latitude];
+				onchange();
+			},
+			() => (locating = 'denied'),
+			{ maximumAge: 600000, timeout: 15000 }
+		);
+	}
 </script>
 
 <jl-job-filters>
@@ -39,8 +66,22 @@
 			<option value="anywhere">{t('jobs.filter.workplace.anywhere')}</option>
 		</select>
 		<fieldset>
+			<button type="button" aria-pressed={filters.near ? 'true' : 'false'} onclick={nearMe} disabled={locating === 'locating'}>
+				◎ {t('near.me')}
+			</button>
+			{#if filters.near}
+				<select bind:value={filters.within} aria-label={t(`near.within.${mode}`, { minutes: '…' })}>
+					<option value={0}>{t('near.any')}</option>
+					{#each config.travel.minutes as minutes (minutes)}
+						<option value={minutes}>{t(`near.within.${mode}`, { minutes })}</option>
+					{/each}
+				</select>
+			{/if}
 			<label><input type="checkbox" bind:checked={grouped} /> {t('jobs.filter.grouped')}</label>
 		</fieldset>
+		{#if locating === 'locating'}<small aria-live="polite">{t('near.locating')}</small>{/if}
+		{#if locating === 'denied'}<small role="alert">{t('near.denied')}</small>{/if}
+		{#if filters.near}<small>{t('near.private')}</small>{/if}
 	</form>
 </jl-job-filters>
 
@@ -67,22 +108,24 @@
 	fieldset {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0 var(--space-l);
+		align-items: center;
+		gap: var(--space-s) var(--space-m);
 		margin: 0;
 		padding: 0;
 		border: 0;
 	}
-	fieldset {
+	fieldset select {
+		width: auto;
+	}
+	button[aria-pressed='true'] {
+		background: var(--color-accent);
+		color: var(--color-accent-fg);
+		border-color: var(--color-accent);
+	}
+	small {
 		grid-column: 1 / -1;
 	}
-	@media (min-width: 48rem) {
-		form {
-			grid-template-columns: 2fr 1fr 1fr auto;
-			align-items: center;
-		}
-		input[type='search']:first-child,
-		fieldset {
-			grid-column: auto;
-		}
+	fieldset {
+		grid-column: 1 / -1;
 	}
 </style>

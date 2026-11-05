@@ -1,11 +1,14 @@
 import config from '#lib/data/config.json' with { type: 'json' };
+import { distanceKm, travelMinutes } from './distance.js';
 import { inPlace, remoteRegion } from './place.js';
 
 /**
  * @typedef {import('#lib/ats/job.js').Job} Job
  * @typedef {'' | 'remote' | 'anywhere'} RemoteFilter
  *   remote: jobs done remotely; anywhere: remote jobs that name no country or region they are limited to.
- * @typedef {{query: string, where: string, remote: RemoteFilter}} JobFilters
+ * @typedef {{query: string, where: string, remote: RemoteFilter, near?: [number, number] | null, within?: number}} JobFilters
+ *   near: where the person is ([longitude, latitude]), to find jobs close by; never kept in the page address.
+ *   within: at most that many minutes away (by the usual travel mode), 0 for any distance.
  */
 
 const remoteWords = config.jobs.remoteWords;
@@ -55,14 +58,15 @@ function matchesPlace(job, where, remote) {
 }
 
 /**
- * Jobs matching the filters, newest first.
+ * Jobs matching the filters, newest first; nearest first when searching near someone,
+ * then only the jobs with a known place, each with its distance.
  * @param {Job[]} jobs
  * @param {JobFilters} filters
  * @param {Map<string, string>} names company names by key
  */
-export function filterJobs(jobs, { query, where, remote }, names) {
+export function filterJobs(jobs, { query, where, remote, near, within = 0 }, names) {
 	const what = words(query);
-	return jobs
+	const matching = jobs
 		.filter((job) => {
 			if (remote && !isRemote(job)) return false;
 			if (remote === 'anywhere' && remoteLimit(job)) return false;
@@ -72,6 +76,12 @@ export function filterJobs(jobs, { query, where, remote }, names) {
 			return what.every((w) => text.includes(w));
 		})
 		.sort((a, b) => time(b.published) - time(a.published));
+	if (!near) return matching;
+	return matching
+		.filter((job) => job.point)
+		.map((job) => ({ ...job, km: distanceKm(near, /** @type {[number, number]} */ (job.point)) }))
+		.filter((job) => !within || travelMinutes(job.km) <= within)
+		.sort((a, b) => a.km - b.km);
 }
 
 /**

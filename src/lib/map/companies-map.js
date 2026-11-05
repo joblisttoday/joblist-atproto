@@ -1,4 +1,5 @@
 import config from '#lib/data/config.json';
+import { createMap, cssColors, loadMapLibre } from './maplibre.js';
 
 /**
  * @typedef {{lat: number, lon: number, company: {key: string, name: string}}} Point
@@ -32,26 +33,12 @@ export function mountMap(node, points) {
 	/** @type {import('maplibre-gl').Map | undefined} */
 	let map;
 	let removed = false;
-	const css = getComputedStyle(node);
-	const color = (/** @type {string} */ name) => css.getPropertyValue(name).trim();
-	const dark = matchMedia('(prefers-color-scheme: dark)').matches;
+	const color = cssColors(node);
 
 	(async () => {
-		const [maplibre, { default: workerUrl }] = await Promise.all([
-			import('maplibre-gl'),
-			import('maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url'),
-			import('maplibre-gl/dist/maplibre-gl.css')
-		]);
+		const maplibre = await loadMapLibre();
 		if (removed) return;
-		maplibre.setWorkerUrl(workerUrl);
-		map = new maplibre.Map({
-			container: node,
-			style: dark ? config.map.styleDark : config.map.style,
-			center: /** @type {[number, number]} */ (config.map.center),
-			zoom: config.map.zoom,
-			attributionControl: { compact: true }
-		});
-		map.addControl(new maplibre.NavigationControl({ showCompass: false }));
+		map = createMap(maplibre, node);
 		map.fitBounds(mainArea(points), { padding: config.map.padding, maxZoom: config.map.maxZoom, animate: false });
 		const instance = map;
 		instance.on('load', () => {

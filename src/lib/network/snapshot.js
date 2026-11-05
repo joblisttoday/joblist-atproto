@@ -43,7 +43,7 @@ export function getSnapshotJobs() {
 			// Posted jobs come from their records, read with the others (they may be edited or deleted since).
 			if (j.s?.startsWith('at://')) continue;
 			const list = jobs.get(j.c) || [];
-			list.push({ title: j.t, url: j.u, company: j.c, location: j.l, department: j.d, published: j.p, id: j.i, remote: j.r });
+			list.push({ title: j.t, url: j.u, company: j.c, location: j.l, department: j.d, published: j.p, id: j.i, remote: j.r, point: j.g });
 			jobs.set(j.c, list);
 		}
 		return { jobs, checked: new Set(data.checked || []) };

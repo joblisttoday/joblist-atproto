@@ -17,6 +17,7 @@
 	 * filters: the search, when the page keeps it (in its address).
 	 * since: jobs published after it are marked new.
 	 * jobs: every job read, for the page.
+	 * results: the jobs matching the filters, for the page (a map of them).
 	 * actions: shown under the filters.
 	 * @type {{
 	 *   companies: import('#lib/models/company.js').Company[],
@@ -24,6 +25,7 @@
 	 *   filters?: import('#lib/models/job.js').JobFilters,
 	 *   since?: string,
 	 *   jobs?: import('#lib/ats/job.js').Job[],
+	 *   results?: import('#lib/ats/job.js').Job[],
 	 *   actions?: import('svelte').Snippet
 	 * }}
 	 */
@@ -33,6 +35,7 @@
 		filters = $bindable({ query: '', where: '', remote: '' }),
 		since = '',
 		jobs: all = $bindable([]),
+		results = $bindable([]),
 		actions
 	} = $props();
 	const PAGE = config.jobs.pageSize;
@@ -59,6 +62,9 @@
 	// On a company's page, the offers it posted come first.
 	const matching = $derived(sameOffers(filterJobs(jobs, filters, names)));
 	const filtered = $derived(single ? postedFirst(matching) : matching);
+	$effect(() => {
+		results = filtered;
+	});
 	const offers = $derived(sameOffers(jobs).length);
 	const groups = $derived(grouped ? byCompany(filtered) : []);
 	// Suggestions are computed once all boards answered, not on every answer.
@@ -165,9 +171,6 @@
 		margin: var(--space-s) 0;
 	}
 	jl-jobs > ul {
-		display: grid;
-		grid-template-columns: var(--columns);
-		column-gap: var(--column-gap);
 		margin: var(--space-s) 0;
 	}
 	details {
