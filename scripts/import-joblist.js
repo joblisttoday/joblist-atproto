@@ -10,12 +10,12 @@
  * <companies-dir> holds one folder per company with an index.json.
  * Re-running updates records instead of duplicating them.
  */
-import { readdirSync, readFileSync, existsSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { writeFileSync } from 'node:fs';
 import { AtpAgent } from '@atproto/api';
 import config from '../src/lib/data/config.json' with { type: 'json' };
 import providers from '../src/lib/data/providers.json' with { type: 'json' };
 import { toDomain } from '../src/lib/models/company.js';
+import { isUrl, readLegacyCompanies } from './lib/legacy.js';
 import starterLists from './starter-lists.json' with { type: 'json' };
 
 const [dir = '../workers/.db-github-data/companies', ...flags] = process.argv.slice(2);
@@ -44,29 +44,9 @@ function toLocation(position) {
 	return location;
 }
 
-/**
- * A valid record key from an old joblist slug ('charité' → 'charite').
- * @param {string} slug
- */
-function toKey(slug) {
-	return slug
-		.normalize('NFD')
-		.replace(/[\u0300-\u036f]/g, '')
-		.replace(/[^A-Za-z0-9._:~-]/g, '-');
-}
-
 /** @param {string} s */
 function capitalize(s) {
 	return s.charAt(0).toUpperCase() + s.slice(1);
-}
-
-/** @param {string} url */
-function isUrl(url) {
-	try {
-		return ['http:', 'https:'].includes(new URL(url).protocol);
-	} catch {
-		return false;
-	}
 }
 
 /** @param {any} d */
@@ -80,18 +60,12 @@ function toJobBoard(d) {
 
 /** Read the old company folders and turn them into records keyed by domain. */
 function readCompanies() {
-	/** @type {Map<string, {rkey: string, slug: string, record: Record<string, any>}>} */
-	const byKey = new Map();
-	for (const slug of readdirSync(dir).sort()) {
-		const file = join(dir, slug, 'index.json');
-		if (!existsSync(file)) continue;
-		const d = JSON.parse(readFileSync(file, 'utf8'));
-		if (!d.title) continue;
-		const domain = isUrl(d.company_url) ? toDomain(d.company_url) : '';
-		const rkey = domain && !byKey.has(domain) ? domain : toKey(slug);
+	// A later folder with the same key replaces an earlier one.
+	const byKey = new Map(readLegacyCompanies(dir).map((c) => [c.rkey, c]));
+	return [...byKey.values()].map(({ slug, rkey, data: d }) => {
 		/** @type {Record<string, any>} */
 		const record = { $type: COMPANY, name: d.title.slice(0, 100), createdAt: now };
-		if (domain) record.url = d.company_url;
+		if (isUrl(d.company_url) && toDomain(d.company_url)) record.url = d.company_url;
 		if (d.description) record.description = [...d.description.trim()].slice(0, 3000).join('');
 		if (d.tags?.length) record.tags = d.tags.slice(0, 20).map((/** @type {string} */ t) => t.toLowerCase());
 		const locations = (d.positions || []).map(toLocation).filter((/** @type {object} */ l) => Object.keys(l).length);
@@ -100,9 +74,8 @@ function readCompanies() {
 		if (jobBoard) record.jobBoard = jobBoard;
 		const links = LINK_FIELDS.map((f) => d[f]).filter(isUrl);
 		if (links.length) record.links = links;
-		byKey.set(rkey, { rkey, slug, record });
-	}
-	return [...byKey.values()];
+		return { rkey, slug, record };
+	});
 }
 
 /**
