@@ -16,6 +16,7 @@ import { toSuggestion } from '../src/lib/models/suggestion.js';
 import { postPath } from '../src/lib/models/job-post.js';
 import { escape, page } from './html.js';
 import { jobPages } from './job-pages.js';
+import { robots, sitemap } from './sitemap.js';
 
 const [build = 'build', snapshot = 'static/snapshot'] = process.argv.slice(2);
 const template = readFileSync(join(build, 'index.html'), 'utf8');
@@ -52,8 +53,12 @@ function jobLink(job) {
 	return did ? postPath(did, rkey) : job.u;
 }
 
+/** Every prerendered page, for the sitemap. */
+const paths = ['/', '/companies', '/jobs'];
+
 /** @param {string} path @param {string} html */
 function write(path, html) {
+	paths.push(path);
 	// Files are named by the decoded path (job pages have encoded DIDs in their links).
 	const dir = join(build, decodeURIComponent(path));
 	mkdirSync(dir, { recursive: true });
@@ -117,4 +122,6 @@ writeFileSync(
 	join(build, 'index.html'),
 	page(template, { title: config.name, description: en['home.intro'], url: config.url, body: '' })
 );
-console.log(`prerendered ${count} pages`);
+writeFileSync(join(build, 'sitemap.xml'), sitemap(config.url, paths));
+writeFileSync(join(build, 'robots.txt'), robots(config.url));
+console.log(`prerendered ${count} pages, sitemap of ${paths.length}`);
