@@ -12,7 +12,8 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
 		"test:unit": "vitest",
 		"test": "npm run test:unit -- --run && node --test 'scripts/**/*.test.js' 'indexer/**/*.test.js'",
-		"deploy": "node indexer/index.js static/snapshot && vite build && node indexer/prerender.js build static/snapshot && wrangler deploy",
+		"build:site": "node indexer/index.js static/snapshot && vite build && node indexer/prerender.js build static/snapshot",
+		"deploy": "npm run build:site && wrangler deploy",
 		"import": "node scripts/import-joblist.js",
 		"index": "node indexer/index.js static/snapshot",
 		"prerender": "node indexer/prerender.js build static/snapshot"

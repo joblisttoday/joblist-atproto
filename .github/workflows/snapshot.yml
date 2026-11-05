@@ -2,7 +2,7 @@
 # publishes it to the public repo joblisttoday/joblist-snapshot (GitHub Pages),
 # which the app reads. Free, and needs no Cloudflare credentials.
 # Secrets: SNAPSHOT_DEPLOY_KEY (write deploy key of joblist-snapshot).
-# Optional: CLOUDFLARE_API_TOKEN also redeploys the site with fresh prerendered pages.
+# The site itself (prerendered pages) is built and deployed by Cloudflare Workers Builds on push.
 # Also publishes the last crawl (branch `crawl`) under crawl/.
 name: snapshot
 
@@ -21,8 +21,6 @@ jobs:
   build-and-publish:
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    env:
-      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -48,5 +46,3 @@ jobs:
           git add -A
           git -c user.name=joblist -c user.email=1502484+4www@users.noreply.github.com commit -qm "Snapshot $(date -u +%FT%TZ)"
           GIT_SSH_COMMAND="ssh -i ~/.ssh/snapshot" git push -qf git@github.com:joblisttoday/joblist-snapshot.git gh-pages
-      - if: env.CLOUDFLARE_API_TOKEN != ''
-        run: npm run build && node indexer/prerender.js build static/snapshot && npx wrangler deploy

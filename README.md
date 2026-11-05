@@ -108,8 +108,16 @@ Configuration lives in data files, not code:
 
 ## Deploy
 
+Cloudflare Workers Builds deploys `main` on every push (connected to this
+GitHub repository in the dashboard, no token):
+
+- Build command: `npm run build:site` (snapshot, app, prerendered pages)
+- Deploy command: `npx wrangler deploy`
+
+By hand:
+
 ```sh
-npm run deploy   # vite build && wrangler deploy → https://joblist.today
+npm run deploy   # build:site && wrangler deploy → https://joblist.today
 ```
 
 [`static/client-metadata.json`](static/client-metadata.json) must match the

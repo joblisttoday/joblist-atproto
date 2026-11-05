@@ -151,8 +151,6 @@ joblist.today account, so its work is labelled and can be told apart.
    - `CRAWLER_HANDLE`: `crawler.joblist.today`
    - `CRAWLER_APP_PASSWORD`: the app password
    - `CRAWLER_SERVICE` (optional): the PDS, if not `https://bsky.social`
-   - `CLOUDFLARE_API_TOKEN` (Workers Scripts: Edit), used by the snapshot
-     the crawl starts.
 6. Actions → crawl → Run workflow, once, and read `proposals.json` on the
    `crawl` branch. It then runs every Monday at 04:23 UTC.
 
