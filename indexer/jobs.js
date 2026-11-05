@@ -7,9 +7,10 @@ import { isLive, placeNames, toPost } from '../src/lib/models/job-post.js';
 /**
  * @typedef {import('../src/lib/models/company.js').Company} Company
  * @typedef {import('../src/lib/atproto/records.js').RepoRecord} RepoRecord
- * @typedef {{t: string, u: string, c: string, l?: string, d?: string, p?: string, i?: string, r?: string, s: string, v?: 1}} IndexedJob
+ * @typedef {{t: string, u: string, c: string, l?: string, d?: string, p?: string, i?: string, r?: string, s: string, v?: 1, g?: [number, number]}} IndexedJob
  *   Compact job: title, url, company key, location, department, published, id at its board,
- *   where the work happens (onsite, hybrid, remote), source ('ats' or a record uri), verified.
+ *   where the work happens (onsite, hybrid, remote), source ('ats' or a record uri), verified,
+ *   where it is ([longitude, latitude]).
  */
 
 /**
