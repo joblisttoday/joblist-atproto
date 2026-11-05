@@ -14,8 +14,9 @@ import { toCompany } from '../src/lib/models/company.js';
 import { membership, toList } from '../src/lib/models/list.js';
 import { toSuggestion } from '../src/lib/models/suggestion.js';
 import { postPath } from '../src/lib/models/job-post.js';
-import { escape, page } from './html.js';
+import { escape, jsonLd, page } from './html.js';
 import { jobPages } from './job-pages.js';
+import { organization } from './organization.js';
 import { robots, sitemap } from './sitemap.js';
 
 const [build = 'build', snapshot = 'static/snapshot'] = process.argv.slice(2);
@@ -101,6 +102,7 @@ for (const company of companies.values()) {
 			title: `${company.name} · ${config.name}`,
 			description,
 			url: config.url + path,
+			head: jsonLd(organization(company, config.url + path)),
 			body: `<h1>${escape(company.name)}</h1><p>${escape(description)}</p>${
 				company.url ? `<p><a href="${escape(company.url)}">${escape(company.url)}</a></p>` : ''
 			}<ul>${jobs
