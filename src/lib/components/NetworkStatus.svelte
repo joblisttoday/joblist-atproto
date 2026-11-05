@@ -26,9 +26,7 @@
 <style>
 	jl-network-status {
 		display: block;
-		max-width: var(--page-width);
-		margin: 0 auto;
-		padding: 0 var(--space-m);
+		padding: 0 var(--gutter);
 	}
 	jl-network-status:not([loading]):not([failed]) {
 		display: none;

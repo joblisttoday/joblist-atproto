@@ -45,9 +45,24 @@
 </jl-job-filters>
 
 <style>
+	/* Stays in reach under the header while scrolling the results. */
+	jl-job-filters {
+		display: block;
+		position: sticky;
+		top: var(--header-height);
+		z-index: 5;
+		margin: 0 calc(-1 * var(--gutter));
+		padding: var(--space-s) var(--gutter);
+		background: var(--color-bg);
+		border-bottom: var(--border);
+	}
 	form {
 		display: grid;
+		grid-template-columns: 1fr 1fr;
 		gap: var(--space-s);
+	}
+	input[type='search']:first-child {
+		grid-column: 1 / -1;
 	}
 	fieldset {
 		display: flex;
@@ -57,12 +72,17 @@
 		padding: 0;
 		border: 0;
 	}
+	fieldset {
+		grid-column: 1 / -1;
+	}
 	@media (min-width: 48rem) {
 		form {
-			grid-template-columns: 1fr 1fr;
+			grid-template-columns: 2fr 1fr 1fr auto;
+			align-items: center;
 		}
+		input[type='search']:first-child,
 		fieldset {
-			grid-column: 1 / -1;
+			grid-column: auto;
 		}
 	}
 </style>

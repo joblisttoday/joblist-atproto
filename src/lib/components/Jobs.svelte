@@ -164,7 +164,10 @@
 	jl-jobs > p {
 		margin: var(--space-s) 0;
 	}
-	ul {
+	jl-jobs > ul {
+		display: grid;
+		grid-template-columns: var(--columns);
+		column-gap: var(--column-gap);
 		margin: var(--space-s) 0;
 	}
 	details {

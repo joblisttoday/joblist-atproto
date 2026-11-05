@@ -1,4 +1,5 @@
 <script>
+	import PageHeader from '#lib/components/PageHeader.svelte';
 	import config from '#lib/data/config.json';
 	import Jobs from '#lib/components/Jobs.svelte';
 	import SavedSearches from '#lib/components/SavedSearches.svelte';
@@ -38,9 +39,9 @@
 
 <svelte:head><title>{t('jobs.title')} · {config.name}</title></svelte:head>
 
-<h1>{t('jobs.title')}</h1>
-<p>{t('jobs.intro')}</p>
-<menu><a href="/jobs/new">+ {t('post.title')}</a></menu>
+<PageHeader title={t('jobs.title')} intro={t('jobs.intro')}>
+	{#snippet actions()}<a href="/jobs/new">+ {t('post.title')}</a>{/snippet}
+</PageHeader>
 <SavedSearches {jobs} {names} onopen={open} />
 {#if companies.length}
 	<Jobs {companies} careers={false} bind:filters bind:jobs {since}>

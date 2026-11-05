@@ -1,4 +1,5 @@
 <script>
+	import PageHeader from '#lib/components/PageHeader.svelte';
 	import ListItem from '#lib/components/ListItem.svelte';
 	import { data, network } from '#lib/network/network.svelte.js';
 	import { mixedAuthors } from '#lib/models/list.js';
@@ -16,11 +17,9 @@
 </script>
 
 <jl-home>
-	<header>
-		<h1>{t('home.title')}</h1>
-		<p>{t('home.intro')}</p>
-		<menu><a href="/lists/new">+ {t('list.new')}</a></menu>
-	</header>
+	<PageHeader title={t('home.title')} intro={t('home.intro')}>
+		{#snippet actions()}<a href="/lists/new">+ {t('list.new')}</a>{/snippet}
+	</PageHeader>
 
 	<section aria-label={t('nav.lists')}>
 		{#if data.lists.length > 6}
@@ -42,19 +41,12 @@
 	jl-home {
 		display: block;
 	}
-	jl-home > header {
-		padding: var(--space-m) 0 0;
+	input {
+		margin-bottom: var(--space-s);
 	}
-	jl-home > header > p {
-		color: var(--color-muted);
-		max-width: 34em;
-		margin-bottom: 0;
-	}
-	@media (min-width: 48rem) {
-		ul {
-			display: grid;
-			grid-template-columns: 1fr 1fr;
-			column-gap: var(--space-l);
-		}
+	ul {
+		display: grid;
+		grid-template-columns: var(--columns);
+		column-gap: var(--column-gap);
 	}
 </style>

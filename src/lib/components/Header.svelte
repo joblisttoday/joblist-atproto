@@ -33,16 +33,18 @@
 <style>
 	jl-header {
 		display: block;
+		position: sticky;
+		top: 0;
+		z-index: 10;
+		background: var(--color-bg);
 		border-bottom: var(--border);
 	}
 	header {
 		display: flex;
 		align-items: center;
 		gap: var(--space-m);
-		max-width: var(--page-width);
 		min-height: var(--header-height);
-		margin: 0 auto;
-		padding: 0 var(--space-m);
+		padding: 0 var(--gutter);
 	}
 	header > a {
 		display: flex;
@@ -56,14 +58,5 @@
 	}
 	header > :global(jl-nav) {
 		margin-left: auto;
-	}
-
-	@media (min-width: 48rem) {
-		jl-header {
-			position: sticky;
-			top: 0;
-			z-index: 10;
-			background: var(--color-bg);
-		}
 	}
 </style>

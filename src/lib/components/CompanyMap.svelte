@@ -42,6 +42,14 @@
 	jl-map[small] figure {
 		height: var(--map-height-small);
 	}
+	/* Edge to edge on phones. */
+	@media (max-width: 48rem) {
+		figure {
+			margin-inline: calc(-1 * var(--gutter));
+			border-inline: 0;
+			border-radius: 0;
+		}
+	}
 	/* MapLibre builds its popups outside Svelte. */
 	jl-map :global(.maplibregl-popup-content) {
 		background: var(--color-bg);

@@ -28,9 +28,7 @@
 		align-items: center;
 		justify-content: space-between;
 		gap: var(--space-s) var(--space-m);
-		max-width: var(--page-width);
-		margin: 0 auto;
-		padding: var(--space-m);
+		padding: var(--space-m) var(--gutter);
 	}
 	p {
 		margin: 0;

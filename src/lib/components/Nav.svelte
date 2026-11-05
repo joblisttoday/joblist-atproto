@@ -35,8 +35,6 @@
 		display: grid;
 		grid-auto-flow: column;
 		grid-auto-columns: 1fr;
-		max-width: var(--page-width);
-		margin: 0 auto;
 	}
 	a {
 		display: flex;
