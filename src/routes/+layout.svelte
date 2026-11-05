@@ -30,6 +30,8 @@
 <svelte:head>
 	<link rel="icon" href={favicon} />
 	<title>{config.name}</title>
+	<!-- Cookieless page views (Umami), only on the production domain. -->
+	<script defer src={config.analytics.script} data-website-id={config.analytics.websiteId} data-domains={config.analytics.domains}></script>
 </svelte:head>
 
 <a href="#main">{t('nav.skip')}</a>

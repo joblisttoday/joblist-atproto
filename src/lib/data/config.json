@@ -67,6 +67,11 @@
 		"signup": "https://bsky.app",
 		"profile": "https://bsky.app/profile/{handle}"
 	},
+	"analytics": {
+		"script": "https://cloud.umami.is/script.js",
+		"websiteId": "479fa5c4-e9c9-4d8d-85c6-9a88c886dd24",
+		"domains": "joblist.today"
+	},
 	"snapshot": {
 		"path": "https://raw.githubusercontent.com/joblisttoday/joblist-snapshot/gh-pages",
 		"maxAgeHours": 12
