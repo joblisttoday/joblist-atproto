@@ -84,7 +84,7 @@
 {:else if fetched === null}
 	<h1>{t('list.notFoundTitle')}</h1>
 	<p>{t('list.notFound')}</p>
-	<menu><a href="/">{t('nav.lists')}</a></menu>
+	<menu><a href="/lists">{t('nav.lists')}</a></menu>
 {:else}
 	<Pending />
 {/if}

@@ -38,10 +38,20 @@
 	--column-min: 20rem;
 	--column-gap: var(--gutter);
 	--columns: repeat(auto-fill, minmax(min(100%, var(--column-min)), 1fr));
-	--explore-list-width: 40rem;
+	--explore-list-width: 28rem;
+	--sheet-peek: 9.5rem;
+	--sheet-half: 55%;
+	--handle-width: 2.5rem;
+	--radius-large: 1rem;
 	--shadow: 0 2px 8px rgb(0 0 0 / 0.25);
 	--tap-size: 2.75rem;
+	--chip-height: 2.25rem;
 	--avatar-size: 4rem;
+	--avatar-small: 2.5rem;
+	--avatar-saturation: 45%;
+	--avatar-lightness: 42%;
+	--color-avatar-fg: #fff;
+	--chip-line: 1.6;
 	--nav-height: 3.5rem;
 	--header-height: 3rem;
 	--map-height: 60vh;
@@ -268,6 +278,7 @@ legend {
 
 menu {
 	display: flex;
+	list-style: none;
 	flex-wrap: wrap;
 	gap: var(--space-s);
 	margin: var(--space-m) 0;

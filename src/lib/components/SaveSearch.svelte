@@ -31,4 +31,11 @@
 		gap: var(--space-s);
 		margin: var(--space-s) 0;
 	}
+	/* A chip, like the search's own choices. */
+	button {
+		min-height: var(--chip-height);
+		padding: 0 var(--space-m);
+		border-radius: var(--radius-round);
+		font-size: var(--font-size-small);
+	}
 </style>

@@ -1,9 +1,13 @@
 import config from '#lib/data/config.json';
+import { mainArea } from './companies-map.js';
 import { createMap, cssColors, loadMapLibre } from './maplibre.js';
 
 /**
  * @typedef {{point: [number, number], title: string, url: string, company: string}} MapJob
- * @typedef {{setJobs: (jobs: MapJob[]) => void, setHere: (here: [number, number] | null | undefined) => void, destroy: () => void}} JobsMap
+ * @typedef {{top: number, right: number, bottom: number, left: number}} Insets
+ * @typedef {{setJobs: (jobs: MapJob[], fit?: boolean) => void, setHere: (here: [number, number] | null | undefined) => void, setCovered: (covered: Insets) => void, destroy: () => void}} JobsMap
+ *   setCovered: the part of the map under the page's panels, kept out of framing.
+ *   fit: frame the jobs (after a search), else show the whole globe.
  */
 
 /** @param {MapJob[]} jobs */
@@ -43,6 +47,41 @@ export function mountJobsMap(node, text) {
 	/** @type {[number, number] | null | undefined} */
 	let here = null;
 	const color = cssColors(node);
+	/** @type {ReturnType<typeof setTimeout> | undefined} */
+	let framing;
+	let framed = false;
+	/** @type {Insets} */
+	let covered = { top: 0, right: 0, bottom: 0, left: 0 };
+	// Where the globe faces when showing the whole network: most jobs are north of the equator.
+	const globeCenter = /** @type {[number, number]} */ (config.map.globeCenter);
+	/** The zoom showing the whole globe in the free part of the map, whatever the screen. */
+	const globeZoom = () => {
+		const free = Math.min(node.clientWidth - covered.left - covered.right, node.clientHeight - covered.top - covered.bottom);
+		return Math.max(config.map.globeMinZoom, Math.log2(free / config.map.globeSizePx));
+	};
+	/** The free part of the map, with some room around what is framed. */
+	const room = () => {
+		const p = config.map.padding;
+		return { top: covered.top + p, right: covered.right + p, bottom: covered.bottom + p, left: covered.left + p };
+	};
+
+	/** Frame the jobs found, once the search settles; the whole globe when there is no search. */
+	function frame(/** @type {boolean} */ fit) {
+		clearTimeout(framing);
+		framing = setTimeout(() => {
+			if (!map || !ready || here) return;
+			if (fit && jobs.length) {
+				const [[west, south], [east, north]] = mainArea(jobs.map((j) => ({ lon: j.point[0], lat: j.point[1] })));
+				// Spread over continents: turn the globe to them rather than flatten it.
+				if (east - west > config.map.globeSpan) map.easeTo({ center: [(west + east) / 2, (south + north) / 2], zoom: globeZoom(), padding: covered });
+				else map.fitBounds([[west, south], [east, north]], { padding: room(), maxZoom: config.map.maxZoom });
+				framed = true;
+			} else if (!fit && framed) {
+				map.easeTo({ center: globeCenter, zoom: globeZoom(), padding: covered });
+				framed = false;
+			}
+		}, config.map.frameDelayMs);
+	}
 
 	const source = (/** @type {string} */ id) => /** @type {import('maplibre-gl').GeoJSONSource | undefined} */ (map?.getSource(id));
 	function render() {
@@ -55,7 +94,7 @@ export function mountJobsMap(node, text) {
 	(async () => {
 		const maplibre = await loadMapLibre();
 		if (removed) return;
-		map = createMap(maplibre, node, { zoom: 1.2 });
+		map = createMap(maplibre, node, { center: globeCenter, zoom: globeZoom() });
 		const instance = map;
 		instance.on('load', () => {
 			instance.resize();
@@ -133,20 +172,28 @@ export function mountJobsMap(node, text) {
 			ready = true;
 			render();
 			// Someone searching near them before the map was ready.
-			if (here) instance.jumpTo({ center: here, zoom: config.map.nearZoom });
+			if (here) instance.jumpTo({ center: here, zoom: config.map.nearZoom, padding: covered });
+			else instance.jumpTo({ center: globeCenter, zoom: globeZoom(), padding: covered });
 		});
 	})();
 
 	return {
-		setJobs(list) {
+		setJobs(list, fit = false) {
 			jobs = list;
 			render();
+			frame(fit);
 		},
 		setHere(point) {
 			const moved = point && (!here || point[0] !== here[0] || point[1] !== here[1]);
 			here = point;
 			render();
-			if (moved && ready && map) map.flyTo({ center: point, zoom: config.map.nearZoom });
+			if (moved && ready && map) map.flyTo({ center: point, zoom: config.map.nearZoom, padding: covered });
+		},
+		setCovered(insets) {
+			const first = !covered.left && !covered.bottom;
+			covered = insets;
+			// The panel was measured after the map was made: show the globe in the free part.
+			if (first && ready && map && !here && !framed) map.jumpTo({ center: globeCenter, zoom: globeZoom(), padding: covered });
 		},
 		destroy() {
 			removed = true;

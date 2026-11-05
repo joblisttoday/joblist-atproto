@@ -4,10 +4,11 @@
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * The jobs found, on a globe; `here` is where the person is, when they search near them.
-	 * @type {{jobs: import('#lib/ats/job.js').Job[], names: Map<string, string>, here?: [number, number] | null}}
+	 * The jobs found, on a globe; `here` is where the person is, when they search near them;
+	 * `fit` frames the jobs (after a search); `covered` is the part of the map under the page's panels.
+	 * @type {{jobs: import('#lib/ats/job.js').Job[], names: Map<string, string>, here?: [number, number] | null, fit?: boolean, covered?: import('#lib/map/jobs-map.js').Insets}}
 	 */
-	let { jobs, names, here = null } = $props();
+	let { jobs, names, here = null, fit = false, covered = { top: 0, right: 0, bottom: 0, left: 0 } } = $props();
 
 	/** @type {HTMLElement} */
 	let figure;
@@ -30,7 +31,8 @@
 		return () => map?.destroy();
 	});
 
-	$effect(() => map?.setJobs(located));
+	$effect(() => map?.setCovered(covered));
+	$effect(() => map?.setJobs(located, fit));
 	$effect(() => map?.setHere(here));
 </script>
 

@@ -1,5 +1,10 @@
 {
 	"nav.lists": "Lists",
+	"nav.explore": "Explore",
+	"nav.post": "Post a job",
+	"explore.welcome": "{jobs} open jobs at {companies} companies, curated by people on atproto.",
+	"explore.publish": "Anyone with a Bluesky or atproto account can post a job here.",
+	"explore.sheet": "Show more or less of the results",
 	"nav.companies": "Companies",
 	"nav.add": "Add",
 	"nav.me": "Me",
@@ -116,6 +121,8 @@
 	"job.distance.bike": "{km} km · ≈ {minutes} min by bike",
 	"job.distance.walk": "{km} km · ≈ {minutes} min on foot",
 	"explore.map": "Map",
+	"explore.what": "Job or company",
+	"explore.where": "City or country",
 	"explore.list": "List",
 	"map.jobs": "Map of {count} jobs",
 	"map.here": "You are here",
@@ -220,6 +227,8 @@
 	"companies.found": "{count} found",
 	"companies.more": "Show {count} more ({left} left)",
 	"companies.title": "Companies",
+	"companies.add": "Add a company",
+	"companies.intro": "Companies that hire, added by anyone. Missing one? Paste its website or job board.",
 
 	"suggestion.title": "Suggest a company",
 	"suggestion.search": "Which company?",

@@ -1,5 +1,6 @@
 <script>
 	import config from '#lib/data/config.json';
+	import { currentPlace } from '#lib/navigation/location.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
@@ -23,19 +24,14 @@
 			onchange();
 			return;
 		}
-		if (!navigator.geolocation) {
-			locating = 'denied';
-			return;
-		}
 		locating = 'locating';
-		navigator.geolocation.getCurrentPosition(
-			({ coords }) => {
+		currentPlace().then(
+			(point) => {
 				locating = '';
-				filters.near = [coords.longitude, coords.latitude];
+				filters.near = point;
 				onchange();
 			},
-			() => (locating = 'denied'),
-			{ maximumAge: 600000, timeout: 15000 }
+			() => (locating = 'denied')
 		);
 	}
 </script>

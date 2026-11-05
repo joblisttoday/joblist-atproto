@@ -27,6 +27,11 @@
 		"clusterRadius": 40,
 		"clusterMaxZoom": 13,
 		"nearZoom": 11,
+		"globeSizePx": 320,
+		"globeMinZoom": 1,
+		"globeCenter": [10, 30],
+		"globeSpan": 90,
+		"frameDelayMs": 600,
 		"center": [
 			13.405,
 			52.52
@@ -91,6 +96,7 @@
 		"kmPerHour": { "walk": 5, "bike": 15 },
 		"mode": "bike",
 		"detour": 1.3,
+		"bandMinutes": 5,
 		"minutes": [15, 30, 45, 60]
 	},
 	"snapshot": {

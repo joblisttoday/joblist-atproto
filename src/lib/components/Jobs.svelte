@@ -19,6 +19,7 @@
 	 * jobs: every job read, for the page.
 	 * results: the jobs matching the filters, for the page (a map of them).
 	 * actions: shown under the filters.
+	 * search: show the filters (false when the page has its own search).
 	 * @type {{
 	 *   companies: import('#lib/models/company.js').Company[],
 	 *   careers?: boolean,
@@ -26,7 +27,9 @@
 	 *   since?: string,
 	 *   jobs?: import('#lib/ats/job.js').Job[],
 	 *   results?: import('#lib/ats/job.js').Job[],
-	 *   actions?: import('svelte').Snippet
+	 *   actions?: import('svelte').Snippet,
+	 *   search?: boolean,
+	 *   places?: string[]
 	 * }}
 	 */
 	let {
@@ -36,7 +39,9 @@
 		since = '',
 		jobs: all = $bindable([]),
 		results = $bindable([]),
-		actions
+		actions,
+		search = true,
+		places: suggested = $bindable([])
 	} = $props();
 	const PAGE = config.jobs.pageSize;
 
@@ -69,6 +74,14 @@
 	const groups = $derived(grouped ? byCompany(filtered) : []);
 	// Suggestions are computed once all boards answered, not on every answer.
 	const places = $derived(loading ? [] : commonPlaces(jobs));
+	$effect(() => {
+		suggested = places;
+	});
+	// A new search starts from its first page.
+	$effect(() => {
+		[filters.query, filters.where, filters.remote, filters.near, filters.within];
+		shown = PAGE;
+	});
 
 	$effect(() => {
 		const list = targets;
@@ -116,7 +129,7 @@
 		</small>
 	</p>
 
-	{#if jobs.length > 10 || actions}
+	{#if search && (jobs.length > 10 || actions)}
 		<JobFilters bind:filters bind:grouped {places} onchange={() => (shown = PAGE)} />
 	{/if}
 	{@render actions?.()}

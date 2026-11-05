@@ -32,26 +32,32 @@
 					minutes: travelMinutes(job.km)
 				})
 	);
-	const meta = $derived([distance, location, place, job.department, ago(time(job.published), i18n.locale)].filter(Boolean).join(' · '));
+	// Where and for whom on one line; how far, how and when as chips.
+	const line = $derived([location, job.department].filter(Boolean).join(' · '));
+	const chips = $derived([distance, place, ago(time(job.published), i18n.locale)].filter(Boolean));
+	// Each company keeps its color, from its key.
+	const hue = $derived([...job.company].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 360, 7));
 	let open = $state(false);
 </script>
 
 <jl-job posted={posted ? (posted.verified ? 'company' : 'shared') : undefined} {open} fresh={fresh || undefined}>
+	{#if company}<jl-avatar style="--hue: {hue}" aria-hidden="true">{company.trim().charAt(0).toUpperCase()}</jl-avatar>{/if}
 	{#if posted}
 		<a href={postPath(posted.did, posted.rkey)}>{job.title}</a>
-		<small>
-			{#if company}<a href="/company/{job.company}">{company}</a>{meta ? ' · ' : ''}{/if}{meta}
-		</small>
-		{#if posted.verified}
-			<small><mark>✓ {t('job.verified')}</mark></small>
-		{:else}
+		<small>{#if company}<a href="/company/{job.company}">{company}</a>{line ? ' · ' : ''}{/if}{line}</small>
+		<jl-chips>
+			{#each chips as chip (chip)}<span>{chip}</span>{/each}
+			{#if posted.verified}<mark>✓ {t('job.verified')}</mark>{/if}
+		</jl-chips>
+		{#if !posted.verified}
 			<small>{t('job.sharedBy')} <a href="/{handleOf(posted.did)}">@{handleOf(posted.did)}</a></small>
 		{/if}
 	{:else}
 		<details bind:open>
 			<summary>
 				<strong>{#if fresh}<mark>{t('job.new')}</mark> {/if}{job.title}</strong>
-				<small>{company ? `${company}${meta ? ' · ' : ''}` : ''}{meta}</small>
+				<small>{company ? `${company}${line ? ' · ' : ''}` : ''}{line}</small>
+				<jl-chips>{#each chips as chip (chip)}<span>{chip}</span>{/each}</jl-chips>
 			</summary>
 			{#if open}<JobDescription {job} {company} />{/if}
 		</details>
@@ -60,9 +66,44 @@
 
 <style>
 	jl-job {
-		display: block;
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr);
+		column-gap: var(--space-s);
+		align-items: start;
 		padding: var(--space-s) 0;
 		border-bottom: var(--border);
+	}
+	jl-job > :not(jl-avatar) {
+		grid-column: 2;
+	}
+	jl-job:not(:has(jl-avatar)) > * {
+		grid-column: 1 / -1;
+	}
+	/* The company's initial, in its own color. */
+	jl-avatar {
+		grid-row: 1 / span 4;
+		display: grid;
+		place-items: center;
+		width: var(--avatar-small);
+		height: var(--avatar-small);
+		border-radius: var(--radius);
+		background: hsl(var(--hue) var(--avatar-saturation) var(--avatar-lightness));
+		color: var(--color-avatar-fg);
+		font-weight: var(--font-weight-strong);
+	}
+	jl-chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-xs);
+		margin-top: var(--space-xs);
+	}
+	jl-chips > * {
+		padding: 0 var(--space-s);
+		border-radius: var(--radius-round);
+		background: var(--color-soft);
+		color: var(--color-fg);
+		font-size: var(--font-size-small);
+		line-height: var(--chip-line);
 	}
 	jl-job > a,
 	summary strong {
