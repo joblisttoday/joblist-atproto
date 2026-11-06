@@ -1,5 +1,6 @@
 import config from '#lib/data/config.json';
 import { mainArea } from './companies-map.js';
+import { focusArea } from './focus.js';
 import { createMap, cssColors, loadMapLibre } from './maplibre.js';
 
 /**
@@ -54,6 +55,8 @@ export function mountJobsMap(node, text) {
 	/** @type {ReturnType<typeof setTimeout> | undefined} */
 	let framing;
 	let framed = false;
+	// Whether the jobs are to be framed: they may arrive before the map is ready.
+	let fitting = false;
 	/** @type {Insets} */
 	let covered = { top: 0, right: 0, bottom: 0, left: 0 };
 	// Where the globe faces when showing the whole network: most jobs are north of the equator.
@@ -63,11 +66,6 @@ export function mountJobsMap(node, text) {
 		const free = Math.min(node.clientWidth - covered.left - covered.right, node.clientHeight - covered.top - covered.bottom);
 		return Math.max(config.map.globeMinZoom, Math.log2(free / config.map.globeSizePx));
 	};
-	/** The free part of the map, with some room around what is framed. */
-	const room = () => {
-		const p = config.map.padding;
-		return { top: covered.top + p, right: covered.right + p, bottom: covered.bottom + p, left: covered.left + p };
-	};
 
 	/** Frame the jobs found, once the search settles; the whole globe when there is no search. */
 	function frame(/** @type {boolean} */ fit) {
@@ -75,10 +73,16 @@ export function mountJobsMap(node, text) {
 		framing = setTimeout(() => {
 			if (!map || !ready || here || selected) return;
 			if (fit && jobs.length) {
-				const [[west, south], [east, north]] = mainArea(jobs.map((j) => ({ lon: j.point[0], lat: j.point[1] })));
+				// Mostly in one city: that city; else where most of them are.
+				const [[west, south], [east, north]] =
+					focusArea(jobs.map((j) => j.point), config.map.focus) || mainArea(jobs.map((j) => ({ lon: j.point[0], lat: j.point[1] })));
 				// Spread over continents: turn the globe to them rather than flatten it.
 				if (east - west > config.map.globeSpan) map.easeTo({ center: [(west + east) / 2, (south + north) / 2], zoom: globeZoom(), padding: covered });
-				else map.fitBounds([[west, south], [east, north]], { padding: room(), maxZoom: config.map.maxZoom });
+				else {
+					// MapLibre adds the map's padding to the one given here: the panels once, then some room.
+					map.setPadding(covered);
+					map.fitBounds([[west, south], [east, north]], { padding: config.map.padding, maxZoom: config.map.maxZoom });
+				}
 				framed = true;
 			} else if (!fit && framed) {
 				map.easeTo({ center: globeCenter, zoom: globeZoom(), padding: covered });
@@ -123,8 +127,22 @@ export function mountJobsMap(node, text) {
 					'circle-stroke-width': config.map.pointStroke,
 					'circle-stroke-color': color('--color-bg'),
 					// Bigger with more jobs, slowly.
-					'circle-radius': ['interpolate', ['linear'], ['sqrt', ['get', 'point_count']], 1, 8, 40, 34]
+					'circle-radius': ['interpolate', ['linear'], ['sqrt', ['get', 'point_count']], 1, 12, 40, 34]
 				}
+			});
+			// How many jobs in each cluster.
+			instance.addLayer({
+				id: 'cluster-counts',
+				type: 'symbol',
+				source: 'jobs',
+				filter: ['has', 'point_count'],
+				layout: {
+					'text-field': ['get', 'point_count_abbreviated'],
+					'text-font': config.map.font,
+					'text-size': ['interpolate', ['linear'], ['sqrt', ['get', 'point_count']], 1, 11, 40, 16],
+					'text-allow-overlap': true
+				},
+				paint: { 'text-color': color('--color-bg') }
 			});
 			instance.addLayer({
 				id: 'jobs',
@@ -137,6 +155,14 @@ export function mountJobsMap(node, text) {
 					'circle-stroke-width': config.map.pointStroke,
 					'circle-stroke-color': color('--color-bg')
 				}
+			});
+			// Around each point, a wider invisible circle that takes the taps: a finger is wider than a dot.
+			instance.addLayer({
+				id: 'jobs-hit',
+				type: 'circle',
+				source: 'jobs',
+				filter: ['!', ['has', 'point_count']],
+				paint: { 'circle-radius': config.map.hitRadius, 'circle-color': 'transparent' }
 			});
 			instance.addLayer({
 				id: 'here',
@@ -177,7 +203,7 @@ export function mountJobsMap(node, text) {
 				}
 				instance.easeTo({ center: /** @type {[number, number]} */ (/** @type {import('geojson').Point} */ (feature.geometry).coordinates), zoom });
 			});
-			instance.on('click', 'jobs', (event) => {
+			instance.on('click', 'jobs-hit', (event) => {
 				if (text.onpick) {
 					text.onpick([...new Set((event.features || []).map((f) => String(f.properties.url)))]);
 					return;
@@ -196,7 +222,7 @@ export function mountJobsMap(node, text) {
 				}
 				new maplibre.Popup({ closeButton: false }).setLngLat(event.lngLat).setDOMContent(list).addTo(instance);
 			});
-			for (const layer of ['clusters', 'jobs']) {
+			for (const layer of ['clusters', 'jobs-hit']) {
 				instance.on('mouseenter', layer, () => (instance.getCanvas().style.cursor = 'pointer'));
 				instance.on('mouseleave', layer, () => (instance.getCanvas().style.cursor = ''));
 			}
@@ -205,12 +231,15 @@ export function mountJobsMap(node, text) {
 			// Someone searching near them before the map was ready.
 			if (here) instance.jumpTo({ center: here, zoom: config.map.nearZoom, padding: covered });
 			else instance.jumpTo({ center: globeCenter, zoom: globeZoom(), padding: covered });
+			// A search found before the map was ready.
+			if (fitting) frame(true);
 		});
 	})();
 
 	return {
 		setJobs(list, fit = false) {
 			jobs = list;
+			fitting = fit;
 			render();
 			frame(fit);
 		},

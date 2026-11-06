@@ -47,7 +47,10 @@
 		"pointRadius": 6,
 		"pointStroke": 2,
 		"popupMax": 8,
-		"placeMax": 500
+		"placeMax": 500,
+		"focus": { "cellDeg": 0.5, "km": 40, "share": 0.5 },
+		"font": ["Noto Sans Regular"],
+		"hitRadius": 22
 	},
 	"limits": {
 		"concurrency": 6,
