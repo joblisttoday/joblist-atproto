@@ -92,6 +92,26 @@ function normalize({ query, where, remote }) {
  * @param {Map<string, string>} names company names by key
  */
 export function newCount(search, jobs, names) {
+	return newJobs(search, jobs, names).length;
+}
+
+/**
+ * A search's offers published since it was last looked at.
+ * @param {SavedSearch} search
+ * @param {Job[]} jobs
+ * @param {Map<string, string>} names company names by key
+ */
+export function newJobs(search, jobs, names) {
 	const since = time(search.seen);
-	return sameOffers(filterJobs(jobs, search, names)).filter((j) => time(j.published) > since).length;
+	return sameOffers(filterJobs(jobs, search, names)).filter((j) => time(j.published) > since);
+}
+
+/**
+ * The new offers of all searches, each once (searches can share some).
+ * @param {SavedSearch[]} searches
+ * @param {Job[]} jobs
+ * @param {Map<string, string>} names company names by key
+ */
+export function allNewCount(searches, jobs, names) {
+	return new Set(searches.flatMap((s) => newJobs(s, jobs, names).map((j) => j.url))).size;
 }

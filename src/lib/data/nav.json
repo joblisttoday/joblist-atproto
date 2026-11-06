@@ -1,6 +1,6 @@
 [
 	{ "href": "/", "icon": "explore", "label": "nav.explore" },
-	{ "href": "/saved", "icon": "saved", "label": "nav.saved" },
+	{ "href": "/saved", "icon": "saved", "label": "nav.saved", "badge": "saved" },
 	{ "href": "/companies", "icon": "companies", "label": "nav.companies" },
 	{ "href": "/lists", "icon": "lists", "label": "nav.lists" },
 	{ "href": "/jobs/new", "icon": "post", "label": "nav.post", "wide": true },

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { fromParams, isEmpty, nearby, newCount, sameSearch, toParams } from './saved-search.js';
+import { allNewCount, fromParams, isEmpty, nearby, newCount, sameSearch, toParams } from './saved-search.js';
 
 /** @type {import('./job.js').JobFilters} */
 const search = { query: 'frontend', where: 'Berlin', remote: 'remote' };
@@ -30,6 +30,9 @@ describe('newCount', () => {
 			{ ...job, url: '4', title: 'Designer', published: '2026-10-19' }
 		];
 		expect(newCount({ ...search, seen: '2026-10-15' }, jobs, new Map())).toBe(1);
+		// Across searches, a job new in two of them counts once.
+		const wider = { query: 'frontend', where: '', remote: /** @type {''} */ (''), seen: '2026-10-15' };
+		expect(allNewCount([{ ...search, seen: '2026-10-15' }, wider], jobs, new Map())).toBe(1);
 	});
 });
 

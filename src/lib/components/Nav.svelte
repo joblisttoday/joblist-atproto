@@ -3,9 +3,12 @@
 	import { page } from '$app/state';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { navLinks } from '#lib/navigation/nav.js';
+	import { savedJobs } from '#lib/network/saved-jobs.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	const items = $derived(navLinks(session.handle));
+	/** The count a tab shows, 0 for none. @param {string | undefined} badge */
+	const count = (badge) => (badge === 'saved' ? savedJobs.fresh : 0);
 
 	/** @param {string} href */
 	function current(href) {
@@ -18,7 +21,14 @@
 <jl-nav>
 	<nav aria-label={t('nav.label')}>
 		{#each items as item (item.href)}
-			<a href={item.href} aria-current={current(item.href) ? 'page' : undefined} data-wide={item.wide || undefined}><Icon name={item.icon} />{t(item.label)}</a>
+			{@const n = count(item.badge)}
+			<a
+				href={item.href}
+				aria-current={current(item.href) ? 'page' : undefined}
+				aria-label={n ? `${t(item.label)}, ${t('searches.new', { count: n })}` : undefined}
+				data-wide={item.wide || undefined}
+				><Icon name={item.icon} />{t(item.label)}{#if n}<mark>{n > 99 ? '99+' : n}</mark>{/if}</a
+			>
 		{/each}
 	</nav>
 </jl-nav>
@@ -56,6 +66,24 @@
 	a:hover {
 		color: var(--color-fg);
 	}
+	/* New jobs: a dot with the count, on the icon's corner. */
+	a {
+		position: relative;
+	}
+	mark {
+		position: absolute;
+		top: var(--space-xxs);
+		left: calc(50% + var(--space-xs));
+		min-width: var(--badge-size);
+		padding: 0 var(--space-xxs);
+		border-radius: var(--radius-round);
+		background: var(--color-accent);
+		color: var(--color-accent-fg);
+		font-size: var(--font-size-badge);
+		font-weight: var(--font-weight-strong);
+		line-height: var(--badge-size);
+		text-align: center;
+	}
 	a[data-wide] {
 		display: none;
 	}
@@ -92,6 +120,9 @@
 		}
 		a[aria-current='page'] {
 			border-bottom-color: var(--color-fg);
+		}
+		mark {
+			position: static;
 		}
 	}
 </style>
