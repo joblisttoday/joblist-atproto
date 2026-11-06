@@ -15,7 +15,8 @@
 		"relay": "https://relay1.us-east.bsky.network",
 		"appview": "https://public.api.bsky.app",
 		"plc": "https://plc.directory",
-		"handleResolver": "https://public.api.bsky.app"
+		"handleResolver": "https://public.api.bsky.app",
+		"placeSearch": "https://photon.komoot.io/api/"
 	},
 	"layout": {
 		"wide": "(min-width: 64rem)",
@@ -66,6 +67,13 @@
 		"fr"
 	],
 	"defaultLocale": "en",
+	"placeSearch": {
+		"limit": 6,
+		"minLength": 2,
+		"delayMs": 250,
+		"languages": ["en", "fr", "de"],
+		"layers": ["city", "locality", "district", "county", "state", "country"]
+	},
 	"hostedHandles": [".bsky.social"],
 	"quickSearch": {
 		"places": 2000,

@@ -69,6 +69,8 @@
 	--search-width-wide: 48rem;
 	--card-min: 20rem;
 	--account-width: 12rem;
+	--textarea-min: 8rem;
+	--textarea-max: 60vh;
 	--reading-width: 42rem;
 	--aside-width: 22rem;
 	--required-mark: ' *';
