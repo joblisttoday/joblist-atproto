@@ -116,7 +116,7 @@ describe('verified and merge', () => {
 		expect(toPost(record(value, 'did:plc:a'), profiles).verified).toBe(true);
 		expect(toPost(record(value, 'did:plc:b'), profiles).verified).toBe(false);
 	});
-	it('keeps one job per link, the company own post first, then board jobs', () => {
+	it('keeps one job per link: the company own post, then board jobs, then shared posts', () => {
 		const shared = toJob(toPost(record(value, 'did:plc:b'), profiles));
 		const own = toJob(toPost(record(value, 'did:plc:a'), profiles));
 		const other = toJob(toPost(record({ ...value, url: 'https://acme.org/jobs/2' }, 'did:plc:b'), profiles));
@@ -127,8 +127,13 @@ describe('verified and merge', () => {
 		const merged = mergeJobs([shared, other, own], board);
 		expect(merged.map((j) => [j.url, j.posted?.did])).toEqual([
 			['https://acme.org/jobs/1', 'did:plc:a'],
-			['https://acme.org/jobs/2', 'did:plc:b'],
-			['https://acme.org/jobs/3', undefined]
+			['https://acme.org/jobs/3', undefined],
+			['https://acme.org/jobs/2', 'did:plc:b']
+		]);
+		// Without the company's own post, a shared post never replaces the board's job.
+		expect(mergeJobs([shared], board).map((j) => [j.url, j.title, j.posted?.did])).toEqual([
+			['https://acme.org/jobs/1', 'E', undefined],
+			['https://acme.org/jobs/3', 'F', undefined]
 		]);
 		expect(postedFirst([board[1], other, own]).map((j) => j.url)).toEqual([
 			'https://acme.org/jobs/1',
