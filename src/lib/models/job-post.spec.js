@@ -11,7 +11,8 @@ import {
 	toForm,
 	toJob,
 	toPost,
-	toRecord
+	toRecord,
+	withPoints
 } from './job-post.js';
 
 const NOW = Date.parse('2026-10-19T12:00:00Z');
@@ -141,5 +142,22 @@ describe('verified and merge', () => {
 			'https://acme.org/jobs/3'
 		]);
 		expect(isRemote(own)).toBe(true);
+	});
+});
+
+describe('where posted jobs are', () => {
+	const profiles = new Map([['did:plc:a', { handle: 'acme.org' }]]);
+	const value = { title: 'E', company: 'acme.org', url: 'https://acme.org/jobs/1', createdAt: '2026-10-01' };
+	it('is the place the poster gives, else the one the snapshot found', () => {
+		const placed = toJob(toPost(record({ ...value, locations: [{ name: 'Berlin', latitude: '52.5', longitude: '13.4' }] }, 'did:plc:a'), profiles));
+		expect(placed.point).toEqual([13.4, 52.5]);
+		const named = toJob(toPost(record({ ...value, locations: [{ name: 'Paris' }] }, 'did:plc:a'), profiles));
+		expect(named.point).toBeUndefined();
+		const uri = `at://did:plc:a/today.joblist.job/${named.posted?.rkey}`;
+		/** @type {Map<string, [number, number]>} */
+		const points = new Map([[uri, [2.35, 48.86]]]);
+		const [found, kept] = withPoints([named, placed], points);
+		expect(found.point).toEqual([2.35, 48.86]);
+		expect(kept).toBe(placed);
 	});
 });

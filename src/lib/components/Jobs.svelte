@@ -8,7 +8,7 @@
 	import { getSnapshotFirst, getSnapshotJobs } from '#lib/network/snapshot.js';
 	import { boardUrl, hasJobsApi } from '#lib/models/company.js';
 	import { byCompany, commonPlaces, filterJobs, offerCount, sameOffers, time } from '#lib/models/job.js';
-	import { mergeJobs, postedFirst } from '#lib/models/job-post.js';
+	import { mergeJobs, postedFirst, withPoints } from '#lib/models/job-post.js';
 	import { data } from '#lib/network/network.svelte.js';
 	import { withoutHidden } from '#lib/models/job-mark.js';
 	import { marks } from '#lib/network/job-marks.svelte.js';
@@ -71,7 +71,9 @@
 	const single = $derived(companies.length === 1);
 	const names = $derived(new Map(companies.map((c) => [c.key, c.name])));
 	// Offers posted on joblist, for every company here (with a job board or not).
-	const posted = $derived(companies.flatMap((c) => data.postedJobs.get(c.key) || []));
+	/** Where posted jobs are, as the snapshot found. @type {Map<string, [number, number]>} */
+	let points = $state.raw(new Map());
+	const posted = $derived(withPoints(companies.flatMap((c) => data.postedJobs.get(c.key) || []), points));
 	// quick: the newest offers shown at once, until every job is read (the explorer, with all companies).
 	/** @type {import('#lib/ats/job.js').Job[]} */
 	let early = $state.raw([]);
@@ -125,6 +127,7 @@
 			const live = snapshot ? list.filter((c) => !snapshot.checked.has(c.key)) : list;
 			if (snapshot) {
 				gone = snapshot.gone;
+				points = snapshot.points;
 				add(list.flatMap((c) => snapshot.jobs.get(c.key) || []));
 				answered = list.length - live.length;
 			}

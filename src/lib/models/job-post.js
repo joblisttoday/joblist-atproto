@@ -1,4 +1,5 @@
 import { safeUrl } from './url.js';
+import { locationPoints } from './company.js';
 import config from '#lib/data/config.json' with { type: 'json' };
 
 /**
@@ -200,6 +201,8 @@ export function toPost(record, profiles) {
  * @returns {Job}
  */
 export function toJob(post) {
+	// Where it is, when the poster says it (the snapshot finds the others, see withPoints).
+	const [at] = locationPoints(post.locations);
 	return {
 		title: post.title,
 		url: post.url,
@@ -207,8 +210,23 @@ export function toJob(post) {
 		location: placeNames(post.locations) || undefined,
 		published: post.createdAt,
 		remote: post.remote,
-		posted: { did: post.did, rkey: post.rkey, verified: post.verified }
+		posted: { did: post.did, rkey: post.rkey, verified: post.verified },
+		point: at && [at.lon, at.lat]
 	};
+}
+
+/**
+ * Posted jobs with the place the snapshot found for them, when they do not say it.
+ * @param {Job[]} jobs
+ * @param {Map<string, [number, number]>} points by record address (at://…)
+ */
+export function withPoints(jobs, points) {
+	if (!points.size) return jobs;
+	return jobs.map((job) => {
+		if (job.point || !job.posted) return job;
+		const point = points.get(`at://${job.posted.did}/${config.collections.job}/${job.posted.rkey}`);
+		return point ? { ...job, point } : job;
+	});
 }
 
 /** @param {Location[]} locations */

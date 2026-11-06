@@ -1,7 +1,7 @@
 import config from '../src/lib/data/config.json' with { type: 'json' };
 import { getJobs } from '../src/lib/ats/index.js';
 import { mapLimit } from '../src/lib/atproto/xrpc.js';
-import { hasJobsApi } from '../src/lib/models/company.js';
+import { hasJobsApi, locationPoints } from '../src/lib/models/company.js';
 import { isLive, placeNames, toPost } from '../src/lib/models/job-post.js';
 
 /**
@@ -100,6 +100,9 @@ export function recordJobs(records, profiles, now = Date.now()) {
 				s: post.uri
 			};
 			if (post.verified) job.v = 1;
+			// Where it is, when the poster says it.
+			const [at] = locationPoints(post.locations);
+			if (at) job.g = [at.lon, at.lat];
 			return job;
 		});
 }

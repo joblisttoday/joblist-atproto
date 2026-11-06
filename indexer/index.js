@@ -42,7 +42,7 @@ const officeKeys = jobs.flatMap((j) => {
 });
 const searched = await findOffices(officeKeys, offices, places);
 for (const job of jobs) {
-	const point = locate(job.l, byKey.get(job.c), places, offices);
+	const point = job.g || locate(job.l, byKey.get(job.c), places, offices);
 	if (point) job.g = point;
 }
 console.log(`places: ${looked} looked up, ${Object.keys(places).length} known, ${jobs.filter((j) => j.g).length} jobs located`);

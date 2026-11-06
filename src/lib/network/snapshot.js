@@ -29,8 +29,9 @@ export function getSnapshotRecords() {
 }
 
 /**
- * @typedef {{jobs: Map<string, import('#lib/ats/job.js').Job[]>, checked: Set<string>, gone: Set<string>}} SnapshotJobs
+ * @typedef {{jobs: Map<string, import('#lib/ats/job.js').Job[]>, checked: Set<string>, gone: Set<string>, points: Map<string, [number, number]>}} SnapshotJobs
  *   gone: companies whose job board closed (found by the crawler).
+ *   points: where the jobs posted on atproto are, by record address (the jobs themselves are read from their records).
  * @type {Promise<SnapshotJobs | null> | null}
  */
 let jobsPromise = null;
@@ -41,14 +42,17 @@ export function getSnapshotJobs() {
 		if (!data || !fresh(data.generatedAt)) return null;
 		/** @type {Map<string, import('#lib/ats/job.js').Job[]>} */
 		const jobs = new Map();
+		/** @type {Map<string, [number, number]>} */
+		const points = new Map();
 		for (const j of data.jobs) {
+			if (j.s?.startsWith('at://') && j.g) points.set(j.s, j.g);
 			const job = toJob(j);
 			if (!job) continue;
 			const list = jobs.get(j.c) || [];
 			list.push(job);
 			jobs.set(j.c, list);
 		}
-		return { jobs, checked: new Set(data.checked || []), gone: new Set(data.gone || []) };
+		return { jobs, checked: new Set(data.checked || []), gone: new Set(data.gone || []), points };
 	});
 	return jobsPromise;
 }

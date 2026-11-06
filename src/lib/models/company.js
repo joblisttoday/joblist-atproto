@@ -170,7 +170,15 @@ export function hasJobsApi(company) {
  * @param {Company} company
  */
 export function mapPoints(company) {
-	return company.locations
+	return locationPoints(company.locations);
+}
+
+/**
+ * The places that say where they are (latitude and longitude), with them as numbers.
+ * @param {Location[]} locations
+ */
+export function locationPoints(locations) {
+	return locations
 		.map((l) => ({ ...l, lat: Number(l.latitude), lon: Number(l.longitude) }))
 		.filter((l) => l.latitude && l.longitude && Number.isFinite(l.lat) && Number.isFinite(l.lon));
 }
