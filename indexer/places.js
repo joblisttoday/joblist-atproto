@@ -31,6 +31,8 @@ export function placeNames(location) {
 				.replace(/\s*[-–]\s*$|^\s*[-–]\s*/g, '')
 				.replace(/\s+/g, ' ')
 				.replace(/ ,/g, ',')
+				// "Anywhere in the United States": what is left after the work words.
+				.replace(/^[\s,-]*(in|within|across)\s+(the\s+)?/i, '')
 				.replace(/^[\s,]+|[\s,]+$/g, '')
 		)
 		.filter((part) => /\p{L}{2}/u.test(part) && !isCountry(part));

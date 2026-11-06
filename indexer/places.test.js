@@ -60,6 +60,8 @@ test('placeNames drops places that are only a country', () => {
 	assert.deepEqual(placeNames('Remote - Brazil'), []);
 	assert.deepEqual(placeNames('Remote (United States)'), []);
 	assert.deepEqual(placeNames('USA'), []);
+	assert.deepEqual(placeNames('Anywhere in the United States'), []);
+	assert.deepEqual(placeNames('Remote-Friendly (Travel Required) | Canada'), []);
 	assert.deepEqual(placeNames('Remote - Singapore'), ['Singapore']);
 	assert.deepEqual(placeNames('Berlin, Germany'), ['Berlin, Germany']);
 });
