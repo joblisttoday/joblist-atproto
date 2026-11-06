@@ -11,6 +11,7 @@ import { join } from 'node:path';
 import config from '../src/lib/data/config.json' with { type: 'json' };
 import en from '../src/lib/i18n/locales/en.json' with { type: 'json' };
 import { toCompany } from '../src/lib/models/company.js';
+import { Companies } from '../src/lib/models/companies.js';
 import { membership, toList } from '../src/lib/models/list.js';
 import { toSuggestion } from '../src/lib/models/suggestion.js';
 import { postPath } from '../src/lib/models/job-post.js';
@@ -41,7 +42,8 @@ const versionsByKey = new Map();
 for (const r of companyRecords) {
 	if (r.value?.name) versionsByKey.set(r.rkey, [...(versionsByKey.get(r.rkey) || []), r]);
 }
-const companies = new Map([...versionsByKey].map(([key, versions]) => [key, toCompany(versions, profiles)]));
+// The same company added twice gets one page; the other's address leads to it in the app.
+const companies = new Companies([...versionsByKey.values()].map((versions) => toCompany(versions, profiles)));
 /** @type {Map<string, number>} */
 const jobCounts = new Map();
 for (const job of jobs) jobCounts.set(job.c, (jobCounts.get(job.c) || 0) + 1);

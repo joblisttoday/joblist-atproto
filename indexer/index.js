@@ -10,6 +10,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { mapPoints, toCompany } from '../src/lib/models/company.js';
+import { Companies } from '../src/lib/models/companies.js';
 import { crawlRecords } from './crawl.js';
 import config from '../src/lib/data/config.json' with { type: 'json' };
 import { fetchBoardJobs, recordJobs } from './jobs.js';
@@ -118,5 +119,6 @@ function groupCompanies(companyRecords, profiles) {
 		if (!r.value?.name) continue;
 		byKey.set(r.rkey, [...(byKey.get(r.rkey) || []), r]);
 	}
-	return [...byKey.values()].map((versions) => toCompany(versions, profiles));
+	// The same company added twice is read once (companies.js).
+	return [...new Companies([...byKey.values()].map((versions) => toCompany(versions, profiles))).values()];
 }

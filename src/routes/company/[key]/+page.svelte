@@ -1,5 +1,6 @@
 <script>
 	import { page } from '$app/state';
+	import { goto } from '$app/navigation';
 	import config from '#lib/data/config.json';
 	import AddToList from '#lib/components/AddToList.svelte';
 	import CompanyHeader from '#lib/components/CompanyHeader.svelte';
@@ -16,6 +17,10 @@
 
 	const key = $derived(page.params.key || '');
 	const company = $derived(data.companies.get(key));
+	// The same company added twice: its page is the kept one's.
+	$effect(() => {
+		if (company && company.key !== key) goto(`/company/${company.key}`, { replaceState: true });
+	});
 	const lists = $derived(listsWith(key));
 	// Jobs come from its job board, or were posted here (by the company or anyone).
 	const hasJobs = $derived(Boolean(company && (boardUrl(company.jobBoard) || data.postedJobs.has(key))));

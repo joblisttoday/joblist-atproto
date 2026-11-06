@@ -8,6 +8,7 @@ import { membership, toList } from '#lib/models/list.js';
 import { toSuggestion } from '#lib/models/suggestion.js';
 import { isLive, toJob, toPost } from '#lib/models/job-post.js';
 import { allowed } from '#lib/models/moderation.js';
+import { Companies } from '#lib/models/companies.js';
 import { readCache, writeCache } from './cache.js';
 import { getSnapshotRecords } from './snapshot.js';
 
@@ -58,9 +59,8 @@ const companies = $derived.by(() => {
 		versions.push(r);
 		byKey.set(r.rkey, versions);
 	}
-	return new Map(
-		[...byKey].map(([key, versions]) => [key, toCompany(versions, profileMap)])
-	);
+	// The same company added twice is shown once (companies.js).
+	return new Companies([...byKey.values()].map((versions) => toCompany(versions, profileMap)));
 });
 
 const lists = $derived(
