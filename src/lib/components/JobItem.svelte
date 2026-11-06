@@ -10,9 +10,12 @@
 
 	/**
 	 * fresh: published since the person last looked at this search.
-	 * @type {{job: import('#lib/ats/job.js').Job, company?: string, fresh?: boolean}}
+	 * onselect: the card opens the job in the page (the explorer) instead of unfolding it.
+	 * selected: the job open in the page. expanded: unfolded from the start.
+	 * actions: shown when unfolded, between the summary and the description.
+	 * @type {{job: import('#lib/ats/job.js').Job, company?: string, fresh?: boolean, onselect?: () => void, selected?: boolean, expanded?: boolean, actions?: import('svelte').Snippet}}
 	 */
-	let { job, company, fresh = false } = $props();
+	let { job, company, fresh = false, onselect, selected = false, expanded = false, actions } = $props();
 	const MAX_PLACES = config.jobs.placesShown;
 	const posted = $derived(job.posted);
 	const where = $derived(workplace(job));
@@ -37,10 +40,12 @@
 	const chips = $derived([distance, place, ago(time(job.published), i18n.locale)].filter(Boolean));
 	// Each company keeps its color, from its key.
 	const hue = $derived([...job.company].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 360, 7));
-	let open = $state(false);
+	// Only where it starts: the reader can still fold it.
+	// svelte-ignore state_referenced_locally
+	let open = $state(expanded);
 </script>
 
-<jl-job posted={posted ? (posted.verified ? 'company' : 'shared') : undefined} {open} fresh={fresh || undefined}>
+<jl-job posted={posted ? (posted.verified ? 'company' : 'shared') : undefined} {open} fresh={fresh || undefined} selected={selected || undefined}>
 	{#if company}<jl-avatar style="--hue: {hue}" aria-hidden="true">{company.trim().charAt(0).toUpperCase()}</jl-avatar>{/if}
 	{#if posted}
 		<a href={postPath(posted.did, posted.rkey)}>{job.title}</a>
@@ -52,6 +57,12 @@
 		{#if !posted.verified}
 			<small>{t('job.sharedBy')} <a href="/{handleOf(posted.did)}">@{handleOf(posted.did)}</a></small>
 		{/if}
+	{:else if onselect}
+		<button type="button" onclick={onselect} aria-current={selected ? 'true' : undefined}>
+			<strong>{#if fresh}<mark>{t('job.new')}</mark> {/if}{job.title}</strong>
+			<small>{company ? `${company}${line ? ' · ' : ''}` : ''}{line}</small>
+			<jl-chips>{#each chips as chip (chip)}<span>{chip}</span>{/each}</jl-chips>
+		</button>
 	{:else}
 		<details bind:open>
 			<summary>
@@ -59,7 +70,7 @@
 				<small>{company ? `${company}${line ? ' · ' : ''}` : ''}{line}</small>
 				<jl-chips>{#each chips as chip (chip)}<span>{chip}</span>{/each}</jl-chips>
 			</summary>
-			{#if open}<JobDescription {job} {company} />{/if}
+			{#if open}{@render actions?.()}<JobDescription {job} {company} />{/if}
 		</details>
 	{/if}
 </jl-job>
@@ -104,6 +115,30 @@
 		color: var(--color-fg);
 		font-size: var(--font-size-small);
 		line-height: var(--chip-line);
+	}
+	/* A card opening the job in the page: the whole card is the button. */
+	jl-job > button {
+		display: block;
+		width: 100%;
+		min-height: 0;
+		padding: 0;
+		border: 0;
+		background: none;
+		text-align: start;
+	}
+	jl-job > button:hover:not(:disabled) {
+		background: none;
+	}
+	jl-job > button:hover strong {
+		text-decoration: underline;
+	}
+	jl-job[selected] {
+		box-shadow: inset var(--selected-bar) 0 0 var(--color-focus);
+		padding-inline-start: var(--space-s);
+	}
+	jl-job > button strong {
+		display: block;
+		font-weight: var(--font-weight-strong);
 	}
 	jl-job > a,
 	summary strong {

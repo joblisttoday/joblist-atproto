@@ -5,7 +5,8 @@ import { createMap, cssColors, loadMapLibre } from './maplibre.js';
 /**
  * @typedef {{point: [number, number], title: string, url: string, company: string}} MapJob
  * @typedef {{top: number, right: number, bottom: number, left: number}} Insets
- * @typedef {{setJobs: (jobs: MapJob[], fit?: boolean) => void, setHere: (here: [number, number] | null | undefined) => void, setCovered: (covered: Insets) => void, destroy: () => void}} JobsMap
+ * @typedef {{setJobs: (jobs: MapJob[], fit?: boolean) => void, setHere: (here: [number, number] | null | undefined) => void, setSelected: (point: [number, number] | null | undefined) => void, setCovered: (covered: Insets) => void, destroy: () => void}} JobsMap
+ *   setSelected: the job open in the page, ringed on the map and brought into view.
  *   setCovered: the part of the map under the page's panels, kept out of framing.
  *   fit: frame the jobs (after a search), else show the whole globe.
  */
@@ -34,7 +35,8 @@ function hereGeoJson(here) {
  * Jobs as clusters on a globe: a cluster opens closer on click, a single place lists its jobs.
  * The map is made once; setJobs and setHere update it as the search changes.
  * @param {HTMLElement} node
- * @param {{label: (count: number) => string}} text
+ * @param {{label: (count: number) => string, onpick?: (urls: string[]) => void}} text
+ *   onpick: the jobs at a place someone tapped (else a popup lists them).
  * @returns {JobsMap}
  */
 export function mountJobsMap(node, text) {
@@ -46,6 +48,8 @@ export function mountJobsMap(node, text) {
 	let jobs = [];
 	/** @type {[number, number] | null | undefined} */
 	let here = null;
+	/** @type {[number, number] | null | undefined} */
+	let selected = null;
 	const color = cssColors(node);
 	/** @type {ReturnType<typeof setTimeout> | undefined} */
 	let framing;
@@ -69,7 +73,7 @@ export function mountJobsMap(node, text) {
 	function frame(/** @type {boolean} */ fit) {
 		clearTimeout(framing);
 		framing = setTimeout(() => {
-			if (!map || !ready || here) return;
+			if (!map || !ready || here || selected) return;
 			if (fit && jobs.length) {
 				const [[west, south], [east, north]] = mainArea(jobs.map((j) => ({ lon: j.point[0], lat: j.point[1] })));
 				// Spread over continents: turn the globe to them rather than flatten it.
@@ -88,6 +92,7 @@ export function mountJobsMap(node, text) {
 		if (!ready) return;
 		source('jobs')?.setData(toGeoJson(jobs));
 		source('here')?.setData(hereGeoJson(here));
+		source('selected')?.setData(hereGeoJson(selected));
 		node.setAttribute('aria-label', text.label(jobs.length));
 	}
 
@@ -106,6 +111,7 @@ export function mountJobsMap(node, text) {
 				clusterMaxZoom: config.map.clusterMaxZoom
 			});
 			instance.addSource('here', { type: 'geojson', data: hereGeoJson(null) });
+			instance.addSource('selected', { type: 'geojson', data: hereGeoJson(null) });
 			instance.addLayer({
 				id: 'clusters',
 				type: 'circle',
@@ -144,13 +150,38 @@ export function mountJobsMap(node, text) {
 				}
 			});
 
+			// The open job: a ring around its place.
+			instance.addLayer({
+				id: 'selected',
+				type: 'circle',
+				source: 'selected',
+				paint: {
+					'circle-radius': config.map.pointRadius * 2.5,
+					'circle-color': 'transparent',
+					'circle-stroke-width': config.map.pointStroke + 1,
+					'circle-stroke-color': color('--color-focus')
+				}
+			});
+
 			instance.on('click', 'clusters', async (event) => {
 				const feature = event.features?.[0];
 				if (!feature) return;
-				const zoom = await source('jobs')?.getClusterExpansionZoom(feature.properties.cluster_id);
+				const jobsSource = source('jobs');
+				const id = feature.properties.cluster_id;
+				const zoom = await jobsSource?.getClusterExpansionZoom(id);
+				// Jobs at the very same place never split: list them instead of zooming on.
+				if (text.onpick && jobsSource && zoom !== undefined && zoom > config.map.clusterMaxZoom) {
+					const leaves = await jobsSource.getClusterLeaves(id, config.map.placeMax, 0);
+					text.onpick(leaves.map((leaf) => String(leaf.properties?.url)));
+					return;
+				}
 				instance.easeTo({ center: /** @type {[number, number]} */ (/** @type {import('geojson').Point} */ (feature.geometry).coordinates), zoom });
 			});
 			instance.on('click', 'jobs', (event) => {
+				if (text.onpick) {
+					text.onpick([...new Set((event.features || []).map((f) => String(f.properties.url)))]);
+					return;
+				}
 				const list = document.createElement('ul');
 				for (const feature of (event.features || []).slice(0, config.map.popupMax)) {
 					const { title, url, company } = feature.properties;
@@ -188,6 +219,13 @@ export function mountJobsMap(node, text) {
 			here = point;
 			render();
 			if (moved && ready && map) map.flyTo({ center: point, zoom: config.map.nearZoom, padding: covered });
+		},
+		setSelected(point) {
+			selected = point;
+			render();
+			if (point && ready && map) {
+				map.easeTo({ center: point, zoom: Math.max(map.getZoom(), config.map.selectZoom), padding: covered });
+			}
 		},
 		setCovered(insets) {
 			const first = !covered.left && !covered.bottom;

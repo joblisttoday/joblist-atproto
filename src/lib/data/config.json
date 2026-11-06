@@ -27,6 +27,7 @@
 		"clusterRadius": 40,
 		"clusterMaxZoom": 13,
 		"nearZoom": 11,
+		"selectZoom": 12,
 		"globeSizePx": 320,
 		"globeMinZoom": 1,
 		"globeCenter": [10, 30],
@@ -41,7 +42,8 @@
 		"padding": 40,
 		"pointRadius": 6,
 		"pointStroke": 2,
-		"popupMax": 8
+		"popupMax": 8,
+		"placeMax": 500
 	},
 	"limits": {
 		"concurrency": 6,
@@ -58,6 +60,7 @@
 		"pageSize": 50,
 		"placesSuggested": 30,
 		"placesShown": 3,
+		"nearbyShown": 5,
 		"remoteWords": [
 			"remote",
 			"anywhere",

@@ -2,9 +2,12 @@
 	import config from '#lib/data/config.json';
 	import ExploreSearch from './ExploreSearch.svelte';
 	import Jobs from './Jobs.svelte';
+	import JobDetail from './JobDetail.svelte';
+	import JobItem from './JobItem.svelte';
 	import JobsMap from './JobsMap.svelte';
 	import SavedSearches from './SavedSearches.svelte';
 	import SaveSearch from './SaveSearch.svelte';
+	import { tick } from 'svelte';
 	import { replaceState } from '$app/navigation';
 	import { page } from '$app/state';
 	import { fromParams, isEmpty, sameSearch, toParams } from '#lib/models/saved-search.js';
@@ -77,30 +80,105 @@
 		};
 	});
 
+	// A job open in the panel, or the jobs at a place tapped on the map.
+	/** @type {import('#lib/ats/job.js').Job | null} */
+	let selected = $state(null);
+	/** @type {string[] | null} */
+	let picked = $state(null);
+	const pickedJobs = $derived(picked ? results.filter((job) => picked?.includes(job.url)) : null);
+	// Where the results were scrolled, to come back to it.
+	let resultsScroll = 0;
+
+	/** @param {import('#lib/ats/job.js').Job} job */
+	function select(job) {
+		if (!selected && !picked) resultsScroll = panel.scrollTop;
+		selected = job;
+		if (sheet === 'peek') sheet = 'half';
+		panel.scrollTop = 0;
+	}
+
+	/** @param {string[]} urls */
+	function pick(urls) {
+		const found = results.filter((job) => urls.includes(job.url));
+		if (found.length === 1) return select(found[0]);
+		if (!selected && !picked) resultsScroll = panel.scrollTop;
+		selected = null;
+		picked = urls;
+		if (sheet === 'peek') sheet = 'half';
+		panel.scrollTop = 0;
+	}
+
+	/** One step back: from a job to the place it was picked from, then to the results. */
+	async function back() {
+		if (selected && picked) selected = null;
+		else {
+			selected = null;
+			picked = null;
+			await tick();
+			panel.scrollTop = resultsScroll;
+		}
+	}
+
+	// A new search closes what was open.
+	$effect(() => {
+		[filters.query, filters.where, filters.remote, filters.near, filters.within];
+		selected = null;
+		picked = null;
+	});
+
 	function nextSheet() {
 		sheet = SHEET[(SHEET.indexOf(sheet) + 1) % SHEET.length];
 	}
 </script>
 
+<svelte:window onkeydown={(e) => e.key === 'Escape' && (selected || picked) && back()} />
+
 <jl-explore>
 	<jl-explore-map>
-		<JobsMap jobs={results} {names} here={filters.near} fit={searching} {covered} />
+		<JobsMap jobs={results} {names} here={filters.near} fit={searching} {covered} {selected} onpick={pick} />
 	</jl-explore-map>
 	<jl-explore-panel {sheet} bind:this={panel}>
 		<button type="button" aria-label={t('explore.sheet')} onclick={nextSheet}><span></span></button>
-		<ExploreSearch bind:filters {places} />
-		{#if !searching}
-			<p>
-				{t('explore.welcome', { jobs: jobs.length.toLocaleString(), companies: companies.length.toLocaleString() })}
-				<a href="/jobs/new">{t('explore.publish')}</a>
-			</p>
+		{#if selected}
+			<JobDetail job={selected} jobs={results} {names} onback={back} onselect={select} />
+		{:else if pickedJobs}
+			<jl-explore-place>
+				<button type="button" onclick={back}>← {t('explore.back')}</button>
+				<h2>{t('explore.here', { count: pickedJobs.length })}</h2>
+				<ul>
+					{#each pickedJobs as job (job.url)}
+						<li><JobItem {job} company={names.get(job.company)} onselect={() => select(job)} /></li>
+					{/each}
+				</ul>
+			</jl-explore-place>
 		{/if}
-		<SavedSearches {jobs} {names} onopen={open} />
-		{#if companies.length}
-			<Jobs {companies} careers={false} search={false} bind:filters bind:jobs bind:results bind:places {since}>
-				{#snippet actions()}<SaveSearch {filters} />{/snippet}
-			</Jobs>
-		{/if}
+		<!-- Kept while a job is open, so its search and its place in the list are still there after. -->
+		<jl-explore-results hidden={selected || pickedJobs ? true : undefined}>
+			<ExploreSearch bind:filters {places} />
+			{#if !searching}
+				<p>
+					{t('explore.welcome', { jobs: jobs.length.toLocaleString(), companies: companies.length.toLocaleString() })}
+					<a href="/jobs/new">{t('explore.publish')}</a>
+				</p>
+			{/if}
+			<SavedSearches {jobs} {names} onopen={open} />
+			{#if companies.length}
+				<Jobs
+					{companies}
+					careers={false}
+					search={false}
+					bind:filters
+					bind:jobs
+					bind:results
+					bind:places
+					{since}
+					onselect={select}
+					selected={selected?.url}
+				>
+					{#snippet actions()}<SaveSearch {filters} />{/snippet}
+				</Jobs>
+			{/if}
+		</jl-explore-results>
 	</jl-explore-panel>
 </jl-explore>
 
@@ -158,7 +236,17 @@
 		border-radius: var(--radius-round);
 		background: var(--color-line);
 	}
-	jl-explore-panel > p {
+	jl-explore-results {
+		display: block;
+	}
+	jl-explore-place > button {
+		min-height: var(--chip-height);
+		padding: 0 var(--space-m);
+		border-radius: var(--radius-round);
+		font-size: var(--font-size-small);
+		margin: var(--space-xs) 0 0;
+	}
+	jl-explore-results > p {
 		margin: var(--space-s) 0 0;
 		color: var(--color-muted);
 		font-size: var(--font-size-small);

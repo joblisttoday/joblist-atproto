@@ -20,6 +20,7 @@
 	 * results: the jobs matching the filters, for the page (a map of them).
 	 * actions: shown under the filters.
 	 * search: show the filters (false when the page has its own search).
+	 * onselect, selected: open a job in the page (the explorer), and which one is open.
 	 * @type {{
 	 *   companies: import('#lib/models/company.js').Company[],
 	 *   careers?: boolean,
@@ -29,6 +30,8 @@
 	 *   results?: import('#lib/ats/job.js').Job[],
 	 *   actions?: import('svelte').Snippet,
 	 *   search?: boolean,
+	 *   onselect?: (job: import('#lib/ats/job.js').Job) => void,
+	 *   selected?: string,
 	 *   places?: string[]
 	 * }}
 	 */
@@ -41,6 +44,8 @@
 		results = $bindable([]),
 		actions,
 		search = true,
+		onselect,
+		selected = '',
 		places: suggested = $bindable([])
 	} = $props();
 	const PAGE = config.jobs.pageSize;
@@ -143,7 +148,15 @@
 	{:else}
 		<ul>
 			{#each filtered.slice(0, shown) as job (job.url)}
-				<li><JobItem {job} company={single ? undefined : names.get(job.company)} fresh={sinceTime > 0 && time(job.published) > sinceTime} /></li>
+				<li>
+					<JobItem
+						{job}
+						company={single ? undefined : names.get(job.company)}
+						fresh={sinceTime > 0 && time(job.published) > sinceTime}
+						onselect={onselect && (() => onselect(job))}
+						selected={selected === job.url}
+					/>
+				</li>
 			{/each}
 		</ul>
 		{#if filtered.length > shown}
