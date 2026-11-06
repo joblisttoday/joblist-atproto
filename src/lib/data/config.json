@@ -65,6 +65,7 @@
 		"placesSuggested": 30,
 		"placesShown": 3,
 		"nearbyShown": 5,
+		"typingDelayMs": 200,
 		"remoteWords": [
 			"remote",
 			"anywhere",

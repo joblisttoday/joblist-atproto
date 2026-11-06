@@ -72,7 +72,7 @@ export function filterJobs(jobs, { query, where, remote, near, within = 0 }, nam
 			if (remote === 'anywhere' && remoteLimit(job)) return false;
 			if (!matchesPlace(job, where, remote)) return false;
 			if (!what.length) return true;
-			const text = `${job.title} ${job.department || ''} ${names.get(job.company) || ''}`.toLowerCase();
+			const text = searchText(job, names);
 			return what.every((w) => text.includes(w));
 		})
 		.sort((a, b) => time(b.published) - time(a.published));
@@ -177,6 +177,31 @@ export function commonPlaces(jobs, limit = config.jobs.placesSuggested) {
  */
 export function time(value) {
 	if (!value) return 0;
-	const ms = Date.parse(String(value).replace(' UTC', 'Z').replace(' ', 'T'));
-	return Number.isFinite(ms) ? ms : 0;
+	const key = String(value);
+	let ms = times.get(key);
+	if (ms === undefined) {
+		ms = Date.parse(key.replace(' UTC', 'Z').replace(' ', 'T'));
+		if (!Number.isFinite(ms)) ms = 0;
+		times.set(key, ms);
+	}
+	return ms;
+}
+
+/** Dates already read: sorting tens of thousands of jobs reads each many times. */
+const times = new Map();
+
+/** What a job is searched by, made once per job. */
+const searchTexts = new WeakMap();
+
+/**
+ * @param {Job} job
+ * @param {Map<string, string>} names
+ */
+function searchText(job, names) {
+	let text = searchTexts.get(job);
+	if (text === undefined) {
+		text = `${job.title} ${job.department || ''} ${names.get(job.company) || ''}`.toLowerCase();
+		searchTexts.set(job, text);
+	}
+	return text;
 }

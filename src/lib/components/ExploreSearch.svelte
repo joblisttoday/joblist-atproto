@@ -1,6 +1,7 @@
 <script>
 	import config from '#lib/data/config.json';
 	import { currentPlace } from '#lib/navigation/location.js';
+	import { delayed } from '#lib/navigation/delayed.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
@@ -10,6 +11,9 @@
 	let { filters = $bindable(), places } = $props();
 	const id = $props.id();
 	const mode = config.travel.mode;
+	// Searching tens of thousands of jobs waits for a pause in typing.
+	const query = delayed(() => filters.query, (value) => (filters.query = value), config.jobs.typingDelayMs);
+	const where = delayed(() => filters.where, (value) => (filters.where = value), config.jobs.typingDelayMs);
 	/** @type {'' | 'locating' | 'denied'} */
 	let locating = $state('');
 
@@ -34,14 +38,14 @@
 	<form role="search" onsubmit={(e) => e.preventDefault()}>
 		<input
 			type="search"
-			bind:value={filters.query}
+			bind:value={query.value}
 			placeholder={t('explore.what')}
 			aria-label={t('jobs.filter.what')}
 			enterkeyhint="search"
 		/>
 		<input
 			type="search"
-			bind:value={filters.where}
+			bind:value={where.value}
 			placeholder={t('explore.where')}
 			aria-label={t('jobs.filter.where')}
 			list="{id}-places"
