@@ -3,11 +3,14 @@
 	import { mountMap } from '#lib/map/companies-map.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
-	/** @type {{companies: import('#lib/models/company.js').Company[], small?: boolean}} */
-	let { companies, small = false } = $props();
+	/**
+	 * Companies' places on a map, or `places` given as they are (a job's).
+	 * @type {{companies?: import('#lib/models/company.js').Company[], places?: import('#lib/map/companies-map.js').Point[], small?: boolean}}
+	 */
+	let { companies = [], places, small = false } = $props();
 
 	const points = $derived(
-		companies.flatMap((company) => mapPoints(company).map((p) => ({ ...p, company })))
+		places ?? companies.flatMap((company) => mapPoints(company).map((p) => ({ ...p, company })))
 	);
 
 	/** @param {HTMLElement} node */

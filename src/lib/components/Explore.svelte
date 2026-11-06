@@ -7,6 +7,8 @@
 	import JobItem from './JobItem.svelte';
 	import JobsMap from './JobsMap.svelte';
 	import SaveSearch from './SaveSearch.svelte';
+	import ViewSwitch from './ViewSwitch.svelte';
+	import { readView } from '#lib/navigation/explore-view.js';
 	import { tick, untrack } from 'svelte';
 	import { afterNavigate, pushState, replaceState } from '$app/navigation';
 	import { page } from '$app/state';
@@ -18,8 +20,10 @@
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * The jobs explorer: a map of the whole network, a search, and the jobs found beside it.
-	 * Phones show the results as a sheet over the map (peek, half or full screen).
+	 * The jobs explorer: a search and the jobs found, on a map of the whole network
+	 * or as a list (a grid of cards on wide screens). Phones show the results over the
+	 * map as a sheet (peek, half or full screen). A job open is read on the whole page,
+	 * without the big map.
 	 * @type {{path: string}} path: the page address the search is kept on
 	 */
 	let { path } = $props();
@@ -40,6 +44,8 @@
 	let results = $state.raw([]);
 	/** @type {string[]} */
 	let places = $state.raw([]);
+	/** On the map, or as a list: as this person last chose. */
+	let view = $state(readView());
 	const SHEET = /** @type {const} */ (['peek', 'half', 'full']);
 	/** @type {(typeof SHEET)[number]} */
 	let sheet = $state('half');
@@ -128,6 +134,10 @@
 	// entries (shallow routing), so the phone's back gesture closes them like pages.
 	// An open job is in the address too, so it can be shared.
 	const selected = $derived(page.state.job ?? null);
+	// The big map shows only to look at where jobs are, not while one is read.
+	const mapShown = $derived(view === 'map' && !selected);
+	/** @type {import('#lib/map/jobs-map.js').Insets} */
+	const uncovered = { top: 0, right: 0, bottom: 0, left: 0 };
 	// Opened from a link to a job: open it once the jobs are read.
 	let linked = new URLSearchParams(location.search).get(config.jobs.jobParam);
 	$effect(() => {
@@ -235,21 +245,21 @@
 	onkeydown={(e) => e.key === 'Escape' && !(e.target instanceof HTMLInputElement) && (selected || picked) && back()}
 />
 
-<jl-explore style:--search-room="{covered.top}px">
-	<jl-explore-map>
+<jl-explore style:--search-room="{covered.top}px" view={selected ? 'job' : view}>
+	<jl-explore-map inert={!mapShown}>
 		<JobsMap
 			jobs={results}
 			{names}
 			here={filters.near}
 			fit={searching}
 			still={!!filters.area}
-			{covered}
+			covered={mapShown ? covered : uncovered}
 			{selected}
 			onpick={pick}
 			onmoved={(area) => (moved = area)}
 		/>
 	</jl-explore-map>
-	{#if moved && !selected && !picked}
+	{#if moved && mapShown && !picked}
 		<button type="button" onclick={searchArea} style:--map-left="{covered.left}px"><Icon name="area" /> {t('explore.area')}</button>
 	{/if}
 	<jl-explore-panel {sheet} bind:this={panel} dragging={drag ? true : undefined} style:--sheet-drag={drag ? `${drag.height}px` : undefined}>
@@ -265,7 +275,7 @@
 			<span></span>
 		</button>
 		{#if selected}
-			<JobDetail job={selected} jobs={results} {names} onback={back} onselect={select} />
+			<JobDetail job={selected} jobs={results} all={jobs} {names} onback={back} onselect={select} />
 		{:else if pickedJobs}
 			<jl-explore-place>
 				<button type="button" onclick={back}><Icon name="back" /> {t('explore.back')}</button>
@@ -311,7 +321,7 @@
 					selected={selected?.url}
 					quick
 				>
-					{#snippet actions()}<SaveSearch {filters} />{/snippet}
+					{#snippet actions()}<jl-explore-actions><SaveSearch {filters} /><ViewSwitch bind:view /></jl-explore-actions>{/snippet}
 				</Jobs>
 			{/if}
 			{#if empty}
@@ -388,7 +398,7 @@
 	}
 	/* Phones: no header on the explorer, the search floats over the top of the map. */
 	@media not (min-width: 64rem) {
-		jl-explore-results > :global(jl-explore-search) {
+		jl-explore[view='map'] jl-explore-results > :global(jl-explore-search) {
 			position: fixed;
 			top: calc(env(safe-area-inset-top) + var(--space-s));
 			inset-inline: var(--space-s);
@@ -460,6 +470,39 @@
 		font-size: var(--font-size-small);
 	}
 
+	jl-explore-actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--space-xs);
+	}
+
+	/* As a list, or reading a job: the page is the panel, the map stays hidden under it. */
+	jl-explore:not([view='map']) jl-explore-map {
+		visibility: hidden;
+	}
+	jl-explore:not([view='map']) jl-explore-panel,
+	jl-explore:not([view='map']) jl-explore-panel[sheet] {
+		inset: 0;
+		width: auto;
+		height: auto;
+		border-radius: 0;
+		box-shadow: none;
+		padding-top: var(--space-s);
+	}
+	jl-explore:not([view='map']) jl-explore-panel > button {
+		display: none;
+	}
+	/* The list: the search stays at the top while scrolling. */
+	jl-explore[view='list'] jl-explore-results > :global(jl-explore-search) {
+		display: block;
+		position: sticky;
+		top: calc(-1 * var(--space-s));
+		z-index: 2;
+		padding-block: var(--space-s);
+		background: var(--color-bg);
+	}
+
 	/* Wide screens: the results in a panel at the left, over the map. */
 	@media (min-width: 64rem) {
 		jl-explore {
@@ -476,6 +519,18 @@
 		}
 		jl-explore-panel > button {
 			display: none;
+		}
+		/* As a list: a grid of cards, the page's width. */
+		jl-explore[view='list'] jl-explore-panel {
+			padding-inline: var(--gutter);
+		}
+		jl-explore[view='list'] :global(jl-jobs > ul) {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(var(--card-min), 1fr));
+			column-gap: var(--column-gap);
+		}
+		jl-explore[view='list'] jl-explore-results > :global(jl-explore-search) {
+			max-width: var(--search-width-wide);
 		}
 	}
 </style>

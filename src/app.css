@@ -66,6 +66,10 @@
 	--badge-size: 1.1rem;
 	--icon-avatar: 1.5rem;
 	--search-width: 28rem;
+	--search-width-wide: 48rem;
+	--card-min: 20rem;
+	--reading-width: 42rem;
+	--aside-width: 22rem;
 	--required-mark: ' *';
 	--font-size-badge: 0.7rem;
 	--logo-stroke: 2.2;

@@ -24,6 +24,8 @@ import Plus from '@lucide/svelte/icons/plus';
 import ScanSearch from '@lucide/svelte/icons/scan-search';
 import Search from '@lucide/svelte/icons/search';
 import MapPin from '@lucide/svelte/icons/map-pin';
+import MapIcon from '@lucide/svelte/icons/map';
+import LayoutGrid from '@lucide/svelte/icons/layout-grid';
 import User from '@lucide/svelte/icons/user';
 import X from '@lucide/svelte/icons/x';
 
@@ -52,7 +54,9 @@ export const icons = {
 	hide: EyeOff,
 	unhide: Eye,
 	search: Search,
-	place: MapPin
+	place: MapPin,
+	map: MapIcon,
+	listView: LayoutGrid
 };
 
 /** @typedef {keyof typeof icons} IconName */
