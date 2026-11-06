@@ -289,7 +289,9 @@
 		{/if}
 		<!-- Kept while a job is open, so its search and its place in the list are still there after. -->
 		<jl-explore-results hidden={selected || pickedJobs ? true : undefined}>
-			<ExploreSearch bind:filters {places} />
+			<ExploreSearch bind:filters {places}>
+				{#snippet tools()}<ViewSwitch bind:view />{/snippet}
+			</ExploreSearch>
 			{#if !searching}
 				<p>
 					{t('explore.welcome', { companies: companies.length.toLocaleString() })}
@@ -321,7 +323,7 @@
 					selected={selected?.url}
 					quick
 				>
-					{#snippet actions()}<jl-explore-actions><SaveSearch {filters} /><ViewSwitch bind:view /></jl-explore-actions>{/snippet}
+					{#snippet actions()}<SaveSearch {filters} />{/snippet}
 				</Jobs>
 			{/if}
 			{#if empty}
@@ -470,13 +472,6 @@
 		font-size: var(--font-size-small);
 	}
 
-	jl-explore-actions {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: var(--space-xs);
-	}
-
 	/* As a list, or reading a job: the page is the panel, the map stays hidden under it. */
 	jl-explore:not([view='map']) jl-explore-map {
 		visibility: hidden;
@@ -493,8 +488,8 @@
 	jl-explore:not([view='map']) jl-explore-panel > button {
 		display: none;
 	}
-	/* The list: the search stays at the top while scrolling. */
-	jl-explore[view='list'] jl-explore-results > :global(jl-explore-search) {
+	/* List and grid: the search stays at the top while scrolling. */
+	jl-explore:is([view='list'], [view='grid']) jl-explore-results > :global(jl-explore-search) {
 		display: block;
 		position: sticky;
 		top: calc(-1 * var(--space-s));
@@ -520,16 +515,21 @@
 		jl-explore-panel > button {
 			display: none;
 		}
-		/* As a list: a grid of cards, the page's width. */
-		jl-explore[view='list'] jl-explore-panel {
+		jl-explore:is([view='list'], [view='grid']) jl-explore-panel {
 			padding-inline: var(--gutter);
 		}
-		jl-explore[view='list'] :global(jl-jobs > ul) {
+		/* A list: one column to read, in the middle. */
+		jl-explore[view='list'] jl-explore-results {
+			max-width: var(--search-width-wide);
+			margin-inline: auto;
+		}
+		/* A grid: cards across the page's width. */
+		jl-explore[view='grid'] :global(jl-jobs > ul) {
 			display: grid;
 			grid-template-columns: repeat(auto-fill, minmax(var(--card-min), 1fr));
 			column-gap: var(--column-gap);
 		}
-		jl-explore[view='list'] jl-explore-results > :global(jl-explore-search) {
+		jl-explore[view='grid'] jl-explore-results > :global(jl-explore-search) {
 			max-width: var(--search-width-wide);
 		}
 	}

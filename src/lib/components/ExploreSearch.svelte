@@ -7,9 +7,10 @@
 
 	/**
 	 * The explorer's search: what and where, then quick choices as chips.
-	 * @type {{filters: import('#lib/models/job.js').JobFilters, places: string[]}}
+	 * tools: shown at the end of the chips' row (how the jobs are shown).
+	 * @type {{filters: import('#lib/models/job.js').JobFilters, places: string[], tools?: import('svelte').Snippet}}
 	 */
-	let { filters = $bindable(), places } = $props();
+	let { filters = $bindable(), places, tools } = $props();
 	const id = $props.id();
 	const mode = config.travel.mode;
 	// Searching tens of thousands of jobs waits for a pause in typing.
@@ -57,6 +58,7 @@
 		<datalist id="{id}-places">
 			{#each places as place (place)}<option value={place}></option>{/each}
 		</datalist>
+		<jl-explore-chips>
 		<menu aria-label={t('jobs.filter.workplace')}>
 			<li>
 				<button type="button" aria-pressed={filters.near ? 'true' : 'false'} onclick={nearMe} disabled={locating === 'locating'}>
@@ -93,6 +95,8 @@
 				</li>
 			{/if}
 		</menu>
+		{@render tools?.()}
+		</jl-explore-chips>
 		{#if locating === 'locating'}<small aria-live="polite">{t('near.locating')}</small>{/if}
 		{#if locating === 'denied'}<small role="alert">{t('near.denied')}</small>{/if}
 	</form>
@@ -104,9 +108,20 @@
 		grid-template-columns: 1fr 1fr;
 		gap: var(--space-s);
 	}
-	menu,
+	jl-explore-chips,
 	small {
 		grid-column: 1 / -1;
+	}
+	/* The chips, then the tools kept at the end of the same row. */
+	jl-explore-chips {
+		display: flex;
+		align-items: center;
+		gap: var(--space-xs);
+		min-width: 0;
+	}
+	jl-explore-chips > menu {
+		flex: 1;
+		min-width: 0;
 	}
 	/* One line of chips, swiped sideways when they do not fit. */
 	menu {

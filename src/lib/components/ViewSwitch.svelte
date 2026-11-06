@@ -4,11 +4,13 @@
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * Jobs on the map, or as a list (a grid of cards on wide screens). The choice is kept.
+	 * Jobs as a list, a grid of cards (wide screens) or on the map. The choice is kept.
 	 * @type {{view: import('#lib/navigation/explore-view.js').ExploreView}}
 	 */
 	let { view = $bindable() } = $props();
-	const views = /** @type {const} */ (['list', 'map']);
+	const views = /** @type {const} */ (['list', 'grid', 'map']);
+	/** @type {Record<string, import('#lib/icons.js').IconName>} */
+	const icons = { list: 'listView', grid: 'gridView', map: 'map' };
 
 	/** @param {import('#lib/navigation/explore-view.js').ExploreView} next */
 	function show(next) {
@@ -19,9 +21,9 @@
 
 <jl-view-switch role="group" aria-label={t('explore.view')}>
 	{#each views as name (name)}
-		<button type="button" aria-pressed={view === name} onclick={() => show(name)}>
-			<Icon name={name === 'map' ? 'map' : 'listView'} />
-			{t(`explore.view.${name}`)}
+		<button type="button" data-view={name} aria-pressed={view === name} onclick={() => show(name)} title={t(`explore.view.${name}`)}>
+			<Icon name={icons[name]} />
+			<span>{t(`explore.view.${name}`)}</span>
 		</button>
 	{/each}
 </jl-view-switch>
@@ -34,8 +36,9 @@
 		overflow: hidden;
 	}
 	button {
+		gap: var(--space-xs);
 		min-height: var(--chip-height);
-		padding: 0 var(--space-m);
+		padding: 0 var(--space-s);
 		border: 0;
 		border-radius: 0;
 		font-size: var(--font-size-small);
@@ -49,5 +52,20 @@
 	}
 	button[aria-pressed='true']:hover:not(:disabled) {
 		background: var(--color-fg);
+	}
+	/* Icons in the search's row: their names are for tooltips and screen readers. */
+	span {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
+	/* Phones: no grid, cards are a list there. */
+	@media not (min-width: 64rem) {
+		button[data-view='grid'] {
+			display: none;
+		}
 	}
 </style>

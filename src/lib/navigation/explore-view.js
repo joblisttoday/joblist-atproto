@@ -1,7 +1,7 @@
 /**
- * How someone likes to see jobs: on the map, or as a list. Kept in this browser;
- * the map until they choose.
- * @typedef {'map' | 'list'} ExploreView
+ * How someone likes to see jobs: on the map, as a list, or as a grid of cards
+ * (wide screens). Kept in this browser; the map until they choose.
+ * @typedef {'map' | 'list' | 'grid'} ExploreView
  */
 
 const KEY = 'joblist.view.v1';
@@ -9,7 +9,8 @@ const KEY = 'joblist.view.v1';
 /** @returns {ExploreView} */
 export function readView() {
 	try {
-		return localStorage.getItem(KEY) === 'list' ? 'list' : 'map';
+		const view = localStorage.getItem(KEY);
+		return view === 'list' || view === 'grid' ? view : 'map';
 	} catch {
 		return 'map';
 	}
