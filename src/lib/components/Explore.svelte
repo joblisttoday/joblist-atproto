@@ -8,7 +8,7 @@
 	import SavedSearches from './SavedSearches.svelte';
 	import SaveSearch from './SaveSearch.svelte';
 	import { tick, untrack } from 'svelte';
-	import { pushState, replaceState } from '$app/navigation';
+	import { afterNavigate, pushState, replaceState } from '$app/navigation';
 	import { page } from '$app/state';
 	import { fromParams, isEmpty, sameSearch, toParams } from '#lib/models/saved-search.js';
 	import { markSeen, searches } from '#lib/network/saved-searches.svelte.js';
@@ -26,7 +26,8 @@
 	const companies = $derived([...data.companies.values()]);
 	const names = $derived(new Map(companies.map((c) => [c.key, c.name])));
 	// The search lives in the page address, so any search is a link to keep or share.
-	let filters = $state(fromParams(page.url.searchParams));
+	// Read from the location: page.url misses the searches replaced in it (shallow routing).
+	let filters = $state(fromParams(new URLSearchParams(location.search)));
 	let since = $state('');
 	/** @type {import('#lib/ats/job.js').Job[]} */
 	let jobs = $state.raw([]);
@@ -52,13 +53,28 @@
 
 	// A shallow replace changes the address, not page.url: compare with the location.
 	// Not before the session is ready: a sign-in comes back to this page with its own parameters.
-	// A new search also closes what was open.
+	// A new search also closes what was open; the same search (the session getting ready) does not.
+	/** @param {import('#lib/models/job.js').JobFilters} f */
+	const searchKey = (f) => JSON.stringify([toParams(f), f.near, f.within]);
+	let shownSearch = searchKey(untrack(() => filters));
 	$effect(() => {
 		if (!session.ready) return;
 		const search = toParams(filters);
-		[filters.near, filters.within];
-		if (search !== location.search || untrack(() => selected || picked)) replaceState(`${path}${search}`, {});
+		const key = searchKey(filters);
+		const changed = key !== shownSearch;
+		shownSearch = key;
+		if (search !== location.search || (changed && untrack(() => selected || picked))) replaceState(`${path}${search}`, {});
 	});
+
+	// Back, forward, or coming back from signing in: the search is the address's again.
+	// Where someone is stays, it is never in the address.
+	function readAddress() {
+		const next = { ...fromParams(new URLSearchParams(location.search)), near: filters.near, within: filters.within };
+		if (toParams(next) === toParams(filters)) return;
+		shownSearch = searchKey(next);
+		filters = next;
+	}
+	afterNavigate(readAddress);
 
 	// What covers the map: the panel at the left on wide screens; on phones the sheet
 	// at the bottom and the search floating at the top.
@@ -159,7 +175,10 @@
 	}
 </script>
 
-<svelte:window onkeydown={(e) => e.key === 'Escape' && (selected || picked) && back()} />
+<svelte:window
+	onpopstate={() => tick().then(readAddress)}
+	onkeydown={(e) => e.key === 'Escape' && !(e.target instanceof HTMLInputElement) && (selected || picked) && back()}
+/>
 
 <jl-explore style:--search-room="{covered.top}px">
 	<jl-explore-map>
