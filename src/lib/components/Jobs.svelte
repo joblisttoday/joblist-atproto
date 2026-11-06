@@ -148,7 +148,9 @@
 	<jl-jobs-bar>
 		<p aria-live="polite">
 			<small>
-				{#if loading}
+				{#if loading && !answered}
+					{t('jobs.reading')}
+				{:else if loading}
 					{t('jobs.progress', { answered, total: targets.length, count: jobs.length })}
 				{:else if filtered.length === offers}
 					{t('jobs.count', { count: offers })}
