@@ -57,7 +57,9 @@
 		"concurrency": 6,
 		"jobsConcurrency": 6,
 		"pagesPerRepo": 100,
-		"indexerConcurrency": 8
+		"indexerConcurrency": 8,
+		"boardPageSize": 100,
+		"jobsPerBoard": 2000
 	},
 	"locales": [
 		"en",
