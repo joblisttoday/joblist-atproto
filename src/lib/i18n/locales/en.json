@@ -4,6 +4,8 @@
 	"nav.post": "Post a job",
 	"explore.welcome": "Open jobs at {companies} companies, straight from their own job boards. Search by job and city, or find what is a short bike ride from home.",
 	"explore.publish": "Hiring? Post a job with your Bluesky account.",
+	"explore.area": "Jobs in this area",
+	"explore.areaOn": "This area",
 	"explore.sheet": "Show more or less of the results",
 	"nav.companies": "Companies",
 	"nav.add": "Add",

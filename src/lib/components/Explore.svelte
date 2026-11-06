@@ -38,7 +38,14 @@
 	const SHEET = /** @type {const} */ (['peek', 'half', 'full']);
 	/** @type {(typeof SHEET)[number]} */
 	let sheet = $state('half');
-	const searching = $derived(!isEmpty(filters) || !!filters.near);
+	const searching = $derived(!isEmpty(filters) || !!filters.near || !!filters.area);
+	// The part of the map someone moved to, offered as a search.
+	/** @type {import('#lib/models/job.js').Area | null} */
+	let moved = $state.raw(null);
+	function searchArea() {
+		filters.area = moved;
+		moved = null;
+	}
 
 	/** @param {import('#lib/models/saved-search.js').SavedSearch} search */
 	function open(search) {
@@ -55,7 +62,7 @@
 	// Not before the session is ready: a sign-in comes back to this page with its own parameters.
 	// A new search also closes what was open; the same search (the session getting ready) does not.
 	/** @param {import('#lib/models/job.js').JobFilters} f */
-	const searchKey = (f) => JSON.stringify([toParams(f), f.near, f.within]);
+	const searchKey = (f) => JSON.stringify([toParams(f), f.near, f.within, f.area]);
 	let shownSearch = searchKey(untrack(() => filters));
 	$effect(() => {
 		if (!session.ready) return;
@@ -77,7 +84,7 @@
 	// Back, forward, or coming back from signing in: the search is the address's again.
 	// Where someone is stays, it is never in the address.
 	function readAddress() {
-		const next = { ...fromParams(new URLSearchParams(location.search)), near: filters.near, within: filters.within };
+		const next = { ...fromParams(new URLSearchParams(location.search)), near: filters.near, within: filters.within, area: filters.area };
 		if (toParams(next) === toParams(filters)) return;
 		shownSearch = searchKey(next);
 		filters = next;
@@ -224,8 +231,21 @@
 
 <jl-explore style:--search-room="{covered.top}px">
 	<jl-explore-map>
-		<JobsMap jobs={results} {names} here={filters.near} fit={searching} {covered} {selected} onpick={pick} />
+		<JobsMap
+			jobs={results}
+			{names}
+			here={filters.near}
+			fit={searching}
+			still={!!filters.area}
+			{covered}
+			{selected}
+			onpick={pick}
+			onmoved={(area) => (moved = area)}
+		/>
 	</jl-explore-map>
+	{#if moved && !selected && !picked}
+		<button type="button" onclick={searchArea} style:--map-left="{covered.left}px">{t('explore.area')}</button>
+	{/if}
 	<jl-explore-panel {sheet} bind:this={panel} dragging={drag ? true : undefined} style:--sheet-drag={drag ? `${drag.height}px` : undefined}>
 		<button
 			type="button"
@@ -313,6 +333,19 @@
 		position: absolute;
 		inset: 0;
 		z-index: 0;
+	}
+	/* Search the area moved to: a chip at the top of the free part of the map. */
+	jl-explore > button {
+		position: absolute;
+		top: calc(var(--search-room) + var(--space-s));
+		left: calc(var(--map-left) + (100% - var(--map-left)) / 2);
+		translate: -50% 0;
+		z-index: 1;
+		min-height: var(--chip-height);
+		padding: 0 var(--space-m);
+		border-radius: var(--radius-round);
+		font-size: var(--font-size-small);
+		box-shadow: var(--shadow);
 	}
 	jl-explore-panel {
 		position: absolute;

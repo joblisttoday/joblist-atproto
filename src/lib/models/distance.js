@@ -26,3 +26,13 @@ export function distanceKm([lon1, lat1], [lon2, lat2]) {
 export function travelMinutes(km, mode = /** @type {TravelMode} */ (config.travel.mode)) {
 	return Math.round(((km * config.travel.detour) / config.travel.kmPerHour[mode]) * 60);
 }
+
+/**
+ * Whether a point is in an area, also one across the date line (west east of east).
+ * @param {[number, number]} point [longitude, latitude]
+ * @param {[[number, number], [number, number]]} area [[west, south], [east, north]]
+ */
+export function inArea([lon, lat], [[west, south], [east, north]]) {
+	if (lat < south || lat > north) return false;
+	return west <= east ? lon >= west && lon <= east : lon >= west || lon <= east;
+}

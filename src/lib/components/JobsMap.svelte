@@ -6,10 +6,11 @@
 	/**
 	 * The jobs found, on a globe; `here` is where the person is, when they search near them;
 	 * `fit` frames the jobs (after a search); `covered` is the part of the map under the page's panels;
-	 * `selected` is the job open in the page; `onpick` gets the jobs at a place someone tapped.
-	 * @type {{jobs: import('#lib/ats/job.js').Job[], names: Map<string, string>, here?: [number, number] | null, fit?: boolean, covered?: import('#lib/map/jobs-map.js').Insets, selected?: import('#lib/ats/job.js').Job | null, onpick?: (urls: string[]) => void}}
+	 * `selected` is the job open in the page; `onpick` gets the jobs at a place someone tapped;
+	 * `still` leaves the map where it is; `onmoved` gets the area shown after someone moved the map.
+	 * @type {{jobs: import('#lib/ats/job.js').Job[], names: Map<string, string>, here?: [number, number] | null, fit?: boolean, covered?: import('#lib/map/jobs-map.js').Insets, selected?: import('#lib/ats/job.js').Job | null, onpick?: (urls: string[]) => void, still?: boolean, onmoved?: (area: import('#lib/models/job.js').Area | null) => void}}
 	 */
-	let { jobs, names, here = null, fit = false, covered = { top: 0, right: 0, bottom: 0, left: 0 }, selected = null, onpick } = $props();
+	let { jobs, names, here = null, fit = false, covered = { top: 0, right: 0, bottom: 0, left: 0 }, selected = null, onpick, still = false, onmoved } = $props();
 
 	/** @type {HTMLElement} */
 	let figure;
@@ -28,12 +29,12 @@
 	);
 
 	onMount(() => {
-		map = mountJobsMap(figure, { label: (count) => t('map.jobs', { count }), onpick: onpick && ((urls) => onpick(urls)) });
+		map = mountJobsMap(figure, { label: (count) => t('map.jobs', { count }), onpick: onpick && ((urls) => onpick(urls)), onmoved: onmoved && ((area) => onmoved(area)) });
 		return () => map?.destroy();
 	});
 
 	$effect(() => map?.setCovered(covered));
-	$effect(() => map?.setJobs(located, fit));
+	$effect(() => map?.setJobs(located, fit, still));
 	$effect(() => map?.setHere(here));
 	$effect(() => map?.setSelected(selected?.point));
 </script>

@@ -50,7 +50,8 @@
 		"placeMax": 500,
 		"focus": { "cellDeg": 0.5, "km": 40, "share": 0.5 },
 		"font": ["Noto Sans Regular"],
-		"hitRadius": 22
+		"hitRadius": 22,
+		"areaMinZoom": 4
 	},
 	"limits": {
 		"concurrency": 6,

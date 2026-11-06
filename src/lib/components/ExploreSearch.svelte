@@ -70,6 +70,11 @@
 					</select>
 				</li>
 			{/if}
+			{#if filters.area}
+				<li>
+					<button type="button" aria-pressed="true" onclick={() => (filters.area = null)}>✕ {t('explore.areaOn')}</button>
+				</li>
+			{/if}
 			<li>
 				<button
 					type="button"

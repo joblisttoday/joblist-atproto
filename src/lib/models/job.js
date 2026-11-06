@@ -1,13 +1,15 @@
 import config from '#lib/data/config.json' with { type: 'json' };
-import { distanceKm, travelMinutes } from './distance.js';
+import { distanceKm, inArea, travelMinutes } from './distance.js';
 import { inPlace, remoteRegion } from './place.js';
 
 /**
  * @typedef {import('#lib/ats/job.js').Job} Job
  * @typedef {'' | 'remote' | 'anywhere'} RemoteFilter
  *   remote: jobs done remotely; anywhere: remote jobs that name no country or region they are limited to.
- * @typedef {{query: string, where: string, remote: RemoteFilter, near?: [number, number] | null, within?: number}} JobFilters
+ * @typedef {[[number, number], [number, number]]} Area [[west, south], [east, north]]
+ * @typedef {{query: string, where: string, remote: RemoteFilter, near?: [number, number] | null, within?: number, area?: Area | null}} JobFilters
  *   near: where the person is ([longitude, latitude]), to find jobs close by; never kept in the page address.
+ *   area: only the jobs in it (the part of the map someone looks at).
  *   within: at most that many minutes away (by the usual travel mode), 0 for any distance.
  */
 
@@ -64,10 +66,11 @@ function matchesPlace(job, where, remote) {
  * @param {JobFilters} filters
  * @param {Map<string, string>} names company names by key
  */
-export function filterJobs(jobs, { query, where, remote, near, within = 0 }, names) {
+export function filterJobs(jobs, { query, where, remote, near, within = 0, area }, names) {
 	const what = words(query);
 	const matching = jobs
 		.filter((job) => {
+			if (area && !(job.point && inArea(job.point, area))) return false;
 			if (remote && !isRemote(job)) return false;
 			if (remote === 'anywhere' && remoteLimit(job)) return false;
 			if (!matchesPlace(job, where, remote)) return false;

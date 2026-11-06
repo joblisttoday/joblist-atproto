@@ -90,7 +90,7 @@
 	});
 	// A new search starts from its first page.
 	$effect(() => {
-		[filters.query, filters.where, filters.remote, filters.near, filters.within];
+		[filters.query, filters.where, filters.remote, filters.near, filters.within, filters.area];
 		shown = PAGE;
 	});
 

@@ -6,10 +6,10 @@ import { createMap, cssColors, loadMapLibre } from './maplibre.js';
 /**
  * @typedef {{point: [number, number], title: string, url: string, company: string}} MapJob
  * @typedef {{top: number, right: number, bottom: number, left: number}} Insets
- * @typedef {{setJobs: (jobs: MapJob[], fit?: boolean) => void, setHere: (here: [number, number] | null | undefined) => void, setSelected: (point: [number, number] | null | undefined) => void, setCovered: (covered: Insets) => void, destroy: () => void}} JobsMap
+ * @typedef {{setJobs: (jobs: MapJob[], fit?: boolean, still?: boolean) => void, setHere: (here: [number, number] | null | undefined) => void, setSelected: (point: [number, number] | null | undefined) => void, setCovered: (covered: Insets) => void, destroy: () => void}} JobsMap
  *   setSelected: the job open in the page, ringed on the map and brought into view.
  *   setCovered: the part of the map under the page's panels, kept out of framing.
- *   fit: frame the jobs (after a search), else show the whole globe.
+ *   fit: frame the jobs (after a search), else show the whole globe; still: leave the map where it is (searching the area shown).
  */
 
 /** @param {MapJob[]} jobs */
@@ -36,8 +36,9 @@ function hereGeoJson(here) {
  * Jobs as clusters on a globe: a cluster opens closer on click, a single place lists its jobs.
  * The map is made once; setJobs and setHere update it as the search changes.
  * @param {HTMLElement} node
- * @param {{label: (count: number) => string, onpick?: (urls: string[]) => void}} text
+ * @param {{label: (count: number) => string, onpick?: (urls: string[]) => void, onmoved?: (area: import('#lib/models/job.js').Area | null) => void}} text
  *   onpick: the jobs at a place someone tapped (else a popup lists them).
+ *   onmoved: the free part of the map, after someone moved it (null when zoomed out too far for an area).
  * @returns {JobsMap}
  */
 export function mountJobsMap(node, text) {
@@ -222,6 +223,19 @@ export function mountJobsMap(node, text) {
 				}
 				new maplibre.Popup({ closeButton: false }).setLngLat(event.lngLat).setDOMContent(list).addTo(instance);
 			});
+			// Moved by someone (not by framing): what they look at, to search there.
+			instance.on('moveend', (event) => {
+				if (!event.originalEvent || !text.onmoved) return;
+				if (instance.getZoom() < config.map.areaMinZoom) return text.onmoved(null);
+				const { clientWidth: width, clientHeight: height } = node;
+				const corner = (/** @type {number} */ x, /** @type {number} */ y) => instance.unproject([x, y]);
+				const nw = corner(covered.left, covered.top);
+				const se = corner(width - covered.right, height - covered.bottom);
+				text.onmoved([
+					[nw.lng, se.lat],
+					[se.lng, nw.lat]
+				]);
+			});
 			for (const layer of ['clusters', 'jobs-hit']) {
 				instance.on('mouseenter', layer, () => (instance.getCanvas().style.cursor = 'pointer'));
 				instance.on('mouseleave', layer, () => (instance.getCanvas().style.cursor = ''));
@@ -237,11 +251,11 @@ export function mountJobsMap(node, text) {
 	})();
 
 	return {
-		setJobs(list, fit = false) {
+		setJobs(list, fit = false, still = false) {
 			jobs = list;
-			fitting = fit;
+			fitting = fit && !still;
 			render();
-			frame(fit);
+			if (!still) frame(fit);
 		},
 		setHere(point) {
 			const moved = point && (!here || point[0] !== here[0] || point[1] !== here[1]);
