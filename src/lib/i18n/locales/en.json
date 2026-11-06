@@ -1,4 +1,6 @@
 {
+	"notFound.title": "Page not found",
+	"notFound.text": "This page does not exist, or not any more.",
 	"jobs.gone": "This company's job board seems to have moved or closed.",
 	"jobs.gone.website": "Their website",
 	"jobs.gone.fix": "Know where they post jobs now? Update it",

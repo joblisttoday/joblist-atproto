@@ -18,13 +18,14 @@ export function jsonLd(data) {
 /**
  * The app's HTML shell with page-specific head tags and a no-JavaScript body.
  * @param {string} template build/index.html
- * @param {{title: string, description: string, url: string, body: string, type?: string, head?: string}} meta
- *   type: the og:type (default website); head: more tags, like jsonLd()
+ * @param {{title: string, description: string, url: string, body: string, type?: string, head?: string, noindex?: boolean}} meta
+ *   type: the og:type (default website); head: more tags, like jsonLd(); noindex: a page for people, not search results
  */
-export function page(template, { title, description, url, body, type = 'website', head: extra = '' }) {
+export function page(template, { title, description, url, body, type = 'website', head: extra = '', noindex = false }) {
 	const text = description.slice(0, 300);
 	const head = [
 		`<title>${escape(title)}</title>`,
+		noindex ? `<meta name="robots" content="noindex">` : '',
 		`<meta name="description" content="${escape(text)}">`,
 		`<link rel="canonical" href="${escape(url)}">`,
 		`<meta property="og:type" content="${escape(type)}">`,

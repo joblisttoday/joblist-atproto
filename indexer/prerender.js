@@ -18,6 +18,7 @@ import { escape, jsonLd, page } from './html.js';
 import { jobPages } from './job-pages.js';
 import { organization } from './organization.js';
 import { robots, sitemap } from './sitemap.js';
+import { notFoundPage, sitePages } from './site-pages.js';
 
 const [build = 'build', snapshot = 'static/snapshot'] = process.argv.slice(2);
 const template = readFileSync(join(build, 'index.html'), 'utf8');
@@ -54,12 +55,15 @@ function jobLink(job) {
 	return did ? postPath(did, rkey) : job.u;
 }
 
-/** Every prerendered page, for the sitemap. */
-const paths = ['/', '/companies', '/jobs'];
+/** Every prerendered page meant for search results, for the sitemap. */
+/** @type {string[]} */
+const paths = [];
+/** The lists, for their index and their authors' pages. @type {{name: string, path: string, count: number, did: string}[]} */
+const listed = [];
 
-/** @param {string} path @param {string} html */
-function write(path, html) {
-	paths.push(path);
+/** @param {string} path @param {string} html @param {boolean} [inSitemap] */
+function write(path, html, inSitemap = true) {
+	if (inSitemap) paths.push(path);
 	// Files are named by the decoded path (job pages have encoded DIDs in their links).
 	const dir = join(build, decodeURIComponent(path));
 	mkdirSync(dir, { recursive: true });
@@ -77,6 +81,7 @@ for (const record of listRecords) {
 	const open = members.reduce((n, c) => n + (jobCounts.get(c.key) || 0), 0);
 	const path = `/${handleOf(list.did)}/${list.rkey}`;
 	const summary = `${members.length} companies, ${open} open jobs. ${list.description || ''}`.trim();
+	listed.push({ name: list.name, path, count: members.length, did: list.did });
 	write(
 		path,
 		page(template, {
@@ -120,10 +125,23 @@ for (const { path, meta } of jobPages(jobRecords, companies, profiles)) {
 	count++;
 }
 
-writeFileSync(
-	join(build, 'index.html'),
-	page(template, { title: config.name, description: en['home.intro'], url: config.url, body: '' })
-);
+// The site's own pages; the home last overwrites the template (it is read already).
+const byAuthor = Map.groupBy(listed, (l) => l.did);
+const site = sitePages({
+	companies: [...companies.values()],
+	lists: [...listed].sort((a, b) => b.count - a.count),
+	profiles: [...byAuthor].map(([did, lists]) => ({ handle: handleOf(did), lists })),
+	jobCounts,
+	jobTotal: jobs.length
+});
+for (const { path, meta, listed: inSitemap } of site) {
+	if (path === '/') writeFileSync(join(build, 'index.html'), page(template, meta));
+	else write(path, page(template, meta), inSitemap);
+	if (path === '/') paths.unshift('/');
+	count++;
+}
+// Anything else: a real 404, on which the app still starts (a company added since this build).
+writeFileSync(join(build, '404.html'), page(template, notFoundPage()));
 writeFileSync(join(build, 'sitemap.xml'), sitemap(config.url, paths));
 writeFileSync(join(build, 'robots.txt'), robots(config.url));
 console.log(`prerendered ${count} pages, sitemap of ${paths.length}`);

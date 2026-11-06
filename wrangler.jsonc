@@ -3,10 +3,10 @@
 	"name": "joblist-atproto",
 	"account_id": "561bb824be3c6da587401329eff1d81b",
 	"compatibility_date": "2026-10-01",
-	// A static site: no Worker code, only assets with SPA fallback.
+	// A static site: no Worker code. Unknown addresses get 404.html (status 404), on which the app still starts.
 	"assets": {
 		"directory": "./build",
-		"not_found_handling": "single-page-application",
+		"not_found_handling": "404-page",
 		// Prerendered pages live at /path/index.html but are served at /path.
 		"html_handling": "drop-trailing-slash"
 	},
