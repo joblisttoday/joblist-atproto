@@ -42,6 +42,7 @@ export function page(template, { title, description, url, body, type = 'website'
 		.replace(/\s*<!-- jl:head -->[\s\S]*?<!-- \/jl:head -->/, '')
 		.replace(/\s*<!-- jl:body -->[\s\S]*?<!-- \/jl:body -->/, '')
 		.replace(/<title>[\s\S]*?<\/title>\s*/, '')
-		.replace('</head>', `\t<!-- jl:head -->\n\t\t${head}\n\t\t<!-- /jl:head -->\n\t</head>`)
-		.replace(/(<body[^>]*>)/, body ? `$1\n\t\t<!-- jl:body --><noscript>${body}</noscript><!-- /jl:body -->` : '$1');
+		// Functions, not strings: "$'" or "$&" in someone's text must stay text.
+		.replace('</head>', () => `\t<!-- jl:head -->\n\t\t${head}\n\t\t<!-- /jl:head -->\n\t</head>`)
+		.replace(/(<body[^>]*>)/, (tag) => (body ? `${tag}\n\t\t<!-- jl:body --><noscript>${body}</noscript><!-- /jl:body -->` : tag));
 }

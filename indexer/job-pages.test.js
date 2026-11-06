@@ -40,3 +40,11 @@ test('jobPages makes one page per live offer, with safe structured data', () => 
 	assert.match(pages[0].meta.body, /mailto:jobs@acme\.org/);
 	assert.match(jsonLd({ a: '<b>' }), /\\u003cb>/);
 });
+
+test("page() keeps $ patterns in text as text", async () => {
+	const { page } = await import('./html.js');
+	const html = page('<html><head><title>x</title></head><body><div></div></body></html>', { title: "A $' B $& C", description: '$`', url: 'https://joblist.today/x', body: '<p>$1</p>' });
+	assert.ok(html.includes("A $' B $&amp; C") || html.includes("A $' B $& C"));
+	assert.ok(html.includes('<p>$1</p>'));
+	assert.equal((html.match(/<\/head>/g) || []).length, 1);
+});
