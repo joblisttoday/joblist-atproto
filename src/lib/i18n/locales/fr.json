@@ -73,6 +73,11 @@
 	"search.lists": "Rechercher des listes",
 	"search.companies": "Rechercher entreprises, tags, lieux",
 	"search.none": "Aucun résultat.",
+	"quick.label": "Chercher",
+	"quick.placeholder": "Chercher offres, entreprises, lieux",
+	"quick.jobs": "Offres pour « {text} »",
+	"quick.place": "Offres à {place}",
+	"quick.close": "Fermer la recherche",
 
 	"network.loading": "Lecture du réseau…",
 	"network.progress": "Lecture du réseau… {records} fiches de {accounts} comptes sur {total}",

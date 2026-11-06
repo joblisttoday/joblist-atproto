@@ -161,6 +161,16 @@ export function byCompany(jobs) {
  * @param {number} [limit]
  */
 export function commonPlaces(jobs, limit = config.jobs.placesSuggested) {
+	return placeCounts(jobs, limit).map(([place]) => place);
+}
+
+/**
+ * The places named most in jobs, with how many jobs name them.
+ * @param {Job[]} jobs
+ * @param {number} limit
+ * @returns {[string, number][]}
+ */
+export function placeCounts(jobs, limit) {
 	/** @type {Map<string, number>} */
 	const counts = new Map();
 	for (const job of jobs) {
@@ -169,10 +179,7 @@ export function commonPlaces(jobs, limit = config.jobs.placesSuggested) {
 			if (place.length > 1) counts.set(place, (counts.get(place) || 0) + 1);
 		}
 	}
-	return [...counts]
-		.sort((a, b) => b[1] - a[1])
-		.slice(0, limit)
-		.map(([place]) => place);
+	return [...counts].sort((a, b) => b[1] - a[1]).slice(0, limit);
 }
 
 /**

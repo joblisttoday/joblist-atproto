@@ -73,6 +73,11 @@
 	"search.lists": "Search lists",
 	"search.companies": "Search companies, tags, places",
 	"search.none": "Nothing matches.",
+	"quick.label": "Search",
+	"quick.placeholder": "Search jobs, companies, places",
+	"quick.jobs": "Jobs matching “{text}”",
+	"quick.place": "Jobs in {place}",
+	"quick.close": "Close search",
 
 	"network.loading": "Reading the network…",
 	"network.progress": "Reading the network… {records} records from {accounts} of {total} accounts",

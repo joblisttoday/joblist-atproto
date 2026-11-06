@@ -22,6 +22,8 @@ import LocateFixed from '@lucide/svelte/icons/locate-fixed';
 import LogIn from '@lucide/svelte/icons/log-in';
 import Plus from '@lucide/svelte/icons/plus';
 import ScanSearch from '@lucide/svelte/icons/scan-search';
+import Search from '@lucide/svelte/icons/search';
+import MapPin from '@lucide/svelte/icons/map-pin';
 import User from '@lucide/svelte/icons/user';
 import X from '@lucide/svelte/icons/x';
 
@@ -48,7 +50,9 @@ export const icons = {
 	walk: Footprints,
 	applied: CircleCheck,
 	hide: EyeOff,
-	unhide: Eye
+	unhide: Eye,
+	search: Search,
+	place: MapPin
 };
 
 /** @typedef {keyof typeof icons} IconName */

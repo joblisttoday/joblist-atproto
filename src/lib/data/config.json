@@ -66,6 +66,10 @@
 		"fr"
 	],
 	"defaultLocale": "en",
+	"quickSearch": {
+		"places": 2000,
+		"shown": { "companies": 4, "lists": 2, "places": 3 }
+	},
 	"bluesky": {
 		"file": "bluesky.json",
 		"concurrency": 12

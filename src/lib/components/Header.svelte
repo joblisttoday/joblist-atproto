@@ -1,6 +1,7 @@
 <script>
 	import Icon from './Icon.svelte';
 	import Logo from './Logo.svelte';
+	import QuickSearch from './QuickSearch.svelte';
 	import { page } from '$app/state';
 	import config from '#lib/data/config.json';
 	import Nav from './Nav.svelte';
@@ -27,6 +28,8 @@
 	<header>
 		<a href="/" aria-current={page.url.pathname === '/' ? 'page' : undefined}><Logo /><b>{config.name}</b></a>
 		{#if !topLevel}<a href="/" onclick={back}><Icon name="back" /> {t('nav.back')}</a>{/if}
+		<!-- The explorer has its own search. -->
+		{#if page.url.pathname !== '/'}<QuickSearch />{/if}
 		<Nav />
 	</header>
 	<NetworkStatus />
