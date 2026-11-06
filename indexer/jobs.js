@@ -39,7 +39,44 @@ export async function fetchBoardJobs(companies) {
 			});
 		}
 	});
-	return { jobs, health };
+	const { kept, duplicates, dropped } = tidyJobs(jobs);
+	return { jobs: kept, health, duplicates, dropped };
+}
+
+const notJob = new RegExp(`\\b(${config.jobs.notJobs.join('|')})\\b`, 'i');
+
+/**
+ * Board jobs as people look for them:
+ * - no "general application" or talent pool: they are not an open job;
+ * - one row per link: a job a board lists once per city becomes one job in all its cities;
+ *   a link two companies share (the same company added twice) stays with the one named by
+ *   its domain, and the pair is reported to be merged.
+ * @param {IndexedJob[]} jobs
+ */
+export function tidyJobs(jobs) {
+	/** @type {Map<string, IndexedJob>} */
+	const byUrl = new Map();
+	/** @type {Set<string>} */
+	const pairs = new Set();
+	let dropped = 0;
+	for (const job of jobs) {
+		if (notJob.test(job.t)) {
+			dropped++;
+			continue;
+		}
+		const seen = byUrl.get(job.u);
+		if (!seen) {
+			byUrl.set(job.u, { ...job });
+		} else if (seen.c === job.c) {
+			const places = new Set([...(seen.l || '').split('; '), job.l || ''].filter(Boolean));
+			seen.l = [...places].join('; ') || undefined;
+		} else {
+			const [keep, other] = [seen.c, job.c].sort((a, b) => Number(b.includes('.')) - Number(a.includes('.')) || a.localeCompare(b));
+			pairs.add(JSON.stringify([keep, other]));
+			if (keep !== seen.c) byUrl.set(job.u, { ...job, l: seen.l });
+		}
+	}
+	return { kept: [...byUrl.values()], duplicates: [...pairs].map((p) => JSON.parse(p)), dropped };
 }
 
 /**

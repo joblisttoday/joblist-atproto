@@ -72,6 +72,7 @@
 		"placesShown": 3,
 		"nearbyShown": 5,
 		"typingDelayMs": 200,
+		"notJobs": ["general application", "open application", "spontaneous application", "unsolicited application", "initiativbewerbung", "blindbewerbung", "candidature spontan[ée]e", "talent (pool|community|network)"],
 		"jobParam": "job",
 		"remoteWords": [
 			"remote",

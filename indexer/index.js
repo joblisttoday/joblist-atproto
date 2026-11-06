@@ -27,7 +27,7 @@ console.log(`records: ${records.company.length} company, ${records.list.length} 
 
 const board = await fetchBoardJobs(companies);
 const jobs = [...recordJobs(records.job, profiles), ...board.jobs];
-console.log(`jobs: ${jobs.length} (${board.jobs.length} from job boards)`);
+console.log(`jobs: ${jobs.length} (${board.jobs.length} from job boards; ${board.dropped} not jobs left out; ${board.duplicates.length} companies added twice)`);
 
 // Where each job is, from the places looked up so far (this run adds the most named new ones).
 const places = await loadCache(config.geocode.placesFile);
@@ -59,7 +59,8 @@ const files = {
 	},
 	// `checked`: companies whose board was read, so the app knows an empty result is real.
 	'jobs.json': { generatedAt, checked: Object.keys(board.health), jobs },
-	'health.json': { generatedAt, companies: board.health },
+	// duplicates: [kept, other] companies that share a job board, to merge.
+	'health.json': { generatedAt, companies: board.health, duplicates: board.duplicates },
 	[config.geocode.placesFile]: places,
 	[config.geocode.officesFile]: offices,
 	'suggestions.json': { generatedAt, companies: suggest(companies, records) },

@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { recordJobs } from './jobs.js';
+import { recordJobs, tidyJobs } from './jobs.js';
 
 const NOW = Date.parse('2026-10-19T12:00:00Z');
 /** @param {string} did @param {string} rkey @param {Record<string, any>} value */
@@ -26,4 +26,27 @@ test('recordJobs keeps live offers and marks the company own ones', () => {
 		{ t: 'Engineer', u: 'https://acme.org/jobs/1', c: 'acme.org', l: 'Berlin, Germany', p: base.createdAt, s: 'at://did:plc:acme/today.joblist.job/1', v: 1 },
 		{ t: 'Engineer', u: 'https://acme.org/jobs/2', c: 'acme.org', l: 'remote', p: base.createdAt, s: 'at://did:plc:bob/today.joblist.job/2' }
 	]);
+});
+
+test('tidyJobs: one job per link, in all its cities; no talent pools', () => {
+	const job = (/** @type {any} */ o) => ({ t: 'Engineer', u: 'https://a/1', c: 'acme.com', s: 'ats', ...o });
+	const { kept, duplicates, dropped } = tidyJobs([
+		job({ l: 'Paris' }),
+		job({ l: 'Lyon' }),
+		job({ l: 'Paris' }),
+		job({ c: 'acme', l: 'Lille' }),
+		job({ t: 'Join our Talent Pool', u: 'https://a/2' }),
+		job({ t: 'Initiativbewerbung (m/w/d)', u: 'https://a/3' }),
+		job({ t: 'Designer', u: 'https://b/1', c: 'scale-ai' }),
+		job({ t: 'Designer', u: 'https://b/1', c: 'scale.com' })
+	]);
+	assert.deepEqual(
+		kept.map((j) => [j.u, j.c, j.l]),
+		[
+			['https://a/1', 'acme.com', 'Paris; Lyon'],
+			['https://b/1', 'scale.com', undefined]
+		]
+	);
+	assert.deepEqual(duplicates, [['acme.com', 'acme'], ['scale.com', 'scale-ai']]);
+	assert.equal(dropped, 2);
 });
