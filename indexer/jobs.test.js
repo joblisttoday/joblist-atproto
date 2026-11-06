@@ -50,3 +50,10 @@ test('tidyJobs: one job per link, in all its cities; no talent pools', () => {
 	assert.deepEqual(duplicates, [['acme.com', 'acme'], ['scale.com', 'scale-ai']]);
 	assert.equal(dropped, 2);
 });
+
+test('toMinute: dates to the minute, in UTC', async () => {
+	const { toMinute } = await import('./jobs.js');
+	assert.equal(toMinute('2026-11-02T17:49:54.880+02:00'), '2026-11-02T15:49Z');
+	assert.equal(toMinute(undefined), undefined);
+	assert.equal(toMinute('not a date'), 'not a date');
+});

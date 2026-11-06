@@ -47,7 +47,9 @@ export function getSnapshotJobs() {
 			const url = safeUrl(j.u);
 			if (!url) continue;
 			const list = jobs.get(j.c) || [];
-			list.push({ title: j.t, url, company: j.c, location: j.l, department: j.d, published: j.p, id: j.i, remote: j.r, point: j.g });
+			// The id at its board is left out when the link ends with it.
+			const id = j.i ?? url.slice(url.lastIndexOf('/') + 1);
+			list.push({ title: j.t, url, company: j.c, location: j.l, department: j.d, published: j.p, id, remote: j.r, point: j.g });
 			jobs.set(j.c, list);
 		}
 		return { jobs, checked: new Set(data.checked || []), gone: new Set(data.gone || []) };

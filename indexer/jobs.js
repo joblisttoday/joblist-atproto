@@ -7,10 +7,11 @@ import { isLive, placeNames, toPost } from '../src/lib/models/job-post.js';
 /**
  * @typedef {import('../src/lib/models/company.js').Company} Company
  * @typedef {import('../src/lib/atproto/records.js').RepoRecord} RepoRecord
- * @typedef {{t: string, u: string, c: string, l?: string, d?: string, p?: string, i?: string, r?: string, s: string, v?: 1, g?: [number, number]}} IndexedJob
- *   Compact job: title, url, company key, location, department, published, id at its board,
- *   where the work happens (onsite, hybrid, remote), source ('ats' or a record uri), verified,
- *   where it is ([longitude, latitude]).
+ * @typedef {{t: string, u: string, c: string, l?: string, d?: string, p?: string, i?: string, r?: string, s?: string, v?: 1, g?: [number, number]}} IndexedJob
+ *   Compact job (every phone downloads all of them): title, url, company key, location, department,
+ *   published (to the minute), id at its board (left out when the url ends with it),
+ *   where the work happens (onsite, hybrid, remote), source (a record uri; none for a job board),
+ *   verified, where it is ([longitude, latitude]).
  */
 
 /**
@@ -32,10 +33,9 @@ export async function fetchBoardJobs(companies) {
 				c: company.key,
 				l: j.location || undefined,
 				d: j.department || undefined,
-				p: j.published || undefined,
-				i: j.id || undefined,
-				r: j.remote || undefined,
-				s: 'ats'
+				p: toMinute(j.published),
+				i: j.id && !j.url.endsWith(`/${j.id}`) ? j.id : undefined,
+				r: j.remote || undefined
 			});
 		}
 	});
@@ -102,4 +102,13 @@ export function recordJobs(records, profiles, now = Date.now()) {
 			if (post.verified) job.v = 1;
 			return job;
 		});
+}
+
+/**
+ * A date to the minute, in UTC ("2026-11-02T17:49Z"): enough to sort and say how new.
+ * @param {string | undefined} value
+ */
+export function toMinute(value) {
+	const ms = value ? Date.parse(value) : NaN;
+	return Number.isFinite(ms) ? `${new Date(ms).toISOString().slice(0, 16)}Z` : value || undefined;
 }
