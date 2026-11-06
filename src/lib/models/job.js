@@ -108,7 +108,8 @@ export function sameOffers(jobs) {
 		const key = `${job.company}\n${job.title.trim().toLowerCase()}`;
 		const kept = job.posted ? undefined : first.get(key);
 		if (kept) {
-			kept.also = [...(kept.also || []), job];
+			// Added to, not copied: an employer may have hundreds of the same offer.
+			(kept.also ||= []).push(job);
 			continue;
 		}
 		const copy = { ...job, also: undefined };
@@ -183,7 +184,7 @@ export function time(value) {
 	const key = String(value);
 	let ms = times.get(key);
 	if (ms === undefined) {
-		ms = Date.parse(key.replace(' UTC', 'Z').replace(' ', 'T'));
+		ms = Date.parse(key.includes(' ') ? key.replace(' UTC', 'Z').replace(' ', 'T') : key);
 		if (!Number.isFinite(ms)) ms = 0;
 		times.set(key, ms);
 	}

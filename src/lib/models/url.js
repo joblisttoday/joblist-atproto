@@ -7,6 +7,8 @@
  */
 export function safeUrl(value, { email = false } = {}) {
 	const text = String(value ?? '').trim();
+	// Most links are plain web links: told at a glance (tens of thousands are checked at once).
+	if (plainWeb.test(text)) return text;
 	try {
 		const { protocol } = new URL(text);
 		return protocol === 'https:' || protocol === 'http:' || (email && protocol === 'mailto:') ? text : '';
@@ -14,3 +16,6 @@ export function safeUrl(value, { email = false } = {}) {
 		return '';
 	}
 }
+
+/** A web link with nothing unusual in it. */
+const plainWeb = /^https?:\/\/[a-z0-9.-]+(?::\d+)?(?:[/?#][^\s"'<>\\]*)?$/i;
