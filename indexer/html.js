@@ -1,3 +1,5 @@
+import config from '../src/lib/data/config.json' with { type: 'json' };
+
 /** @param {unknown} value */
 export function escape(value) {
 	return String(value ?? '')
@@ -34,6 +36,10 @@ export function page(template, { title, description, url, body, type = 'website'
 		`<meta property="og:description" content="${escape(text)}">`,
 		`<meta property="og:url" content="${escape(url)}">`,
 		`<meta name="twitter:card" content="summary">`,
+		// The data every page starts from: fetched while the app itself loads, not after.
+		...config.snapshot.preload.map(
+			(/** @type {string} */ name) => `<link rel="preload" as="fetch" crossorigin="anonymous" href="${escape(`${config.snapshot.path}/${name}`)}">`
+		),
 		extra
 	]
 		.filter(Boolean)

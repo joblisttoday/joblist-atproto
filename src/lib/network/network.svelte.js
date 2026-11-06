@@ -10,7 +10,7 @@ import { isLive, toJob, toPost } from '#lib/models/job-post.js';
 import { allowed } from '#lib/models/moderation.js';
 import { Companies } from '#lib/models/companies.js';
 import { readCache, writeCache } from './cache.js';
-import { getSnapshotRecords } from './snapshot.js';
+import { getSnapshotJobs, getSnapshotRecords } from './snapshot.js';
 
 /**
  * @typedef {import('#lib/atproto/records.js').RepoRecord} RepoRecord
@@ -144,6 +144,8 @@ let started = false;
 export async function startNetwork() {
 	if (started) return;
 	started = true;
+	// The jobs download alongside the records, not after them.
+	getSnapshotJobs();
 	const cached = readCache();
 	if (cached) {
 		Object.assign(network, cached);
@@ -158,7 +160,8 @@ export async function startNetwork() {
 			network.loadedAt = snapshot.loadedAt;
 		}
 	}
-	refresh();
+	// Reading the whole network is slow on a phone: once the jobs are shown, not while.
+	getSnapshotJobs().finally(() => setTimeout(refresh, config.snapshot.refreshDelayMs));
 }
 
 /** Read every record the app uses from every repository that has some. */

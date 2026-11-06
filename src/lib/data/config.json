@@ -127,7 +127,9 @@
 	"snapshot": {
 		"path": "https://raw.githubusercontent.com/joblisttoday/joblist-snapshot/gh-pages",
 		"maxAgeHours": 12,
-		"prerenderFiles": ["records.json", "jobs.json", "meta.json"]
+		"prerenderFiles": ["records.json", "jobs.json", "meta.json"],
+		"preload": ["records.json", "jobs.json"],
+		"refreshDelayMs": 15000
 	},
 	"crawler": {
 		"service": "https://bsky.social",
