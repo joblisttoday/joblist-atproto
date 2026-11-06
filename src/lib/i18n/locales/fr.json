@@ -6,6 +6,7 @@
 	"explore.publish": "Vous recrutez ? Publiez une offre avec votre compte Bluesky.",
 	"explore.area": "Offres dans cette zone",
 	"explore.areaOn": "Cette zone",
+	"explore.remoteFrom": "Depuis : {country}",
 	"explore.sheet": "Afficher plus ou moins de résultats",
 	"nav.companies": "Entreprises",
 	"nav.add": "Ajouter",

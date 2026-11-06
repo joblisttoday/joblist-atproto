@@ -1,8 +1,8 @@
 <script>
 	import config from '#lib/data/config.json';
-	import { currentPlace } from '#lib/navigation/location.js';
+	import { browserCountry, currentPlace } from '#lib/navigation/location.js';
 	import { delayed } from '#lib/navigation/delayed.svelte.js';
-	import { t } from '#lib/i18n/index.svelte.js';
+	import { i18n, t } from '#lib/i18n/index.svelte.js';
 
 	/**
 	 * The explorer's search: what and where, then quick choices as chips.
@@ -14,6 +14,8 @@
 	// Searching tens of thousands of jobs waits for a pause in typing.
 	const query = delayed(() => filters.query, (value) => (filters.query = value), config.jobs.typingDelayMs);
 	const where = delayed(() => filters.where, (value) => (filters.where = value), config.jobs.typingDelayMs);
+	// Remote work is often limited to a country: offer the person's own.
+	const country = $derived(browserCountry(i18n.locale));
 	/** @type {'' | 'locating' | 'denied'} */
 	let locating = $state('');
 
@@ -84,6 +86,11 @@
 					{t('jobs.filter.workplace.remote')}
 				</button>
 			</li>
+			{#if filters.remote && !filters.where && country}
+				<li>
+					<button type="button" onclick={() => (filters.where = country.name)}>{t('explore.remoteFrom', { country: country.label })}</button>
+				</li>
+			{/if}
 		</menu>
 		{#if locating === 'locating'}<small aria-live="polite">{t('near.locating')}</small>{/if}
 		{#if locating === 'denied'}<small role="alert">{t('near.denied')}</small>{/if}

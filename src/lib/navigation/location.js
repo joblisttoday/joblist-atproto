@@ -13,3 +13,24 @@ export function currentPlace() {
 		);
 	});
 }
+
+/**
+ * The person's country, guessed from their browser's language settings ("de-DE": Germany),
+ * in English (as job boards write it) and in the page's language.
+ * @param {string} locale the page's language
+ * @returns {{name: string, label: string} | null}
+ */
+export function browserCountry(locale) {
+	for (const tag of navigator.languages || [navigator.language]) {
+		try {
+			const region = new Intl.Locale(tag).maximize().region;
+			if (!region) continue;
+			const name = new Intl.DisplayNames(['en'], { type: 'region' }).of(region);
+			const label = new Intl.DisplayNames([locale], { type: 'region' }).of(region);
+			if (name && label) return { name, label };
+		} catch {
+			// not a language tag: try the next one
+		}
+	}
+	return null;
+}
