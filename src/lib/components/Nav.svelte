@@ -4,11 +4,18 @@
 	import { session } from '#lib/auth/session.svelte.js';
 	import { navLinks } from '#lib/navigation/nav.js';
 	import { savedJobs } from '#lib/network/saved-jobs.svelte.js';
+	import { data } from '#lib/network/network.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	const items = $derived(navLinks(session.handle));
 	/** The count a tab shows, 0 for none. @param {string | undefined} badge */
 	const count = (badge) => (badge === 'saved' ? savedJobs.fresh : 0);
+	// Signed in with a company's domain: the account is that company's.
+	const company = $derived(session.handle ? data.companies.get(session.handle) : undefined);
+	/** What the account tab says to screen readers. */
+	const accountLabel = $derived(
+		company ? t('nav.account.company', { handle: session.handle || '', name: company.name }) : t('nav.account', { handle: session.handle || '' })
+	);
 
 	/** @param {string} href */
 	function current(href) {
@@ -25,10 +32,18 @@
 			<a
 				href={item.href}
 				aria-current={current(item.href) ? 'page' : undefined}
-				aria-label={n ? `${t(item.label)}, ${t('searches.new', { count: n })}` : undefined}
+				aria-label={item.account ? accountLabel : n ? `${t(item.label)}, ${t('searches.new', { count: n })}` : undefined}
 				data-wide={item.wide || undefined}
-				><Icon name={item.icon} />{t(item.label)}{#if n}<mark>{n > 99 ? '99+' : n}</mark>{/if}</a
+				data-account={item.account ? (company ? 'company' : 'person') : undefined}
 			>
+				{#if item.account}
+					{#if session.avatar}<img src={session.avatar} alt="" />{:else}<Icon name={item.icon} />{/if}
+					<span>@{session.handle}</span>
+					{#if company}<Icon name="companies" />{/if}
+				{:else}
+					<Icon name={item.icon} />{t(item.label)}{#if n}<mark>{n > 99 ? '99+' : n}</mark>{/if}
+				{/if}
+			</a>
 		{/each}
 	</nav>
 </jl-nav>
@@ -87,6 +102,25 @@
 	a[data-wide] {
 		display: none;
 	}
+	/* The account: its picture and handle, cut to fit; a company account says so. */
+	a[data-account] img {
+		width: var(--nav-icon-size);
+		height: var(--nav-icon-size);
+		border-radius: var(--radius-round);
+		object-fit: cover;
+	}
+	a[data-account] span {
+		max-width: 100%;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	a[data-account='company'] > :global(jl-icon:last-child) {
+		position: absolute;
+		top: var(--space-xxs);
+		left: calc(50% + var(--space-xs));
+		color: var(--color-ok);
+	}
 	a[aria-current='page'] {
 		color: var(--color-fg);
 		font-weight: var(--font-weight-strong);
@@ -121,8 +155,16 @@
 		a[aria-current='page'] {
 			border-bottom-color: var(--color-fg);
 		}
-		mark {
+		mark,
+		a[data-account='company'] > :global(jl-icon:last-child) {
 			position: static;
+		}
+		a[data-account] span {
+			max-width: var(--account-width);
+		}
+		a[data-account] img {
+			width: 1em;
+			height: 1em;
 		}
 	}
 </style>

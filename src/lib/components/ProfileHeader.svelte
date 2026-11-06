@@ -7,6 +7,8 @@
 	/** @type {{did?: string, handle: string, children?: import('svelte').Snippet}} */
 	let { did, handle, children } = $props();
 	const profile = $derived(did ? data.profiles.get(did) : undefined);
+	// Its handle is a company's domain: the account is that company's.
+	const company = $derived(data.companies.get(handle));
 </script>
 
 <jl-profile-header>
@@ -20,6 +22,9 @@
 					<a href={config.links.profile.replace('{handle}', handle)} target="_blank" rel="noopener">{t('profile.bluesky')} <Icon name="external" /></a>
 				</small>
 			</p>
+			{#if company}
+				<p><small><Icon name="companies" /> {t('profile.company')} <a href="/company/{company.key}">{company.name}</a>{#if company.verified} <Icon name="verified" label={t('company.verified', { domain: company.key })} />{/if}</small></p>
+			{/if}
 		</hgroup>
 		{@render children?.()}
 	</header>

@@ -7,6 +7,8 @@
 	"jobs.gone.website": "Their website",
 	"jobs.gone.fix": "Know where they post jobs now? Update it",
 	"nav.saved": "Saved",
+	"nav.account": "Your account, @{handle}",
+	"nav.account.company": "Your account, @{handle}: the account of {name}",
 	"saved.title": "Saved",
 	"saved.intro": "Your searches with their new jobs, and the jobs you applied to or hid. Kept in this browser only, never published.",
 	"saved.empty": "Nothing saved yet. Search on Jobs, then tap Save search to come back to it here.",
@@ -281,6 +283,7 @@
 	"profile.jobs": "Jobs posted",
 	"profile.empty": "Nothing here yet.",
 	"profile.bluesky": "Bluesky profile",
+	"profile.company": "Company account:",
 	"profile.notFound": "This account could not be found.",
 
 	"about.source": "Source code",

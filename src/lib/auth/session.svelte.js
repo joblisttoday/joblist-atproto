@@ -14,6 +14,8 @@ export const session = $state({
 	did: null,
 	/** @type {string | null} */
 	handle: null,
+	/** Its Bluesky picture. @type {string | null} */
+	avatar: null,
 	/** @type {import('@atproto/api').Agent | null} */
 	agent: null,
 	/** @type {string | null} */
@@ -67,10 +69,12 @@ async function use(oauthSession) {
 	session.agent = new Agent(oauthSession);
 	const profiles = await getProfiles([oauthSession.sub]);
 	session.handle = profiles.get(oauthSession.sub)?.handle || oauthSession.sub;
+	session.avatar = profiles.get(oauthSession.sub)?.avatar || null;
 }
 
 function clear() {
 	session.did = null;
 	session.handle = null;
+	session.avatar = null;
 	session.agent = null;
 }

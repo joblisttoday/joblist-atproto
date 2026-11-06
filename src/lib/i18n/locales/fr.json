@@ -7,6 +7,8 @@
 	"jobs.gone.website": "Leur site",
 	"jobs.gone.fix": "Vous savez où elle publie ses offres ? Mettez-la à jour",
 	"nav.saved": "Gardées",
+	"nav.account": "Votre compte, @{handle}",
+	"nav.account.company": "Votre compte, @{handle} : le compte de {name}",
 	"saved.title": "Gardées",
 	"saved.intro": "Vos recherches avec leurs nouvelles offres, et les offres auxquelles vous avez postulé ou que vous avez masquées. Gardées dans ce navigateur seulement, jamais publiées.",
 	"saved.empty": "Rien de gardé pour l'instant. Cherchez dans Offres, puis touchez Garder la recherche pour la retrouver ici.",
@@ -282,6 +284,7 @@
 	"profile.jobs": "Offres publiées",
 	"profile.empty": "Rien ici pour l'instant.",
 	"profile.bluesky": "Profil Bluesky",
+	"profile.company": "Compte d'entreprise :",
 	"profile.notFound": "Ce compte est introuvable.",
 
 	"about.source": "Code source",
