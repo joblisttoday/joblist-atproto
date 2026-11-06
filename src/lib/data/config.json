@@ -93,7 +93,8 @@
 	},
 	"links": {
 		"signup": "https://bsky.app",
-		"profile": "https://bsky.app/profile/{handle}"
+		"profile": "https://bsky.app/profile/{handle}",
+		"handleHelp": "https://bsky.social/about/blog/4-28-2023-domain-handle-tutorial"
 	},
 	"analytics": {
 		"script": "https://cloud.umami.is/script.js",

@@ -3,6 +3,7 @@
 	import { goto } from '$app/navigation';
 	import config from '#lib/data/config.json';
 	import AddToList from '#lib/components/AddToList.svelte';
+	import CompanyClaim from '#lib/components/CompanyClaim.svelte';
 	import CompanyHeader from '#lib/components/CompanyHeader.svelte';
 	import CompanyHiring from '#lib/components/CompanyHiring.svelte';
 	import CompanyMap from '#lib/components/CompanyMap.svelte';
@@ -34,6 +35,7 @@
 {#if company}
 	<jl-company-page verified={company.verified || undefined}>
 		<CompanyHeader {company} />
+		<CompanyClaim {company} />
 
 		<section aria-labelledby="company-jobs">
 			<h2 id="company-jobs">{t('list.tab.jobs')}</h2>

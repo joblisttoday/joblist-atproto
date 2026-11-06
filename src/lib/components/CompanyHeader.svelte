@@ -13,6 +13,8 @@
 	let { company } = $props();
 	const own = $derived(company.versions.find((v) => v.did === session.did));
 	const board = $derived(boardUrl(company.jobBoard));
+	// The company's own account: its Bluesky picture and profile.
+	const account = $derived(company.verified ? data.profiles.get(company.record.did) : undefined);
 	/** @type {string | null} */
 	let error = $state(null);
 
@@ -30,11 +32,12 @@
 
 <jl-company-header verified={company.verified || undefined}>
 	<header>
-		<h1>{company.name}</h1>
+		<h1>{#if account?.avatar}<img src={account.avatar} alt="" />{/if}{company.name}</h1>
 		<p>
 			<small>
 				{#if company.url}<a href={company.url} target="_blank" rel="noopener">{company.key} <Icon name="external" /></a>{:else}{company.key}{/if}
 				{#if company.verified}· <span><Icon name="verified" /> {t('company.verified', { domain: company.key })}</span>{/if}
+				{#if account}· <a href={config.links.profile.replace('{handle}', account.handle)} target="_blank" rel="noopener">{t('company.onBluesky', { handle: account.handle })}</a>{/if}
 			</small>
 		</p>
 		<CompanyEdited {company} />
@@ -58,7 +61,16 @@
 		display: block;
 	}
 	h1 {
+		display: flex;
+		align-items: center;
+		gap: var(--space-s);
 		margin-bottom: var(--space-xs);
+	}
+	h1 img {
+		width: var(--avatar-small);
+		height: var(--avatar-small);
+		border-radius: var(--radius);
+		object-fit: cover;
 	}
 	span {
 		color: var(--color-ok);
