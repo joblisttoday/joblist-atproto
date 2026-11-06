@@ -6,6 +6,7 @@
 	import { travelMinutes } from '#lib/models/distance.js';
 	import { postPath } from '#lib/models/job-post.js';
 	import { handleOf } from '#lib/network/network.svelte.js';
+	import { markOf } from '#lib/network/job-marks.svelte.js';
 	import { ago } from '#lib/i18n/dates.js';
 	import { i18n, t } from '#lib/i18n/index.svelte.js';
 
@@ -40,6 +41,7 @@
 	// Where and for whom on one line; how far, how and when as chips.
 	const line = $derived([location, job.department].filter(Boolean).join(' · '));
 	const chips = $derived([distance, place, ago(time(job.published), i18n.locale)].filter(Boolean));
+	const applied = $derived(markOf(job) === 'applied');
 	// Each company keeps its color, from its key.
 	const hue = $derived([...job.company].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 360, 7));
 	// Only where it starts: the reader can still fold it.
@@ -47,12 +49,13 @@
 	let open = $state(expanded);
 </script>
 
-<jl-job posted={posted ? (posted.verified ? 'company' : 'shared') : undefined} {open} fresh={fresh || undefined} selected={selected || undefined}>
+<jl-job posted={posted ? (posted.verified ? 'company' : 'shared') : undefined} {open} fresh={fresh || undefined} selected={selected || undefined} applied={applied || undefined}>
 	{#if company}<jl-avatar style="--hue: {hue}" aria-hidden="true">{company.trim().charAt(0).toUpperCase()}</jl-avatar>{/if}
 	{#if posted}
 		<a href={postPath(posted.did, posted.rkey)}>{job.title}</a>
 		<small>{#if company}<a href="/company/{job.company}">{company}</a>{line ? ' · ' : ''}{/if}{line}</small>
 		<jl-chips>
+			{#if applied}<mark><Icon name="applied" /> {t('marks.applied')}</mark>{/if}
 			{#each chips as chip (chip)}<span>{#if chip === distance}<Icon name={travelIcon} />{' '}{/if}{chip}</span>{/each}
 			{#if posted.verified}<mark><Icon name="verified" /> {t('job.verified')}</mark>{/if}
 		</jl-chips>
@@ -63,14 +66,14 @@
 		<button type="button" onclick={onselect} aria-current={selected ? 'true' : undefined}>
 			<strong>{#if fresh}<mark>{t('job.new')}</mark> {/if}{job.title}</strong>
 			<small>{company ? `${company}${line ? ' · ' : ''}` : ''}{line}</small>
-			<jl-chips>{#each chips as chip (chip)}<span>{#if chip === distance}<Icon name={travelIcon} />{' '}{/if}{chip}</span>{/each}</jl-chips>
+			<jl-chips>{#if applied}<mark><Icon name="applied" /> {t('marks.applied')}</mark>{/if}{#each chips as chip (chip)}<span>{#if chip === distance}<Icon name={travelIcon} />{' '}{/if}{chip}</span>{/each}</jl-chips>
 		</button>
 	{:else}
 		<details bind:open>
 			<summary>
 				<strong>{#if fresh}<mark>{t('job.new')}</mark> {/if}{job.title}</strong>
 				<small>{company ? `${company}${line ? ' · ' : ''}` : ''}{line}</small>
-				<jl-chips>{#each chips as chip (chip)}<span>{#if chip === distance}<Icon name={travelIcon} />{' '}{/if}{chip}</span>{/each}</jl-chips>
+				<jl-chips>{#if applied}<mark><Icon name="applied" /> {t('marks.applied')}</mark>{/if}{#each chips as chip (chip)}<span>{#if chip === distance}<Icon name={travelIcon} />{' '}{/if}{chip}</span>{/each}</jl-chips>
 			</summary>
 			{#if open}{@render actions?.()}<JobDescription {job} {company} />{/if}
 		</details>

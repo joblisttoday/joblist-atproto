@@ -10,6 +10,8 @@
 	import { byCompany, commonPlaces, filterJobs, offerCount, sameOffers, time } from '#lib/models/job.js';
 	import { mergeJobs, postedFirst } from '#lib/models/job-post.js';
 	import { data } from '#lib/network/network.svelte.js';
+	import { withoutHidden } from '#lib/models/job-mark.js';
+	import { marks } from '#lib/network/job-marks.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 	import { untrack } from 'svelte';
 
@@ -81,8 +83,8 @@
 	});
 	const sinceTime = $derived(time(since));
 	const withoutApi = $derived(careers ? companies.filter((c) => !hasJobsApi(c) && boardUrl(c.jobBoard)) : []);
-	// On a company's page, the offers it posted come first.
-	const matching = $derived(sameOffers(filterJobs(jobs, filters, names)));
+	// On a company's page, the offers it posted come first. The ones someone hid are left out.
+	const matching = $derived(sameOffers(withoutHidden(filterJobs(jobs, filters, names), marks.all)));
 	const filtered = $derived(single ? postedFirst(matching) : matching);
 	$effect(() => {
 		results = filtered;

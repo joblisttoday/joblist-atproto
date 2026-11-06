@@ -223,7 +223,7 @@ function newestFirst(jobs) {
 /** What makes two jobs the same offer, made once per job. @type {WeakMap<Job, string>} */
 const offerKeys = new WeakMap();
 /** @param {Job} job */
-function offerKey(job) {
+export function offerKey(job) {
 	let key = offerKeys.get(job);
 	if (key === undefined) {
 		key = `${job.company}\n${job.title.trim().toLowerCase()}`;

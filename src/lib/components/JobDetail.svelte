@@ -4,6 +4,7 @@
 	import JobItem from './JobItem.svelte';
 	import { distanceKm } from '#lib/models/distance.js';
 	import { postPath } from '#lib/models/job-post.js';
+	import { markOf, toggleMark } from '#lib/network/job-marks.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
@@ -21,6 +22,13 @@
 	const name = $derived(names.get(job.company) || job.company);
 	// Applying comes first: on the job board, or on the offer's page when it was posted here.
 	const apply = $derived(job.posted ? postPath(job.posted.did, job.posted.rkey) : job.url);
+	const mark = $derived(markOf(job));
+
+	// A hidden job leaves the results: back to them.
+	function hide() {
+		toggleMark(job, 'hidden', name);
+		onback();
+	}
 
 	const nearby = $derived.by(() => {
 		const from = job.point;
@@ -41,7 +49,8 @@
 			{#snippet actions()}
 				<menu>
 					<a href={apply} target={job.posted ? undefined : '_blank'} rel={job.posted ? undefined : 'noopener'}>{t('explore.apply')}{#if !job.posted}<Icon name="external" />{/if}</a>
-					<a href="/company/{job.company}">{t('jobs.aboutCompany', { name })}</a>
+					<button type="button" aria-pressed={mark === 'applied'} onclick={() => toggleMark(job, 'applied', name)}><Icon name="applied" /> {t(mark === 'applied' ? 'marks.applied' : 'marks.apply')}</button>
+					<button type="button" onclick={hide}><Icon name="hide" /> {t('marks.hide')}</button>
 				</menu>
 			{/snippet}
 		</JobItem>
@@ -85,6 +94,10 @@
 	jl-job-detail :global(details > menu > a:first-child:hover) {
 		background: var(--color-accent);
 		opacity: 0.85;
+	}
+	jl-job-detail :global(details > menu > button[aria-pressed='true']) {
+		background: var(--color-soft);
+		color: var(--color-ok);
 	}
 	h2 {
 		margin-top: var(--space-l);

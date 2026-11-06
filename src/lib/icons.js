@@ -10,6 +10,9 @@ import Bike from '@lucide/svelte/icons/bike';
 import Bookmark from '@lucide/svelte/icons/bookmark';
 import BookmarkCheck from '@lucide/svelte/icons/bookmark-check';
 import Check from '@lucide/svelte/icons/check';
+import CircleCheck from '@lucide/svelte/icons/circle-check';
+import Eye from '@lucide/svelte/icons/eye';
+import EyeOff from '@lucide/svelte/icons/eye-off';
 import Building2 from '@lucide/svelte/icons/building-2';
 import Compass from '@lucide/svelte/icons/compass';
 import Footprints from '@lucide/svelte/icons/footprints';
@@ -42,7 +45,10 @@ export const icons = {
 	external: ArrowUpRight,
 	verified: BadgeCheck,
 	bike: Bike,
-	walk: Footprints
+	walk: Footprints,
+	applied: CircleCheck,
+	hide: EyeOff,
+	unhide: Eye
 };
 
 /** @typedef {keyof typeof icons} IconName */
