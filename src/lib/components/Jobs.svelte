@@ -11,6 +11,7 @@
 	import { mergeJobs, postedFirst } from '#lib/models/job-post.js';
 	import { data } from '#lib/network/network.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
+	import { untrack } from 'svelte';
 
 	/**
 	 * careers: also link the companies whose jobs are only on their own careers page.
@@ -93,8 +94,11 @@
 		shown = PAGE;
 	});
 
+	// The boards to read: the same ones after a refresh of the network are not read again.
+	const boards = $derived(JSON.stringify(targets.map((c) => [c.key, c.jobBoard])));
 	$effect(() => {
-		const list = targets;
+		boards;
+		const list = untrack(() => targets);
 		let cancelled = false;
 		const seen = new Set();
 		boardJobs = [];
