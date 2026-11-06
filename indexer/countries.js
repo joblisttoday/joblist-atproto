@@ -9,14 +9,33 @@ const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const regionNames = new Intl.DisplayNames(['en'], { type: 'region' });
 /** @type {Set<string>} */
 const names = new Set(config.geocode.countryWords);
+/** Country codes by English name. @type {Map<string, string>} */
+const codes = new Map();
 for (const a of letters)
 	for (const b of letters) {
 		const name = regionNames.of(a + b);
-		if (name && name !== a + b) names.add(name.toLowerCase());
+		if (name && name !== a + b) {
+			names.add(name.toLowerCase());
+			codes.set(name.toLowerCase(), a + b);
+		}
 	}
 for (const city of config.geocode.cityCountries) names.delete(city);
 
 /** @param {string} place */
 export function isCountry(place) {
 	return names.has(place.toLowerCase().trim());
+}
+
+/**
+ * A country's ISO 3166-1 code ("Germany", "de", "UK": DE, DE, GB), as search engines want it.
+ * @param {string | undefined} country
+ * @returns {string | undefined}
+ */
+export function countryCode(country) {
+	const text = (country || '').trim().toLowerCase();
+	if (!text) return undefined;
+	const alias = /** @type {Record<string, string>} */ (config.geocode.countryAliases)[text];
+	if (alias) return alias.toUpperCase();
+	if (/^[a-z]{2}$/.test(text) && regionNames.of(text.toUpperCase()) !== text.toUpperCase()) return text.toUpperCase();
+	return codes.get(text);
 }

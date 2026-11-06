@@ -71,3 +71,12 @@ test('locate puts no remote job on the only office', () => {
 	assert.equal(locate('Remote', one, {}), undefined);
 	assert.deepEqual(locate('', one, {}), [13.405, 52.52]);
 });
+
+test('countryCode: names, codes and aliases as ISO codes', async () => {
+	const { countryCode } = await import('./countries.js');
+	assert.equal(countryCode('Germany'), 'DE');
+	assert.equal(countryCode('de'), 'DE');
+	assert.equal(countryCode('UK'), 'GB');
+	assert.equal(countryCode('United States'), 'US');
+	assert.equal(countryCode('Atlantis'), undefined);
+});

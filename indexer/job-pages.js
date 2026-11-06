@@ -1,6 +1,7 @@
 import config from '../src/lib/data/config.json' with { type: 'json' };
 import en from '../src/lib/i18n/locales/en.json' with { type: 'json' };
 import { isLive, placeNames, postPageUrl, postPath, toPost } from '../src/lib/models/job-post.js';
+import { countryCode } from './countries.js';
 import { escape, jsonLd } from './html.js';
 
 /**
@@ -35,10 +36,20 @@ export function jobPosting(post, company) {
 	if (places.length) {
 		schema.jobLocation = places.map((l) => ({
 			'@type': 'Place',
-			address: { '@type': 'PostalAddress', addressLocality: l.name, streetAddress: l.address, addressCountry: l.country }
+			address: {
+				'@type': 'PostalAddress',
+				addressLocality: l.name,
+				streetAddress: l.address,
+				addressCountry: countryCode(l.country) || l.country
+			}
 		}));
 	}
-	if (post.remote === 'remote') schema.jobLocationType = 'TELECOMMUTE';
+	// Remote: search engines need the countries one can work from; without them, the offer stays at its places.
+	const countries = [...new Set(post.locations.map((l) => countryCode(l.country)).filter(Boolean))];
+	if (post.remote === 'remote' && countries.length) {
+		schema.jobLocationType = 'TELECOMMUTE';
+		schema.applicantLocationRequirements = countries.map((code) => ({ '@type': 'Country', name: code }));
+	}
 	return schema;
 }
 

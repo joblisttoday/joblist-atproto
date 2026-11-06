@@ -28,6 +28,15 @@ test('jobPosting describes the offer for search engines', () => {
 	assert.equal(schema.validThrough, value.expiresAt);
 	assert.deepEqual(schema.hiringOrganization, { '@type': 'Organization', name: 'Acme', sameAs: 'https://acme.org' });
 	assert.equal(schema.jobLocation[0].address.addressLocality, 'Berlin');
+	assert.equal(schema.jobLocation[0].address.addressCountry, 'DE');
+	assert.deepEqual(schema.applicantLocationRequirements, [{ '@type': 'Country', name: 'DE' }]);
+});
+
+test('jobPosting: a remote offer with no country stays at its places', () => {
+	const post = toPost({ ...record, value: { ...value, locations: [{ name: 'Berlin' }] } }, profiles);
+	const schema = jobPosting(post, companies.get('acme.org'));
+	assert.equal(schema.jobLocationType, undefined);
+	assert.equal(schema.applicantLocationRequirements, undefined);
 });
 
 test('jobPages makes one page per live offer, with safe structured data', () => {
