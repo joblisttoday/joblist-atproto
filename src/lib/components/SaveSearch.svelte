@@ -11,7 +11,7 @@
 	const saved = $derived(isSaved(filters));
 </script>
 
-{#if !isEmpty(filters)}
+{#if !isEmpty(filters) || filters.near}
 	<!-- One toggle: kept in this browser only (said in its title), or forgotten. -->
 	<jl-save-search saved={saved || undefined}>
 		<button

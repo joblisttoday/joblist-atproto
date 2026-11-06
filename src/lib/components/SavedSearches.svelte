@@ -1,5 +1,6 @@
 <script>
-	import { newCount, toParams } from '#lib/models/saved-search.js';
+	import config from '#lib/data/config.json';
+	import { newCount, searchId, toParams } from '#lib/models/saved-search.js';
 	import { searches } from '#lib/network/saved-searches.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
@@ -15,14 +16,16 @@
 
 	/** @param {import('#lib/models/saved-search.js').SavedSearch} s */
 	const label = (s) =>
-		[s.query, s.where, s.remote && t(`jobs.filter.workplace.${s.remote}`)].filter(Boolean).join(' · ');
+		[s.query, s.where, s.remote && t(`jobs.filter.workplace.${s.remote}`), s.near && near(s.within)].filter(Boolean).join(' · ');
+	/** A search near someone: how far, not where. @param {number | undefined} within */
+	const near = (within) => `◎ ${within ? t(`near.within.${config.travel.mode}`, { minutes: within }) : t('near.me')}`;
 </script>
 
 {#if searches.list.length}
 	<jl-saved-searches>
 		<h2>{t('searches.title')}</h2>
 		<ul>
-			{#each searches.list as search (toParams(search))}
+			{#each searches.list as search (searchId(search))}
 				{@const count = jobs.length ? newCount(search, jobs, names) : 0}
 				<li>
 					<a

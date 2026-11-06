@@ -51,12 +51,30 @@ export function isEmpty(filters) {
 }
 
 /**
- * Two searches are the same when their filters are, whatever the case and spaces.
+ * Two searches are the same when their filters are, whatever the case and spaces,
+ * and from the same place (about 100 m), within the same time.
  * @param {JobFilters} a
  * @param {JobFilters} b
  */
 export function sameSearch(a, b) {
-	return toParams(normalize(a)) === toParams(normalize(b));
+	return searchId(a) === searchId(b);
+}
+
+/**
+ * What tells a search apart from others.
+ * @param {JobFilters} filters
+ */
+export function searchId(filters) {
+	return JSON.stringify([toParams(normalize(filters)), nearby(filters.near), filters.near ? filters.within || 0 : 0]);
+}
+
+/**
+ * Where someone searches from, to about 100 m: as precise as a commute needs, no more.
+ * @param {[number, number] | null | undefined} near
+ * @returns {[number, number] | null}
+ */
+export function nearby(near) {
+	return near ? [Math.round(near[0] * 1e3) / 1e3, Math.round(near[1] * 1e3) / 1e3] : null;
 }
 
 /** @param {JobFilters} filters */

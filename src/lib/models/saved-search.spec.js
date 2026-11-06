@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { fromParams, isEmpty, newCount, sameSearch, toParams } from './saved-search.js';
+import { fromParams, isEmpty, nearby, newCount, sameSearch, toParams } from './saved-search.js';
 
 /** @type {import('./job.js').JobFilters} */
 const search = { query: 'frontend', where: 'Berlin', remote: 'remote' };
@@ -30,5 +30,18 @@ describe('newCount', () => {
 			{ ...job, url: '4', title: 'Designer', published: '2026-10-19' }
 		];
 		expect(newCount({ ...search, seen: '2026-10-15' }, jobs, new Map())).toBe(1);
+	});
+});
+
+describe('searches near someone', () => {
+	const base = { query: 'designer', where: '', remote: /** @type {''} */ ('') };
+	it('are the same from about the same place, within the same time', () => {
+		expect(sameSearch({ ...base, near: [13.40512, 52.52003], within: 30 }, { ...base, near: [13.4052, 52.5201], within: 30 })).toBe(true);
+		expect(sameSearch({ ...base, near: [13.405, 52.52], within: 30 }, { ...base, near: [13.405, 52.52], within: 15 })).toBe(false);
+		expect(sameSearch({ ...base, near: [13.405, 52.52], within: 30 }, base)).toBe(false);
+	});
+	it('keep the place to about 100 m', () => {
+		expect(nearby([13.40512, 52.52049])).toEqual([13.405, 52.52]);
+		expect(nearby(null)).toBe(null);
 	});
 });

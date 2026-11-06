@@ -50,7 +50,7 @@
 	/** @param {import('#lib/models/saved-search.js').SavedSearch} search */
 	function open(search) {
 		since = search.seen;
-		filters = { query: search.query, where: search.where, remote: search.remote };
+		filters = { query: search.query, where: search.where, remote: search.remote, near: search.near ?? null, within: search.within || 0 };
 		markSeen(search);
 	}
 

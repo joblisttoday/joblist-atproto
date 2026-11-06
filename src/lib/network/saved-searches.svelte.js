@@ -1,8 +1,9 @@
-import { sameSearch } from '#lib/models/saved-search.js';
+import { nearby, sameSearch } from '#lib/models/saved-search.js';
 
 /**
  * Job searches kept in this browser only: what someone looks for says they
- * look for work, so it never goes to their (public) atproto repository.
+ * look for work, and a search near them says where they live, so neither
+ * goes to their (public) atproto repository.
  * @typedef {import('#lib/models/saved-search.js').SavedSearch} SavedSearch
  * @typedef {import('#lib/models/job.js').JobFilters} JobFilters
  */
@@ -35,9 +36,12 @@ export function isSaved(filters) {
 }
 
 /** @param {JobFilters} filters */
-export function saveSearch({ query, where, remote }) {
-	if (isSaved({ query, where, remote })) return;
-	searches.list = [...searches.list, { query: query.trim(), where: where.trim(), remote, seen: new Date().toISOString() }];
+export function saveSearch(filters) {
+	if (isSaved(filters)) return;
+	const { query, where, remote, near, within } = filters;
+	const place = nearby(near);
+	const kept = { query: query.trim(), where: where.trim(), remote, seen: new Date().toISOString() };
+	searches.list = [...searches.list, place ? { ...kept, near: place, within: within || 0 } : kept];
 	write();
 }
 
