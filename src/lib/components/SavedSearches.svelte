@@ -1,62 +1,61 @@
 <script>
 	import config from '#lib/data/config.json';
+	import { goto } from '$app/navigation';
+	import { filterJobs, sameOffers } from '#lib/models/job.js';
 	import { newCount, searchId, toParams } from '#lib/models/saved-search.js';
-	import { searches } from '#lib/network/saved-searches.svelte.js';
+	import { forgetSearch, searches } from '#lib/network/saved-searches.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * The searches kept in this browser, each with its jobs published since last looked at.
-	 * @type {{
-	 *   jobs: import('#lib/ats/job.js').Job[],
-	 *   names: Map<string, string>,
-	 *   onopen: (search: import('#lib/models/saved-search.js').SavedSearch) => void
-	 * }}
+	 * The searches kept in this browser: each with its new jobs (published since last looked at)
+	 * and all its jobs; opens in the explorer, or is removed.
+	 * jobs: every job known, empty while they are read.
+	 * @type {{jobs: import('#lib/ats/job.js').Job[], names: Map<string, string>}}
 	 */
-	let { jobs, names, onopen } = $props();
+	let { jobs, names } = $props();
 
 	/** @param {import('#lib/models/saved-search.js').SavedSearch} s */
 	const label = (s) =>
-		[s.query, s.where, s.remote && t(`jobs.filter.workplace.${s.remote}`), s.near && near(s.within)].filter(Boolean).join(' · ');
+		[s.query, s.where, s.remote && t(`jobs.filter.workplace.${s.remote}`), s.near && near(s.within)].filter(Boolean).join(' · ') ||
+		t('saved.all');
 	/** A search near someone: how far, not where. @param {number | undefined} within */
 	const near = (within) => `◎ ${within ? t(`near.within.${config.travel.mode}`, { minutes: within }) : t('near.me')}`;
+
+	/** In the explorer, with its place near someone (not in the address). @param {import('#lib/models/saved-search.js').SavedSearch} search */
+	function open(search) {
+		searches.opening = search;
+		goto(`/${toParams(search)}`);
+	}
 </script>
 
-{#if searches.list.length}
-	<jl-saved-searches>
-		<h2>{t('searches.title')}</h2>
-		<ul>
-			{#each searches.list as search (searchId(search))}
-				{@const count = jobs.length ? newCount(search, jobs, names) : 0}
-				<li>
-					<a
-						href="/jobs{toParams(search)}"
-						onclick={(e) => {
-							e.preventDefault();
-							onopen(search);
-						}}
-					>
-						{label(search)}
-					</a>
-					{#if count}<mark>{t('searches.new', { count })}</mark>{/if}
-				</li>
-			{/each}
-		</ul>
-	</jl-saved-searches>
-{/if}
+<jl-saved-searches>
+	<ul>
+		{#each searches.list as search (searchId(search))}
+			{@const fresh = jobs.length ? newCount(search, jobs, names) : 0}
+			{@const all = jobs.length ? sameOffers(filterJobs(jobs, search, names)).length : null}
+			<li>
+				<a
+					href="/{toParams(search)}"
+					onclick={(e) => {
+						e.preventDefault();
+						open(search);
+					}}
+				>
+					<strong>{label(search)}</strong>
+					{#if all !== null}<small>{t('saved.matching', { count: all.toLocaleString() })}</small>{/if}
+				</a>
+				{#if fresh}<mark>{t('searches.new', { count: fresh })}</mark>{/if}
+				<button type="button" aria-label={t('saved.remove', { name: label(search) })} onclick={() => forgetSearch(search)}>✕</button>
+			</li>
+		{/each}
+	</ul>
+</jl-saved-searches>
 
 <style>
 	jl-saved-searches {
 		display: block;
-		margin: var(--space-m) 0;
-	}
-	h2 {
-		font-size: var(--font-size-small);
-		margin: 0 0 var(--space-xs);
 	}
 	ul {
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-s);
 		margin: 0;
 		padding: 0;
 		list-style: none;
@@ -64,19 +63,34 @@
 	li {
 		display: flex;
 		align-items: center;
-		gap: var(--space-xs);
-		min-height: var(--tap-size);
-		padding: 0 var(--space-m);
-		border: var(--border);
-		border-radius: var(--radius-round);
+		gap: var(--space-s);
+		border-bottom: var(--border);
 	}
 	a {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		min-height: var(--tap-size);
+		padding: var(--space-s) 0;
 		color: var(--color-fg);
 		text-decoration: none;
 	}
+	small {
+		color: var(--color-muted);
+	}
 	mark {
-		background: none;
-		color: var(--color-ok);
+		padding: 0 var(--space-s);
+		border-radius: var(--radius-round);
+		background: var(--color-accent);
+		color: var(--color-accent-fg);
 		font-size: var(--font-size-small);
+	}
+	button {
+		min-width: var(--tap-size);
+		min-height: var(--tap-size);
+		border: 0;
+		background: none;
+		color: var(--color-muted);
 	}
 </style>

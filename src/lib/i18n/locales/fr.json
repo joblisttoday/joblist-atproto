@@ -1,4 +1,12 @@
 {
+	"nav.saved": "Gardées",
+	"saved.title": "Recherches gardées",
+	"saved.intro": "Vos recherches, avec les offres publiées depuis votre dernière visite. Gardées dans ce navigateur seulement, jamais publiées.",
+	"saved.empty": "Rien de gardé pour l'instant. Cherchez dans Explorer, puis touchez ☆ Garder la recherche pour la retrouver ici.",
+	"saved.explore": "Explorer les offres",
+	"saved.matching": "{count} offres",
+	"saved.remove": "Retirer {name}",
+	"saved.all": "Toutes les offres",
 	"nav.lists": "Listes",
 	"nav.explore": "Explorer",
 	"nav.post": "Publier une offre",

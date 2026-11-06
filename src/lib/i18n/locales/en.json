@@ -1,4 +1,12 @@
 {
+	"nav.saved": "Saved",
+	"saved.title": "Saved searches",
+	"saved.intro": "Your searches, with the jobs published since you last looked. Kept in this browser only, never published.",
+	"saved.empty": "Nothing saved yet. Search on Explore, then tap ☆ Save search to come back to it here.",
+	"saved.explore": "Explore jobs",
+	"saved.matching": "{count} jobs",
+	"saved.remove": "Remove {name}",
+	"saved.all": "All jobs",
 	"nav.lists": "Lists",
 	"nav.explore": "Explore",
 	"nav.post": "Post a job",

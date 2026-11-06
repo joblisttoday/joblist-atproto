@@ -17,7 +17,7 @@
 <jl-nav>
 	<nav aria-label={t('nav.label')}>
 		{#each items as item (item.href)}
-			<a href={item.href} aria-current={current(item.href) ? 'page' : undefined}>{t(item.label)}</a>
+			<a href={item.href} aria-current={current(item.href) ? 'page' : undefined} data-wide={item.wide || undefined}>{t(item.label)}</a>
 		{/each}
 	</nav>
 </jl-nav>
@@ -51,6 +51,9 @@
 	a:hover {
 		color: var(--color-fg);
 	}
+	a[data-wide] {
+		display: none;
+	}
 	a[aria-current='page'] {
 		color: var(--color-fg);
 		font-weight: var(--font-weight-strong);
@@ -69,7 +72,9 @@
 			gap: var(--space-xs);
 			margin: 0;
 		}
-		a {
+		a,
+		a[data-wide] {
+			display: flex;
 			min-height: var(--header-height);
 			padding: 0 var(--space-s);
 			font-size: var(--font-size);

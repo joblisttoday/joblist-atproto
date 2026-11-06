@@ -1,7 +1,8 @@
 [
 	{ "href": "/", "label": "nav.explore" },
-	{ "href": "/lists", "label": "nav.lists" },
+	{ "href": "/saved", "label": "nav.saved" },
 	{ "href": "/companies", "label": "nav.companies" },
-	{ "href": "/jobs/new", "label": "nav.post" },
+	{ "href": "/lists", "label": "nav.lists" },
+	{ "href": "/jobs/new", "label": "nav.post", "wide": true },
 	{ "href": "/{handle}", "label": "nav.me", "signedOut": { "href": "/signin", "label": "nav.signin" } }
 ]

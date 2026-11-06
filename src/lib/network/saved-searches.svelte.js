@@ -20,7 +20,12 @@ function read() {
 	}
 }
 
-export const searches = $state({ list: read() });
+/**
+ * list: the searches kept. opening: one opened from the saved page, for the explorer
+ * to take (its place near someone is not in the page address).
+ * @type {{list: SavedSearch[], opening: SavedSearch | null}}
+ */
+export const searches = $state({ list: read(), opening: null });
 
 function write() {
 	try {

@@ -5,7 +5,6 @@
 	import JobDetail from './JobDetail.svelte';
 	import JobItem from './JobItem.svelte';
 	import JobsMap from './JobsMap.svelte';
-	import SavedSearches from './SavedSearches.svelte';
 	import SaveSearch from './SaveSearch.svelte';
 	import { tick, untrack } from 'svelte';
 	import { afterNavigate, pushState, replaceState } from '$app/navigation';
@@ -54,8 +53,9 @@
 		markSeen(search);
 	}
 
-	// Opened from a kept link: its new jobs are marked, once.
-	const arrived = searches.list.find((s) => sameSearch(s, filters));
+	// Opened from the saved page, or from a kept link: its new jobs are marked, once.
+	const arrived = searches.opening || searches.list.find((s) => sameSearch(s, filters));
+	searches.opening = null;
 	if (arrived) open(arrived);
 
 	// A shallow replace changes the address, not page.url: compare with the location.
@@ -280,7 +280,6 @@
 					<a href="/jobs/new">{t('explore.publish')}</a>
 				</p>
 			{/if}
-			<SavedSearches {jobs} {names} onopen={open} />
 			{#if companies.length}
 				<Jobs
 					{companies}
