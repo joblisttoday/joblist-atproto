@@ -15,6 +15,7 @@ import { crawlRecords } from './crawl.js';
 import config from '../src/lib/data/config.json' with { type: 'json' };
 import { fetchBoardJobs, firstJobs, recordJobs, toMinute } from './jobs.js';
 import { dateOffers } from './ledger.js';
+import { blueskyAccounts } from './bluesky.js';
 import { findOffices, officeKey } from './offices.js';
 import { geocode, locate, placeNames } from './places.js';
 import { suggest } from './suggest.js';
@@ -29,6 +30,10 @@ console.log(`records: ${records.company.length} company, ${records.list.length} 
 
 const board = await fetchBoardJobs(companies);
 const jobs = [...recordJobs(records.job, profiles), ...board.jobs];
+// Companies whose domain is their Bluesky handle.
+const bluesky = await blueskyAccounts(companies.map((c) => c.key), /** @type {any} */ (await loadCache(config.bluesky.file)));
+console.log(`bluesky: ${Object.keys(bluesky).length} companies have their domain as handle`);
+
 // Each offer dated when it was first seen, not when its board last posted it again.
 const dates = dateOffers(jobs, /** @type {any} */ (await loadCache(config.ledger.file)), /** @type {string} */ (toMinute(generatedAt)), config.ledger.keepDays);
 console.log(`offers: ${Object.keys(dates.ledger).length} known, ${dates.reposted} jobs posted again keep their first date, ${dates.dated} undated jobs dated`);
@@ -83,6 +88,7 @@ const files = {
 	// duplicates: [kept, other] companies that share a job board, to merge.
 	'health.json': { generatedAt, companies: board.health, duplicates: board.duplicates },
 	[config.ledger.file]: dates.ledger,
+	[config.bluesky.file]: bluesky,
 	[config.geocode.placesFile]: places,
 	[config.geocode.officesFile]: offices,
 	'suggestions.json': { generatedAt, companies: suggest(companies, records) },

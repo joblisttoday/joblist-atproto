@@ -66,6 +66,10 @@
 		"fr"
 	],
 	"defaultLocale": "en",
+	"bluesky": {
+		"file": "bluesky.json",
+		"concurrency": 12
+	},
 	"ledger": {
 		"file": "offers.json",
 		"keepDays": 30
