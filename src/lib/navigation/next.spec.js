@@ -11,6 +11,8 @@ describe('nextPath', () => {
 		expect(next('https://example.org')).toBe(null);
 		expect(next('//example.org')).toBe(null);
 		expect(next('/\\example.org')).toBe(null);
+		expect(next('/\t/example.org')).toBe(null);
+		expect(next('/\n/example.org')).toBe(null);
 		expect(nextPath(new URLSearchParams())).toBe(null);
 	});
 });

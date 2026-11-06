@@ -5,5 +5,6 @@
  */
 export function nextPath(params) {
 	const next = params.get('next') || '';
-	return /^\/(?![/\\])/.test(next) ? next : null;
+	// No control characters either: browsers drop tabs and line breaks, so "/\t/x" would become "//x".
+	return /^\/(?![/\\])/.test(next) && !/[\u0000-\u001f\u007f]/.test(next) ? next : null;
 }
