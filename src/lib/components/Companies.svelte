@@ -9,10 +9,11 @@
 	 *   companies: import('#lib/models/company.js').Company[],
 	 *   searchable?: boolean,
 	 *   query?: string,
+	 *   counts?: Map<string, number>,
 	 *   aside?: import('svelte').Snippet<[import('#lib/models/company.js').Company]>
 	 * }}
 	 */
-	let { companies, searchable = true, query = $bindable(''), aside } = $props();
+	let { companies, searchable = true, query = $bindable(''), counts, aside } = $props();
 	const PAGE = config.companies.pageSize;
 	let shown = $state(PAGE);
 
@@ -41,7 +42,7 @@
 	<ul>
 		{#each filtered.slice(0, shown) as company (company.key)}
 			<li>
-				{#if aside}<CompanyItem {company}>{@render aside(company)}</CompanyItem>{:else}<CompanyItem {company} />{/if}
+				{#if aside}<CompanyItem {company} jobs={counts?.get(company.key)}>{@render aside(company)}</CompanyItem>{:else}<CompanyItem {company} jobs={counts?.get(company.key)} />{/if}
 			</li>
 		{/each}
 	</ul>
