@@ -48,7 +48,8 @@ export async function listRecords(did, collection, onPage) {
 			cursor
 		});
 		for (const r of /** @type {AtRecord[]} */ (page.records || [])) {
-			records.push({ did, rkey: r.uri.split('/').pop() || '', uri: r.uri, cid: r.cid, value: r.value });
+			const rkey = recordKey(r.uri, did, collection);
+			if (rkey) records.push({ did, rkey, uri: r.uri, cid: r.cid, value: r.value });
 		}
 		onPage?.(page.records?.length || 0);
 		cursor = page.records?.length ? page.cursor : undefined;
@@ -72,4 +73,19 @@ export async function getRecord(did, collection, rkey) {
 	} catch {
 		return null;
 	}
+}
+
+/**
+ * A record's key, when its address is the one asked for (this repository and
+ * collection) and the key is a valid record key: what a server returns is not
+ * trusted, since keys become page addresses and file names.
+ * @param {string} uri
+ * @param {string} did
+ * @param {string} collection
+ */
+export function recordKey(uri, did, collection) {
+	const prefix = `at://${did}/${collection}/`;
+	if (typeof uri !== 'string' || !uri.startsWith(prefix)) return '';
+	const rkey = uri.slice(prefix.length);
+	return /^[A-Za-z0-9._:~-]{1,512}$/.test(rkey) && rkey !== '.' && rkey !== '..' ? rkey : '';
 }

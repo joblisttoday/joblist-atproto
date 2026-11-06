@@ -7,7 +7,7 @@
  *   node indexer/prerender.js [build-dir] [snapshot-dir]
  */
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, resolve, sep } from 'node:path';
 import config from '../src/lib/data/config.json' with { type: 'json' };
 import en from '../src/lib/i18n/locales/en.json' with { type: 'json' };
 import { toCompany } from '../src/lib/models/company.js';
@@ -69,6 +69,8 @@ function write(path, html, inSitemap = true) {
 	if (inSitemap) paths.push(path);
 	// Files are named by the decoded path (job pages have encoded DIDs in their links).
 	const dir = join(build, decodeURIComponent(path));
+	// Paths come from records: none may lead out of the build.
+	if (!resolve(dir).startsWith(resolve(build) + sep)) throw new Error(`page outside the build: ${path}`);
 	mkdirSync(dir, { recursive: true });
 	writeFileSync(join(dir, 'index.html'), html);
 }

@@ -99,6 +99,8 @@ describe('expiry', () => {
 		expect(isLive(value, NOW + 2 * DAY)).toBe(false);
 		expect(isLive({ ...value, expiresAt: 'soon' }, NOW)).toBe(false);
 		expect(isLive({ ...value, url: '' }, NOW)).toBe(false);
+		expect(isLive({ ...value, expiresAt: '9999-01-01T00:00:00Z' }, NOW)).toBe(false);
+		expect(isLive({ ...value, expiresAt: new Date(NOW + 120 * DAY).toISOString() }, NOW)).toBe(true);
 	});
 	it('renews from now and counts days left', () => {
 		const value = renewed({ title: 'E', expiresAt: '2026-01-01T00:00:00Z' }, NOW);

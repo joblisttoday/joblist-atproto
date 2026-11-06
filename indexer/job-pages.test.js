@@ -14,7 +14,7 @@ const value = {
 	employment: 'full-time',
 	apply: { url: 'mailto:jobs@acme.org', bluesky: true },
 	createdAt: '2026-10-01T00:00:00.000Z',
-	expiresAt: '2099-01-01T00:00:00.000Z'
+	expiresAt: new Date(Date.now() + 30 * 864e5).toISOString()
 };
 const record = { did: 'did:plc:acme', rkey: '3abc', uri: 'at://did:plc:acme/today.joblist.job/3abc', cid: '', value };
 const profiles = new Map([['did:plc:acme', { handle: 'acme.org' }]]);

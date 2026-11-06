@@ -1,15 +1,25 @@
 /**
  * The same company added twice (\"scale-ai\" and \"scale.com\"), found by their
- * shared job board: one company is kept, the one named by its domain, and the
- * other's key leads to it. Records stay as their authors wrote them.
+ * shared job board: one company is kept, and the other's key leads to it.
+ * Only companies nobody verified are merged: anyone can name any job board, and
+ * proving one's own domain says nothing about a board, so a board alone must
+ * never let one company take another's place. The one named by its domain is kept. Records stay as their authors wrote them.
  * @typedef {import('./company.js').Company} Company
  */
 
 /** @param {Company} c */
 const boardOf = (c) => (c.jobBoard?.provider && c.jobBoard?.id ? `${c.jobBoard.provider}:${c.jobBoard.id.toLowerCase()}` : '');
 
-/** The key to keep of two: named by a domain, else the first in order. @param {string} a @param {string} b */
-const preferred = (a, b) => (Number(b.includes('.')) - Number(a.includes('.')) || a.localeCompare(b)) <= 0 ? a : b;
+/**
+ * The company to keep of two: the one named by a domain, else the first in
+ * order; none when either is verified.
+ * @param {Company} a @param {Company} b
+ * @returns {Company | null}
+ */
+function preferred(a, b) {
+	if (a.verified || b.verified) return null;
+	return (Number(b.key.includes('.')) - Number(a.key.includes('.')) || a.key.localeCompare(b.key)) <= 0 ? a : b;
+}
 
 /**
  * Keys of companies that are another's twin, and the key kept for each.
@@ -17,7 +27,7 @@ const preferred = (a, b) => (Number(b.includes('.')) - Number(a.includes('.')) |
  * @returns {Map<string, string>}
  */
 export function twins(companies) {
-	/** @type {Map<string, string>} */
+	/** @type {Map<string, Company>} */
 	const kept = new Map();
 	/** @type {Map<string, string>} */
 	const aliases = new Map();
@@ -26,13 +36,14 @@ export function twins(companies) {
 		if (!board) continue;
 		const other = kept.get(board);
 		if (!other) {
-			kept.set(board, c.key);
+			kept.set(board, c);
 			continue;
 		}
-		const keep = preferred(other, c.key);
-		const drop = keep === other ? c.key : other;
+		const keep = preferred(other, c);
+		if (!keep) continue;
+		const drop = keep === other ? c : other;
 		kept.set(board, keep);
-		aliases.set(drop, keep);
+		aliases.set(drop.key, keep.key);
 	}
 	// A key dropped after it was kept for another: lead both to the last kept.
 	for (const [drop, keep] of aliases) {

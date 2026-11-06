@@ -52,7 +52,8 @@ const { days: DEFAULT_DAYS, maxDays: MAX_DAYS } = config.jobPost;
 export function isLive(value, now = Date.now()) {
 	if (!value?.title || !value.company || !value.url) return false;
 	const expires = Date.parse(String(value.expiresAt || ''));
-	return Number.isFinite(expires) && expires > now;
+	// Never beyond the longest an offer runs from now: a date years away would keep it up for good.
+	return Number.isFinite(expires) && expires > now && expires <= now + (MAX_DAYS + 1) * DAY;
 }
 
 /**
