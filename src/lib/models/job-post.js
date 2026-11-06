@@ -1,3 +1,4 @@
+import { safeUrl } from './url.js';
 import config from '#lib/data/config.json' with { type: 'json' };
 
 /**
@@ -180,12 +181,12 @@ export function toPost(record, profiles) {
 		rkey: record.rkey,
 		title: String(v.title || ''),
 		company: String(v.company || ''),
-		url: String(v.url || ''),
+		url: safeUrl(v.url),
 		description: String(v.description || ''),
 		locations: Array.isArray(v.locations) ? v.locations : [],
 		remote: v.remote,
 		employment: v.employment,
-		apply: v.apply && typeof v.apply === 'object' ? v.apply : {},
+		apply: v.apply && typeof v.apply === 'object' ? { ...v.apply, url: safeUrl(v.apply.url, { email: true }) || undefined } : {},
 		createdAt: String(v.createdAt || ''),
 		expiresAt: String(v.expiresAt || ''),
 		verified: profiles.get(record.did)?.handle === v.company,

@@ -1,3 +1,4 @@
+import { safeUrl } from '#lib/models/url.js';
 import * as ashby from './ashby.js';
 import * as greenhouse from './greenhouse.js';
 import * as lever from './lever.js';
@@ -37,6 +38,7 @@ export function getJobs(company) {
 			fetcher(id)
 				.then((jobs) =>
 					jobs
+						.map((j) => ({ ...j, url: safeUrl(j.url) }))
 						.filter((j) => j.title && j.url)
 						.map((j) => ({ ...j, location: tidyPlace(j.location), company: company.key }))
 				)
