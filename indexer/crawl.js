@@ -1,3 +1,4 @@
+import { allowed } from '../src/lib/models/moderation.js';
 import config from '../src/lib/data/config.json' with { type: 'json' };
 import { getProfiles } from '../src/lib/atproto/identity.js';
 import { listRecords, listRepos } from '../src/lib/atproto/records.js';
@@ -19,7 +20,7 @@ export async function crawlRecords() {
 		for (const [type, nsid] of collections) {
 			if (!reposByCollection[type].includes(did)) continue;
 			try {
-				records[type].push(...(await listRecords(did, nsid)));
+				records[type].push(...(await listRecords(did, nsid)).filter(allowed));
 			} catch (err) {
 				console.warn(`skipped ${type} of ${did}: ${err instanceof Error ? err.message : err}`);
 			}

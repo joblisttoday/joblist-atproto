@@ -7,6 +7,7 @@ import { toCompany } from '#lib/models/company.js';
 import { membership, toList } from '#lib/models/list.js';
 import { toSuggestion } from '#lib/models/suggestion.js';
 import { isLive, toJob, toPost } from '#lib/models/job-post.js';
+import { allowed } from '#lib/models/moderation.js';
 import { readCache, writeCache } from './cache.js';
 import { getSnapshotRecords } from './snapshot.js';
 
@@ -52,7 +53,7 @@ const companies = $derived.by(() => {
 	/** @type {Map<string, RepoRecord[]>} */
 	const byKey = new Map();
 	for (const r of network.companyRecords) {
-		if (!r.value?.name) continue;
+		if (!r.value?.name || !allowed(r)) continue;
 		const versions = byKey.get(r.rkey) || [];
 		versions.push(r);
 		byKey.set(r.rkey, versions);
@@ -64,19 +65,19 @@ const companies = $derived.by(() => {
 
 const lists = $derived(
 	network.listRecords
-		.filter((r) => r.value?.name)
+		.filter((r) => r.value?.name && allowed(r))
 		.map(toList)
 		.sort((a, b) => b.createdAt.localeCompare(a.createdAt))
 );
 
 const suggestions = $derived(
-	network.suggestionRecords.filter((r) => r.value?.list && r.value?.company).map(toSuggestion)
+	network.suggestionRecords.filter((r) => r.value?.list && r.value?.company && allowed(r)).map(toSuggestion)
 );
 
 /** Every job offer posted on joblist, also expired ones (their posters can renew them). */
 const posts = $derived(
 	network.jobRecords
-		.filter((r) => r.value?.title && r.value?.company)
+		.filter((r) => r.value?.title && r.value?.company && allowed(r))
 		.map((r) => toPost(r, profileMap))
 		.sort((a, b) => b.createdAt.localeCompare(a.createdAt))
 );
