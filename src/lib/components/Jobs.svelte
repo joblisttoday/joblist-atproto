@@ -7,7 +7,7 @@
 	import { mapLimit } from '#lib/atproto/xrpc.js';
 	import { getSnapshotJobs } from '#lib/network/snapshot.js';
 	import { boardUrl, hasJobsApi } from '#lib/models/company.js';
-	import { byCompany, commonPlaces, filterJobs, sameOffers, time } from '#lib/models/job.js';
+	import { byCompany, commonPlaces, filterJobs, offerCount, sameOffers, time } from '#lib/models/job.js';
 	import { mergeJobs, postedFirst } from '#lib/models/job-post.js';
 	import { data } from '#lib/network/network.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
@@ -83,7 +83,7 @@
 	$effect(() => {
 		busy = loading;
 	});
-	const offers = $derived(sameOffers(jobs).length);
+	const offers = $derived(offerCount(jobs));
 	const groups = $derived(grouped ? byCompany(filtered) : []);
 	// Suggestions are computed once all boards answered, not on every answer.
 	const places = $derived(loading ? [] : commonPlaces(jobs));

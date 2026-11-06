@@ -2,7 +2,7 @@
 	import Icon from './Icon.svelte';
 	import config from '#lib/data/config.json';
 	import { goto } from '$app/navigation';
-	import { filterJobs, sameOffers } from '#lib/models/job.js';
+	import { filterJobs, offerCount } from '#lib/models/job.js';
 	import { newCount, searchId, toParams } from '#lib/models/saved-search.js';
 	import { forgetSearch, searches } from '#lib/network/saved-searches.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
@@ -32,7 +32,7 @@
 	<ul>
 		{#each searches.list as search (searchId(search))}
 			{@const fresh = jobs.length ? newCount(search, jobs, names) : 0}
-			{@const all = jobs.length ? sameOffers(filterJobs(jobs, search, names)).length : null}
+			{@const all = jobs.length ? offerCount(filterJobs(jobs, search, names)) : null}
 			<li>
 				<a
 					href="/{toParams(search)}"

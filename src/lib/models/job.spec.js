@@ -128,3 +128,17 @@ describe('sameOffers', () => {
 		expect(jobs[0].also).toBeUndefined();
 	});
 });
+
+describe('offerCount', () => {
+	it('counts offers like sameOffers, without making them', async () => {
+		const { offerCount, sameOffers } = await import('./job.js');
+		const jobs = /** @type {any[]} */ ([
+			{ title: 'Engineer', url: '1', company: 'a' },
+			{ title: 'engineer ', url: '2', company: 'a' },
+			{ title: 'Engineer', url: '3', company: 'b' },
+			{ title: 'Engineer', url: '4', company: 'a', posted: {} }
+		]);
+		expect(offerCount(jobs)).toBe(sameOffers(jobs).length);
+		expect(offerCount(jobs)).toBe(3);
+	});
+});

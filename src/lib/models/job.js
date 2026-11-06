@@ -77,8 +77,8 @@ export function filterJobs(jobs, { query, where, remote, near, within = 0, area 
 			if (!what.length) return true;
 			const text = searchText(job, names);
 			return what.every((w) => text.includes(w));
-		})
-		.sort((a, b) => time(b.published) - time(a.published));
+		});
+	newestFirst(matching);
 	if (!near) return matching;
 	return matching
 		.filter((job) => job.point)
@@ -105,7 +105,7 @@ export function sameOffers(jobs) {
 	/** @type {Job[]} */
 	const out = [];
 	for (const job of jobs) {
-		const key = `${job.company}\n${job.title.trim().toLowerCase()}`;
+		const key = offerKey(job);
 		const kept = job.posted ? undefined : first.get(key);
 		if (kept) {
 			// Added to, not copied: an employer may have hundreds of the same offer.
@@ -208,4 +208,37 @@ function searchText(job, names) {
 		searchTexts.set(job, text);
 	}
 	return text;
+}
+
+/**
+ * Sort jobs newest first, in place, reading each date once
+ * (a sort compares each job many times).
+ * @param {Job[]} jobs
+ */
+function newestFirst(jobs) {
+	const times = new Map(jobs.map((job) => [job, time(job.published)]));
+	jobs.sort((a, b) => /** @type {number} */ (times.get(b)) - /** @type {number} */ (times.get(a)));
+}
+
+/** What makes two jobs the same offer, made once per job. @type {WeakMap<Job, string>} */
+const offerKeys = new WeakMap();
+/** @param {Job} job */
+function offerKey(job) {
+	let key = offerKeys.get(job);
+	if (key === undefined) {
+		key = `${job.company}\n${job.title.trim().toLowerCase()}`;
+		offerKeys.set(job, key);
+	}
+	return key;
+}
+
+/**
+ * How many offers some jobs are (see sameOffers), without making them.
+ * @param {Job[]} jobs
+ */
+export function offerCount(jobs) {
+	const keys = new Set();
+	let posted = 0;
+	for (const job of jobs) job.posted ? posted++ : keys.add(offerKey(job));
+	return keys.size + posted;
 }
