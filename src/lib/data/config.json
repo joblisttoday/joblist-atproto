@@ -101,6 +101,8 @@
 		"officeMaxKm": 50,
 		"budget": 1100,
 		"tooWide": ["continent", "country", "state", "region", "province", "state_district", "county"],
+		"cityCountries": ["singapore", "hong kong", "luxembourg", "monaco", "macao", "vatican city", "gibraltar"],
+		"countryWords": ["usa", "us", "uk", "uae", "united states of america", "europe", "asia", "africa", "north america", "south america", "latin america"],
 		"cityRegions": ["JP-13", "CN-SH", "CN-BJ", "CN-TJ", "CN-CQ"],
 		"countryAliases": { "uk": "gb", "usa": "us", "united states": "us", "uae": "ae" },
 		"placesFile": "places-2.json",

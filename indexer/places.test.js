@@ -5,7 +5,7 @@ import { geocode, locate, placeNames } from './places.js';
 test('placeNames keeps the places and drops the work words', () => {
 	assert.deepEqual(placeNames('Berlin, Germany | Remote (EMEA)'), ['Berlin, Germany']);
 	assert.deepEqual(placeNames('Chattanooga, TN (Real Estate & Construction)'), ['Chattanooga, TN']);
-	assert.deepEqual(placeNames('US - Remote'), ['US']);
+	assert.deepEqual(placeNames('US - Remote'), []);
 	assert.deepEqual(placeNames('Hybrid'), []);
 	assert.deepEqual(placeNames('San Francisco, CA | New York City, NY'), ['San Francisco, CA', 'New York City, NY']);
 	assert.deepEqual(placeNames(undefined), []);
@@ -39,8 +39,8 @@ test('locate uses the looked up place otherwise', () => {
 
 test('locate falls back to the only office when the job names no place', () => {
 	const single = /** @type {any} */ ({ locations: [company.locations[0]] });
-	assert.deepEqual(locate('Remote', single, {}), [13.405, 52.52]);
-	assert.equal(locate('Remote', company, {}), undefined);
+	assert.deepEqual(locate('Hybrid', single, {}), [13.405, 52.52]);
+	assert.equal(locate('Hybrid', company, {}), undefined);
 });
 
 test('locate prefers the office found for the company in that place', () => {
@@ -54,4 +54,18 @@ test('placeNames drops words that name no place', () => {
 	assert.deepEqual(placeNames('Global'), []);
 	assert.deepEqual(placeNames('Remote - EMEA'), []);
 	assert.deepEqual(placeNames('Berlin (Hybrid), Germany'), ['Berlin, Germany']);
+});
+
+test('placeNames drops places that are only a country', () => {
+	assert.deepEqual(placeNames('Remote - Brazil'), []);
+	assert.deepEqual(placeNames('Remote (United States)'), []);
+	assert.deepEqual(placeNames('USA'), []);
+	assert.deepEqual(placeNames('Remote - Singapore'), ['Singapore']);
+	assert.deepEqual(placeNames('Berlin, Germany'), ['Berlin, Germany']);
+});
+
+test('locate puts no remote job on the only office', () => {
+	const one = /** @type {any} */ ({ locations: [{ name: 'Berlin', latitude: '52.52', longitude: '13.405' }] });
+	assert.equal(locate('Remote', one, {}), undefined);
+	assert.deepEqual(locate('', one, {}), [13.405, 52.52]);
 });

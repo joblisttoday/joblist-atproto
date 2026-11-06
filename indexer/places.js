@@ -5,6 +5,7 @@
  */
 import config from '../src/lib/data/config.json' with { type: 'json' };
 import { mapPoints } from '../src/lib/models/company.js';
+import { isCountry } from './countries.js';
 import { Refused, accept, inside, search, tooWide } from './nominatim.js';
 
 /**
@@ -32,8 +33,11 @@ export function placeNames(location) {
 				.replace(/ ,/g, ',')
 				.replace(/^[\s,]+|[\s,]+$/g, '')
 		)
-		.filter((part) => /\p{L}{2}/u.test(part));
+		.filter((part) => /\p{L}{2}/u.test(part) && !isCountry(part));
 }
+
+/** Whether a job location says it is remote. */
+const remoteWords = new RegExp(`\\b(${config.jobs.remoteWords.join('|')})\\b`, 'i');
 
 /** @param {string} name */
 export function placeKey(name) {
@@ -105,6 +109,7 @@ export function locate(location, company, cache, found = {}) {
 		const found = cache[placeKey(name)];
 		if (found) return found;
 	}
-	if (offices.length === 1 && !names.length) return [round(offices[0].lon), round(offices[0].lat)];
+	// Without a place, the only office: unless the job is remote, then it has no point.
+	if (offices.length === 1 && !names.length && !remoteWords.test(location || '')) return [round(offices[0].lon), round(offices[0].lat)];
 	return undefined;
 }
