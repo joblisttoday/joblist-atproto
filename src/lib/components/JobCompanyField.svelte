@@ -20,7 +20,7 @@
 
 <jl-job-company chosen={company ? true : undefined}>
 	<fieldset>
-		<legend>{t('post.company')}</legend>
+		<legend data-required>{t('post.company')}</legend>
 		{#if company}
 			<p>
 				<a href="/company/{company}">{chosen?.name || company}</a> <small>{company}</small>

@@ -61,6 +61,7 @@
 
 <jl-job-form editing={post ? true : undefined}>
 	<form onsubmit={submit} toolname={tool.toolname} tooldescription={tool.tooldescription}>
+		<p><small data-required>{t('form.required')}</small></p>
 		<JobCompanyField bind:company={form.company} {back} locked={Boolean(post)} />
 		{#if form.company}<JobPoster company={form.company} />{/if}
 

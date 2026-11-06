@@ -12,7 +12,7 @@
 
 <jl-job-apply-fields missing={missing || undefined}>
 	<fieldset aria-describedby="apply-help">
-		<legend>{t('post.apply')}</legend>
+		<legend data-required>{t('post.apply')}</legend>
 		<small id="apply-help">{t('post.apply.help')}</small>
 		<label for="apply-to">{t('post.applyTo')}</label>
 		<input

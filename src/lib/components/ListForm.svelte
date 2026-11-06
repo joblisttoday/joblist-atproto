@@ -86,6 +86,7 @@
 
 <jl-list-form>
 	<form onsubmit={submit} toolname={tool.toolname} tooldescription={tool.tooldescription}>
+		<p><small data-required>{t('form.required')}</small></p>
 		<label for="list-name">{t('form.list.name')}</label>
 		<input id="list-name" name="name" toolparamdescription={tool.params.name} bind:value={form.name} required maxlength="100" placeholder={t('form.list.name.placeholder')} />
 

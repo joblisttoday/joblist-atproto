@@ -66,6 +66,7 @@
 <jl-company-form editing={editing || undefined}>
 	<form onsubmit={submit} toolname={tool.toolname} tooldescription={tool.tooldescription}>
 		{#if editing}<p><small>{t('form.ownVersion')}</small></p>{/if}
+		<p><small data-required>{t('form.required')}</small></p>
 
 		<label for="url">{t('form.website')}</label>
 		<input

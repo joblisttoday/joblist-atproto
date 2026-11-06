@@ -204,6 +204,7 @@
 	"form.company.edit": "Edit company",
 	"form.website": "Website",
 	"form.website.help": "The website domain identifies the company.",
+	"form.required": "Fields marked with * are required.",
 	"form.name": "Name",
 	"form.description": "Description",
 	"form.tags": "Tags",
