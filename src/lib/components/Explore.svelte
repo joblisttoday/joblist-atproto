@@ -124,6 +124,11 @@
 		tick().then(() => panel && (panel.scrollTop = resultsScroll));
 	});
 
+	// Nothing found: the ways to find more, from the closest change to the widest.
+	const nextMinutes = $derived(config.travel.minutes.find((m) => m > (filters.within || 0)));
+	let busy = $state(false);
+	const empty = $derived(searching && !busy && jobs.length > 0 && results.length === 0);
+
 	function nextSheet() {
 		sheet = SHEET[(SHEET.indexOf(sheet) + 1) % SHEET.length];
 	}
@@ -204,12 +209,31 @@
 					bind:jobs
 					bind:results
 					bind:places
+					bind:busy
 					{since}
 					onselect={select}
 					selected={selected?.url}
 				>
 					{#snippet actions()}<SaveSearch {filters} />{/snippet}
 				</Jobs>
+			{/if}
+			{#if empty}
+				<menu aria-label={t('explore.widen')}>
+					{#if filters.near && filters.within && nextMinutes}
+						<li><button type="button" onclick={() => (filters.within = nextMinutes)}>{t(`near.within.${config.travel.mode}`, { minutes: nextMinutes })}</button></li>
+					{:else if filters.near && filters.within}
+						<li><button type="button" onclick={() => (filters.within = 0)}>{t('near.any')}</button></li>
+					{/if}
+					{#if filters.remote}
+						<li><button type="button" onclick={() => (filters.remote = '')}>{t('explore.notOnlyRemote')}</button></li>
+					{/if}
+					{#if filters.where}
+						<li><button type="button" onclick={() => (filters.where = '')}>{t('explore.clear', { text: filters.where })}</button></li>
+					{/if}
+					{#if filters.query}
+						<li><button type="button" onclick={() => (filters.query = '')}>{t('explore.clear', { text: filters.query })}</button></li>
+					{/if}
+				</menu>
 			{/if}
 		</jl-explore-results>
 	</jl-explore-panel>
@@ -296,6 +320,13 @@
 		border-radius: var(--radius-round);
 		font-size: var(--font-size-small);
 		margin: var(--space-xs) 0 0;
+	}
+	/* Ways to find more, as chips. */
+	jl-explore-results > menu button {
+		min-height: var(--chip-height);
+		padding: 0 var(--space-m);
+		border-radius: var(--radius-round);
+		font-size: var(--font-size-small);
 	}
 	jl-explore-results > p {
 		margin: var(--space-s) 0 0;

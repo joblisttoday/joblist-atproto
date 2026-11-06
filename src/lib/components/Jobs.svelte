@@ -17,7 +17,7 @@
 	 * filters: the search, when the page keeps it (in its address).
 	 * since: jobs published after it are marked new.
 	 * jobs: every job read, for the page.
-	 * results: the jobs matching the filters, for the page (a map of them).
+	 * results: the jobs matching the filters, for the page (a map of them). busy: still reading job boards.
 	 * actions: shown under the filters.
 	 * search: show the filters (false when the page has its own search).
 	 * onselect, selected: open a job in the page (the explorer), and which one is open.
@@ -28,6 +28,7 @@
 	 *   since?: string,
 	 *   jobs?: import('#lib/ats/job.js').Job[],
 	 *   results?: import('#lib/ats/job.js').Job[],
+	 *   busy?: boolean,
 	 *   actions?: import('svelte').Snippet,
 	 *   search?: boolean,
 	 *   onselect?: (job: import('#lib/ats/job.js').Job) => void,
@@ -42,6 +43,7 @@
 		since = '',
 		jobs: all = $bindable([]),
 		results = $bindable([]),
+		busy = $bindable(false),
 		actions,
 		search = true,
 		onselect,
@@ -74,6 +76,9 @@
 	const filtered = $derived(single ? postedFirst(matching) : matching);
 	$effect(() => {
 		results = filtered;
+	});
+	$effect(() => {
+		busy = loading;
 	});
 	const offers = $derived(sameOffers(jobs).length);
 	const groups = $derived(grouped ? byCompany(filtered) : []);
