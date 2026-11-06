@@ -103,8 +103,7 @@
 	}
 	afterNavigate(readAddress);
 
-	// What covers the map: the panel at the left on wide screens; on phones the sheet
-	// at the bottom and the search floating at the top.
+	// What covers the map: the panel at the left on wide screens, the sheet at the bottom on phones.
 	/** @type {HTMLElement} */
 	let panel;
 	let covered = $state({ top: 0, right: 0, bottom: 0, left: 0 });
@@ -113,16 +112,12 @@
 		const measure = () => {
 			const box = panel.getBoundingClientRect();
 			const parent = /** @type {HTMLElement} */ (panel.parentElement).getBoundingClientRect();
-			const search = panel.querySelector('jl-explore-search')?.getBoundingClientRect();
-			const top = search && search.height ? search.bottom - parent.top : 0;
 			covered = wide.matches
 				? { top: 0, right: 0, bottom: 0, left: box.right - parent.left }
-				: { top, right: 0, bottom: parent.bottom - box.top, left: 0 };
+				: { top: 0, right: 0, bottom: parent.bottom - box.top, left: 0 };
 		};
 		const observer = new ResizeObserver(measure);
 		observer.observe(panel);
-		const search = panel.querySelector('jl-explore-search');
-		if (search) observer.observe(search);
 		wide.addEventListener('change', measure);
 		return () => {
 			observer.disconnect();
@@ -225,7 +220,7 @@
 	/** @param {PointerEvent} event */
 	function slide(event) {
 		if (!drag) return;
-		const room = /** @type {HTMLElement} */ (panel.parentElement).clientHeight - covered.top;
+		const room = /** @type {HTMLElement} */ (panel.parentElement).clientHeight;
 		drag.height = Math.min(room, Math.max(0, drag.from - (event.clientY - drag.y)));
 		drag.moved ||= Math.abs(event.clientY - drag.y) > config.layout.dragThreshold;
 	}
@@ -245,7 +240,16 @@
 	onkeydown={(e) => e.key === 'Escape' && !(e.target instanceof HTMLInputElement) && (selected || picked) && back()}
 />
 
-<jl-explore style:--search-room="{covered.top}px" view={selected ? 'job' : view}>
+<jl-explore view={selected ? 'job' : view}>
+	<!-- The search, and how the jobs are shown, at the same place in every view. -->
+	{#if !selected}
+		<jl-explore-bar>
+			<ExploreSearch bind:filters {places}>
+				{#snippet tools()}<ViewSwitch bind:view />{/snippet}
+			</ExploreSearch>
+		</jl-explore-bar>
+	{/if}
+	<jl-explore-stage>
 	<jl-explore-map inert={!mapShown}>
 		<JobsMap
 			jobs={results}
@@ -289,9 +293,6 @@
 		{/if}
 		<!-- Kept while a job is open, so its search and its place in the list are still there after. -->
 		<jl-explore-results hidden={selected || pickedJobs ? true : undefined}>
-			<ExploreSearch bind:filters {places}>
-				{#snippet tools()}<ViewSwitch bind:view />{/snippet}
-			</ExploreSearch>
 			{#if !searching}
 				<p>
 					{t('explore.welcome', { companies: companies.length.toLocaleString() })}
@@ -346,15 +347,31 @@
 			{/if}
 		</jl-explore-results>
 	</jl-explore-panel>
+	</jl-explore-stage>
 </jl-explore>
 
 <style>
-	/* The explorer takes the whole screen above the navigation (phones) or below the header; only the panel scrolls. */
+	/* The explorer takes the whole screen above the navigation (phones) or below the header:
+	   the search bar at the top, the jobs under it; only the results scroll. */
 	jl-explore {
 		position: fixed;
 		inset: 0 0 calc(var(--nav-height) + env(safe-area-inset-bottom)) 0;
 		z-index: 1;
+		display: flex;
+		flex-direction: column;
 		background: var(--color-bg);
+	}
+	jl-explore-bar {
+		flex: none;
+		z-index: 2;
+		padding: calc(env(safe-area-inset-top) + var(--space-s)) var(--gutter) var(--space-s);
+		background: var(--color-bg);
+		border-bottom: var(--border);
+	}
+	jl-explore-stage {
+		position: relative;
+		flex: 1;
+		min-height: 0;
 	}
 	/* Its own layer, so the map's controls stay under the results. */
 	jl-explore-map {
@@ -363,9 +380,9 @@
 		z-index: 0;
 	}
 	/* Search the area moved to: a chip at the top of the free part of the map. */
-	jl-explore > button {
+	jl-explore-stage > button {
 		position: absolute;
-		top: calc(var(--search-room) + var(--space-s));
+		top: var(--space-s);
 		left: calc(var(--map-left) + (100% - var(--map-left)) / 2);
 		translate: -50% 0;
 		z-index: 1;
@@ -392,24 +409,11 @@
 		height: var(--sheet-peek);
 	}
 	jl-explore-panel[sheet='full'] {
-		height: calc(100% - var(--search-room));
+		height: 100%;
 	}
 	jl-explore-panel[dragging] {
 		height: var(--sheet-drag);
 		transition: none;
-	}
-	/* Phones: no header on the explorer, the search floats over the top of the map. */
-	@media not (min-width: 64rem) {
-		jl-explore[view='map'] jl-explore-results > :global(jl-explore-search) {
-			position: fixed;
-			top: calc(env(safe-area-inset-top) + var(--space-s));
-			inset-inline: var(--space-s);
-			z-index: 3;
-			padding: var(--space-s);
-			background: var(--color-bg);
-			border-radius: var(--radius-large);
-			box-shadow: var(--shadow);
-		}
 	}
 	/* The handle: drag or tap to show more or less. */
 	jl-explore-panel > button {
@@ -472,7 +476,7 @@
 		font-size: var(--font-size-small);
 	}
 
-	/* As a list, or reading a job: the page is the panel, the map stays hidden under it. */
+	/* As a list or a grid, or reading a job: the results take the whole stage, the map stays hidden under it. */
 	jl-explore:not([view='map']) jl-explore-map {
 		visibility: hidden;
 	}
@@ -483,54 +487,49 @@
 		height: auto;
 		border-radius: 0;
 		box-shadow: none;
-		padding-top: var(--space-s);
 	}
 	jl-explore:not([view='map']) jl-explore-panel > button {
 		display: none;
 	}
-	/* List and grid: the search stays at the top while scrolling. */
-	jl-explore:is([view='list'], [view='grid']) jl-explore-results > :global(jl-explore-search) {
-		display: block;
-		position: sticky;
-		top: calc(-1 * var(--space-s));
-		z-index: 2;
-		padding-block: var(--space-s);
-		background: var(--color-bg);
-	}
 
-	/* Wide screens: the results in a panel at the left, over the map. */
+	/* Wide screens: the results in a panel at the left of the map; or the whole width. */
 	@media (min-width: 64rem) {
 		jl-explore {
 			top: var(--header-height);
 			bottom: 0;
+		}
+		jl-explore-bar {
+			padding-top: var(--space-s);
 		}
 		jl-explore-panel,
 		jl-explore-panel[sheet] {
 			inset: var(--space-m) auto var(--space-m) var(--space-m);
 			width: var(--explore-list-width);
 			height: auto;
-			padding-top: var(--space-m);
+			padding-top: var(--space-xs);
 			border-radius: var(--radius-large);
 		}
 		jl-explore-panel > button {
 			display: none;
 		}
-		jl-explore:is([view='list'], [view='grid']) jl-explore-panel {
-			padding-inline: var(--gutter);
+		/* A list: one job a row, its chips at the end. */
+		jl-explore[view='list'] :global(jl-jobs > ul jl-job > button) {
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) auto;
+			column-gap: var(--column-gap);
+			align-items: center;
 		}
-		/* A list: one column to read, in the middle. */
-		jl-explore[view='list'] jl-explore-results {
-			max-width: var(--search-width-wide);
-			margin-inline: auto;
+		jl-explore[view='list'] :global(jl-jobs > ul jl-job > button > jl-chips) {
+			grid-column: 2;
+			grid-row: 1 / span 2;
+			justify-content: flex-end;
+			margin-top: 0;
 		}
-		/* A grid: cards across the page's width. */
+		/* A grid: cards across the width. */
 		jl-explore[view='grid'] :global(jl-jobs > ul) {
 			display: grid;
 			grid-template-columns: repeat(auto-fill, minmax(var(--card-min), 1fr));
 			column-gap: var(--column-gap);
-		}
-		jl-explore[view='grid'] jl-explore-results > :global(jl-explore-search) {
-			max-width: var(--search-width-wide);
 		}
 	}
 </style>
