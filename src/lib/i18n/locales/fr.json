@@ -1,4 +1,7 @@
 {
+	"jobs.gone": "La page d'offres de cette entreprise semble avoir changé ou fermé.",
+	"jobs.gone.website": "Leur site",
+	"jobs.gone.fix": "Vous savez où elle publie ses offres ? Mettez-la à jour",
 	"nav.saved": "Gardées",
 	"saved.title": "Recherches gardées",
 	"saved.intro": "Vos recherches, avec les offres publiées depuis votre dernière visite. Gardées dans ce navigateur seulement, jamais publiées.",

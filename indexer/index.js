@@ -47,6 +47,14 @@ for (const job of jobs) {
 console.log(`places: ${looked} looked up, ${Object.keys(places).length} known, ${jobs.filter((j) => j.g).length} jobs located`);
 console.log(`offices: ${searched} looked up, ${Object.values(offices).filter(Boolean).length} found`);
 
+// Boards the crawler found closed (their page gone): the app says so instead of "no open jobs".
+const crawlHealth = join(out, 'crawl', 'health.json');
+const gone = existsSync(crawlHealth)
+	? Object.entries(JSON.parse(readFileSync(crawlHealth, 'utf8')).companies || {})
+			.filter(([, c]) => /** @type {any} */ (c).board === 'dead')
+			.map(([key]) => key)
+	: [];
+
 const files = {
 	// Same shape as the app's local cache, so the app can start from it.
 	'records.json': {
@@ -58,7 +66,8 @@ const files = {
 		profiles: Object.fromEntries(profiles)
 	},
 	// `checked`: companies whose board was read, so the app knows an empty result is real.
-	'jobs.json': { generatedAt, checked: Object.keys(board.health), jobs },
+	// gone: companies whose job board closed, as the last crawl found.
+	'jobs.json': { generatedAt, checked: Object.keys(board.health), gone, jobs },
 	// duplicates: [kept, other] companies that share a job board, to merge.
 	'health.json': { generatedAt, companies: board.health, duplicates: board.duplicates },
 	[config.geocode.placesFile]: places,

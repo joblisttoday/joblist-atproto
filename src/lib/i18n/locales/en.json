@@ -1,4 +1,7 @@
 {
+	"jobs.gone": "This company's job board seems to have moved or closed.",
+	"jobs.gone.website": "Their website",
+	"jobs.gone.fix": "Know where they post jobs now? Update it",
 	"nav.saved": "Saved",
 	"saved.title": "Saved searches",
 	"saved.intro": "Your searches, with the jobs published since you last looked. Kept in this browser only, never published.",

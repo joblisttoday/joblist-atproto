@@ -57,6 +57,8 @@
 	/** @type {import('#lib/ats/job.js').Job[]} */
 	let boardJobs = $state.raw([]);
 	let answered = $state(0);
+	/** Companies whose job board closed. @type {Set<string>} */
+	let gone = $state.raw(new Set());
 	let grouped = $state(false);
 	let shown = $state(PAGE);
 
@@ -113,6 +115,7 @@
 			if (cancelled) return;
 			const live = snapshot ? list.filter((c) => !snapshot.checked.has(c.key)) : list;
 			if (snapshot) {
+				gone = snapshot.gone;
 				add(list.flatMap((c) => snapshot.jobs.get(c.key) || []));
 				answered = list.length - live.length;
 			}
@@ -178,7 +181,16 @@
 	{/if}
 
 	{#if !loading && !filtered.length}
-		<p>{jobs.length ? t('search.none') : t('jobs.none')}</p>
+		{#if single && !jobs.length && gone.has(companies[0].key)}
+			<!-- Its board closed: say so, and how to find their jobs or fix the link. -->
+			<p>
+				{t('jobs.gone')}
+				{#if companies[0].url}<a href={companies[0].url} target="_blank" rel="noopener">{t('jobs.gone.website')}</a> ·{/if}
+				<a href="/add?key={encodeURIComponent(companies[0].key)}">{t('jobs.gone.fix')}</a>
+			</p>
+		{:else}
+			<p>{jobs.length ? t('search.none') : t('jobs.none')}</p>
+		{/if}
 	{/if}
 
 	{#if withoutApi.length}

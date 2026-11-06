@@ -29,7 +29,8 @@ export function getSnapshotRecords() {
 }
 
 /**
- * @typedef {{jobs: Map<string, import('#lib/ats/job.js').Job[]>, checked: Set<string>}} SnapshotJobs
+ * @typedef {{jobs: Map<string, import('#lib/ats/job.js').Job[]>, checked: Set<string>, gone: Set<string>}} SnapshotJobs
+ *   gone: companies whose job board closed (found by the crawler).
  * @type {Promise<SnapshotJobs | null> | null}
  */
 let jobsPromise = null;
@@ -49,7 +50,7 @@ export function getSnapshotJobs() {
 			list.push({ title: j.t, url, company: j.c, location: j.l, department: j.d, published: j.p, id: j.i, remote: j.r, point: j.g });
 			jobs.set(j.c, list);
 		}
-		return { jobs, checked: new Set(data.checked || []) };
+		return { jobs, checked: new Set(data.checked || []), gone: new Set(data.gone || []) };
 	});
 	return jobsPromise;
 }
