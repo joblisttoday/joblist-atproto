@@ -111,7 +111,7 @@ Configuration lives in data files, not code:
 Cloudflare Workers Builds deploys `main` on every push (connected to this
 GitHub repository in the dashboard, no token):
 
-- Build command: `npm run build:site` (snapshot, app, prerendered pages)
+- Build command: `npm run build:site` (downloads the published snapshot, builds the app, prerenders pages; `npm run index` builds a snapshot locally)
 - Deploy command: `npx wrangler deploy`
 
 By hand:
