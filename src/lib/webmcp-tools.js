@@ -1,6 +1,6 @@
 import webmcp from '#lib/data/webmcp.json' with { type: 'json' };
 import { boardUrl, searchText } from '#lib/models/company.js';
-import { filterJobs, workplace } from '#lib/models/job.js';
+import { filterJobs, newestFirst, workplace } from '#lib/models/job.js';
 
 /**
  * Answers of the read-only WebMCP tools, from data already in the browser.
@@ -54,7 +54,9 @@ export function searchCompanies(companies, { query = '' }, origin) {
  */
 export function searchJobs(jobs, companies, { query = '', place = '', remote = false, anywhere = false }) {
 	const names = new Map([...companies.values()].map((c) => [c.key, c.name]));
-	const found = filterJobs(jobs, { query, where: place, remote: anywhere ? 'anywhere' : remote ? 'remote' : '' }, names);
+	// A copy, newest first (filtering keeps the order it is given, and may give the same array).
+	const found = [...filterJobs(jobs, { query, where: place, remote: anywhere ? 'anywhere' : remote ? 'remote' : '' }, names)];
+	newestFirst(found);
 	return {
 		total: found.length,
 		jobs: found.slice(0, limit).map((j) => ({

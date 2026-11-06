@@ -81,12 +81,38 @@ function searchable(location, remote) {
  * @param {boolean} [remote]
  */
 export function inPlace(location, where, remote = false) {
-	const place = canonical(where);
-	const text = searchable(location || '', remote);
-	const has = (/** @type {string} */ value) => value.trim().split(' ').filter(Boolean).every((w) => text.includes(` ${w}`));
-	if (!place.trim()) return true;
-	return has(place) || (remote && countryOf.has(place) ? has(/** @type {string} */ (countryOf.get(place))) : false);
+	return placeMatcher(where)(location, remote);
 }
+
+/**
+ * inPlace for one typed place, made once for a whole search: the place is read
+ * once, and each location (there are far fewer than jobs) is matched once.
+ * @param {string} where
+ * @returns {(location: string | undefined, remote?: boolean) => boolean}
+ */
+export function placeMatcher(where) {
+	const place = canonical(where);
+	if (!place.trim()) return () => true;
+	const words = place.trim().split(' ').filter(Boolean);
+	const country = countryOf.get(place);
+	const countryWords = country ? country.trim().split(' ').filter(Boolean) : null;
+	/** @type {Map<string, boolean>} */
+	const seen = new Map();
+	return (location, remote = false) => {
+		const key = `${remote ? 'r' : 'o'}${location || ''}`;
+		let found = seen.get(key);
+		if (found === undefined) {
+			const text = searchable(location || '', remote);
+			const has = (/** @type {string[]} */ list) => list.every((w) => text.includes(` ${w}`));
+			found = has(words) || Boolean(remote && countryWords && has(countryWords));
+			seen.set(key, found);
+		}
+		return found;
+	};
+}
+
+/** @type {Map<string, string>} */
+const regions = new Map();
 
 /**
  * Where a remote job can be done from, as its location says: "Remote - USA" → "united states".
@@ -95,9 +121,14 @@ export function inPlace(location, where, remote = false) {
  * @param {string[]} remoteWords
  */
 export function remoteRegion(location, remoteWords) {
-	let text = canonical(location || '');
+	const key = location || '';
+	const known = regions.get(key);
+	if (known !== undefined) return known;
+	let text = canonical(key);
 	for (const word of [...remoteWords.map(clean), ...anywhere, ...noise]) {
 		while (text.includes(word)) text = text.replace(word, ' ');
 	}
-	return text.trim();
+	text = text.trim();
+	regions.set(key, text);
+	return text;
 }

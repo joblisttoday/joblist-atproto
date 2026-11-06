@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { byCompany, commonPlaces, filterJobs, isRemote, offerPlaces, remoteLimit, sameOffers, tidyPlace, time, workplace } from './job.js';
+import { byCompany, commonPlaces, filterJobs, isRemote, newestFirst, offerPlaces, remoteLimit, sameOffers, tidyPlace, time, workplace } from './job.js';
 
 /** @param {Partial<import('#lib/ats/job.js').Job>} job */
 const job = (job) => ({ title: 'Engineer', url: 'https://x', company: 'acme.org', ...job });
@@ -49,8 +49,15 @@ describe('filterJobs', () => {
 		job({ title: 'Engineer', location: 'Paris', published: '2024-02-01', url: 'b' }),
 		job({ title: 'Engineer', location: 'Remote', url: 'c' })
 	];
-	it('sorts newest first, undated last', () => {
-		expect(filterJobs(jobs, none, names).map((j) => j.location)).toEqual(['Paris', 'Berlin, Germany', 'Remote']);
+	it('sorts newest first, undated last (once, before filtering)', () => {
+		const sorted = [...jobs];
+		newestFirst(sorted);
+		expect(sorted.map((j) => j.location)).toEqual(['Paris', 'Berlin, Germany', 'Remote']);
+	});
+	it('keeps the order given, and gives the same jobs when nothing is filtered', () => {
+		expect(filterJobs(jobs, none, names)).toBe(jobs);
+		const reversed = [...jobs].reverse();
+		expect(filterJobs(reversed, { ...none, query: ' ' }, names)).toBe(reversed);
 	});
 	it('near someone: newest first among jobs about as close', () => {
 		const near = /** @type {[number, number]} */ ([13.405, 52.52]);

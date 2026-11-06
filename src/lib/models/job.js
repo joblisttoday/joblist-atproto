@@ -1,6 +1,6 @@
 import config from '#lib/data/config.json' with { type: 'json' };
 import { distanceKm, inArea, travelMinutes } from './distance.js';
-import { inPlace, remoteRegion } from './place.js';
+import { placeMatcher, remoteRegion } from './place.js';
 
 /**
  * @typedef {import('#lib/ats/job.js').Job} Job
@@ -47,38 +47,30 @@ export function remoteLimit(job) {
 }
 
 /**
- * Whether a job is in the place someone typed. A remote job matches when its
- * limit is that place, or when it names no limit.
- * @param {Job} job
- * @param {string} where
- * @param {RemoteFilter} remote
- */
-function matchesPlace(job, where, remote) {
-	if (!where.trim()) return true;
-	if (remote && !remoteLimit(job)) return true;
-	return inPlace(job.location, where, isRemote(job));
-}
-
-/**
- * Jobs matching the filters, newest first. Near someone: only the jobs with a known place,
- * each with its distance, by travel time in bands (a few minutes more do not matter), newest first in each.
+ * Jobs matching the filters, in the order given (see newestFirst). A remote job is in
+ * the place typed when its limit is that place, or when it names no limit.
+ * Near someone: only the jobs with a known place, each with its distance, by travel
+ * time in bands (a few minutes more do not matter), newest first in each.
+ * No filter: the same jobs, not a copy.
  * @param {Job[]} jobs
  * @param {JobFilters} filters
  * @param {Map<string, string>} names company names by key
  */
 export function filterJobs(jobs, { query, where, remote, near, within = 0, area }, names) {
 	const what = words(query);
-	const matching = jobs
-		.filter((job) => {
-			if (area && !(job.point && inArea(job.point, area))) return false;
-			if (remote && !isRemote(job)) return false;
-			if (remote === 'anywhere' && remoteLimit(job)) return false;
-			if (!matchesPlace(job, where, remote)) return false;
-			if (!what.length) return true;
-			const text = searchText(job, names);
-			return what.every((w) => text.includes(w));
-		});
-	newestFirst(matching);
+	const place = where.trim() ? placeMatcher(where) : null;
+	const matching =
+		!what.length && !place && !remote && !area
+			? jobs
+			: jobs.filter((job) => {
+					if (area && !(job.point && inArea(job.point, area))) return false;
+					if (remote && !isRemote(job)) return false;
+					if (remote === 'anywhere' && remoteLimit(job)) return false;
+					if (place && !(remote && !remoteLimit(job)) && !place(job.location, isRemote(job))) return false;
+					if (!what.length) return true;
+					const text = searchText(job, names);
+					return what.every((w) => text.includes(w));
+				});
 	if (!near) return matching;
 	return matching
 		.filter((job) => job.point)
@@ -219,10 +211,10 @@ function searchText(job, names) {
 
 /**
  * Sort jobs newest first, in place, reading each date once
- * (a sort compares each job many times).
+ * (a sort compares each job many times). Done once on all jobs: filtering keeps the order.
  * @param {Job[]} jobs
  */
-function newestFirst(jobs) {
+export function newestFirst(jobs) {
 	const times = new Map(jobs.map((job) => [job, time(job.published)]));
 	jobs.sort((a, b) => /** @type {number} */ (times.get(b)) - /** @type {number} */ (times.get(a)));
 }

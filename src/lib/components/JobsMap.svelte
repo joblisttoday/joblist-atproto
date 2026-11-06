@@ -1,5 +1,5 @@
 <script>
-	import { onMount } from 'svelte';
+	import { onDestroy } from 'svelte';
 	import { mountJobsMap } from '#lib/map/jobs-map.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
@@ -8,35 +8,49 @@
 	 * `fit` frames the jobs (after a search); `covered` is the part of the map under the page's panels;
 	 * `selected` is the job open in the page; `onpick` gets the jobs at a place someone tapped;
 	 * `still` leaves the map where it is; `onmoved` gets the area shown after someone moved the map.
-	 * @type {{jobs: import('#lib/ats/job.js').Job[], names: Map<string, string>, here?: [number, number] | null, fit?: boolean, covered?: import('#lib/map/jobs-map.js').Insets, selected?: import('#lib/ats/job.js').Job | null, onpick?: (urls: string[]) => void, still?: boolean, onmoved?: (area: import('#lib/models/job.js').Area | null) => void}}
+	 * `active`: the map is shown. MapLibre loads the first time it is, and a hidden map is not
+	 * given the jobs (tens of thousands of points, costly to send to it on every search).
+	 * @type {{jobs: import('#lib/ats/job.js').Job[], names: Map<string, string>, here?: [number, number] | null, fit?: boolean, covered?: import('#lib/map/jobs-map.js').Insets, selected?: import('#lib/ats/job.js').Job | null, onpick?: (urls: string[]) => void, still?: boolean, onmoved?: (area: import('#lib/models/job.js').Area | null) => void, active?: boolean}}
 	 */
-	let { jobs, names, here = null, fit = false, covered = { top: 0, right: 0, bottom: 0, left: 0 }, selected = null, onpick, still = false, onmoved } = $props();
+	let { jobs, names, here = null, fit = false, covered = { top: 0, right: 0, bottom: 0, left: 0 }, selected = null, onpick, still = false, onmoved, active = true } = $props();
 
 	/** @type {HTMLElement} */
 	let figure;
 	/** @type {import('#lib/map/jobs-map.js').JobsMap | undefined} */
 	let map = $state();
 
-	const located = $derived(
-		jobs
+	/** @param {import('#lib/ats/job.js').Job[]} list */
+	const located = (list) =>
+		list
 			.filter((job) => job.point)
 			.map((job) => ({
 				point: /** @type {[number, number]} */ (job.point),
 				title: job.title,
 				url: job.url,
 				company: names.get(job.company) || job.company
-			}))
-	);
+			}));
+	// What the map was last given: shown again unchanged, it keeps where someone moved it.
+	/** @type {{jobs: unknown, names: unknown, fit: boolean, still: boolean} | null} */
+	let given = null;
 
-	onMount(() => {
+	// Made the first time the map is shown, kept after.
+	$effect(() => {
+		if (!active || map) return;
 		map = mountJobsMap(figure, { label: (count) => t('map.jobs', { count }), onpick: onpick && ((urls) => onpick(urls)), onmoved: onmoved && ((area) => onmoved(area)) });
-		return () => map?.destroy();
 	});
+	onDestroy(() => map?.destroy());
 
 	$effect(() => map?.setCovered(covered));
-	$effect(() => map?.setJobs(located, fit, still));
+	$effect(() => {
+		if (!active || !map) return;
+		if (given && given.jobs === jobs && given.names === names && given.fit === fit && given.still === still) return;
+		given = { jobs, names, fit, still };
+		map.setJobs(located(jobs), fit, still);
+	});
 	$effect(() => map?.setHere(here));
-	$effect(() => map?.setSelected(selected?.point));
+	$effect(() => {
+		if (active) map?.setSelected(selected?.point);
+	});
 </script>
 
 <jl-jobs-map>

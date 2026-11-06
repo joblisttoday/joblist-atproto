@@ -7,7 +7,7 @@
 	import { mapLimit } from '#lib/atproto/xrpc.js';
 	import { getSnapshotFirst, getSnapshotJobs } from '#lib/network/snapshot.js';
 	import { boardUrl, hasJobsApi } from '#lib/models/company.js';
-	import { byCompany, commonPlaces, filterJobs, offerCount, sameOffers, time } from '#lib/models/job.js';
+	import { byCompany, commonPlaces, filterJobs, newestFirst, offerCount, sameOffers, time } from '#lib/models/job.js';
 	import { mergeJobs, postedFirst, withPoints } from '#lib/models/job-post.js';
 	import { data } from '#lib/network/network.svelte.js';
 	import { withoutHidden } from '#lib/models/job-mark.js';
@@ -79,7 +79,12 @@
 	let early = $state.raw([]);
 	// Read once, when the list is made: it is how the page starts.
 	if (untrack(() => quick)) getSnapshotFirst().then((first) => (early = first.jobs));
-	const jobs = $derived(mergeJobs(posted, boardJobs.length ? boardJobs : early));
+	// Newest first, sorted once here: every search keeps this order.
+	const jobs = $derived.by(() => {
+		const merged = mergeJobs(posted, boardJobs.length ? boardJobs : early);
+		newestFirst(merged);
+		return merged;
+	});
 	$effect(() => {
 		all = jobs;
 	});

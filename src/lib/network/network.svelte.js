@@ -10,7 +10,7 @@ import { isLive, toJob, toPost } from '#lib/models/job-post.js';
 import { allowed } from '#lib/models/moderation.js';
 import { Companies } from '#lib/models/companies.js';
 import { readCache, writeCache } from './cache.js';
-import { getSnapshotJobs, getSnapshotRecords } from './snapshot.js';
+import { fresh, getSnapshotJobs, getSnapshotRecords } from './snapshot.js';
 
 /**
  * @typedef {import('#lib/atproto/records.js').RepoRecord} RepoRecord
@@ -138,8 +138,11 @@ export function listsWith(key) {
 let started = false;
 
 /**
- * Show what is known at once (local cache, else the AppView snapshot),
- * then refresh from the network, which stays the source of truth.
+ * Show what is known at once (local cache), then the snapshot when it is newer.
+ * While the snapshot is fresh it is the network as everyone sees it, and only the
+ * signed-in person's own records are read live (what they just wrote). Without a
+ * fresh snapshot, every repository is read, as before there was one: fine for a
+ * few accounts, too many requests for every visitor once there are thousands.
  */
 export async function startNetwork() {
 	if (started) return;
@@ -147,21 +150,48 @@ export async function startNetwork() {
 	// The jobs download alongside the records, not after them.
 	getSnapshotJobs();
 	const cached = readCache();
-	if (cached) {
-		Object.assign(network, cached);
-	} else {
-		const snapshot = await getSnapshotRecords();
-		if (snapshot && !network.loadedAt) {
-			network.companyRecords = snapshot.companyRecords;
-			network.listRecords = snapshot.listRecords;
-			network.suggestionRecords = snapshot.suggestionRecords || [];
-			network.jobRecords = snapshot.jobRecords || [];
-			network.profiles = snapshot.profiles;
-			network.loadedAt = snapshot.loadedAt;
-		}
+	if (cached) Object.assign(network, cached);
+	const snapshot = await getSnapshotRecords();
+	if (snapshot && (!network.loadedAt || snapshot.loadedAt > network.loadedAt)) {
+		network.companyRecords = snapshot.companyRecords;
+		network.listRecords = snapshot.listRecords;
+		network.suggestionRecords = snapshot.suggestionRecords || [];
+		network.jobRecords = snapshot.jobRecords || [];
+		network.profiles = snapshot.profiles;
+		network.loadedAt = snapshot.loadedAt;
+	}
+	if (snapshot && fresh(snapshot.loadedAt)) {
+		// Signed in (now or later): their own records, as they are now.
+		$effect.root(() => {
+			$effect(() => {
+				if (session.did) refreshOwn(session.did);
+			});
+		});
+		return;
 	}
 	// Reading the whole network is slow on a phone: once the jobs are shown, not while.
 	getSnapshotJobs().finally(() => setTimeout(refresh, config.snapshot.refreshDelayMs));
+}
+
+/**
+ * One account's records, read from its own server, in place of those known.
+ * @param {string} did
+ */
+async function refreshOwn(did) {
+	const types = /** @type {RecordType[]} */ (Object.keys(TYPES));
+	const read = await Promise.all(types.map((type) => listRecords(did, config.collections[type]).catch(() => null)));
+	types.forEach((type, i) => {
+		const own = read[i];
+		if (!own) return;
+		const key = TYPES[type];
+		const known = network[key].filter((r) => r.did === did);
+		// Unchanged: left as it is, so nothing shown is worked out again.
+		const versions = (/** @type {RepoRecord[]} */ list) => list.map((r) => `${r.uri} ${r.cid}`).sort().join('\n');
+		if (versions(known) === versions(own)) return;
+		network[key] = [...network[key].filter((r) => r.did !== did), ...own];
+	});
+	if (session.handle && !network.profiles[did]) network.profiles[did] = { did, handle: session.handle };
+	writeCache(network);
 }
 
 /** Read every record the app uses from every repository that has some. */

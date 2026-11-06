@@ -258,6 +258,7 @@
 			fit={searching}
 			still={!!filters.area}
 			covered={mapShown ? covered : uncovered}
+				active={mapShown}
 			{selected}
 			onpick={pick}
 			onmoved={(area) => (moved = area)}

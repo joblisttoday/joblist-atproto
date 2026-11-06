@@ -22,15 +22,47 @@ export const session = $state({
 	error: null
 });
 
+/**
+ * Whether this browser has a session to restore: the sign-in code (large) loads only then,
+ * or on the way back from signing in. Kept in this browser: the account signed in, or "none".
+ */
+const KEY = 'joblist.session.v1';
+/** @param {string} value */
+function remember(value) {
+	try {
+		localStorage.setItem(KEY, value);
+	} catch {
+		// storage blocked: the sign-in code loads on each visit
+	}
+}
+async function mayHaveSession() {
+	// Back from the sign-in page (its answer is in the address fragment).
+	if (/[#&]state=/.test(location.hash) && /[#&](code|error)=/.test(location.hash)) return true;
+	let known = null;
+	try {
+		known = localStorage.getItem(KEY);
+	} catch {
+		return true;
+	}
+	if (known) return known !== 'none';
+	// Not known yet (a first visit, or signed in before this was kept): ask the sign-in store, once.
+	const databases = (await indexedDB.databases?.().catch(() => null)) ?? null;
+	if (!databases) return true;
+	const stored = databases.some((db) => db.name === '@atproto-oauth-client');
+	if (!stored) remember('none');
+	return stored;
+}
+
 /** Restore the last session, or finish a sign-in redirect. Call once. */
 export async function initSession() {
 	try {
+		if (!(await mayHaveSession())) return;
 		client = await (await auth()).loadClient(clear);
 		const result = await client.init();
 		if (result) {
 			await use(result.session);
 			if (result.state) await goto(result.state, { replace: true });
-		}
+		} else remember('none');
 	} catch (err) {
 		session.error = err instanceof Error ? err.message : String(err);
 	} finally {
@@ -65,6 +97,7 @@ export async function signOut() {
 /** @param {import('@atproto/oauth-client-browser').OAuthSession} oauthSession */
 async function use(oauthSession) {
 	session.did = oauthSession.sub;
+	remember(oauthSession.sub);
 	const { Agent } = await import('@atproto/api');
 	session.agent = new Agent(oauthSession);
 	const profiles = await getProfiles([oauthSession.sub]);
@@ -73,6 +106,7 @@ async function use(oauthSession) {
 }
 
 function clear() {
+	remember('none');
 	session.did = null;
 	session.handle = null;
 	session.avatar = null;

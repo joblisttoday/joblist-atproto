@@ -17,8 +17,11 @@ async function getFile(name) {
 	}
 }
 
-/** @param {string | undefined} generatedAt */
-function fresh(generatedAt) {
+/**
+ * Whether a snapshot is recent enough to show as the network.
+ * @param {string | null | undefined} generatedAt
+ */
+export function fresh(generatedAt) {
 	const age = Date.now() - new Date(generatedAt || 0).getTime();
 	return age < config.snapshot.maxAgeHours * 3600 * 1000;
 }

@@ -103,7 +103,8 @@ export function newCount(search, jobs, names) {
  */
 export function newJobs(search, jobs, names) {
 	const since = time(search.seen);
-	return sameOffers(filterJobs(jobs, search, names)).filter((j) => time(j.published) > since);
+	// The new jobs first (a handful), then the search on them: not a search of every job.
+	return sameOffers(filterJobs(jobs.filter((j) => time(j.published) > since), search, names));
 }
 
 /**
