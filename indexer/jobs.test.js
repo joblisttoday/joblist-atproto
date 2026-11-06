@@ -57,3 +57,13 @@ test('toMinute: dates to the minute, in UTC', async () => {
 	assert.equal(toMinute(undefined), undefined);
 	assert.equal(toMinute('not a date'), 'not a date');
 });
+
+test('firstJobs: the newest offers, one per company and title, no posted jobs', async () => {
+	const { firstJobs } = await import('./jobs.js');
+	const job = (/** @type {any} */ o) => ({ t: 'Engineer', u: 'u', c: 'a', ...o });
+	const first = firstJobs(
+		[job({ p: '2026-11-01T10:00Z' }), job({ p: '2026-11-03T10:00Z' }), job({ t: 'Designer', p: '2026-11-02T10:00Z' }), job({ t: 'Posted', p: '2026-11-04T10:00Z', s: 'at://x' }), job({ t: 'Undated' })],
+		5
+	);
+	assert.deepEqual(first.map((j) => [j.t, j.p]), [['Engineer', '2026-11-03T10:00Z'], ['Designer', '2026-11-02T10:00Z']]);
+});

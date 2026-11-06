@@ -14,6 +14,7 @@
 	import { markSeen, searches } from '#lib/network/saved-searches.svelte.js';
 	import { data } from '#lib/network/network.svelte.js';
 	import { session } from '#lib/auth/session.svelte.js';
+	import { getSnapshotFirst } from '#lib/network/snapshot.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
@@ -24,6 +25,10 @@
 	let { path } = $props();
 
 	const companies = $derived([...data.companies.values()]);
+	// The newest offers, shown at once: reading every company and job takes a phone a few seconds.
+	/** @type {{jobs: import('#lib/ats/job.js').Job[], names: Map<string, string>} | null} */
+	let first = $state.raw(null);
+	getSnapshotFirst().then((loaded) => (first = loaded));
 	const names = $derived(new Map(companies.map((c) => [c.key, c.name])));
 	// The search lives in the page address, so any search is a link to keep or share.
 	// Read from the location: page.url misses the searches replaced in it (shallow routing).
@@ -281,6 +286,16 @@
 					<a href="/jobs/new">{t('explore.publish')}</a>
 				</p>
 			{/if}
+			{#if !companies.length && first?.jobs.length && !searching}
+				<jl-explore-first aria-busy="true">
+					<p><small>{t('explore.newest')}</small></p>
+					<ul>
+						{#each first.jobs as job (job.url)}
+							<li><JobItem {job} company={first.names.get(job.company)} onselect={() => select(job)} /></li>
+						{/each}
+					</ul>
+				</jl-explore-first>
+			{/if}
 			{#if companies.length}
 				<Jobs
 					{companies}
@@ -294,6 +309,7 @@
 					{since}
 					onselect={select}
 					selected={selected?.url}
+					quick
 				>
 					{#snippet actions()}<SaveSearch {filters} />{/snippet}
 				</Jobs>
@@ -407,6 +423,22 @@
 	}
 	jl-explore-results {
 		display: block;
+	}
+	jl-explore-first {
+		display: block;
+	}
+	/* Like the list that replaces it: no jump when it does. */
+	jl-explore-first > p {
+		display: flex;
+		align-items: center;
+		min-height: var(--chip-height);
+		margin: var(--space-s) 0 0;
+		color: var(--color-muted);
+	}
+	jl-explore-first > ul {
+		margin: var(--space-s) 0;
+		padding: 0;
+		list-style: none;
 	}
 	jl-explore-place > button {
 		min-height: var(--chip-height);

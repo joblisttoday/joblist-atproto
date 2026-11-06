@@ -5,7 +5,7 @@
 	import JobItem from './JobItem.svelte';
 	import { getJobs } from '#lib/ats/index.js';
 	import { mapLimit } from '#lib/atproto/xrpc.js';
-	import { getSnapshotJobs } from '#lib/network/snapshot.js';
+	import { getSnapshotFirst, getSnapshotJobs } from '#lib/network/snapshot.js';
 	import { boardUrl, hasJobsApi } from '#lib/models/company.js';
 	import { byCompany, commonPlaces, filterJobs, offerCount, sameOffers, time } from '#lib/models/job.js';
 	import { mergeJobs, postedFirst } from '#lib/models/job-post.js';
@@ -34,7 +34,8 @@
 	 *   search?: boolean,
 	 *   onselect?: (job: import('#lib/ats/job.js').Job) => void,
 	 *   selected?: string,
-	 *   places?: string[]
+	 *   places?: string[],
+	 *   quick?: boolean
 	 * }}
 	 */
 	let {
@@ -49,7 +50,8 @@
 		search = true,
 		onselect,
 		selected = '',
-		places: suggested = $bindable([])
+		places: suggested = $bindable([]),
+		quick = false
 	} = $props();
 	const PAGE = config.jobs.pageSize;
 
@@ -68,7 +70,12 @@
 	const names = $derived(new Map(companies.map((c) => [c.key, c.name])));
 	// Offers posted on joblist, for every company here (with a job board or not).
 	const posted = $derived(companies.flatMap((c) => data.postedJobs.get(c.key) || []));
-	const jobs = $derived(mergeJobs(posted, boardJobs));
+	// quick: the newest offers shown at once, until every job is read (the explorer, with all companies).
+	/** @type {import('#lib/ats/job.js').Job[]} */
+	let early = $state.raw([]);
+	// Read once, when the list is made: it is how the page starts.
+	if (untrack(() => quick)) getSnapshotFirst().then((first) => (early = first.jobs));
+	const jobs = $derived(mergeJobs(posted, boardJobs.length ? boardJobs : early));
 	$effect(() => {
 		all = jobs;
 	});

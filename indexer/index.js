@@ -13,7 +13,7 @@ import { mapPoints, toCompany } from '../src/lib/models/company.js';
 import { Companies } from '../src/lib/models/companies.js';
 import { crawlRecords } from './crawl.js';
 import config from '../src/lib/data/config.json' with { type: 'json' };
-import { fetchBoardJobs, recordJobs } from './jobs.js';
+import { fetchBoardJobs, firstJobs, recordJobs } from './jobs.js';
 import { findOffices, officeKey } from './offices.js';
 import { geocode, locate, placeNames } from './places.js';
 import { suggest } from './suggest.js';
@@ -69,6 +69,13 @@ const files = {
 	// `checked`: companies whose board was read, so the app knows an empty result is real.
 	// gone: companies whose job board closed, as the last crawl found.
 	'jobs.json': { generatedAt, checked: Object.keys(board.health), gone, jobs },
+	// The newest offers, small: the list shows them at once, while jobs.json loads.
+	// With their companies' names: the page shows them before it reads the companies.
+	'first.json': (() => {
+		const first = firstJobs(jobs, config.jobs.pageSize);
+		const names = Object.fromEntries(first.map((j) => [j.c, companies.find((c) => c.key === j.c)?.name || j.c]));
+		return { generatedAt, names, jobs: first };
+	})(),
 	// duplicates: [kept, other] companies that share a job board, to merge.
 	'health.json': { generatedAt, companies: board.health, duplicates: board.duplicates },
 	[config.geocode.placesFile]: places,

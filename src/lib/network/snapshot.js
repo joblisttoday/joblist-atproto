@@ -42,17 +42,45 @@ export function getSnapshotJobs() {
 		/** @type {Map<string, import('#lib/ats/job.js').Job[]>} */
 		const jobs = new Map();
 		for (const j of data.jobs) {
-			// Posted jobs come from their records, read with the others (they may be edited or deleted since).
-			if (j.s?.startsWith('at://')) continue;
-			const url = safeUrl(j.u);
-			if (!url) continue;
+			const job = toJob(j);
+			if (!job) continue;
 			const list = jobs.get(j.c) || [];
-			// The id at its board is left out when the link ends with it.
-			const id = j.i ?? url.slice(url.lastIndexOf('/') + 1);
-			list.push({ title: j.t, url, company: j.c, location: j.l, department: j.d, published: j.p, id, remote: j.r, point: j.g });
+			list.push(job);
 			jobs.set(j.c, list);
 		}
 		return { jobs, checked: new Set(data.checked || []), gone: new Set(data.gone || []) };
 	});
 	return jobsPromise;
+}
+
+/**
+ * The newest offers and their companies' names, a small file read first:
+ * the list shows them while the companies and all the jobs load.
+ * @type {Promise<{jobs: import('#lib/ats/job.js').Job[], names: Map<string, string>}> | null}
+ */
+let firstPromise = null;
+export function getSnapshotFirst() {
+	firstPromise ??= getFile('first.json').then((data) => {
+		if (!data || !fresh(data.generatedAt)) return { jobs: [], names: new Map() };
+		return {
+			jobs: data.jobs.map(toJob).filter(Boolean),
+			names: new Map(Object.entries(data.names || {}).map(([key, name]) => [key, String(name)]))
+		};
+	});
+	return firstPromise;
+}
+
+/**
+ * A job as the snapshot keeps it (see indexer/jobs.js), as the app uses it.
+ * Posted jobs come from their records, read with the others (they may be edited or deleted since).
+ * @param {any} j
+ * @returns {import('#lib/ats/job.js').Job | null}
+ */
+function toJob(j) {
+	if (j.s?.startsWith('at://')) return null;
+	const url = safeUrl(j.u);
+	if (!url) return null;
+	// The id at its board is left out when the link ends with it.
+	const id = j.i ?? url.slice(url.lastIndexOf('/') + 1);
+	return { title: j.t, url, company: j.c, location: j.l, department: j.d, published: j.p, id, remote: j.r, point: j.g };
 }

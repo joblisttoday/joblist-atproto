@@ -105,6 +105,23 @@ export function recordJobs(records, profiles, now = Date.now()) {
 }
 
 /**
+ * The newest offers (one per company and title), for the list to show while all jobs load.
+ * @param {IndexedJob[]} jobs
+ * @param {number} count
+ */
+export function firstJobs(jobs, count) {
+	const seen = new Set();
+	return jobs
+		.filter((j) => !j.s && j.p)
+		.sort((a, b) => String(b.p).localeCompare(String(a.p)))
+		.filter((j) => {
+			const key = `${j.c}\n${j.t.trim().toLowerCase()}`;
+			return !seen.has(key) && seen.add(key);
+		})
+		.slice(0, count);
+}
+
+/**
  * A date to the minute, in UTC ("2026-11-02T17:49Z"): enough to sort and say how new.
  * @param {string | undefined} value
  */
