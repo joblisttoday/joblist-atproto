@@ -1,10 +1,11 @@
 /**
  * Where a company's office is in a place a job names: "idealo, Berlin" is an office
  * in OpenStreetMap, more precise than the middle of Berlin. Looked up once, kept in
- * offices.json (published with the snapshot) like places.json.
+ * the offices cache (published with the snapshot) like places.json.
  */
 import config from '../src/lib/data/config.json' with { type: 'json' };
 import { distanceKm } from '../src/lib/models/distance.js';
+import { Refused } from './nominatim.js';
 import { placeKey } from './places.js';
 
 /**
@@ -44,8 +45,9 @@ export async function findOffices(keys, offices, places, { budget = settings.off
 			const near = /** @type {[number, number]} */ (places[place]);
 			offices[key] =
 				hit && settings.officeCategories.includes(hit.category) && distanceKm(hit.point, near) <= settings.officeMaxKm ? hit.point : 0;
-		} catch {
-			// Unanswered: tried again next run.
+		} catch (error) {
+			// Asked to slow down: stop for this run. Otherwise unanswered: tried again next run.
+			if (error instanceof Refused) return i;
 		}
 	}
 	return missing.length;
@@ -55,6 +57,7 @@ export async function findOffices(keys, offices, places, { budget = settings.off
 async function nominatim(query) {
 	const url = `${settings.service}?${new URLSearchParams({ q: query, format: 'jsonv2', limit: '1' })}`;
 	const res = await fetch(url, { headers: { 'user-agent': settings.userAgent, 'accept-language': 'en' } });
+	if (res.status === 429 || res.status === 403) throw new Refused(`${res.status}`);
 	if (!res.ok) throw new Error(`${res.status}`);
 	const [hit] = await res.json();
 	if (!hit) return null;

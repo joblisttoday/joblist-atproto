@@ -1,10 +1,11 @@
 /**
  * Where jobs are, as coordinates: each place a job board names ("Berlin, Germany")
- * is looked up once with OpenStreetMap Nominatim, then kept in places.json
+ * is looked up once with OpenStreetMap Nominatim, then kept in the places cache
  * (published with the snapshot), so later runs only look up new places.
  */
 import config from '../src/lib/data/config.json' with { type: 'json' };
 import { mapPoints } from '../src/lib/models/company.js';
+import { Refused, accept, inside, search, tooWide } from './nominatim.js';
 
 /**
  * @typedef {import('../src/lib/models/company.js').Company} Company
@@ -28,6 +29,7 @@ export function placeNames(location) {
 				.replace(workWords, ' ')
 				.replace(/\s*[-–]\s*$|^\s*[-–]\s*/g, '')
 				.replace(/\s+/g, ' ')
+				.replace(/ ,/g, ',')
 				.replace(/^[\s,]+|[\s,]+$/g, '')
 		)
 		.filter((part) => /\p{L}{2}/u.test(part));
@@ -54,8 +56,9 @@ export async function geocode(names, cache, { budget = settings.budget, delay = 
 		if (i) await new Promise((resolve) => setTimeout(resolve, delay));
 		try {
 			cache[key] = await lookup(key);
-		} catch {
-			// Unanswered: tried again next run.
+		} catch (error) {
+			// Asked to slow down: stop for this run. Otherwise unanswered: tried again next run.
+			if (error instanceof Refused) return i;
 		}
 	}
 	return missing.length;
@@ -66,12 +69,15 @@ export async function geocode(names, cache, { budget = settings.budget, delay = 
  * @returns {Promise<Found>}
  */
 async function nominatim(name) {
-	const url = `${settings.service}?${new URLSearchParams({ q: name, format: 'jsonv2', limit: '1' })}`;
-	const res = await fetch(url, { headers: { 'user-agent': settings.userAgent, 'accept-language': 'en' } });
-	if (!res.ok) throw new Error(`${res.status}`);
-	const [hit] = await res.json();
-	// Countries and regions are too wide to measure a distance from.
-	return hit && !settings.tooWide.includes(hit.addresstype) ? [round(Number(hit.lon)), round(Number(hit.lat))] : 0;
+	let hit = await search(name);
+	// A region named like a city (Bristol, the county): the city of that name in it.
+	if (hit && tooWide(hit)) {
+		const region = hit;
+		await new Promise((resolve) => setTimeout(resolve, settings.delayMs));
+		const city = await search(name, 'city');
+		hit = city && inside(city, region) ? city : undefined;
+	}
+	return hit && accept(name, hit) ? [round(Number(hit.lon)), round(Number(hit.lat))] : 0;
 }
 
 /** @param {number} n about 10 m */

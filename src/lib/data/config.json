@@ -96,12 +96,16 @@
 		"service": "https://nominatim.openstreetmap.org/search",
 		"userAgent": "joblist.today indexer (+https://joblist.today)",
 		"delayMs": 1100,
-		"budget": 400,
 		"officeBudget": 300,
 		"officeCategories": ["office"],
 		"officeMaxKm": 50,
+		"budget": 1100,
 		"tooWide": ["continent", "country", "state", "region", "province", "state_district", "county"],
-		"ignoreWords": ["hybrid", "on-site", "onsite", "on site", "office", "headquarters", "hq", "multiple locations", "various locations", "flexible"]
+		"cityRegions": ["JP-13", "CN-SH", "CN-BJ", "CN-TJ", "CN-CQ"],
+		"countryAliases": { "uk": "gb", "usa": "us", "united states": "us", "uae": "ae" },
+		"placesFile": "places-2.json",
+		"officesFile": "offices.json",
+		"ignoreWords": ["hybrid", "on-site", "onsite", "on site", "office", "headquarters", "hq", "multiple locations", "various locations", "flexible", "jobs?", "global", "worldwide", "international", "distributed", "emea", "apac", "latam", "americas", "nordics", "dach", "benelux"]
 	},
 	"travel": {
 		"kmPerHour": { "walk": 5, "bike": 15 },

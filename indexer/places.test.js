@@ -48,3 +48,10 @@ test('locate prefers the office found for the company in that place', () => {
 	const found = { 'acme|berlin, germany': [13.39, 52.51] };
 	assert.deepEqual(locate('Berlin, Germany', acme, { 'berlin, germany': [13.4, 52.52] }, found), [13.39, 52.51]);
 });
+
+test('placeNames drops words that name no place', () => {
+	assert.deepEqual(placeNames('Remote job'), []);
+	assert.deepEqual(placeNames('Global'), []);
+	assert.deepEqual(placeNames('Remote - EMEA'), []);
+	assert.deepEqual(placeNames('Berlin (Hybrid), Germany'), ['Berlin, Germany']);
+});

@@ -30,11 +30,11 @@ const jobs = [...recordJobs(records.job, profiles), ...board.jobs];
 console.log(`jobs: ${jobs.length} (${board.jobs.length} from job boards)`);
 
 // Where each job is, from the places looked up so far (this run adds the most named new ones).
-const places = await loadCache('places.json');
+const places = await loadCache(config.geocode.placesFile);
 const looked = await geocode(jobs.flatMap((j) => placeNames(j.l)), places);
 const byKey = new Map(companies.map((c) => [c.key, c]));
 // Then the companies' offices in those places, for those whose offices are not known yet.
-const offices = await loadCache('offices.json');
+const offices = await loadCache(config.geocode.officesFile);
 const officeKeys = jobs.flatMap((j) => {
 	const company = byKey.get(j.c);
 	return company && !mapPoints(company).length ? placeNames(j.l).map((name) => officeKey(company.name, name)) : [];
@@ -60,8 +60,8 @@ const files = {
 	// `checked`: companies whose board was read, so the app knows an empty result is real.
 	'jobs.json': { generatedAt, checked: Object.keys(board.health), jobs },
 	'health.json': { generatedAt, companies: board.health },
-	'places.json': places,
-	'offices.json': offices,
+	[config.geocode.placesFile]: places,
+	[config.geocode.officesFile]: offices,
 	'suggestions.json': { generatedAt, companies: suggest(companies, records) },
 	'meta.json': {
 		generatedAt,
@@ -85,12 +85,12 @@ const files = {
 async function loadCache(name) {
 	const file = join(out, name);
 	if (existsSync(file)) return JSON.parse(readFileSync(file, 'utf8'));
-	try {
-		const res = await fetch(`${config.snapshot.path}/${name}`);
-		return res.ok ? await res.json() : {};
-	} catch {
-		return {};
-	}
+	// Only a cache never published starts empty: any other failure stops the run,
+	// rather than publishing a snapshot that forgot where its jobs are.
+	const res = await fetch(`${config.snapshot.path}/${name}`);
+	if (res.status === 404) return {};
+	if (!res.ok) throw new Error(`${name}: ${res.status}`);
+	return await res.json();
 }
 
 mkdirSync(out, { recursive: true });
