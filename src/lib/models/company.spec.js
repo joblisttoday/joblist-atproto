@@ -5,6 +5,16 @@ import { boardUrl, changedFields, copyRecord, editedAt, isUnchecked, pickVersion
 /** @param {string} did @param {string} createdAt */
 const version = (did, createdAt) => ({ did, rkey: 'acme.org', uri: `at://${did}/x/acme.org`, cid: '', value: { name: did, createdAt } });
 
+describe('links from records', () => {
+	it('keep only web links', () => {
+		const bad = { ...version('did:a', '2026-01-01'), value: { name: 'a', createdAt: '2026-01-01', url: 'javascript:alert(1)', links: ['javascript:x', 'https://ok.org'], jobBoard: { url: 'javascript:y' } } };
+		const company = toCompany([bad], new Map());
+		expect(company.url).toBeUndefined();
+		expect(company.links).toEqual(['https://ok.org']);
+		expect(boardUrl(company.jobBoard)).toBe('');
+	});
+});
+
 describe('toDomain', () => {
 	it('keeps the bare host', () => {
 		expect(toDomain('https://www.Acme.org/jobs?x=1')).toBe('acme.org');
@@ -21,6 +31,11 @@ describe('pickVersion', () => {
 	});
 	it('otherwise shows the most recent edit by anyone', () => {
 		expect(pickVersion(versions, new Map()).did).toBe('did:b');
+	});
+	it('does not believe dates in the future', () => {
+		const pinned = { ...version('did:x', '2099-01-01'), value: { name: 'x', createdAt: '2020-01-01', updatedAt: '2099-01-01' } };
+		expect(editedAt(pinned)).toBe('');
+		expect(pickVersion([pinned, ...versions], new Map()).did).toBe('did:b');
 	});
 	it('uses updatedAt over createdAt', () => {
 		const edited = { ...version('did:a', '2026-01-01'), value: { name: 'a', createdAt: '2026-01-01', updatedAt: '2026-03-01' } };

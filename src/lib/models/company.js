@@ -1,3 +1,4 @@
+import { safeUrl } from './url.js';
 import config from '#lib/data/config.json' with { type: 'json' };
 import providers from '#lib/data/providers.json' with { type: 'json' };
 
@@ -48,11 +49,14 @@ export function isOwnRecord(record, profiles) {
 }
 
 /**
- * When a version was last edited.
+ * When a version was last edited, as its author says. A date in the future is not
+ * believed (it would keep that version on top for good): such a version counts as undated.
  * @param {RepoRecord} record
+ * @param {number} [now]
  */
-export function editedAt(record) {
-	return String(record.value.updatedAt || record.value.createdAt || '');
+export function editedAt(record, now = Date.now()) {
+	const date = String(record.value.updatedAt || record.value.createdAt || '');
+	return Date.parse(date) > now ? '' : date;
 }
 
 /**
@@ -129,12 +133,12 @@ export function toCompany(versions, profiles) {
 	return {
 		key: record.rkey,
 		name: v.name || record.rkey,
-		url: v.url,
+		url: safeUrl(v.url) || undefined,
 		description: v.description,
 		tags: v.tags || [],
 		locations: v.locations || [],
 		jobBoard: v.jobBoard,
-		links: v.links || [],
+		links: (v.links || []).map((/** @type {unknown} */ link) => safeUrl(link)).filter(Boolean),
 		verified: isOwnRecord(record, profiles),
 		// A company's own record is never "the crawler's", even from a bot account.
 		unchecked: !isOwnRecord(record, profiles) && isUnchecked(record, versions),
@@ -152,7 +156,7 @@ export function boardUrl(jobBoard) {
 	if (!jobBoard) return '';
 	const provider = providers.find((p) => p.id === jobBoard.provider);
 	if (provider && jobBoard.id) return provider.board.replace('{id}', jobBoard.id);
-	return jobBoard.url || '';
+	return safeUrl(jobBoard.url);
 }
 
 /** @param {Company} company */
