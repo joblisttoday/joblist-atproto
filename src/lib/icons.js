@@ -14,7 +14,7 @@ import CircleCheck from '@lucide/svelte/icons/circle-check';
 import Eye from '@lucide/svelte/icons/eye';
 import EyeOff from '@lucide/svelte/icons/eye-off';
 import Building2 from '@lucide/svelte/icons/building-2';
-import Compass from '@lucide/svelte/icons/compass';
+import Briefcase from '@lucide/svelte/icons/briefcase';
 import Footprints from '@lucide/svelte/icons/footprints';
 import House from '@lucide/svelte/icons/house';
 import List from '@lucide/svelte/icons/list';
@@ -28,7 +28,7 @@ import User from '@lucide/svelte/icons/user';
 import X from '@lucide/svelte/icons/x';
 
 export const icons = {
-	explore: Compass,
+	jobs: Briefcase,
 	saved: Bookmark,
 	save: Bookmark,
 	savedOn: BookmarkCheck,
