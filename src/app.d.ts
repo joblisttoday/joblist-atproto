@@ -5,7 +5,11 @@ declare global {
 		// interface Error {}
 		// interface Locals {}
 		// interface PageData {}
-		// interface PageState {}
+		// What the explorer has open, as a history entry: back closes it.
+		interface PageState {
+			job?: import('#lib/ats/job.js').Job;
+			picked?: string[];
+		}
 		// interface Platform {}
 	}
 }

@@ -7,8 +7,8 @@
 	import JobsMap from './JobsMap.svelte';
 	import SavedSearches from './SavedSearches.svelte';
 	import SaveSearch from './SaveSearch.svelte';
-	import { tick } from 'svelte';
-	import { replaceState } from '$app/navigation';
+	import { tick, untrack } from 'svelte';
+	import { pushState, replaceState } from '$app/navigation';
 	import { page } from '$app/state';
 	import { fromParams, isEmpty, sameSearch, toParams } from '#lib/models/saved-search.js';
 	import { markSeen, searches } from '#lib/network/saved-searches.svelte.js';
@@ -52,13 +52,16 @@
 
 	// A shallow replace changes the address, not page.url: compare with the location.
 	// Not before the session is ready: a sign-in comes back to this page with its own parameters.
+	// A new search also closes what was open.
 	$effect(() => {
 		if (!session.ready) return;
 		const search = toParams(filters);
-		if (search !== location.search) replaceState(`${path}${search}`, {});
+		[filters.near, filters.within];
+		if (search !== location.search || untrack(() => selected || picked)) replaceState(`${path}${search}`, {});
 	});
 
-	// What the panel hides of the map: at the left on wide screens, at the bottom on phones.
+	// What covers the map: the panel at the left on wide screens; on phones the sheet
+	// at the bottom and the search floating at the top.
 	/** @type {HTMLElement} */
 	let panel;
 	let covered = $state({ top: 0, right: 0, bottom: 0, left: 0 });
@@ -67,12 +70,16 @@
 		const measure = () => {
 			const box = panel.getBoundingClientRect();
 			const parent = /** @type {HTMLElement} */ (panel.parentElement).getBoundingClientRect();
+			const search = panel.querySelector('jl-explore-search')?.getBoundingClientRect();
+			const top = search && search.height ? search.bottom - parent.top : 0;
 			covered = wide.matches
 				? { top: 0, right: 0, bottom: 0, left: box.right - parent.left }
-				: { top: 0, right: 0, bottom: parent.bottom - box.top, left: 0 };
+				: { top, right: 0, bottom: parent.bottom - box.top, left: 0 };
 		};
 		const observer = new ResizeObserver(measure);
 		observer.observe(panel);
+		const search = panel.querySelector('jl-explore-search');
+		if (search) observer.observe(search);
 		wide.addEventListener('change', measure);
 		return () => {
 			observer.disconnect();
@@ -80,11 +87,10 @@
 		};
 	});
 
-	// A job open in the panel, or the jobs at a place tapped on the map.
-	/** @type {import('#lib/ats/job.js').Job | null} */
-	let selected = $state(null);
-	/** @type {string[] | null} */
-	let picked = $state(null);
+	// A job open in the panel, or the jobs at a place tapped on the map. They are history
+	// entries (shallow routing), so the phone's back gesture closes them like pages.
+	const selected = $derived(page.state.job ?? null);
+	const picked = $derived(page.state.picked ?? null);
 	const pickedJobs = $derived(picked ? results.filter((job) => picked?.includes(job.url)) : null);
 	// Where the results were scrolled, to come back to it.
 	let resultsScroll = 0;
@@ -92,7 +98,7 @@
 	/** @param {import('#lib/ats/job.js').Job} job */
 	function select(job) {
 		if (!selected && !picked) resultsScroll = panel.scrollTop;
-		selected = job;
+		pushState('', { job: $state.snapshot(job), picked: picked ?? undefined });
 		if (sheet === 'peek') sheet = 'half';
 		panel.scrollTop = 0;
 	}
@@ -102,43 +108,70 @@
 		const found = results.filter((job) => urls.includes(job.url));
 		if (found.length === 1) return select(found[0]);
 		if (!selected && !picked) resultsScroll = panel.scrollTop;
-		selected = null;
-		picked = urls;
+		pushState('', { picked: urls });
 		if (sheet === 'peek') sheet = 'half';
 		panel.scrollTop = 0;
 	}
 
 	/** One step back: from a job to the place it was picked from, then to the results. */
-	async function back() {
-		if (selected && picked) selected = null;
-		else {
-			selected = null;
-			picked = null;
-			await tick();
-			panel.scrollTop = resultsScroll;
-		}
+	function back() {
+		history.back();
 	}
 
-	// A new search closes what was open.
+	// Back on the results: where they were scrolled.
 	$effect(() => {
-		[filters.query, filters.where, filters.remote, filters.near, filters.within];
-		selected = null;
-		picked = null;
+		if (selected || picked) return;
+		tick().then(() => panel && (panel.scrollTop = resultsScroll));
 	});
 
 	function nextSheet() {
 		sheet = SHEET[(SHEET.indexOf(sheet) + 1) % SHEET.length];
 	}
+
+	// The sheet follows a finger on its handle, then settles at the closest size; a tap steps through them.
+	/** @type {{y: number, from: number, height: number, moved: boolean} | null} */
+	let drag = $state(null);
+	/** @param {PointerEvent} event */
+	function grab(event) {
+		drag = { y: event.clientY, from: panel.offsetHeight, height: panel.offsetHeight, moved: false };
+		/** @type {HTMLElement} */ (event.currentTarget).setPointerCapture(event.pointerId);
+	}
+	/** @param {PointerEvent} event */
+	function slide(event) {
+		if (!drag) return;
+		const room = /** @type {HTMLElement} */ (panel.parentElement).clientHeight - covered.top;
+		drag.height = Math.min(room, Math.max(0, drag.from - (event.clientY - drag.y)));
+		drag.moved ||= Math.abs(event.clientY - drag.y) > config.layout.dragThreshold;
+	}
+	function settle() {
+		if (!drag) return;
+		if (!drag.moved) nextSheet();
+		else {
+			const share = drag.height / /** @type {HTMLElement} */ (panel.parentElement).clientHeight;
+			sheet = share < config.layout.sheetPeekBelow ? 'peek' : share < config.layout.sheetFullAbove ? 'half' : 'full';
+		}
+		drag = null;
+	}
 </script>
 
 <svelte:window onkeydown={(e) => e.key === 'Escape' && (selected || picked) && back()} />
 
-<jl-explore>
+<jl-explore style:--search-room="{covered.top}px">
 	<jl-explore-map>
 		<JobsMap jobs={results} {names} here={filters.near} fit={searching} {covered} {selected} onpick={pick} />
 	</jl-explore-map>
-	<jl-explore-panel {sheet} bind:this={panel}>
-		<button type="button" aria-label={t('explore.sheet')} onclick={nextSheet}><span></span></button>
+	<jl-explore-panel {sheet} bind:this={panel} dragging={drag ? true : undefined} style:--sheet-drag={drag ? `${drag.height}px` : undefined}>
+		<button
+			type="button"
+			aria-label={t('explore.sheet')}
+			onpointerdown={grab}
+			onpointermove={slide}
+			onpointerup={settle}
+			onpointercancel={() => (drag = null)}
+			onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), nextSheet())}
+		>
+			<span></span>
+		</button>
 		{#if selected}
 			<JobDetail job={selected} jobs={results} {names} onback={back} onselect={select} />
 		{:else if pickedJobs}
@@ -157,7 +190,7 @@
 			<ExploreSearch bind:filters {places} />
 			{#if !searching}
 				<p>
-					{t('explore.welcome', { jobs: jobs.length.toLocaleString(), companies: companies.length.toLocaleString() })}
+					{t('explore.welcome', { companies: companies.length.toLocaleString() })}
 					<a href="/jobs/new">{t('explore.publish')}</a>
 				</p>
 			{/if}
@@ -183,10 +216,10 @@
 </jl-explore>
 
 <style>
-	/* The explorer takes the screen between the header and the navigation; only the panel scrolls. */
+	/* The explorer takes the whole screen above the navigation (phones) or below the header; only the panel scrolls. */
 	jl-explore {
 		position: fixed;
-		inset: var(--header-height) 0 calc(var(--nav-height) + env(safe-area-inset-bottom)) 0;
+		inset: 0 0 calc(var(--nav-height) + env(safe-area-inset-bottom)) 0;
 		z-index: 1;
 		background: var(--color-bg);
 	}
@@ -213,17 +246,35 @@
 		height: var(--sheet-peek);
 	}
 	jl-explore-panel[sheet='full'] {
-		height: 100%;
-		border-radius: 0;
+		height: calc(100% - var(--search-room));
 	}
-	/* The handle: tap to show more or less. */
+	jl-explore-panel[dragging] {
+		height: var(--sheet-drag);
+		transition: none;
+	}
+	/* Phones: no header on the explorer, the search floats over the top of the map. */
+	@media not (min-width: 64rem) {
+		jl-explore-results > :global(jl-explore-search) {
+			position: fixed;
+			top: calc(env(safe-area-inset-top) + var(--space-s));
+			inset-inline: var(--space-s);
+			z-index: 3;
+			padding: var(--space-s);
+			background: var(--color-bg);
+			border-radius: var(--radius-large);
+			box-shadow: var(--shadow);
+		}
+	}
+	/* The handle: drag or tap to show more or less. */
 	jl-explore-panel > button {
 		position: sticky;
 		top: 0;
 		z-index: 2;
 		display: flex;
 		width: calc(100% + 2 * var(--gutter));
-		min-height: var(--space-l);
+		min-height: var(--handle-height);
+		touch-action: none;
+		cursor: grab;
 		margin: 0 calc(-1 * var(--gutter)) var(--space-xs);
 		padding: 0;
 		border: 0;
@@ -255,6 +306,7 @@
 	/* Wide screens: the results in a panel at the left, over the map. */
 	@media (min-width: 64rem) {
 		jl-explore {
+			top: var(--header-height);
 			bottom: 0;
 		}
 		jl-explore-panel,
