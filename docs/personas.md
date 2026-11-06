@@ -21,9 +21,10 @@ Wants remote work they are allowed to take from their country.
 ### Watching, not searching
 Has a job, looks now and then: wants the new jobs of their saved searches,
 and nothing else.
-- **Today:** a "new" count per search on /saved, seen only when they open it.
-- **Missing:** the count on the Saved tab, and a way to be told: a feed per
-  saved search, or browser notifications.
+- **Today:** the Saved tab counts the new jobs of their searches; /saved
+  shows them per search.
+- **Missing:** a way to be told without opening the site: feeds, or browser
+  notifications.
 
 ### Company first
 Knows where they want to work, or wants to find out who hires in a city or
@@ -44,10 +45,10 @@ Makes lists of companies (a city, a field, their network), adds companies.
 ### Company
 Wants its page right and its jobs shown.
 - **Today:** with the Bluesky handle set to its domain, its company record
-  and job posts are shown as its own, verified.
-- **Missing:** nothing on the site says so: an "Is this your company?" box
-  on its page, and "You manage this page" once signed in with the domain.
-  Its Bluesky avatar as its logo. Recruiters posting for it.
+  and job posts are shown as its own, verified, with its Bluesky picture.
+  Its page says how ("Is this your company?"), and "You manage this page"
+  once signed in with the domain.
+- **Missing:** recruiters posting for it.
 
 ### Recruiter
 Posts jobs for a company, or several.
