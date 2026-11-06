@@ -88,8 +88,8 @@ describe('toApplyUrl', () => {
 });
 
 describe('expiry', () => {
-	it('defaults to 60 days and caps at 120', () => {
-		expect(expiryDate(0, NOW)).toBe(new Date(NOW + 60 * DAY).toISOString());
+	it('defaults to 30 days and caps at 120', () => {
+		expect(expiryDate(0, NOW)).toBe(new Date(NOW + 30 * DAY).toISOString());
 		expect(expiryDate(500, NOW)).toBe(new Date(NOW + 120 * DAY).toISOString());
 		expect(expiryDate(3, NOW)).toBe(new Date(NOW + 3 * DAY).toISOString());
 	});
@@ -102,7 +102,7 @@ describe('expiry', () => {
 	});
 	it('renews from now and counts days left', () => {
 		const value = renewed({ title: 'E', expiresAt: '2026-01-01T00:00:00Z' }, NOW);
-		expect(daysLeft(value.expiresAt, NOW)).toBe(60);
+		expect(daysLeft(value.expiresAt, NOW)).toBe(30);
 		expect(daysLeft('2026-01-01T00:00:00Z', NOW)).toBe(0);
 	});
 });

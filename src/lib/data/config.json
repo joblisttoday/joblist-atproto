@@ -170,7 +170,7 @@
 		}
 	},
 	"jobPost": {
-		"days": 60,
+		"days": 30,
 		"maxDays": 120,
 		"titleMax": 200,
 		"descriptionMax": 10000,

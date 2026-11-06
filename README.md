@@ -51,7 +51,7 @@ show up in every job list with that company, merged with its job board's
 jobs (one per link), and get their own page at `/job/{did}/{rkey}`,
 prerendered with schema.org `JobPosting` data for search engines.
 
-Offers are shown for 60 days by default (120 at most, see `jobPost` in
+Offers are shown for 30 days by default (120 at most, see `jobPost` in
 config); expired ones are hidden everywhere, in the app and the snapshot.
 Their poster can edit, renew or delete them from the offer, the company
 page or their profile.
