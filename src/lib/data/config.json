@@ -66,6 +66,10 @@
 		"fr"
 	],
 	"defaultLocale": "en",
+	"ledger": {
+		"file": "offers.json",
+		"keepDays": 30
+	},
 	"jobs": {
 		"pageSize": 50,
 		"placesSuggested": 30,

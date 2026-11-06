@@ -13,7 +13,8 @@ import { mapPoints, toCompany } from '../src/lib/models/company.js';
 import { Companies } from '../src/lib/models/companies.js';
 import { crawlRecords } from './crawl.js';
 import config from '../src/lib/data/config.json' with { type: 'json' };
-import { fetchBoardJobs, firstJobs, recordJobs } from './jobs.js';
+import { fetchBoardJobs, firstJobs, recordJobs, toMinute } from './jobs.js';
+import { dateOffers } from './ledger.js';
 import { findOffices, officeKey } from './offices.js';
 import { geocode, locate, placeNames } from './places.js';
 import { suggest } from './suggest.js';
@@ -28,6 +29,9 @@ console.log(`records: ${records.company.length} company, ${records.list.length} 
 
 const board = await fetchBoardJobs(companies);
 const jobs = [...recordJobs(records.job, profiles), ...board.jobs];
+// Each offer dated when it was first seen, not when its board last posted it again.
+const dates = dateOffers(jobs, /** @type {any} */ (await loadCache(config.ledger.file)), /** @type {string} */ (toMinute(generatedAt)), config.ledger.keepDays);
+console.log(`offers: ${Object.keys(dates.ledger).length} known, ${dates.reposted} jobs posted again keep their first date, ${dates.dated} undated jobs dated`);
 console.log(`jobs: ${jobs.length} (${board.jobs.length} from job boards; ${board.dropped} not jobs left out; ${board.duplicates.length} companies added twice)`);
 
 // Where each job is, from the places looked up so far (this run adds the most named new ones).
@@ -78,6 +82,7 @@ const files = {
 	})(),
 	// duplicates: [kept, other] companies that share a job board, to merge.
 	'health.json': { generatedAt, companies: board.health, duplicates: board.duplicates },
+	[config.ledger.file]: dates.ledger,
 	[config.geocode.placesFile]: places,
 	[config.geocode.officesFile]: offices,
 	'suggestions.json': { generatedAt, companies: suggest(companies, records) },
