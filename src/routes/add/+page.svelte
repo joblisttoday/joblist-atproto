@@ -6,6 +6,7 @@
 	import AddAnywhere from '#lib/components/AddAnywhere.svelte';
 	import AddFound from '#lib/components/AddFound.svelte';
 	import AddLink from '#lib/components/AddLink.svelte';
+	import AddMine from '#lib/components/AddMine.svelte';
 	import CompanyForm from '#lib/components/CompanyForm.svelte';
 	import RequireSession from '#lib/components/RequireSession.svelte';
 	import { checkBoard } from '#lib/ats/board-check.js';
@@ -42,6 +43,7 @@
 
 <h1>{title}</h1>
 
+{#if !started}<AddMine />{/if}
 {#if !key}
 	<AddLink value={input.link || input.name} {list} next={back} />
 {/if}

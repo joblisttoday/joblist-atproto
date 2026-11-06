@@ -66,6 +66,7 @@
 		"fr"
 	],
 	"defaultLocale": "en",
+	"hostedHandles": [".bsky.social"],
 	"quickSearch": {
 		"places": 2000,
 		"shown": { "companies": 4, "lists": 2, "places": 3 }
