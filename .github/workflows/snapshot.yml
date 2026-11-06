@@ -10,8 +10,16 @@ on:
   schedule:
     - cron: '17 */6 * * *'
   workflow_dispatch:
+  # Only changes to what builds the snapshot: an app change needs no new snapshot.
   push:
     branches: [main]
+    paths:
+      - 'indexer/**'
+      - 'src/lib/ats/**'
+      - 'src/lib/models/**'
+      - 'src/lib/data/config.json'
+      - 'package-lock.json'
+      - '.github/workflows/snapshot.yml'
 
 concurrency:
   group: snapshot
