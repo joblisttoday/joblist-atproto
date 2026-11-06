@@ -10,7 +10,23 @@ export default defineConfig({
 				runes: ({ filename }) =>
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
-			adapter: adapter({ fallback: 'index.html' })
+			adapter: adapter({ fallback: 'index.html' }),
+			// Only this site's scripts (its inline start script by hash) and the analytics run.
+			// Requests go to any https address: job boards, and each person's own atproto server.
+			csp: {
+				mode: 'hash',
+				directives: {
+					'default-src': ['self'],
+					'script-src': ['self', 'https://cloud.umami.is'],
+					'style-src': ['self', 'unsafe-inline'],
+					'img-src': ['self', 'data:', 'blob:', 'https:'],
+					'font-src': ['self', 'data:'],
+					'connect-src': ['self', 'https:'],
+					'worker-src': ['self', 'blob:'],
+					'object-src': ['none'],
+					'base-uri': ['self']
+				}
+			}
 		})
 	],
 	test: {

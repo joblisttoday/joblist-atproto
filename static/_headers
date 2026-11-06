@@ -1,3 +1,12 @@
 # The app's built files have their content hash in their name: they never change.
 /_app/immutable/*
   Cache-Control: public, max-age=31536000, immutable
+
+# Every page: HTTPS only from now on, no sniffing, no framing by other sites,
+# location only for this site (jobs near me). Scripts are limited by the page's own policy.
+/*
+  Strict-Transport-Security: max-age=31536000
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(self), camera=(), microphone=()
+  Content-Security-Policy: frame-ancestors 'none'
