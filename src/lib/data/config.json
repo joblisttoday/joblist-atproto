@@ -172,6 +172,7 @@
 	"jobPost": {
 		"days": 30,
 		"maxDays": 120,
+		"dayChoices": [7, 14, 30, 60, 120],
 		"titleMax": 200,
 		"descriptionMax": 10000,
 		"page": "/job/{did}/{rkey}",
