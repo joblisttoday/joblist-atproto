@@ -124,7 +124,32 @@ async function loadCache(name) {
 
 mkdirSync(out, { recursive: true });
 for (const [name, data] of Object.entries(files)) writeFileSync(join(out, name), JSON.stringify(data));
+
+// One small file per company, for the embeds on other sites: its open jobs, newest first.
+const embeds = join(out, config.embed.dir);
+mkdirSync(embeds, { recursive: true });
+for (const [key, file] of companyFiles(companies, jobs, generatedAt)) writeFileSync(join(embeds, `${key}.json`), JSON.stringify(file));
 console.log(`snapshot written to ${out} in ${files['meta.json'].seconds}s`);
+
+/**
+ * Each company's open jobs, as embeds read them (the fields they show), under a
+ * key safe as a file name.
+ * @param {{key: string, name: string}[]} companies
+ * @param {import('./jobs.js').IndexedJob[]} jobs
+ * @param {string} generatedAt
+ * @returns {[string, {generatedAt: string, name: string, jobs: object[]}][]}
+ */
+function companyFiles(companies, jobs, generatedAt) {
+	/** @type {Map<string, import('./jobs.js').IndexedJob[]>} */
+	const byCompany = new Map();
+	for (const job of jobs) byCompany.set(job.c, [...(byCompany.get(job.c) || []), job]);
+	return companies
+		.filter((c) => /^[a-z0-9][a-z0-9.-]*$/i.test(c.key))
+		.map((c) => {
+			const own = (byCompany.get(c.key) || []).sort((a, b) => String(b.p || '').localeCompare(String(a.p || '')));
+			return [c.key, { generatedAt, name: c.name, jobs: own.map(({ t, u, l, p, r }) => ({ t, u, l, p, r })) }];
+		});
+}
 
 /**
  * @param {import('../src/lib/atproto/records.js').RepoRecord[]} companyRecords

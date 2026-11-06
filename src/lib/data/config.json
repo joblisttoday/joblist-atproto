@@ -75,6 +75,11 @@
 		"layers": ["city", "locality", "district", "county", "state", "country"]
 	},
 	"hostedHandles": [".bsky.social"],
+	"embed": {
+		"dir": "companies",
+		"path": "/embed/",
+		"shown": 20
+	},
 	"quickSearch": {
 		"places": 2000,
 		"shown": { "companies": 4, "lists": 2, "places": 3 }
