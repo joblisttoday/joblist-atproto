@@ -96,6 +96,9 @@
 		"userAgent": "joblist.today indexer (+https://joblist.today)",
 		"delayMs": 1100,
 		"budget": 400,
+		"officeBudget": 300,
+		"officeCategories": ["office"],
+		"officeMaxKm": 50,
 		"tooWide": ["continent", "country", "state", "region", "province", "state_district", "county"],
 		"ignoreWords": ["hybrid", "on-site", "onsite", "on site", "office", "headquarters", "hq", "multiple locations", "various locations", "flexible"]
 	},

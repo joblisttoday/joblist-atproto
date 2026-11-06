@@ -78,16 +78,21 @@ async function nominatim(name) {
 const round = (n) => Math.round(n * 1e4) / 1e4;
 
 /**
- * Where a job is: its first place found, else its company's office named the same,
- * else the company's only office.
+ * Where a job is: its company's office found in its place (offices.js), else the company's
+ * office named like the place, else the place itself; without a place, the company's only office.
  * @param {string | undefined} location
  * @param {Company | undefined} company
- * @param {PlaceCache} cache
+ * @param {PlaceCache} cache places
+ * @param {PlaceCache} [found] offices found by offices.js, by officeKey()
  * @returns {[number, number] | undefined}
  */
-export function locate(location, company, cache) {
+export function locate(location, company, cache, found = {}) {
 	const names = placeNames(location);
 	const offices = company ? mapPoints(company) : [];
+	for (const name of names) {
+		const office = company && found[placeKey(`${company.name}|${name}`)];
+		if (office) return office;
+	}
 	for (const name of names) {
 		const office = offices.find((o) => o.name && placeKey(o.name) === placeKey(name.split(',')[0]));
 		if (office) return [round(office.lon), round(office.lat)];

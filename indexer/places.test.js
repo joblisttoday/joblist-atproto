@@ -42,3 +42,9 @@ test('locate falls back to the only office when the job names no place', () => {
 	assert.deepEqual(locate('Remote', single, {}), [13.405, 52.52]);
 	assert.equal(locate('Remote', company, {}), undefined);
 });
+
+test('locate prefers the office found for the company in that place', () => {
+	const acme = /** @type {any} */ ({ name: 'Acme', locations: [] });
+	const found = { 'acme|berlin, germany': [13.39, 52.51] };
+	assert.deepEqual(locate('Berlin, Germany', acme, { 'berlin, germany': [13.4, 52.52] }, found), [13.39, 52.51]);
+});
