@@ -62,6 +62,9 @@
 	--map-height: 60vh;
 	--map-height-small: 16rem;
 	--transition: 120ms ease-out;
+	--logo-size: 1.75rem;
+	--logo-stroke: 2.2;
+	--logo-open: 450ms cubic-bezier(0.3, 1.5, 0.5, 1);
 
 	color-scheme: light dark;
 }
