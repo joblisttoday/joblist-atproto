@@ -1,4 +1,5 @@
 <script>
+	import Icon from './Icon.svelte';
 	import Author from './Author.svelte';
 	import EditTime from './EditTime.svelte';
 	import { session } from '#lib/auth/session.svelte.js';
@@ -43,7 +44,7 @@
 							{#if current}· <strong>{t('company.version.current')}</strong>{/if}
 						</p>
 						<small>
-							{#if isOwnRecord(version, data.profiles)}✓ {t('company.version.own')} · {/if}
+							{#if isOwnRecord(version, data.profiles)}<Icon name="verified" /> {t('company.version.own')} · {/if}
 							{#if !isOwnRecord(version, data.profiles) && isUnchecked(version, company.versions)}{t('company.unchecked')} · {/if}
 							{#if current}{version.value.name}{:else if changes.length}{t('company.version.changes', {
 									fields: changes.map((label) => t(label)).join(', ')

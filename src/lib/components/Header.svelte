@@ -1,4 +1,5 @@
 <script>
+	import Icon from './Icon.svelte';
 	import { page } from '$app/state';
 	import config from '#lib/data/config.json';
 	import Nav from './Nav.svelte';
@@ -24,7 +25,7 @@
 <jl-header>
 	<header>
 		<a href="/" aria-current={page.url.pathname === '/' ? 'page' : undefined}><b>{config.name}</b></a>
-		{#if !topLevel}<a href="/" onclick={back}>← {t('nav.back')}</a>{/if}
+		{#if !topLevel}<a href="/" onclick={back}><Icon name="back" /> {t('nav.back')}</a>{/if}
 		<Nav />
 	</header>
 	<NetworkStatus />

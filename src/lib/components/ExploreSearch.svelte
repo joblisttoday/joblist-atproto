@@ -1,4 +1,5 @@
 <script>
+	import Icon from './Icon.svelte';
 	import config from '#lib/data/config.json';
 	import { browserCountry, currentPlace } from '#lib/navigation/location.js';
 	import { delayed } from '#lib/navigation/delayed.svelte.js';
@@ -59,7 +60,7 @@
 		<menu aria-label={t('jobs.filter.workplace')}>
 			<li>
 				<button type="button" aria-pressed={filters.near ? 'true' : 'false'} onclick={nearMe} disabled={locating === 'locating'}>
-					◎ {t('near.me')}
+					<Icon name="near" /> {t('near.me')}
 				</button>
 			</li>
 			{#if filters.near}
@@ -74,7 +75,7 @@
 			{/if}
 			{#if filters.area}
 				<li>
-					<button type="button" aria-pressed="true" onclick={() => (filters.area = null)}>✕ {t('explore.areaOn')}</button>
+					<button type="button" aria-pressed="true" onclick={() => (filters.area = null)}><Icon name="close" /> {t('explore.areaOn')}</button>
 				</li>
 			{/if}
 			<li>
@@ -83,7 +84,7 @@
 					aria-pressed={filters.remote ? 'true' : 'false'}
 					onclick={() => (filters.remote = filters.remote ? '' : 'remote')}
 				>
-					{t('jobs.filter.workplace.remote')}
+					<Icon name="remote" /> {t('jobs.filter.workplace.remote')}
 				</button>
 			</li>
 			{#if filters.remote && !filters.where && country}

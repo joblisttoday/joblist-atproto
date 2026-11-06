@@ -1,4 +1,5 @@
 <script>
+	import Icon from './Icon.svelte';
 	import config from '#lib/data/config.json';
 	import { handleOf } from '#lib/network/network.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
@@ -22,9 +23,9 @@
 		<h2 id="job-apply">{t('job.apply')}</h2>
 		{#if web || email || post.apply.bluesky}
 			<menu>
-				{#if web}<a href={url} target="_blank" rel="noopener">{t('job.apply.link')} ↗</a>{/if}
+				{#if web}<a href={url} target="_blank" rel="noopener">{t('job.apply.link')} <Icon name="external" /></a>{/if}
 				{#if email}<a href={url}>{t('job.apply.email')}</a>{/if}
-				{#if post.apply.bluesky}<a href={profile} target="_blank" rel="noopener">{t('job.apply.bluesky', { handle })} ↗</a>{/if}
+				{#if post.apply.bluesky}<a href={profile} target="_blank" rel="noopener">{t('job.apply.bluesky', { handle })} <Icon name="external" /></a>{/if}
 			</menu>
 			{#if post.apply.bluesky}<p><small>{t('job.apply.bluesky.help')}</small></p>{/if}
 		{:else}

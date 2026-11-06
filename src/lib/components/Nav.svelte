@@ -1,4 +1,5 @@
 <script>
+	import Icon from './Icon.svelte';
 	import { page } from '$app/state';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { navLinks } from '#lib/navigation/nav.js';
@@ -17,7 +18,7 @@
 <jl-nav>
 	<nav aria-label={t('nav.label')}>
 		{#each items as item (item.href)}
-			<a href={item.href} aria-current={current(item.href) ? 'page' : undefined} data-wide={item.wide || undefined}>{t(item.label)}</a>
+			<a href={item.href} aria-current={current(item.href) ? 'page' : undefined} data-wide={item.wide || undefined}><Icon name={item.icon} />{t(item.label)}</a>
 		{/each}
 	</nav>
 </jl-nav>
@@ -36,8 +37,12 @@
 		grid-auto-flow: column;
 		grid-auto-columns: 1fr;
 	}
+	/* Phones: the icon above its label. */
 	a {
 		display: flex;
+		flex-direction: column;
+		gap: var(--space-xxs);
+		--icon-size: var(--nav-icon-size);
 		align-items: center;
 		justify-content: center;
 		min-height: var(--nav-height);
@@ -72,9 +77,13 @@
 			gap: var(--space-xs);
 			margin: 0;
 		}
+		/* Wide screens: beside it. */
 		a,
 		a[data-wide] {
 			display: flex;
+			flex-direction: row;
+			gap: var(--space-xs);
+			--icon-size: 1em;
 			min-height: var(--header-height);
 			padding: 0 var(--space-s);
 			font-size: var(--font-size);

@@ -1,4 +1,5 @@
 <script>
+	import Icon from '#lib/components/Icon.svelte';
 	import PageHeader from '#lib/components/PageHeader.svelte';
 	import ListItem from '#lib/components/ListItem.svelte';
 	import { data, network } from '#lib/network/network.svelte.js';
@@ -18,7 +19,7 @@
 
 <jl-home>
 	<PageHeader title={t('home.title')} intro={t('home.intro')}>
-		{#snippet actions()}<a href="/lists/new">+ {t('list.new')}</a>{/snippet}
+		{#snippet actions()}<a href="/lists/new"><Icon name="add" /> {t('list.new')}</a>{/snippet}
 	</PageHeader>
 
 	<section aria-label={t('nav.lists')}>

@@ -1,4 +1,5 @@
 <script>
+	import Icon from './Icon.svelte';
 	import config from '#lib/data/config.json';
 	import JobItem from './JobItem.svelte';
 	import { distanceKm } from '#lib/models/distance.js';
@@ -34,12 +35,12 @@
 </script>
 
 <jl-job-detail>
-	<button type="button" onclick={onback} {@attach (node) => node.focus({ preventScroll: true })}>← {t('explore.back')}</button>
+	<button type="button" onclick={onback} {@attach (node) => node.focus({ preventScroll: true })}><Icon name="back" /> {t('explore.back')}</button>
 	{#key job.url}
 		<JobItem {job} company={name} expanded>
 			{#snippet actions()}
 				<menu>
-					<a href={apply} target={job.posted ? undefined : '_blank'} rel={job.posted ? undefined : 'noopener'}>{t('explore.apply')}{job.posted ? '' : ' ↗'}</a>
+					<a href={apply} target={job.posted ? undefined : '_blank'} rel={job.posted ? undefined : 'noopener'}>{t('explore.apply')}{#if !job.posted}<Icon name="external" />{/if}</a>
 					<a href="/company/{job.company}">{t('jobs.aboutCompany', { name })}</a>
 				</menu>
 			{/snippet}

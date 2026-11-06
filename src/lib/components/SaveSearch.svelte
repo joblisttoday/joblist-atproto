@@ -1,4 +1,5 @@
 <script>
+	import Icon from './Icon.svelte';
 	import { isEmpty } from '#lib/models/saved-search.js';
 	import { forgetSearch, isSaved, saveSearch } from '#lib/network/saved-searches.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
@@ -20,7 +21,7 @@
 			title={t('searches.private')}
 			onclick={() => (saved ? forgetSearch(filters) : saveSearch(filters))}
 		>
-			{saved ? '★' : '☆'} {saved ? t('searches.saved') : t('searches.save')}
+			<Icon name={saved ? 'savedOn' : 'save'} /> {saved ? t('searches.saved') : t('searches.save')}
 		</button>
 	</jl-save-search>
 {/if}

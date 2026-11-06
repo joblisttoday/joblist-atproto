@@ -1,4 +1,5 @@
 <script>
+	import Icon from '#lib/components/Icon.svelte';
 	import config from '#lib/data/config.json';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
@@ -66,8 +67,8 @@
 	<section aria-labelledby="add-more">
 		<h2 id="add-more">{t('add.more')}</h2>
 		<menu>
-			<a href="/lists/new">+ {t('list.new')}</a>
-			<a href="/jobs/new">+ {t('post.title')}</a>
+			<a href="/lists/new"><Icon name="add" /> {t('list.new')}</a>
+			<a href="/jobs/new"><Icon name="add" /> {t('post.title')}</a>
 		</menu>
 	</section>
 	<AddAnywhere />

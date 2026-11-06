@@ -1,4 +1,5 @@
 <script>
+	import Icon from '#lib/components/Icon.svelte';
 	import PageHeader from '#lib/components/PageHeader.svelte';
 	import { page } from '$app/state';
 	import config from '#lib/data/config.json';
@@ -24,7 +25,7 @@
 <svelte:head><title>{t('companies.title')} · {config.name}</title></svelte:head>
 
 <PageHeader title={t('companies.title')} intro={t('companies.intro')}>
-	{#snippet actions()}<a href="/add">+ {t('companies.add')}</a>{/snippet}
+	{#snippet actions()}<a href="/add"><Icon name="add" /> {t('companies.add')}</a>{/snippet}
 </PageHeader>
 <Tabs
 	label={t('list.tabs')}

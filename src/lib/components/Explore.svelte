@@ -1,4 +1,5 @@
 <script>
+	import Icon from './Icon.svelte';
 	import config from '#lib/data/config.json';
 	import ExploreSearch from './ExploreSearch.svelte';
 	import Jobs from './Jobs.svelte';
@@ -244,7 +245,7 @@
 		/>
 	</jl-explore-map>
 	{#if moved && !selected && !picked}
-		<button type="button" onclick={searchArea} style:--map-left="{covered.left}px">{t('explore.area')}</button>
+		<button type="button" onclick={searchArea} style:--map-left="{covered.left}px"><Icon name="area" /> {t('explore.area')}</button>
 	{/if}
 	<jl-explore-panel {sheet} bind:this={panel} dragging={drag ? true : undefined} style:--sheet-drag={drag ? `${drag.height}px` : undefined}>
 		<button
@@ -262,7 +263,7 @@
 			<JobDetail job={selected} jobs={results} {names} onback={back} onselect={select} />
 		{:else if pickedJobs}
 			<jl-explore-place>
-				<button type="button" onclick={back}>← {t('explore.back')}</button>
+				<button type="button" onclick={back}><Icon name="back" /> {t('explore.back')}</button>
 				<h2>{t('explore.here', { count: pickedJobs.length })}</h2>
 				<ul>
 					{#each pickedJobs as job (job.url)}

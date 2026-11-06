@@ -20,6 +20,7 @@
 	--line-height: 1.45;
 	--line-height-tight: 1.2;
 
+	--space-xxs: 0.125rem;
 	--space-xs: 0.25rem;
 	--space-s: 0.5rem;
 	--space-m: 1rem;
@@ -55,6 +56,8 @@
 	--chip-line: 1.6;
 	--selected-bar: 3px;
 	--nav-height: 3.5rem;
+	--nav-icon-size: 1.25rem;
+	--icon-size: 1.15em;
 	--header-height: 3rem;
 	--map-height: 60vh;
 	--map-height-small: 16rem;

@@ -1,4 +1,5 @@
 <script>
+	import Icon from './Icon.svelte';
 	import config from '#lib/data/config.json';
 	import { currentPlace } from '#lib/navigation/location.js';
 	import { t } from '#lib/i18n/index.svelte.js';
@@ -63,7 +64,7 @@
 		</select>
 		<fieldset>
 			<button type="button" aria-pressed={filters.near ? 'true' : 'false'} onclick={nearMe} disabled={locating === 'locating'}>
-				◎ {t('near.me')}
+				<Icon name="near" /> {t('near.me')}
 			</button>
 			{#if filters.near}
 				<select bind:value={filters.within} aria-label={t(`near.within.${mode}`, { minutes: '…' })}>

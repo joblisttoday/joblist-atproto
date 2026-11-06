@@ -1,4 +1,5 @@
 <script>
+	import Icon from './Icon.svelte';
 	import { page } from '$app/state';
 	import { bookmarklet } from '#lib/tools/bookmarklet.js';
 	import { t } from '#lib/i18n/index.svelte.js';
@@ -25,7 +26,7 @@
 
 		<h3>{t('anywhere.bookmarklet.title')}</h3>
 		<p>{t('anywhere.bookmarklet.text')}</p>
-		<menu><a href={code} onclick={click} draggable="true">+ {t('anywhere.bookmarklet.link')}</a></menu>
+		<menu><a href={code} onclick={click} draggable="true"><Icon name="add" /> {t('anywhere.bookmarklet.link')}</a></menu>
 		<p><small role={dragHint ? 'status' : undefined}>{t('anywhere.bookmarklet.help')}</small></p>
 		<label for="bookmarklet-code">{t('anywhere.bookmarklet.code')}</label>
 		<textarea id="bookmarklet-code" readonly rows="4" aria-describedby="bookmarklet-code-help" onfocus={(e) => e.currentTarget.select()}>{code}</textarea>

@@ -1,4 +1,5 @@
 <script>
+	import Icon from './Icon.svelte';
 	import providers from '#lib/data/providers.json';
 	import { boardUrl } from '#lib/models/company.js';
 	import { t } from '#lib/i18n/index.svelte.js';
@@ -22,7 +23,7 @@
 		{#if board}
 			<p>
 				{count ? t('add.jobs', { count, provider }) : t('add.jobs.none', { provider })}
-				<small><a href={boardUrl(board)} target="_blank" rel="noopener">{boardUrl(board)} ↗</a></small>
+				<small><a href={boardUrl(board)} target="_blank" rel="noopener">{boardUrl(board)} <Icon name="external" /></a></small>
 			</p>
 		{/if}
 		{#if existing}

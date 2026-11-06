@@ -1,8 +1,8 @@
 [
-	{ "href": "/", "label": "nav.explore" },
-	{ "href": "/saved", "label": "nav.saved" },
-	{ "href": "/companies", "label": "nav.companies" },
-	{ "href": "/lists", "label": "nav.lists" },
-	{ "href": "/jobs/new", "label": "nav.post", "wide": true },
-	{ "href": "/{handle}", "label": "nav.me", "signedOut": { "href": "/signin", "label": "nav.signin" } }
+	{ "href": "/", "icon": "explore", "label": "nav.explore" },
+	{ "href": "/saved", "icon": "saved", "label": "nav.saved" },
+	{ "href": "/companies", "icon": "companies", "label": "nav.companies" },
+	{ "href": "/lists", "icon": "lists", "label": "nav.lists" },
+	{ "href": "/jobs/new", "icon": "post", "label": "nav.post", "wide": true },
+	{ "href": "/{handle}", "icon": "me", "label": "nav.me", "signedOut": { "href": "/signin", "icon": "signin", "label": "nav.signin" } }
 ]

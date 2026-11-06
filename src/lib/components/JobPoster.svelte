@@ -1,4 +1,5 @@
 <script>
+	import Icon from './Icon.svelte';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
@@ -13,7 +14,7 @@
 
 <jl-job-poster verified={verified || undefined}>
 	{#if verified}
-		<p>✓ {t('post.as.company')}</p>
+		<p><Icon name="verified" /> {t('post.as.company')}</p>
 	{:else}
 		<p>{t('post.as.shared', { handle: session.handle || '' })}</p>
 		<small>{t('post.as.shared.help', { domain: company })}</small>

@@ -1,4 +1,5 @@
 <script>
+	import Icon from './Icon.svelte';
 	import { getDescription } from '#lib/ats/index.js';
 	import { data } from '#lib/network/network.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
@@ -25,8 +26,8 @@
 		{#each paragraphs(value) as paragraph, i (i)}<p>{paragraph}</p>{:else}<p><small>{t('job.description.none')}</small></p>{/each}
 	{/await}
 	<menu>
-		<a href={job.url} target="_blank" rel="noopener">{t('job.offer')}{elsewhere.length && job.location ? `: ${job.location}` : ''} ↗</a>
-		{#each elsewhere as other (other.url)}<a href={other.url} target="_blank" rel="noopener">{other.location} ↗</a>{/each}
+		<a href={job.url} target="_blank" rel="noopener">{t('job.offer')}{elsewhere.length && job.location ? `: ${job.location}` : ''} <Icon name="external" /></a>
+		{#each elsewhere as other (other.url)}<a href={other.url} target="_blank" rel="noopener">{other.location} <Icon name="external" /></a>{/each}
 		{#if company}<a href="/company/{job.company}">{t('jobs.aboutCompany', { name: company })}</a>{/if}
 	</menu>
 </jl-job-description>

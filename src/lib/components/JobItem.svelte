@@ -1,4 +1,5 @@
 <script>
+	import Icon from './Icon.svelte';
 	import config from '#lib/data/config.json';
 	import JobDescription from './JobDescription.svelte';
 	import { offerPlaces, time, workplace } from '#lib/models/job.js';
@@ -26,6 +27,7 @@
 	const location = $derived(
 		places.length > MAX_PLACES ? `${places.slice(0, MAX_PLACES).join('; ')} ${t('job.places.more', { count: places.length - MAX_PLACES })}` : places.join('; ')
 	);
+	const travelIcon = /** @type {import('#lib/icons.js').IconName} */ (config.travel.mode);
 	// How far, when the person searches near them.
 	const distance = $derived(
 		job.km === undefined
@@ -51,8 +53,8 @@
 		<a href={postPath(posted.did, posted.rkey)}>{job.title}</a>
 		<small>{#if company}<a href="/company/{job.company}">{company}</a>{line ? ' · ' : ''}{/if}{line}</small>
 		<jl-chips>
-			{#each chips as chip (chip)}<span>{chip}</span>{/each}
-			{#if posted.verified}<mark>✓ {t('job.verified')}</mark>{/if}
+			{#each chips as chip (chip)}<span>{#if chip === distance}<Icon name={travelIcon} />{' '}{/if}{chip}</span>{/each}
+			{#if posted.verified}<mark><Icon name="verified" /> {t('job.verified')}</mark>{/if}
 		</jl-chips>
 		{#if !posted.verified}
 			<small>{t('job.sharedBy')} <a href="/{handleOf(posted.did)}">@{handleOf(posted.did)}</a></small>
@@ -61,14 +63,14 @@
 		<button type="button" onclick={onselect} aria-current={selected ? 'true' : undefined}>
 			<strong>{#if fresh}<mark>{t('job.new')}</mark> {/if}{job.title}</strong>
 			<small>{company ? `${company}${line ? ' · ' : ''}` : ''}{line}</small>
-			<jl-chips>{#each chips as chip (chip)}<span>{chip}</span>{/each}</jl-chips>
+			<jl-chips>{#each chips as chip (chip)}<span>{#if chip === distance}<Icon name={travelIcon} />{' '}{/if}{chip}</span>{/each}</jl-chips>
 		</button>
 	{:else}
 		<details bind:open>
 			<summary>
 				<strong>{#if fresh}<mark>{t('job.new')}</mark> {/if}{job.title}</strong>
 				<small>{company ? `${company}${line ? ' · ' : ''}` : ''}{line}</small>
-				<jl-chips>{#each chips as chip (chip)}<span>{chip}</span>{/each}</jl-chips>
+				<jl-chips>{#each chips as chip (chip)}<span>{#if chip === distance}<Icon name={travelIcon} />{' '}{/if}{chip}</span>{/each}</jl-chips>
 			</summary>
 			{#if open}{@render actions?.()}<JobDescription {job} {company} />{/if}
 		</details>

@@ -1,4 +1,5 @@
 <script>
+	import Icon from '#lib/components/Icon.svelte';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import config from '#lib/data/config.json';
@@ -44,7 +45,7 @@
 			{:else}
 				<p><small>{self ? t('me.lists.empty') : t('profile.empty')}</small></p>
 			{/if}
-			{#if self}<menu><a href="/lists/new">+ {t('list.new')}</a></menu>{/if}
+			{#if self}<menu><a href="/lists/new"><Icon name="add" /> {t('list.new')}</a></menu>{/if}
 		</section>
 
 		{#if self || posts.length}
@@ -52,7 +53,7 @@
 				<h2 id="profile-jobs">{t('profile.jobs')} <small>{posts.length || ''}</small></h2>
 				{#if self}
 					<MyJobPosts {posts} />
-					<menu><a href="/jobs/new">+ {t('post.title')}</a></menu>
+					<menu><a href="/jobs/new"><Icon name="add" /> {t('post.title')}</a></menu>
 				{:else}
 					<ul>
 						{#each posts.map(toJob) as job (job.url)}
@@ -70,7 +71,7 @@
 			{:else}
 				<p><small>{self ? t('me.companies.empty') : t('profile.empty')}</small></p>
 			{/if}
-			{#if self}<menu><a href="/add">+ {t('form.company.title')}</a></menu>{/if}
+			{#if self}<menu><a href="/add"><Icon name="add" /> {t('form.company.title')}</a></menu>{/if}
 		</section>
 	</jl-profile>
 {:catch}

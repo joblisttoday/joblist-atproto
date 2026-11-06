@@ -1,4 +1,5 @@
 <script>
+	import Icon from './Icon.svelte';
 	import config from '#lib/data/config.json';
 	import { goto } from '$app/navigation';
 	import { filterJobs, sameOffers } from '#lib/models/job.js';
@@ -16,10 +17,9 @@
 
 	/** @param {import('#lib/models/saved-search.js').SavedSearch} s */
 	const label = (s) =>
-		[s.query, s.where, s.remote && t(`jobs.filter.workplace.${s.remote}`), s.near && near(s.within)].filter(Boolean).join(' · ') ||
-		t('saved.all');
+		[s.query, s.where, s.remote && t(`jobs.filter.workplace.${s.remote}`)].filter(Boolean).join(' · ') || (s.near ? '' : t('saved.all'));
 	/** A search near someone: how far, not where. @param {number | undefined} within */
-	const near = (within) => `◎ ${within ? t(`near.within.${config.travel.mode}`, { minutes: within }) : t('near.me')}`;
+	const near = (within) => (within ? t(`near.within.${config.travel.mode}`, { minutes: within }) : t('near.me'));
 
 	/** In the explorer, with its place near someone (not in the address). @param {import('#lib/models/saved-search.js').SavedSearch} search */
 	function open(search) {
@@ -41,11 +41,14 @@
 						open(search);
 					}}
 				>
-					<strong>{label(search)}</strong>
+					<strong>
+						{label(search)}
+						{#if search.near}{#if label(search)} · {/if}<Icon name="near" /> {near(search.within)}{/if}
+					</strong>
 					{#if all !== null}<small>{t('saved.matching', { count: all.toLocaleString() })}</small>{/if}
 				</a>
 				{#if fresh}<mark>{t('searches.new', { count: fresh })}</mark>{/if}
-				<button type="button" aria-label={t('saved.remove', { name: label(search) })} onclick={() => forgetSearch(search)}>✕</button>
+				<button type="button" onclick={() => forgetSearch(search)}><Icon name="close" label={t('saved.remove', { name: label(search) || near(search.within) })} /></button>
 			</li>
 		{/each}
 	</ul>

@@ -1,4 +1,5 @@
 <script>
+	import Icon from './Icon.svelte';
 	import config from '#lib/data/config.json';
 	import { session, signIn } from '#lib/auth/session.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
@@ -41,7 +42,7 @@
 		{#if error || session.error}<p role="alert">{t('signin.error')} <small>{error || session.error}</small></p>{/if}
 		<menu><button type="submit" disabled={busy}>{busy ? t('signin.busy') : t('signin.submit')}</button></menu>
 		<p>
-			<small>{t('signin.noAccount')} <a href={config.links.signup} target="_blank" rel="noopener">{t('signin.create')} ↗</a></small>
+			<small>{t('signin.noAccount')} <a href={config.links.signup} target="_blank" rel="noopener">{t('signin.create')} <Icon name="external" /></a></small>
 		</p>
 	</form>
 </jl-signin>

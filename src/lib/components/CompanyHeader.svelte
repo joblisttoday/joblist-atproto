@@ -1,4 +1,5 @@
 <script>
+	import Icon from './Icon.svelte';
 	import { goto } from '$app/navigation';
 	import config from '#lib/data/config.json';
 	import CompanyEdited from './CompanyEdited.svelte';
@@ -32,8 +33,8 @@
 		<h1>{company.name}</h1>
 		<p>
 			<small>
-				{#if company.url}<a href={company.url} target="_blank" rel="noopener">{company.key} ↗</a>{:else}{company.key}{/if}
-				{#if company.verified}· <span>✓ {t('company.verified', { domain: company.key })}</span>{/if}
+				{#if company.url}<a href={company.url} target="_blank" rel="noopener">{company.key} <Icon name="external" /></a>{:else}{company.key}{/if}
+				{#if company.verified}· <span><Icon name="verified" /> {t('company.verified', { domain: company.key })}</span>{/if}
 			</small>
 		</p>
 		<CompanyEdited {company} />
@@ -44,7 +45,7 @@
 			</ul>
 		{/if}
 		<menu>
-			{#if board}<a href={board} target="_blank" rel="noopener">{t('company.jobBoard')} ↗</a>{/if}
+			{#if board}<a href={board} target="_blank" rel="noopener">{t('company.jobBoard')} <Icon name="external" /></a>{/if}
 			<a href="/add?key={encodeURIComponent(company.key)}">{t('company.edit')}</a>
 			{#if own}<button type="button" onclick={remove}>{t('company.delete')}</button>{/if}
 		</menu>

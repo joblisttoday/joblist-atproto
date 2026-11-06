@@ -1,4 +1,5 @@
 <script>
+	import Icon from './Icon.svelte';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { data } from '#lib/network/network.svelte.js';
 	import { updateList } from '#lib/network/save-list.js';
@@ -34,10 +35,10 @@
 	<menu>
 		{#each mine as list (list.uri)}
 			<button type="button" aria-pressed={list.companies.includes(key)} disabled={busy === list.uri} onclick={() => toggle(list)}>
-				{list.companies.includes(key) ? '✓' : '+'} {list.name}
+				<Icon name={list.companies.includes(key) ? 'added' : 'add'} /> {list.name}
 			</button>
 		{/each}
-		<a href="/lists/new?add={encodeURIComponent(key)}">+ {t('company.newList')}</a>
+		<a href="/lists/new?add={encodeURIComponent(key)}"><Icon name="add" /> {t('company.newList')}</a>
 	</menu>
 	{#if error}<p role="alert">{error}</p>{/if}
 </jl-add-to-list>

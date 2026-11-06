@@ -1,4 +1,5 @@
 <script>
+	import Icon from './Icon.svelte';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/** @type {{locations: import('#lib/models/company.js').Location[]}} */
@@ -30,7 +31,7 @@
 				</menu>
 			</fieldset>
 		{/each}
-		<button type="button" onclick={() => locations.push({})}>+ {t('form.location.add')}</button>
+		<button type="button" onclick={() => locations.push({})}><Icon name="add" /> {t('form.location.add')}</button>
 	</fieldset>
 </jl-locations>
 

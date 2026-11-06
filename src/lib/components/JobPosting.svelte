@@ -1,4 +1,5 @@
 <script>
+	import Icon from './Icon.svelte';
 	import JobApply from './JobApply.svelte';
 	import JobPostMenu from './JobPostMenu.svelte';
 	import { data, handleOf } from '#lib/network/network.svelte.js';
@@ -32,7 +33,7 @@
 		<p>
 			<a href="/company/{post.company}">{company?.name || post.company}</a>
 			{#if post.verified}
-				· <mark>✓ {t('job.verified')}</mark>
+				· <mark><Icon name="verified" /> {t('job.verified')}</mark>
 			{:else}
 				<small>· {t('job.sharedBy')} <a href="/{handle}">@{handle}</a></small>
 			{/if}
@@ -48,7 +49,7 @@
 	</header>
 
 	{#if post.description}<p>{post.description}</p>{/if}
-	{#if offer}<p><a href={offer} target="_blank" rel="noopener">{t('job.offer')} ↗</a></p>{/if}
+	{#if offer}<p><a href={offer} target="_blank" rel="noopener">{t('job.offer')} <Icon name="external" /></a></p>{/if}
 
 	{#if live}<JobApply {post} />{/if}
 </jl-job-posting>

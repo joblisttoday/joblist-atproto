@@ -1,4 +1,5 @@
 <script>
+	import Icon from './Icon.svelte';
 	import config from '#lib/data/config.json';
 	import { data } from '#lib/network/network.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
@@ -16,7 +17,7 @@
 			<p>
 				<small>
 					{#if profile?.displayName}@{handle} · {/if}
-					<a href={config.links.profile.replace('{handle}', handle)} target="_blank" rel="noopener">{t('profile.bluesky')} ↗</a>
+					<a href={config.links.profile.replace('{handle}', handle)} target="_blank" rel="noopener">{t('profile.bluesky')} <Icon name="external" /></a>
 				</small>
 			</p>
 		</hgroup>

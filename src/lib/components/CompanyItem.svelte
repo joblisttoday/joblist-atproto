@@ -1,4 +1,5 @@
 <script>
+	import Icon from './Icon.svelte';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
@@ -14,7 +15,7 @@
 
 <jl-company verified={company.verified || undefined}>
 	<a href="/company/{company.key}">{company.name}</a>
-	{#if company.verified}<span role="img" aria-label={t('company.verified', { domain: company.key })} title={t('company.verified', { domain: company.key })}>✓</span>{/if}
+	{#if company.verified}<span title={t('company.verified', { domain: company.key })}><Icon name="verified" label={t('company.verified', { domain: company.key })} /></span>{/if}
 	{#if jobs}<data value={jobs}>{jobs === 1 ? t('jobs.count.one') : t('jobs.count', { count: jobs.toLocaleString() })}</data>{/if}
 	{#if about}<small>{about}</small>{/if}
 	{#if children}<jl-company-aside>{@render children()}</jl-company-aside>{/if}
