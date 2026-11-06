@@ -12,30 +12,30 @@
 </script>
 
 {#if !isEmpty(filters)}
+	<!-- One toggle: kept in this browser only (said in its title), or forgotten. -->
 	<jl-save-search saved={saved || undefined}>
-		{#if saved}
-			<small>✓ {t('searches.saved')}</small>
-			<button type="button" onclick={() => forgetSearch(filters)}>{t('searches.forget')}</button>
-		{:else}
-			<button type="button" onclick={() => saveSearch(filters)}>{t('searches.save')}</button>
-			<small>{t('searches.private')}</small>
-		{/if}
+		<button
+			type="button"
+			aria-pressed={saved ? 'true' : 'false'}
+			title={t('searches.private')}
+			onclick={() => (saved ? forgetSearch(filters) : saveSearch(filters))}
+		>
+			{saved ? '★' : '☆'} {saved ? t('searches.saved') : t('searches.save')}
+		</button>
 	</jl-save-search>
 {/if}
 
 <style>
 	jl-save-search {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: var(--space-s);
-		margin: var(--space-s) 0;
+		display: block;
 	}
-	/* A chip, like the search's own choices. */
 	button {
 		min-height: var(--chip-height);
 		padding: 0 var(--space-m);
 		border-radius: var(--radius-round);
 		font-size: var(--font-size-small);
+	}
+	button[aria-pressed='true'] {
+		border-color: var(--color-accent);
 	}
 </style>

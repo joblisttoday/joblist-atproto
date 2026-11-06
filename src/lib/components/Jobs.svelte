@@ -122,22 +122,24 @@
 	{#if loading}
 		<progress value={answered} max={targets.length} aria-label={t('jobs.loading')}></progress>
 	{/if}
-	<p aria-live="polite">
-		<small>
-			{#if loading}
-				{t('jobs.progress', { answered, total: targets.length, count: jobs.length })}
-			{:else if filtered.length === offers}
-				{t('jobs.count', { count: offers })}
-			{:else}
-				{t('jobs.countFiltered', { count: filtered.length, total: offers })}
-			{/if}
-		</small>
-	</p>
-
 	{#if search && (jobs.length > 10 || actions)}
 		<JobFilters bind:filters bind:grouped {places} onchange={() => (shown = PAGE)} />
 	{/if}
-	{@render actions?.()}
+	<!-- How many, and what to do with them, on one line. -->
+	<jl-jobs-bar>
+		<p aria-live="polite">
+			<small>
+				{#if loading}
+					{t('jobs.progress', { answered, total: targets.length, count: jobs.length })}
+				{:else if filtered.length === offers}
+					{t('jobs.count', { count: offers })}
+				{:else}
+					{t('jobs.countFiltered', { count: filtered.length, total: offers })}
+				{/if}
+			</small>
+		</p>
+		{@render actions?.()}
+	</jl-jobs-bar>
 
 	{#if grouped}
 		<ul>
@@ -193,8 +195,16 @@
 	jl-jobs {
 		display: block;
 	}
-	jl-jobs > p {
-		margin: var(--space-s) 0;
+	jl-jobs-bar {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--space-xs) var(--space-s);
+		margin: var(--space-s) 0 0;
+	}
+	jl-jobs-bar > p {
+		margin: 0;
 	}
 	jl-jobs > ul {
 		margin: var(--space-s) 0;

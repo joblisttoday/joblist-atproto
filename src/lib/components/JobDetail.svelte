@@ -39,7 +39,7 @@
 		<JobItem {job} company={name} expanded>
 			{#snippet actions()}
 				<menu>
-					<a href={apply} target={job.posted ? undefined : '_blank'} rel={job.posted ? undefined : 'noopener'}>{t('job.apply.link')}{job.posted ? '' : ' ↗'}</a>
+					<a href={apply} target={job.posted ? undefined : '_blank'} rel={job.posted ? undefined : 'noopener'}>{t('explore.apply')}{job.posted ? '' : ' ↗'}</a>
 					<a href="/company/{job.company}">{t('jobs.aboutCompany', { name })}</a>
 				</menu>
 			{/snippet}

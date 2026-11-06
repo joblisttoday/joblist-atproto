@@ -39,7 +39,8 @@
 	--column-gap: var(--gutter);
 	--columns: repeat(auto-fill, minmax(min(100%, var(--column-min)), 1fr));
 	--explore-list-width: 28rem;
-	--sheet-peek: 9.5rem;
+	--sheet-peek: 7.5rem;
+	--handle-height: 2rem;
 	--sheet-half: 55%;
 	--handle-width: 2.5rem;
 	--radius-large: 1rem;

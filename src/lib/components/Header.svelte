@@ -31,6 +31,20 @@
 </jl-header>
 
 <style>
+	/* Phones: pages using the whole screen (the explorer) keep only the navigation. */
+	@media not (min-width: 64rem) {
+		:global(body:has(jl-explore)) jl-header {
+			border: 0;
+		}
+		:global(body:has(jl-explore)) header {
+			min-height: 0;
+			padding: 0;
+		}
+		:global(body:has(jl-explore)) header > a,
+		:global(body:has(jl-explore)) jl-header > :global(jl-network-status) {
+			display: none;
+		}
+	}
 	jl-header {
 		display: block;
 		position: sticky;

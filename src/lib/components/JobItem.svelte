@@ -92,7 +92,7 @@
 	}
 	/* The company's initial, in its own color. */
 	jl-avatar {
-		grid-row: 1 / span 4;
+		grid-row: 1;
 		display: grid;
 		place-items: center;
 		width: var(--avatar-small);
@@ -101,6 +101,10 @@
 		background: hsl(var(--hue) var(--avatar-saturation) var(--avatar-lightness));
 		color: var(--color-avatar-fg);
 		font-weight: var(--font-weight-strong);
+	}
+	/* A posted job lists its parts side by side with the initial. */
+	jl-job[posted] jl-avatar {
+		grid-row: 1 / span 4;
 	}
 	jl-chips {
 		display: flex;

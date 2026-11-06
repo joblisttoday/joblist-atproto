@@ -91,9 +91,16 @@
 	small {
 		grid-column: 1 / -1;
 	}
+	/* One line of chips, swiped sideways when they do not fit. */
 	menu {
+		flex-wrap: nowrap;
 		margin: 0;
 		gap: var(--space-xs);
+		overflow-x: auto;
+		scrollbar-width: none;
+	}
+	menu > li {
+		flex: none;
 	}
 	/* Chips: small, round, filled when on. */
 	menu button,

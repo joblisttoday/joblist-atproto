@@ -120,7 +120,19 @@ export function sameOffers(jobs) {
  * @param {Job} job
  */
 export function offerPlaces(job) {
-	return [...new Set([job, ...(job.also || [])].map((j) => j.location).filter(Boolean))];
+	return [...new Set([job, ...(job.also || [])].map((j) => tidyPlace(j.location)).filter(Boolean))];
+}
+
+/**
+ * A place without its repeated parts: "Berlin, Berlin, Germany" → "Berlin, Germany".
+ * @param {string | undefined} place
+ */
+export function tidyPlace(place) {
+	const seen = new Set();
+	return (place || '')
+		.split(/\s*,\s*/)
+		.filter((part) => part && !seen.has(part.toLowerCase()) && seen.add(part.toLowerCase()))
+		.join(', ');
 }
 
 /**

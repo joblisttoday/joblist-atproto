@@ -30,7 +30,8 @@ export function createMap(maplibre, node, options = {}) {
 		attributionControl: { compact: true },
 		...options
 	});
-	map.addControl(new maplibre.NavigationControl({ showCompass: false }));
+	// Zoom buttons for a mouse; fingers pinch.
+	if (matchMedia(config.layout.finePointer).matches) map.addControl(new maplibre.NavigationControl({ showCompass: false }));
 	map.on('style.load', () => map.setProjection({ type: config.map.projection }));
 	return map;
 }

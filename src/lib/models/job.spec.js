@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { byCompany, commonPlaces, filterJobs, isRemote, offerPlaces, remoteLimit, sameOffers, time, workplace } from './job.js';
+import { byCompany, commonPlaces, filterJobs, isRemote, offerPlaces, remoteLimit, sameOffers, tidyPlace, time, workplace } from './job.js';
 
 /** @param {Partial<import('#lib/ats/job.js').Job>} job */
 const job = (job) => ({ title: 'Engineer', url: 'https://x', company: 'acme.org', ...job });
@@ -32,6 +32,14 @@ describe('remoteLimit', () => {
 		expect(remoteLimit(job({ location: 'Remote job' }))).toBe('');
 		expect(remoteLimit(job({ location: 'Remote, Global' }))).toBe('');
 		expect(remoteLimit(job({ remote: 'remote' }))).toBe('');
+	});
+});
+
+describe('tidyPlace', () => {
+	it('drops the repeated parts of a place', () => {
+		expect(tidyPlace('Berlin, Berlin, Germany')).toBe('Berlin, Germany');
+		expect(tidyPlace('Paris,  paris, France')).toBe('Paris, France');
+		expect(tidyPlace(undefined)).toBe('');
 	});
 });
 
