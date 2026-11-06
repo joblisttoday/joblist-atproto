@@ -63,8 +63,16 @@
 		const key = searchKey(filters);
 		const changed = key !== shownSearch;
 		shownSearch = key;
-		if (search !== location.search || (changed && untrack(() => selected || picked))) replaceState(`${path}${search}`, {});
+		if (search !== addressSearch() || (changed && untrack(() => selected || picked))) replaceState(`${path}${search}`, {});
 	});
+
+	/** The search in the address, without the job open in it. */
+	function addressSearch() {
+		const params = new URLSearchParams(location.search);
+		params.delete(config.jobs.jobParam);
+		const text = params.toString();
+		return text ? `?${text}` : '';
+	}
 
 	// Back, forward, or coming back from signing in: the search is the address's again.
 	// Where someone is stays, it is never in the address.
@@ -105,17 +113,43 @@
 
 	// A job open in the panel, or the jobs at a place tapped on the map. They are history
 	// entries (shallow routing), so the phone's back gesture closes them like pages.
+	// An open job is in the address too, so it can be shared.
 	const selected = $derived(page.state.job ?? null);
+	// Opened from a link to a job: open it once the jobs are read.
+	let linked = new URLSearchParams(location.search).get(config.jobs.jobParam);
+	$effect(() => {
+		if (!linked || !session.ready) return;
+		const job = jobs.find((j) => j.url === linked);
+		if (!job && busy) return;
+		linked = null;
+		if (job) replaceState(location.href, { job: $state.snapshot(job) });
+		if (job) sheet = 'full';
+	});
 	const picked = $derived(page.state.picked ?? null);
 	const pickedJobs = $derived(picked ? results.filter((job) => picked?.includes(job.url)) : null);
 	// Where the results were scrolled, to come back to it.
 	let resultsScroll = 0;
 
+	// Before something opens: where the results were, the sheet's size, what had focus; back to them on close.
+	/** @type {(typeof SHEET)[number] | null} */
+	let sheetBefore = null;
+	/** @type {Element | null} */
+	let opener = null;
+	function leaveResults() {
+		if (selected || picked) return;
+		resultsScroll = panel.scrollTop;
+		sheetBefore = sheet;
+		opener = document.activeElement;
+	}
+
 	/** @param {import('#lib/ats/job.js').Job} job */
 	function select(job) {
-		if (!selected && !picked) resultsScroll = panel.scrollTop;
-		pushState('', { job: $state.snapshot(job), picked: picked ?? undefined });
-		if (sheet === 'peek') sheet = 'half';
+		leaveResults();
+		const params = new URLSearchParams(toParams(filters));
+		params.set(config.jobs.jobParam, job.url);
+		pushState(`${path}?${params}`, { job: $state.snapshot(job), picked: picked ?? undefined });
+		// A job is read on the whole screen.
+		sheet = 'full';
 		panel.scrollTop = 0;
 	}
 
@@ -123,8 +157,8 @@
 	function pick(urls) {
 		const found = results.filter((job) => urls.includes(job.url));
 		if (found.length === 1) return select(found[0]);
-		if (!selected && !picked) resultsScroll = panel.scrollTop;
-		pushState('', { picked: urls });
+		leaveResults();
+		pushState(`${path}${toParams(filters)}`, { picked: urls });
 		if (sheet === 'peek') sheet = 'half';
 		panel.scrollTop = 0;
 	}
@@ -134,10 +168,18 @@
 		history.back();
 	}
 
-	// Back on the results: where they were scrolled.
+	// Back on the results: where they were scrolled, at the size they were, focus on what opened the job.
 	$effect(() => {
 		if (selected || picked) return;
-		tick().then(() => panel && (panel.scrollTop = resultsScroll));
+		untrack(() => {
+			if (sheetBefore) sheet = sheetBefore;
+			sheetBefore = null;
+		});
+		tick().then(() => {
+			if (panel) panel.scrollTop = resultsScroll;
+			if (opener instanceof HTMLElement && opener.isConnected) opener.focus({ preventScroll: true });
+			opener = null;
+		});
 	});
 
 	// Nothing found: the ways to find more, from the closest change to the widest.

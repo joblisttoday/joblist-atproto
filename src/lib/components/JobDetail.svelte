@@ -34,7 +34,7 @@
 </script>
 
 <jl-job-detail>
-	<button type="button" onclick={onback}>← {t('explore.back')}</button>
+	<button type="button" onclick={onback} {@attach (node) => node.focus({ preventScroll: true })}>← {t('explore.back')}</button>
 	{#key job.url}
 		<JobItem {job} company={name} expanded>
 			{#snippet actions()}
@@ -68,7 +68,14 @@
 		font-size: var(--font-size-small);
 		margin: var(--space-xs) 0 var(--space-s);
 	}
-	/* Apply: the page's main action. */
+	/* Apply: the page's main action, kept in reach under the handle while the job is read. */
+	jl-job-detail :global(details > menu) {
+		position: sticky;
+		top: var(--handle-height);
+		z-index: 1;
+		padding-block: var(--space-s);
+		background: var(--color-bg);
+	}
 	jl-job-detail :global(details > menu > a:first-child) {
 		background: var(--color-accent);
 		color: var(--color-accent-fg);

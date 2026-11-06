@@ -66,6 +66,7 @@
 		"placesShown": 3,
 		"nearbyShown": 5,
 		"typingDelayMs": 200,
+		"jobParam": "job",
 		"remoteWords": [
 			"remote",
 			"anywhere",
