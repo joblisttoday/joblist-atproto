@@ -88,3 +88,23 @@ function toJob(j) {
 	const id = j.i ?? url.slice(url.lastIndexOf('/') + 1);
 	return { title: j.t, url, company: j.c, location: j.l, department: j.d, published: j.p, id, remote: j.r, point: j.g };
 }
+
+/**
+ * Companies whose domain is their Bluesky handle (see indexer/bluesky.js), by key.
+ * @typedef {{did: string, name?: string, avatar?: string, followers: number}} BlueskyAccount
+ * @type {Promise<Map<string, BlueskyAccount>> | null}
+ */
+let accountsPromise = null;
+export function getSnapshotAccounts() {
+	accountsPromise ??= getFile(config.bluesky.file).then((data) => {
+		/** @type {Map<string, BlueskyAccount>} */
+		const accounts = new Map();
+		for (const [key, a] of Object.entries(data || {})) {
+			if (typeof a?.did !== 'string') continue;
+			const avatar = safeUrl(a.avatar) || undefined;
+			accounts.set(key, { did: a.did, name: a.name ? String(a.name) : undefined, avatar, followers: Number(a.followers) || 0 });
+		}
+		return accounts;
+	});
+	return accountsPromise;
+}

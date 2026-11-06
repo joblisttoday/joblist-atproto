@@ -1,5 +1,6 @@
 <script>
 	import Icon from './Icon.svelte';
+	import { accountOf, thumbnail } from '#lib/network/accounts.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
@@ -10,10 +11,12 @@
 	const places = $derived(
 		[...new Set(company.locations.map((l) => l.name).filter(Boolean))].slice(0, 3).join(', ')
 	);
+	const avatar = $derived(accountOf(company.key)?.avatar);
 	const about = $derived([places, company.tags.slice(0, 3).join(' · ')].filter(Boolean).join(' — '));
 </script>
 
 <jl-company verified={company.verified || undefined}>
+	{#if avatar}<img src={thumbnail(avatar)} alt="" loading="lazy" />{/if}
 	<a href="/company/{company.key}">{company.name}</a>
 	{#if company.verified}<span title={t('company.verified', { domain: company.key })}><Icon name="verified" label={t('company.verified', { domain: company.key })} /></span>{/if}
 	{#if jobs}<data value={jobs}>{jobs === 1 ? t('jobs.count.one') : t('jobs.count', { count: jobs.toLocaleString() })}</data>{/if}
@@ -27,6 +30,14 @@
 		position: relative;
 		padding: var(--space-s) 0;
 		border-bottom: var(--border);
+	}
+	img {
+		width: var(--icon-avatar);
+		height: var(--icon-avatar);
+		margin-inline-end: var(--space-xs);
+		border-radius: var(--radius);
+		vertical-align: middle;
+		object-fit: cover;
 	}
 	a {
 		font-weight: var(--font-weight-strong);

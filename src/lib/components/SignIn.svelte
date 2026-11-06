@@ -1,10 +1,12 @@
 <script>
 	import Icon from './Icon.svelte';
 	import config from '#lib/data/config.json';
+	import { page } from '$app/state';
 	import { session, signIn } from '#lib/auth/session.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
-	let handle = $state('');
+	// A link can fill it in (a company page: "sign in as example.com").
+	let handle = $state(page.url.searchParams.get('handle') || '');
 	let busy = $state(false);
 	/** @type {string | null} */
 	let error = $state(null);

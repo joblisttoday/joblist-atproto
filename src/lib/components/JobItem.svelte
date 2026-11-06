@@ -7,6 +7,7 @@
 	import { postPath } from '#lib/models/job-post.js';
 	import { handleOf } from '#lib/network/network.svelte.js';
 	import { markOf } from '#lib/network/job-marks.svelte.js';
+	import { accountOf, thumbnail } from '#lib/network/accounts.svelte.js';
 	import { ago } from '#lib/i18n/dates.js';
 	import { i18n, t } from '#lib/i18n/index.svelte.js';
 
@@ -43,6 +44,8 @@
 	const chips = $derived([distance, place, ago(time(job.published), i18n.locale)].filter(Boolean));
 	const applied = $derived(markOf(job) === 'applied');
 	// Each company keeps its color, from its key.
+	// Its Bluesky picture, when the company is there; else its initial.
+	const avatar = $derived(company ? accountOf(job.company)?.avatar : undefined);
 	const hue = $derived([...job.company].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 360, 7));
 	// Only where it starts: the reader can still fold it.
 	// svelte-ignore state_referenced_locally
@@ -50,7 +53,7 @@
 </script>
 
 <jl-job posted={posted ? (posted.verified ? 'company' : 'shared') : undefined} {open} fresh={fresh || undefined} selected={selected || undefined} applied={applied || undefined}>
-	{#if company}<jl-avatar style="--hue: {hue}" aria-hidden="true">{company.trim().charAt(0).toUpperCase()}</jl-avatar>{/if}
+	{#if company}<jl-avatar style="--hue: {hue}" aria-hidden="true">{#if avatar}<img src={thumbnail(avatar)} alt="" loading="lazy" />{:else}{company.trim().charAt(0).toUpperCase()}{/if}</jl-avatar>{/if}
 	{#if posted}
 		<a href={postPath(posted.did, posted.rkey)}>{job.title}</a>
 		<small>{#if company}<a href="/company/{job.company}">{company}</a>{line ? ' · ' : ''}{/if}{line}</small>
@@ -106,6 +109,12 @@
 		background: hsl(var(--hue) var(--avatar-saturation) var(--avatar-lightness));
 		color: var(--color-avatar-fg);
 		font-weight: var(--font-weight-strong);
+		overflow: hidden;
+	}
+	jl-avatar img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
 	}
 	/* A posted job lists its parts side by side with the initial. */
 	jl-job[posted] jl-avatar {

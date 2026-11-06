@@ -1,6 +1,7 @@
 <script>
 	import config from '#lib/data/config.json';
 	import { session } from '#lib/auth/session.svelte.js';
+	import { accountOf } from '#lib/network/accounts.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
@@ -12,6 +13,9 @@
 	const manager = $derived(session.handle === company.key);
 	const post = $derived(`/jobs/new?company=${encodeURIComponent(company.key)}`);
 	const edit = $derived(`/add?key=${encodeURIComponent(company.key)}`);
+	// Its domain is already its Bluesky handle: signing in with it is the only step left.
+	const onBluesky = $derived(Boolean(accountOf(company.key)));
+	const signin = $derived(`/signin?handle=${encodeURIComponent(company.key)}&next=${encodeURIComponent(`/company/${company.key}`)}`);
 </script>
 
 {#if manager}
@@ -30,11 +34,16 @@
 		<details>
 			<summary>{t('company.claim.title')}</summary>
 			<p>{t('company.claim.text')}</p>
+			{#if onBluesky}
+				<p>{t('company.claim.ready', { domain: company.key })}</p>
+				<menu><a href={signin}>{t('company.claim.signinAs', { domain: company.key })}</a></menu>
+			{:else}
 			<ol>
 				<li>{t('company.claim.handle', { domain: company.key })} <a href={config.links.handleHelp} target="_blank" rel="noopener">{t('company.claim.how')}</a></li>
 				<li>{t('company.claim.signin', { domain: company.key })}</li>
 				<li>{t('company.claim.edit')}</li>
 			</ol>
+			{/if}
 		</details>
 	</jl-company-claim>
 {/if}

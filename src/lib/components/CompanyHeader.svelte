@@ -7,14 +7,19 @@
 	import { session } from '#lib/auth/session.svelte.js';
 	import { data, removeLocal } from '#lib/network/network.svelte.js';
 	import { boardUrl } from '#lib/models/company.js';
+	import { accountOf } from '#lib/network/accounts.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/** @type {{company: import('#lib/models/company.js').Company}} */
 	let { company } = $props();
 	const own = $derived(company.versions.find((v) => v.did === session.did));
 	const board = $derived(boardUrl(company.jobBoard));
-	// The company's own account: its Bluesky picture and profile.
-	const account = $derived(company.verified ? data.profiles.get(company.record.did) : undefined);
+	// The company's own account (it wrote the version shown, or its domain is its handle): its Bluesky picture and profile.
+	const author = $derived(company.verified ? data.profiles.get(company.record.did) : undefined);
+	const bluesky = $derived(accountOf(company.key));
+	const account = $derived(
+		author || bluesky ? { handle: author?.handle || company.key, avatar: author?.avatar || bluesky?.avatar, followers: bluesky?.followers } : undefined
+	);
 	/** @type {string | null} */
 	let error = $state(null);
 
@@ -37,7 +42,10 @@
 			<small>
 				{#if company.url}<a href={company.url} target="_blank" rel="noopener">{company.key} <Icon name="external" /></a>{:else}{company.key}{/if}
 				{#if company.verified}· <span><Icon name="verified" /> {t('company.verified', { domain: company.key })}</span>{/if}
-				{#if account}· <a href={config.links.profile.replace('{handle}', account.handle)} target="_blank" rel="noopener">{t('company.onBluesky', { handle: account.handle })}</a>{/if}
+				{#if account}
+					· <a href={config.links.profile.replace('{handle}', account.handle)} target="_blank" rel="noopener">{t('company.onBluesky', { handle: account.handle })}</a>
+					{#if account.followers}· {t('company.followers', { count: account.followers.toLocaleString() })}{/if}
+				{/if}
 			</small>
 		</p>
 		<CompanyEdited {company} />
