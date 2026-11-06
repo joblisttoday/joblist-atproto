@@ -23,7 +23,8 @@ on:
 
 concurrency:
   group: snapshot
-  cancel-in-progress: true
+  # A run in progress finishes (it may be looking up places for half an hour); the next one waits.
+  cancel-in-progress: false
 
 jobs:
   build-and-publish:
