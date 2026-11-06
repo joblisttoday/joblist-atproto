@@ -1,0 +1,82 @@
+<script>
+	import config from '#lib/data/config.json';
+	import { t } from '#lib/i18n/index.svelte.js';
+
+	/**
+	 * How to show a company's jobs on another website: a frame for any site, or an
+	 * element styled by the site. Both read the company's jobs from joblist and stay
+	 * up to date by themselves.
+	 * @type {{company: import('#lib/models/company.js').Company}}
+	 */
+	let { company } = $props();
+	const page = `${config.url}${config.embed.page}`;
+	const scripts = `${config.url}${config.embed.scripts}`;
+	const snippets = $derived([
+		{
+			id: 'iframe',
+			code: `<iframe src="${page}?company=${company.key}" title="${t('embed.title', { name: company.name }).replaceAll('"', '&quot;')}" width="100%" height="480" style="border:0"></iframe>`
+		},
+		{
+			id: 'element',
+			code: `<script type="module" src="${scripts}joblist-jobs.js"></${'script'}>\n<joblist-jobs company="${company.key}"></joblist-jobs>`
+		}
+	]);
+	let copied = $state('');
+
+	/** @param {string} id @param {string} code */
+	async function copy(id, code) {
+		try {
+			await navigator.clipboard.writeText(code);
+			copied = id;
+			setTimeout(() => (copied = ''), 2000);
+		} catch {
+			// the code stays selectable
+		}
+	}
+</script>
+
+<jl-company-embed>
+	<details>
+		<summary>{t('embed.section')}</summary>
+		<p><small>{t('embed.intro')}</small></p>
+		{#each snippets as snippet (snippet.id)}
+			<h3>{t(`embed.${snippet.id}`)}</h3>
+			<pre><code>{snippet.code}</code></pre>
+			<button type="button" onclick={() => copy(snippet.id, snippet.code)}>{copied === snippet.id ? t('embed.copied') : t('embed.copy')}</button>
+		{/each}
+	</details>
+</jl-company-embed>
+
+<style>
+	jl-company-embed {
+		display: block;
+		margin-top: var(--space-l);
+	}
+	summary {
+		display: flex;
+		align-items: center;
+		min-height: var(--tap-size);
+		cursor: pointer;
+		font-weight: var(--font-weight-strong);
+	}
+	h3 {
+		margin: var(--space-m) 0 var(--space-xs);
+		font-size: var(--font-size-small);
+	}
+	pre {
+		margin: 0 0 var(--space-xs);
+		padding: var(--space-s);
+		overflow-x: auto;
+		border-radius: var(--radius);
+		background: var(--color-soft);
+		font-size: var(--font-size-small);
+		white-space: pre-wrap;
+		word-break: break-all;
+	}
+	button {
+		min-height: var(--chip-height);
+		padding: 0 var(--space-m);
+		border-radius: var(--radius-round);
+		font-size: var(--font-size-small);
+	}
+</style>

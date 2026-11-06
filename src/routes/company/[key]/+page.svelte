@@ -4,6 +4,7 @@
 	import config from '#lib/data/config.json';
 	import AddToList from '#lib/components/AddToList.svelte';
 	import CompanyClaim from '#lib/components/CompanyClaim.svelte';
+	import CompanyEmbed from '#lib/components/CompanyEmbed.svelte';
 	import CompanyHeader from '#lib/components/CompanyHeader.svelte';
 	import CompanyHiring from '#lib/components/CompanyHiring.svelte';
 	import CompanyMap from '#lib/components/CompanyMap.svelte';
@@ -41,6 +42,7 @@
 			<h2 id="company-jobs">{t('list.tab.jobs')}</h2>
 			<CompanyHiring {company} />
 			{#if hasJobs}<Jobs companies={[company]} />{/if}
+			<CompanyEmbed {company} />
 		</section>
 
 		<section aria-labelledby="company-lists">

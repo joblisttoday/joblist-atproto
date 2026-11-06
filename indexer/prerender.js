@@ -20,6 +20,7 @@ import { jobPages } from './job-pages.js';
 import { organization } from './organization.js';
 import { robots, sitemap } from './sitemap.js';
 import { notFoundPage, sitePages } from './site-pages.js';
+import { embedSettings } from './embed-settings.js';
 
 const [build = 'build', snapshot = 'static/snapshot'] = process.argv.slice(2);
 const template = readFileSync(join(build, 'index.html'), 'utf8');
@@ -146,4 +147,6 @@ for (const { path, meta, listed: inSitemap } of site) {
 writeFileSync(join(build, '404.html'), page(template, notFoundPage()));
 writeFileSync(join(build, 'sitemap.xml'), sitemap(config.url, paths));
 writeFileSync(join(build, 'robots.txt'), robots(config.url));
+mkdirSync(join(build, 'embed'), { recursive: true });
+writeFileSync(join(build, 'embed', 'settings.json'), JSON.stringify(embedSettings()));
 console.log(`prerendered ${count} pages, sitemap of ${paths.length}`);

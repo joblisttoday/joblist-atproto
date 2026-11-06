@@ -1,0 +1,23 @@
+/* The embed page, for iframes: the page's colors follow the reader's theme. */
+:root {
+	--joblist-bg: #fff;
+	--joblist-fg: #111;
+	--joblist-muted: #555;
+	--joblist-line: #ddd;
+	color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+	:root {
+		--joblist-bg: #111;
+		--joblist-fg: #eee;
+		--joblist-muted: #aaa;
+		--joblist-line: #333;
+	}
+}
+body {
+	margin: 0;
+	padding: 1rem;
+	background: var(--joblist-bg);
+	color: var(--joblist-fg);
+	font: 16px/1.45 system-ui, sans-serif;
+}

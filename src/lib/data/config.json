@@ -77,7 +77,8 @@
 	"hostedHandles": [".bsky.social"],
 	"embed": {
 		"dir": "companies",
-		"path": "/embed/",
+		"page": "/embed",
+		"scripts": "/embed/",
 		"shown": 20
 	},
 	"quickSearch": {

@@ -10,3 +10,15 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: geolocation=(self), camera=(), microphone=()
   Content-Security-Policy: frame-ancestors 'none'
+
+# Embeds (static/embed/): any site may frame them or load their script and settings.
+# They run only their own scripts and read only the snapshot.
+/embed
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self' https://raw.githubusercontent.com; base-uri 'none'; form-action 'none'; frame-ancestors *
+  Access-Control-Allow-Origin: *
+
+/embed/*
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self' https://raw.githubusercontent.com; base-uri 'none'; form-action 'none'; frame-ancestors *
+  Access-Control-Allow-Origin: *
