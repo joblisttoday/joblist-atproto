@@ -15,6 +15,7 @@ import providers from '#lib/data/providers.json' with { type: 'json' };
  *   name: string,
  *   url?: string,
  *   description?: string,
+ *   kind: string,
  *   tags: string[],
  *   locations: Location[],
  *   jobBoard?: JobBoard,
@@ -120,11 +121,20 @@ export function uncheckedLabel(version, bots = config.bots) {
 	return bots.includes(version.did) ? 'company.unchecked' : 'company.unchecked.newAccount';
 }
 
+/**
+ * What sort of organization it is, when it is one the app knows (config.companyForm.kinds): '' else.
+ * @param {unknown} kind
+ */
+export function kindOf(kind) {
+	return typeof kind === 'string' && config.companyForm.kinds.includes(kind) ? kind : '';
+}
+
 /** Fields of a company record compared between versions, with their form label. */
 export const FIELDS = /** @type {const} */ ([
 	['name', 'form.name'],
 	['url', 'form.website'],
 	['description', 'form.description'],
+	['kind', 'form.kind'],
 	['tags', 'form.tags'],
 	['locations', 'form.locations'],
 	['jobBoard', 'form.section.jobs'],
@@ -167,6 +177,7 @@ export function toCompany(versions, profiles) {
 		name: v.name || record.rkey,
 		url: safeUrl(v.url) || undefined,
 		description: v.description,
+		kind: kindOf(v.kind),
 		tags: v.tags || [],
 		locations: v.locations || [],
 		jobBoard: v.jobBoard,
@@ -223,6 +234,7 @@ export function searchText(company) {
 	return [
 		company.name,
 		company.key,
+		company.kind,
 		company.tags.join(' '),
 		company.locations.map((l) => `${l.name || ''} ${l.country || ''}`).join(' ')
 	]
@@ -254,6 +266,7 @@ export function searchCompanies(companies, query, limit) {
  *   name: string,
  *   url: string,
  *   description: string,
+ *   kind: string,
  *   tags: string[],
  *   provider: string,
  *   boardId: string,
@@ -279,6 +292,7 @@ export function toRecord(form, createdAt, now = new Date().toISOString()) {
 	};
 	if (form.url.trim()) record.url = withScheme(form.url);
 	if (form.description.trim()) record.description = form.description.trim();
+	if (kindOf(form.kind)) record.kind = form.kind;
 	const tags = [...new Set(form.tags.map((t) => t.trim().toLowerCase()).filter(Boolean))];
 	if (tags.length) record.tags = tags;
 	const locations = form.locations.filter((l) => Object.values(l).some((x) => String(x || '').trim()));
@@ -303,6 +317,7 @@ export function toForm(company) {
 		name: company?.name || '',
 		url: company?.url || '',
 		description: company?.description || '',
+		kind: company?.kind || '',
 		tags: [...(company?.tags || [])],
 		provider: company?.jobBoard?.provider || '',
 		boardId: company?.jobBoard?.id || '',

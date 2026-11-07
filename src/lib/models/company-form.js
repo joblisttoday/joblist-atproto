@@ -152,6 +152,7 @@ export function previewCompany(form, key) {
 		name: record.name,
 		url: record.url,
 		description: record.description,
+		kind: record.kind || '',
 		tags: record.tags || [],
 		locations: record.locations || [],
 		jobBoard: record.jobBoard,

@@ -13,6 +13,12 @@
 					"name": { "type": "string", "maxLength": 1000, "maxGraphemes": 100 },
 					"url": { "type": "string", "format": "uri", "description": "The organization's website." },
 					"description": { "type": "string", "maxLength": 30000, "maxGraphemes": 3000 },
+					"kind": {
+						"type": "string",
+						"maxLength": 64,
+						"knownValues": ["company", "cooperative", "nonprofit", "collective", "project", "public"],
+						"description": "What sort of organization it is: a company, a cooperative, a nonprofit, a collective, a project, a public body. Apps show others as unknown."
+					},
 					"tags": {
 						"type": "array",
 						"maxLength": 20,

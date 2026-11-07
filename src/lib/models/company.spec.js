@@ -137,3 +137,14 @@ describe('toRecord', () => {
 		expect(toRecord(form, 'c', 'u')).toMatchObject({ tags: ['coop'], links: ['https://a.org'], jobBoard: { url: 'https://acme.org/jobs' } });
 	});
 });
+
+describe('kind of organization', () => {
+	it('is kept when the app knows it, and left out else', async () => {
+		const { kindOf, toRecord, toForm } = await import('./company.js');
+		expect(kindOf('cooperative')).toBe('cooperative');
+		expect(kindOf('<b>')).toBe('');
+		const form = { ...toForm(null), name: 'Coop', kind: 'cooperative' };
+		expect(toRecord(form, '2026-11-07T00:00:00.000Z', '2026-11-07T00:00:00.000Z').kind).toBe('cooperative');
+		expect(toRecord({ ...form, kind: 'bank' }, '2026-11-07T00:00:00.000Z').kind).toBe(undefined);
+	});
+});

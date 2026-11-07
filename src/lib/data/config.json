@@ -144,6 +144,7 @@
 		"pageSize": 100
 	},
 	"companyForm": {
+		"kinds": ["company", "cooperative", "nonprofit", "collective", "project", "public"],
 		"foldAt": 320,
 		"nameMax": 100,
 		"descriptionMax": 3000,

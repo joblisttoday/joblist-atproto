@@ -44,8 +44,9 @@
 			</jl-company-about>
 		{/if}
 		<CompanyInvite {company} field="description" />
-		{#if company.tags.length}
+		{#if company.tags.length || company.kind}
 			<ul aria-label={t('form.tags')}>
+				{#if company.kind}<li><a href="/companies#q={company.kind}" data-kind>{t(`kind.${company.kind}`)}</a></li>{/if}
 				{#each company.tags as tag (tag)}<li><a href="/companies#q={encodeURIComponent(tag)}">{tag}</a></li>{/each}
 			</ul>
 		{/if}

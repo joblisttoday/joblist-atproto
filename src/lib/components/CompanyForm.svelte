@@ -1,4 +1,5 @@
 <script>
+	import ChoiceChips from './ChoiceChips.svelte';
 	import config from '#lib/data/config.json';
 	import webmcp from '#lib/data/webmcp.json';
 	import CompanyBoardFields from './CompanyBoardFields.svelte';
@@ -70,6 +71,8 @@
 	const tool = webmcp.forms.company;
 	/** @type {SaveSignIn | undefined} */
 	let signin = $state();
+	// Optional: "Not said" first, so a choice can be taken back.
+	const kindOptions = [{ value: '', label: t('kind.none') }, ...config.companyForm.kinds.map((kind) => ({ value: kind, label: t(`kind.${kind}`) }))];
 	const submitLabel = $derived(company ? t('form.save') : t('form.company.submit'));
 
 	/** @type {HTMLFormElement} */
@@ -157,6 +160,10 @@
 
 			<jl-form-part part-name="jobBoard">
 				<CompanyBoardFields bind:provider={form.provider} bind:boardId={form.boardId} bind:careersUrl={form.careersUrl} params={tool.params} />
+			</jl-form-part>
+
+			<jl-form-part part-name="kind">
+				<ChoiceChips name="kind" legend={t('form.kind')} options={kindOptions} bind:value={form.kind} help={t('form.kind.help')} />
 			</jl-form-part>
 
 			<jl-form-part part-name="tags">
