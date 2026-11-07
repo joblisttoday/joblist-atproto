@@ -1,7 +1,6 @@
 import config from '#lib/data/config.json';
 import { safeUrl } from '#lib/models/url.js';
-import { newestFirst } from '#lib/models/job.js';
-import { fromSnapshot } from '#lib/models/snapshot-job.js';
+import { fromSnapshot, readJobsFile } from '#lib/models/snapshot-job.js';
 import { readCounts } from '#lib/models/snapshot-counts.js';
 
 /**
@@ -45,29 +44,59 @@ let jobsPromise = null;
 
 /** Jobs as of the last snapshot, by company key; null when missing or stale. */
 export function getSnapshotJobs() {
-	jobsPromise ??= getFile('jobs.json').then((data) => {
-		if (!data || !fresh(data.generatedAt)) return null;
-		/** @type {import('#lib/ats/job.js').Job[]} */
-		const all = [];
-		/** @type {Map<string, [number, number]>} */
-		const points = new Map();
-		for (const j of data.jobs) {
-			if (j.s?.startsWith('at://') && j.g) points.set(j.s, j.g);
-			const job = fromSnapshot(j);
-			if (job) all.push(job);
-		}
-		// Newest first, once: every list of jobs keeps this order (each company's is already, see indexer/counts.js).
-		newestFirst(all);
-		/** @type {Map<string, import('#lib/ats/job.js').Job[]>} */
-		const jobs = new Map();
-		for (const job of all) {
-			const list = jobs.get(job.company);
-			if (list) list.push(job);
-			else jobs.set(job.company, [job]);
-		}
-		return { all, jobs, checked: new Set(data.checked || []), gone: new Set(data.gone || []), points };
-	});
+	jobsPromise ??= getBytes('jobs.json')
+		.then((bytes) => (bytes ? readInWorker(bytes) : null))
+		.then((file) => {
+			if (!file || !fresh(file.generatedAt)) return null;
+			/** @type {Map<string, import('#lib/ats/job.js').Job[]>} */
+			const jobs = new Map();
+			for (const job of file.all) {
+				const list = jobs.get(job.company);
+				if (list) list.push(job);
+				else jobs.set(job.company, [job]);
+			}
+			return { all: file.all, jobs, checked: new Set(file.checked), gone: new Set(file.gone), points: new Map(file.points) };
+		});
 	return jobsPromise;
+}
+
+/** @param {string} name */
+async function getBytes(name) {
+	try {
+		const res = await fetch(`${config.snapshot.path}/${name}`);
+		return res.ok ? await res.arrayBuffer() : null;
+	} catch {
+		return null;
+	}
+}
+
+/**
+ * jobs.json read by a worker (snapshot-jobs.worker.js), else here.
+ * @param {ArrayBuffer} bytes
+ * @returns {Promise<import('#lib/models/snapshot-job.js').JobsFile | null>}
+ */
+function readInWorker(bytes) {
+	const here = () => {
+		try {
+			return readJobsFile(JSON.parse(new TextDecoder().decode(bytes)));
+		} catch {
+			return null;
+		}
+	};
+	if (typeof Worker === 'undefined') return Promise.resolve(here());
+	return new Promise((resolve) => {
+		const worker = new Worker(new URL('./snapshot-jobs.worker.js', import.meta.url), { type: 'module' });
+		worker.onmessage = (event) => {
+			resolve(event.data);
+			worker.terminate();
+		};
+		worker.onerror = () => {
+			worker.terminate();
+			resolve(here());
+		};
+		// Copied, not moved: read here if the worker cannot.
+		worker.postMessage(bytes);
+	});
 }
 
 /**

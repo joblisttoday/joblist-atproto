@@ -1,5 +1,6 @@
 import { safeUrl } from './url.js';
 import { unpackSalary } from '../ats/salary.js';
+import { newestFirst } from './job.js';
 
 /**
  * A job as the snapshot keeps it (see indexer/jobs.js), as the app uses it.
@@ -16,4 +17,30 @@ export function fromSnapshot(j) {
 	// The id at its board is left out when the link ends with it.
 	const id = j.i ?? url.slice(url.lastIndexOf('/') + 1);
 	return { title: j.t, url, company: j.c, location: j.l, department: j.d, published: j.p, id, remote: j.r || '', point: j.g, salary: unpackSalary(j.m) };
+}
+
+/**
+ * @typedef {{generatedAt: string, all: import('#lib/ats/job.js').Job[], checked: string[], gone: string[], points: [string, [number, number]][]}} JobsFile
+ *   all: its job board jobs, newest first (see newestFirst); points: where posted jobs are, by record address.
+ */
+
+/**
+ * jobs.json as the app uses it (read in a worker: it is tens of thousands of jobs).
+ * @param {any} data
+ * @returns {JobsFile | null}
+ */
+export function readJobsFile(data) {
+	if (!data || !Array.isArray(data.jobs)) return null;
+	/** @type {import('#lib/ats/job.js').Job[]} */
+	const all = [];
+	/** @type {[string, [number, number]][]} */
+	const points = [];
+	for (const j of data.jobs) {
+		if (j.s?.startsWith('at://') && j.g) points.push([j.s, j.g]);
+		const job = fromSnapshot(j);
+		if (job) all.push(job);
+	}
+	// Newest first, once: every list of jobs keeps this order (each company's is already, see indexer/counts.js).
+	newestFirst(all);
+	return { generatedAt: String(data.generatedAt || ''), all, checked: data.checked || [], gone: data.gone || [], points };
 }

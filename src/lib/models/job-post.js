@@ -239,14 +239,18 @@ export function placeNames(locations) {
  * Posted jobs and job board jobs, one per link: the company's own posts, then its
  * job board, then posts shared by others. A shared post with a board job's link
  * never replaces it: anyone can post, only the company and its board say what the job is.
+ * A new list, in that order; the board has each link once (tens of thousands: only the few
+ * posted jobs are looked for in it).
  * @param {Job[]} posted
  * @param {Job[]} board
  */
 export function mergeJobs(posted, board) {
 	const seen = new Set();
-	const own = posted.filter((job) => job.posted?.verified);
-	const shared = posted.filter((job) => !job.posted?.verified);
-	return [...own, ...board, ...shared].filter((job) => !seen.has(job.url) && seen.add(job.url));
+	const once = (/** @type {Job} */ job) => !seen.has(job.url) && seen.add(job.url);
+	const own = posted.filter((job) => job.posted?.verified && once(job));
+	const kept = own.length ? board.filter((job) => !seen.has(job.url)) : [...board];
+	const shared = posted.filter((job) => !job.posted?.verified && once(job) && !board.some((b) => b.url === job.url));
+	return [...own, ...kept, ...shared];
 }
 
 /**
