@@ -5,7 +5,7 @@
 	import { session } from '#lib/auth/session.svelte.js';
 	import { data } from '#lib/network/network.svelte.js';
 	import { saveVersion } from '#lib/network/save-version.js';
-	import { changedFields, editedAt, isOwnRecord, isUnchecked } from '#lib/models/company.js';
+	import { changedFields, editedAt, isOwnRecord, isUnchecked, uncheckedLabel } from '#lib/models/company.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/** @type {{company: import('#lib/models/company.js').Company}} */
@@ -45,7 +45,7 @@
 						</p>
 						<small>
 							{#if isOwnRecord(version, data.profiles)}<Icon name="verified" /> {t('company.version.own')} · {/if}
-							{#if !isOwnRecord(version, data.profiles) && isUnchecked(version, company.versions)}{t('company.unchecked')} · {/if}
+							{#if !isOwnRecord(version, data.profiles) && isUnchecked(version, company.versions)}{t(uncheckedLabel(version))} · {/if}
 							{#if current}{version.value.name}{:else if changes.length}{t('company.version.changes', {
 									fields: changes.map((label) => t(label)).join(', ')
 								})}{:else}{t('company.version.same')}{/if}

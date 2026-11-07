@@ -11,7 +11,7 @@
 				"required": ["list", "company", "createdAt"],
 				"properties": {
 					"list": { "type": "string", "format": "at-uri", "description": "The today.joblist.list the company is suggested for." },
-					"company": { "type": "string", "maxLength": 512, "description": "Company record key (its domain)." },
+					"company": { "type": "string", "maxLength": 253, "description": "Company record key (its domain)." },
 					"note": { "type": "string", "maxLength": 3000, "maxGraphemes": 300, "description": "Why it belongs in the list." },
 					"createdAt": { "type": "string", "format": "datetime" }
 				}

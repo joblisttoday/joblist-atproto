@@ -52,11 +52,14 @@ function cleanCollection(collection) {
 	if (isBuiltin(id) ? name !== '' : !named || !isDate(at)) return { value: null, dropped: 1 };
 	/** @type {Record<string, SavedJob>} */
 	const kept = {};
+	let count = 0;
 	let dropped = 0;
 	for (const [key, job] of Object.entries(jobs)) {
-		const clean = isText(key, limits.keyMax, 1) && key !== '__proto__' && Object.keys(kept).length < limits.jobsMax ? cleanJob(job) : null;
-		if (clean) kept[key] = clean;
-		else dropped++;
+		const clean = isText(key, limits.keyMax, 1) && key !== '__proto__' && count < limits.jobsMax ? cleanJob(job) : null;
+		if (clean) {
+			kept[key] = clean;
+			count++;
+		} else dropped++;
 	}
 	return { value: { id, name: /** @type {string} */ (name), at: isBuiltin(id) ? '' : /** @type {string} */ (at), jobs: kept }, dropped };
 }

@@ -1,6 +1,6 @@
 import config from '../src/lib/data/config.json' with { type: 'json' };
 import en from '../src/lib/i18n/locales/en.json' with { type: 'json' };
-import { canApply, isLive, placeNames, postPageUrl, postPath, toPost } from '../src/lib/models/job-post.js';
+import { canApply, claimedCompanies, isLive, notFromCompany, placeNames, postPageUrl, postPath, toPost } from '../src/lib/models/job-post.js';
 import { countryCode } from './countries.js';
 import { escape, jsonLd } from './html.js';
 
@@ -99,17 +99,19 @@ function body(post, name, handle) {
 }
 
 /**
- * One page per live job offer posted on joblist.
+ * One page per live job offer posted on joblist; none for others' posts for a company
+ * that speaks for itself (search engines would list them as its jobs).
  * @param {import('../src/lib/atproto/records.js').RepoRecord[]} records
  * @param {Map<string, Company>} companies
  * @param {Map<string, {handle: string, avatar?: string}>} profiles
  * @param {Record<string, {avatar?: string}>} [bluesky] companies on Bluesky (bluesky.json)
  */
 export function jobPages(records, companies, profiles, bluesky = {}) {
-	return records
-		.filter((r) => isLive(r.value))
-		.map((r) => {
-			const post = toPost(r, profiles);
+	const posts = records.filter((r) => isLive(r.value)).map((r) => toPost(r, profiles));
+	const claimed = claimedCompanies(companies.values(), posts);
+	return posts
+		.filter((post) => !notFromCompany(post, claimed))
+		.map((post) => {
 			const company = companies.get(post.company);
 			const name = company?.name || post.company;
 			const handle = profiles.get(post.did)?.handle || post.did;

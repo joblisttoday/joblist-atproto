@@ -1,0 +1,20 @@
+{
+	"lexicon": 1,
+	"id": "today.joblist.authFull",
+	"defs": {
+		"main": {
+			"type": "permission-set",
+			"title": "joblist",
+			"title:lang": { "fr": "joblist" },
+			"detail": "Describe companies, make and curate lists of companies, suggest companies for lists and post job offers, in your own account.",
+			"detail:lang": { "fr": "Décrire des entreprises, créer et organiser des listes d'entreprises, en proposer pour des listes et publier des offres d'emploi, dans votre propre compte." },
+			"permissions": [
+				{
+					"type": "permission",
+					"resource": "repo",
+					"collection": ["today.joblist.company", "today.joblist.list", "today.joblist.job", "today.joblist.suggestion"]
+				}
+			]
+		}
+	}
+}

@@ -1,5 +1,7 @@
 import { safeUrl } from './url.js';
-import { locationPoints } from './company.js';
+import { locationPoints, speaksFor } from './company.js';
+import { toSalary } from '#lib/ats/salary.js';
+import { capRecord } from './limits.js';
 import config from '#lib/data/config.json' with { type: 'json' };
 
 /**
@@ -9,6 +11,7 @@ import config from '#lib/data/config.json' with { type: 'json' };
  * @typedef {import('#lib/atproto/records.js').RepoRecord} RepoRecord
  * @typedef {import('#lib/models/company.js').Location} Location
  * @typedef {import('#lib/ats/job.js').Job} Job
+ * @typedef {import('#lib/ats/salary.js').Salary} Salary
  * @typedef {{url?: string, bluesky?: boolean}} Apply
  * @typedef {{
  *   uri: string,
@@ -22,7 +25,10 @@ import config from '#lib/data/config.json' with { type: 'json' };
  *   remote?: string,
  *   employment?: string,
  *   apply: Apply,
+ *   salary?: Salary,
+ *   status: string,
  *   createdAt: string,
+ *   updatedAt?: string,
  *   expiresAt: string,
  *   verified: boolean,
  *   record: RepoRecord
@@ -37,8 +43,15 @@ import config from '#lib/data/config.json' with { type: 'json' };
  *   offerUrl: string,
  *   applyTo: string,
  *   bluesky: boolean,
- *   days: number
+ *   days: number,
+ *   salaryMin?: string,
+ *   salaryMax?: string,
+ *   currency?: string,
+ *   period?: string,
+ *   status?: string
  * }} JobForm
+ *   salaryMin, salaryMax: whole amounts as typed; currency: ISO 4217 code; period: year, month…;
+ *   status: open (default), filled or closed.
  */
 
 const DAY = 24 * 3600 * 1000;
@@ -51,6 +64,8 @@ const { days: DEFAULT_DAYS, maxDays: MAX_DAYS } = config.jobPost;
  */
 export function isLive(value, now = Date.now()) {
 	if (!value?.title || !value.company || !value.url) return false;
+	// Filled or closed: the poster says it no longer takes applications.
+	if (value.status && value.status !== config.jobPost.status[0]) return false;
 	const expires = Date.parse(String(value.expiresAt || ''));
 	// Never beyond the longest an offer runs from now: a date years away would keep it up for good.
 	return Number.isFinite(expires) && expires > now && expires <= now + (MAX_DAYS + 1) * DAY;
@@ -137,7 +152,12 @@ export function toRecord(form, { page, createdAt, now = Date.now() }) {
 	if (url) apply.url = url;
 	if (form.bluesky) apply.bluesky = true;
 	if (canApply(apply)) record.apply = apply;
+	const salary = wholeSalary(toSalary({ min: form.salaryMin, max: form.salaryMax, currency: form.currency, period: form.period }));
+	if (salary) record.salary = salary;
+	if (form.status && form.status !== config.jobPost.status[0] && config.jobPost.status.includes(form.status)) record.status = form.status;
 	record.createdAt = createdAt || new Date(now).toISOString();
+	// Edited: when, as the poster says (createdAt is kept).
+	if (createdAt) record.updatedAt = new Date(now).toISOString();
 	record.expiresAt = expiryDate(form.days, now);
 	return record;
 }
@@ -161,7 +181,12 @@ export function toForm(post, company = '', now = Date.now()) {
 		offerUrl: own,
 		applyTo: apply.replace(/^mailto:/i, ''),
 		bluesky: Boolean(post?.apply.bluesky),
-		days: post ? daysLeft(post.expiresAt, now) || DEFAULT_DAYS : DEFAULT_DAYS
+		days: post ? daysLeft(post.expiresAt, now) || DEFAULT_DAYS : DEFAULT_DAYS,
+		salaryMin: post?.salary?.min ? String(post.salary.min) : '',
+		salaryMax: post?.salary?.max ? String(post.salary.max) : '',
+		currency: post?.salary?.currency || '',
+		period: post?.salary?.period || '',
+		status: post?.status || config.jobPost.status[0]
 	};
 }
 
@@ -172,11 +197,12 @@ export function postPageUrl({ did, rkey }) {
 
 /**
  * @param {RepoRecord} record
- * @param {Map<string, {handle: string}>} profiles
+ * @param {Map<string, import('./company.js').Handle>} profiles
  * @returns {JobPost}
  */
 export function toPost(record, profiles) {
-	const v = record.value;
+	// Anyone can post: only what the lexicon allows is shown.
+	const v = capRecord(config.collections.job, record.value);
 	return {
 		uri: record.uri,
 		did: record.did,
@@ -189,9 +215,12 @@ export function toPost(record, profiles) {
 		remote: v.remote,
 		employment: v.employment,
 		apply: v.apply && typeof v.apply === 'object' ? { ...v.apply, url: safeUrl(v.apply.url, { email: true }) || undefined } : {},
+		salary: v.salary && typeof v.salary === 'object' ? wholeSalary(toSalary(v.salary)) : undefined,
+		status: typeof v.status === 'string' && v.status ? v.status : config.jobPost.status[0],
 		createdAt: String(v.createdAt || ''),
+		updatedAt: typeof v.updatedAt === 'string' ? v.updatedAt : undefined,
 		expiresAt: String(v.expiresAt || ''),
-		verified: profiles.get(record.did)?.handle === v.company,
+		verified: speaksFor(profiles, record.did, String(v.company || '')),
 		record
 	};
 }
@@ -211,6 +240,7 @@ export function toJob(post) {
 		location: placeNames(post.locations) || undefined,
 		published: post.createdAt,
 		remote: post.remote,
+		salary: post.salary,
 		posted: { did: post.did, rkey: post.rkey, verified: post.verified },
 		point: at && [at.lon, at.lat]
 	};
@@ -236,16 +266,41 @@ export function placeNames(locations) {
 }
 
 /**
+ * Companies that speak for themselves on joblist: their own account's version is
+ * the one shown (verified), or they posted a job themselves.
+ * @param {Iterable<{key: string, verified: boolean}>} companies
+ * @param {Iterable<{company: string, verified: boolean}>} posts
+ */
+export function claimedCompanies(companies, posts) {
+	const claimed = new Set();
+	for (const c of companies) if (c.verified) claimed.add(c.key);
+	for (const p of posts) if (p.verified) claimed.add(p.company);
+	return claimed;
+}
+
+/**
+ * Whether a post is someone else's, for a company that speaks for itself: it is
+ * never shown as that company's job (anyone could post a fake offer to collect
+ * applications in its name), and its page says it is not from the company.
+ * @param {{company: string, verified: boolean}} post
+ * @param {Set<string>} claimed from claimedCompanies
+ */
+export function notFromCompany(post, claimed) {
+	return !post.verified && claimed.has(post.company);
+}
+
+/**
  * Posted jobs and job board jobs, one per link: the company's own posts, then its
  * job board, then posts shared by others. A shared post with a board job's link
  * never replaces it: anyone can post, only the company and its board say what the job is.
+ * Once the company posts its own, others' posts for it are left out.
  * @param {Job[]} posted
  * @param {Job[]} board
  */
 export function mergeJobs(posted, board) {
 	const seen = new Set();
 	const own = posted.filter((job) => job.posted?.verified);
-	const shared = posted.filter((job) => !job.posted?.verified);
+	const shared = own.length ? [] : posted.filter((job) => !job.posted?.verified);
 	return [...own, ...board, ...shared].filter((job) => !seen.has(job.url) && seen.add(job.url));
 }
 
@@ -257,6 +312,20 @@ export function mergeJobs(posted, board) {
 export function postedFirst(jobs) {
 	const rank = (/** @type {Job} */ j) => (j.posted ? (j.posted.verified ? 0 : 1) : 2);
 	return [...jobs].sort((a, b) => rank(a) - rank(b));
+}
+
+/**
+ * A pay range in whole units, as the record keeps it (integers).
+ * @param {Salary | undefined} salary
+ * @returns {Salary | undefined}
+ */
+function wholeSalary(salary) {
+	if (!salary) return undefined;
+	/** @type {Salary} */
+	const whole = { currency: salary.currency, period: salary.period };
+	if (salary.min) whole.min = Math.round(salary.min);
+	if (salary.max) whole.max = Math.round(salary.max);
+	return whole;
 }
 
 /** @param {string} url */

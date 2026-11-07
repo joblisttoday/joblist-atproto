@@ -12,11 +12,14 @@ import { dirname, join } from 'node:path';
 import { mapPoints, toCompany } from '../src/lib/models/company.js';
 import { Companies } from '../src/lib/models/companies.js';
 import { crawlRecords } from './crawl.js';
+import { limitAccounts } from './caps.js';
 import config from '../src/lib/data/config.json' with { type: 'json' };
 import { fetchBoardJobs, firstJobs, recordJobs, toMinute } from './jobs.js';
 import { dateOffers } from './ledger.js';
+import { seeVersions } from './seen.js';
 import { landingFiles } from './landing.js';
 import { blueskyAccounts } from './bluesky.js';
+import { verifyCompanyHandles } from './handles.js';
 import { isCompanyKey } from '../src/lib/models/landing.js';
 import { postPath } from '../src/lib/models/job-post.js';
 import { findOffices, officeKey } from './offices.js';
@@ -27,12 +30,23 @@ const out = process.argv[2] || 'static/snapshot';
 const started = Date.now();
 const generatedAt = new Date().toISOString();
 
-const { records, profiles } = await crawlRecords();
+const crawled = await crawlRecords();
+const { profiles } = crawled;
+// Each record within its lexicon's limits, each account within its share: one account cannot bloat the snapshot.
+const { records, dropped } = limitAccounts(crawled.records);
+for (const { did, type, count } of dropped) console.warn(`records: ${count} ${type} records of ${did} left out (over ${config.limits.perAccount[/** @type {keyof typeof config.limits.perAccount} */ (type)]} per account)`);
+// Handles that would make an account speak for a company, checked both ways (not only by the AppView).
+const handles = await verifyCompanyHandles(profiles, records.company, records.job);
+console.log(`handles: ${handles.checked} company handles checked, ${handles.unknown} could not be, not verified: ${handles.failed.join(', ') || 'none'}`);
+// Company versions ordered by when they first appeared, not by the date their author gives.
+const versions = seeVersions(records.company, [...records.list, ...records.job, ...records.suggestion], /** @type {any} */ (await loadCache(config.versions.file)), generatedAt, config.versions.newAccountDays);
+records.company = versions.records;
+console.log(`versions: ${versions.added} new company versions, ${versions.newAuthors} from new accounts over someone else's`);
 const companies = groupCompanies(records.company, profiles);
 console.log(`records: ${records.company.length} company, ${records.list.length} list, ${records.suggestion.length} suggestion, ${records.job.length} job, from ${profiles.size} accounts`);
 
 const board = await fetchBoardJobs(companies);
-const jobs = [...recordJobs(records.job, profiles), ...board.jobs];
+const jobs = [...recordJobs(records.job, profiles, companies), ...board.jobs];
 // Companies whose domain is their Bluesky handle.
 const bluesky = await blueskyAccounts(companies.map((c) => c.key), /** @type {any} */ (await loadCache(config.bluesky.file)));
 console.log(`bluesky: ${Object.keys(bluesky).length} companies have their domain as handle`);
@@ -91,6 +105,7 @@ const files = {
 	// duplicates: [kept, other] companies that share a job board, to merge.
 	'health.json': { generatedAt, companies: board.health, duplicates: board.duplicates },
 	[config.ledger.file]: dates.ledger,
+	[config.versions.file]: versions.ledger,
 	[config.bluesky.file]: bluesky,
 	[config.geocode.placesFile]: places,
 	[config.geocode.officesFile]: offices,

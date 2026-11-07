@@ -23,8 +23,8 @@
 					},
 					"company": {
 						"type": "string",
-						"maxLength": 512,
-						"description": "Company record key (its domain)."
+						"maxLength": 253,
+						"description": "Company record key: its domain, lowercase, without 'www.' (see today.joblist.company)."
 					},
 					"url": {
 						"type": "string",
@@ -66,15 +66,88 @@
 						"type": "ref",
 						"ref": "#apply"
 					},
+					"salary": {
+						"type": "ref",
+						"ref": "#salary"
+					},
+					"status": {
+						"type": "string",
+						"maxLength": 32,
+						"knownValues": [
+							"open",
+							"filled",
+							"closed"
+						],
+						"description": "Whether the offer still takes applications. Missing means open; a filled or closed offer is no longer shown."
+					},
+					"applicantLocations": {
+						"type": "array",
+						"maxLength": 50,
+						"description": "Countries applicants can work from (ISO 3166-1 alpha-2 codes, e.g. 'DE'), for remote offers.",
+						"items": {
+							"type": "string",
+							"minLength": 2,
+							"maxLength": 2
+						}
+					},
+					"langs": {
+						"type": "array",
+						"maxLength": 3,
+						"description": "Languages the offer is written in (BCP-47 tags).",
+						"items": {
+							"type": "string",
+							"format": "language"
+						}
+					},
 					"createdAt": {
 						"type": "string",
 						"format": "datetime"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "datetime",
+						"description": "When the poster last edited the offer."
 					},
 					"expiresAt": {
 						"type": "string",
 						"format": "datetime",
 						"description": "After this date the offer is no longer shown."
 					}
+				}
+			}
+		},
+		"salary": {
+			"type": "object",
+			"description": "What the job pays, in whole units of the currency (not cents). At least one of min and max.",
+			"required": [
+				"currency",
+				"period"
+			],
+			"properties": {
+				"min": {
+					"type": "integer",
+					"minimum": 0
+				},
+				"max": {
+					"type": "integer",
+					"minimum": 0
+				},
+				"currency": {
+					"type": "string",
+					"minLength": 3,
+					"maxLength": 3,
+					"description": "ISO 4217 code, e.g. 'EUR'."
+				},
+				"period": {
+					"type": "string",
+					"maxLength": 16,
+					"knownValues": [
+						"year",
+						"month",
+						"week",
+						"day",
+						"hour"
+					]
 				}
 			}
 		},

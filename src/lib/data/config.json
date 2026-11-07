@@ -12,8 +12,13 @@
 	"bots": [
 		"did:plc:jqaucxlucukeif3bltpuc7zx"
 	],
+	"lexicons": {
+		"dir": "lexicons",
+		"did": "did:plc:jqaucxlucukeif3bltpuc7zx"
+	},
 	"services": {
 		"relay": "https://relay1.us-east.bsky.network",
+		"relayFallbacks": ["https://relay1.us-west.bsky.network"],
 		"appview": "https://public.api.bsky.app",
 		"plc": "https://plc.directory",
 		"handleResolver": "https://public.api.bsky.app",
@@ -62,7 +67,10 @@
 		"pagesPerRepo": 100,
 		"indexerConcurrency": 8,
 		"boardPageSize": 100,
-		"jobsPerBoard": 2000
+		"jobsPerBoard": 2000,
+		"perAccount": { "company": 200, "list": 50, "job": 50, "suggestion": 200 },
+		"boardsPerAccount": 100,
+		"boards": 3000
 	},
 	"locales": [
 		"en",
@@ -91,9 +99,18 @@
 		"file": "bluesky.json",
 		"concurrency": 12
 	},
+	"handles": {
+		"dns": "https://cloudflare-dns.com/dns-query",
+		"timeoutMs": 8000,
+		"concurrency": 12
+	},
 	"ledger": {
 		"file": "offers.json",
 		"keepDays": 30
+	},
+	"versions": {
+		"file": "versions.json",
+		"newAccountDays": 7
 	},
 	"jobs": {
 		"pageSize": 50,
@@ -188,7 +205,8 @@
 		"handleHelp": "https://bsky.social/about/blog/4-28-2023-domain-handle-tutorial"
 	},
 	"analytics": {
-		"script": "https://cloud.umami.is/script.js",
+		"script": "/vendor/umami.js",
+		"hostUrl": "https://gateway.umami.is",
 		"websiteId": "479fa5c4-e9c9-4d8d-85c6-9a88c886dd24",
 		"domains": "joblist.today"
 	},
@@ -266,6 +284,7 @@
 			"internship",
 			"volunteer"
 		],
+		"status": ["open", "filled", "closed"],
 		"schemaEmployment": {
 			"full-time": "FULL_TIME",
 			"part-time": "PART_TIME",

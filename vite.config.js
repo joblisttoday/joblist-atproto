@@ -11,13 +11,15 @@ export default defineConfig({
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
 			adapter: adapter({ fallback: 'index.html' }),
-			// Only this site's scripts (its inline start script by hash) and the analytics run.
-			// Requests go to any https address: job boards, and each person's own atproto server.
+			// Only this site's scripts run (its inline start script by hash; the analytics are a copy
+			// served from here, static/vendor/umami.js). No other site's script: Cloudflare's Web
+			// Analytics beacon is refused too (turn it off in the dashboard, see README).
+			// Requests go to any https address: job boards, each person's own atproto server, Umami's collector.
 			csp: {
 				mode: 'hash',
 				directives: {
 					'default-src': ['self'],
-					'script-src': ['self', 'https://cloud.umami.is'],
+					'script-src': ['self'],
 					'style-src': ['self', 'unsafe-inline'],
 					'img-src': ['self', 'data:', 'blob:', 'https:'],
 					'font-src': ['self', 'data:'],

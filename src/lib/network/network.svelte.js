@@ -6,7 +6,7 @@ import { session } from '#lib/auth/session.svelte.js';
 import { toCompany } from '#lib/models/company.js';
 import { membership, toList } from '#lib/models/list.js';
 import { toSuggestion } from '#lib/models/suggestion.js';
-import { isLive, toJob, toPost } from '#lib/models/job-post.js';
+import { claimedCompanies, isLive, notFromCompany, toJob, toPost } from '#lib/models/job-post.js';
 import { allowed } from '#lib/models/moderation.js';
 import { isCompanyKey } from '#lib/models/landing.js';
 import { Companies } from '#lib/models/companies.js';
@@ -83,12 +83,17 @@ const posts = $derived(
 		.sort((a, b) => b.createdAt.localeCompare(a.createdAt))
 );
 
+const livePosts = $derived(posts.filter((post) => isLive(post.record.value)));
+
+/** Companies that speak for themselves: others' posts for them are not their jobs. */
+const claimed = $derived(claimedCompanies(companies.values(), livePosts));
+
 /** Posted jobs that can be shown now, by company key. */
 const postedJobs = $derived.by(() => {
 	/** @type {Map<string, import('#lib/ats/job.js').Job[]>} */
 	const byCompany = new Map();
-	for (const post of posts) {
-		if (!isLive(post.record.value)) continue;
+	for (const post of livePosts) {
+		if (notFromCompany(post, claimed)) continue;
 		byCompany.set(post.company, [...(byCompany.get(post.company) || []), toJob(post)]);
 	}
 	return byCompany;
@@ -109,6 +114,9 @@ export const data = {
 	},
 	get postedJobs() {
 		return postedJobs;
+	},
+	get claimed() {
+		return claimed;
 	},
 	get profiles() {
 		return profileMap;

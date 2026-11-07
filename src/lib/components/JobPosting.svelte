@@ -3,7 +3,7 @@
 	import JobApply from './JobApply.svelte';
 	import JobPostMenu from './JobPostMenu.svelte';
 	import { data, handleOf } from '#lib/network/network.svelte.js';
-	import { isLive, placeNames, postPageUrl } from '#lib/models/job-post.js';
+	import { isLive, notFromCompany, placeNames, postPageUrl } from '#lib/models/job-post.js';
 	import { time } from '#lib/models/job.js';
 	import { ago, longDate } from '#lib/i18n/dates.js';
 	import { i18n, t } from '#lib/i18n/index.svelte.js';
@@ -15,6 +15,8 @@
 	let { post, ondeleted } = $props();
 	const company = $derived(data.companies.get(post.company));
 	const live = $derived(isLive(post.record.value));
+	// Someone else's post for a company that posts its own: a warning, and no way to apply here.
+	const unofficial = $derived(notFromCompany(post, data.claimed));
 	const handle = $derived(handleOf(post.did));
 	const facts = $derived(
 		[
@@ -27,7 +29,7 @@
 	const offer = $derived(post.url !== postPageUrl(post) && /^https?:\/\//i.test(post.url) ? post.url : '');
 </script>
 
-<jl-job-posting verified={post.verified || undefined} expired={live ? undefined : true}>
+<jl-job-posting verified={post.verified || undefined} expired={live ? undefined : true} unofficial={unofficial || undefined}>
 	<header>
 		<h1>{post.title}</h1>
 		<p>
@@ -46,12 +48,13 @@
 			</small>
 		</p>
 		<JobPostMenu {post} {ondeleted} />
+		{#if unofficial}<p role="alert">{t('job.notFromCompany', { company: company?.name || post.company })}</p>{/if}
 	</header>
 
 	{#if post.description}<p>{post.description}</p>{/if}
-	{#if offer}<p><a href={offer} target="_blank" rel="noopener">{t('job.offer')} <Icon name="external" /></a></p>{/if}
+	{#if offer && !unofficial}<p><a href={offer} target="_blank" rel="noopener">{t('job.offer')} <Icon name="external" /></a></p>{/if}
 
-	{#if live}<JobApply {post} />{/if}
+	{#if live && !unofficial}<JobApply {post} />{/if}
 </jl-job-posting>
 
 <style>
@@ -74,6 +77,9 @@
 	mark {
 		background: none;
 		color: var(--color-ok);
+	}
+	jl-job-posting[unofficial] [role='alert'] {
+		color: var(--color-error);
 	}
 	jl-job-posting[expired] h1 {
 		color: var(--color-muted);

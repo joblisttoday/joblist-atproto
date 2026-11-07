@@ -15,17 +15,32 @@ test('recordJobs keeps live offers and marks the company own ones', () => {
 	const jobs = recordJobs(
 		[
 			record('did:plc:acme', '1', { ...base, expiresAt: '2026-11-01T00:00:00Z', locations: [{ name: 'Berlin', country: 'Germany' }] }),
-			record('did:plc:bob', '2', { ...base, url: 'https://acme.org/jobs/2', expiresAt: '2026-11-01T00:00:00Z', remote: 'remote' }),
+			record('did:plc:bob', '2', { ...base, company: 'beta.org', url: 'https://beta.org/jobs/2', expiresAt: '2026-11-01T00:00:00Z', remote: 'remote' }),
 			record('did:plc:bob', '3', { ...base, expiresAt: '2026-10-18T00:00:00Z' }),
 			record('did:plc:bob', '4', { ...base, title: '', expiresAt: '2026-11-01T00:00:00Z' })
 		],
 		profiles,
+		[],
 		NOW
 	);
 	assert.deepEqual(jobs, [
 		{ t: 'Engineer', u: 'https://acme.org/jobs/1', c: 'acme.org', l: 'Berlin, Germany', p: base.createdAt, s: 'at://did:plc:acme/today.joblist.job/1', v: 1 },
-		{ t: 'Engineer', u: 'https://acme.org/jobs/2', c: 'acme.org', l: 'remote', p: base.createdAt, s: 'at://did:plc:bob/today.joblist.job/2' }
+		{ t: 'Engineer', u: 'https://beta.org/jobs/2', c: 'beta.org', l: 'remote', p: base.createdAt, s: 'at://did:plc:bob/today.joblist.job/2' }
 	]);
+});
+
+test('recordJobs leaves out what others post for a company that speaks for itself', () => {
+	const live = { ...base, expiresAt: '2026-11-01T00:00:00Z' };
+	const bobFor = (/** @type {string} */ company) => record('did:plc:bob', company, { ...live, company, url: `https://${company}/fake` });
+	const records = [record('did:plc:acme', '1', live), bobFor('acme.org'), bobFor('own.org'), bobFor('free.org')];
+	const companies = [{ key: 'own.org', verified: true }, { key: 'free.org', verified: false }];
+	assert.deepEqual(
+		recordJobs(records, profiles, companies, NOW).map((j) => [j.c, j.s?.split('/')[2]]),
+		[
+			['acme.org', 'did:plc:acme'],
+			['free.org', 'did:plc:bob']
+		]
+	);
 });
 
 test('tidyJobs: one job per link, in all its cities; no talent pools', () => {

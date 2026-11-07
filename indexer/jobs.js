@@ -1,10 +1,11 @@
 import config from '../src/lib/data/config.json' with { type: 'json' };
 import { getJobs } from '../src/lib/ats/index.js';
 import { mapLimit } from '../src/lib/atproto/xrpc.js';
-import { hasJobsApi, locationPoints } from '../src/lib/models/company.js';
-import { isLive, placeNames, toPost } from '../src/lib/models/job-post.js';
+import { locationPoints } from '../src/lib/models/company.js';
+import { claimedCompanies, isLive, notFromCompany, placeNames, toPost } from '../src/lib/models/job-post.js';
 import { workplace } from '../src/lib/models/job.js';
 import { packSalary } from '../src/lib/ats/salary.js';
+import { limitBoards } from './caps.js';
 
 /**
  * @typedef {import('../src/lib/models/company.js').Company} Company
@@ -26,7 +27,11 @@ export async function fetchBoardJobs(companies) {
 	const jobs = [];
 	/** @type {Record<string, {status: 'live' | 'empty' | 'none', jobs: number}>} */
 	const health = {};
-	await mapLimit(companies.filter(hasJobsApi), config.limits.indexerConcurrency, async (company) => {
+	// Made-up companies with job boards cannot make the run read boards without end.
+	const boards = limitBoards(companies);
+	for (const { did, count } of boards.dropped) console.warn(`boards: ${count} companies shown in ${did}'s version not read (over ${config.limits.boardsPerAccount} per account)`);
+	if (boards.overTotal) console.warn(`boards: ${boards.overTotal} companies not read (over ${config.limits.boards} in all)`);
+	await mapLimit(boards.kept, config.limits.indexerConcurrency, async (company) => {
 		const found = await getJobs(company);
 		health[company.key] = { status: found.length ? 'live' : 'empty', jobs: found.length };
 		for (const j of found) {
@@ -85,16 +90,19 @@ export function tidyJobs(jobs) {
 }
 
 /**
- * Jobs posted as today.joblist.job records, without the expired ones.
+ * Jobs posted as today.joblist.job records, without the expired ones, nor those
+ * others posted for a company that speaks for itself (see notFromCompany).
  * @param {RepoRecord[]} records
  * @param {Map<string, {handle: string}>} profiles
+ * @param {Iterable<{key: string, verified: boolean}>} [companies]
  * @param {number} [now]
  */
-export function recordJobs(records, profiles, now = Date.now()) {
-	return records
-		.filter((r) => isLive(r.value, now))
-		.map((r) => {
-			const post = toPost(r, profiles);
+export function recordJobs(records, profiles, companies = [], now = Date.now()) {
+	const posts = records.filter((r) => isLive(r.value, now)).map((r) => toPost(r, profiles));
+	const claimed = claimedCompanies(companies, posts);
+	return posts
+		.filter((post) => !notFromCompany(post, claimed))
+		.map((post) => {
 			/** @type {IndexedJob} */
 			const job = {
 				t: post.title,
@@ -105,6 +113,7 @@ export function recordJobs(records, profiles, now = Date.now()) {
 				s: post.uri
 			};
 			if (post.verified) job.v = 1;
+			if (post.salary) job.m = packSalary(post.salary);
 			// Where it is, when the poster says it.
 			const [at] = locationPoints(post.locations);
 			if (at) job.g = [at.lon, at.lat];

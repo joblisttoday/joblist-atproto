@@ -22,13 +22,23 @@ Four record types, defined in [`lexicons/`](lexicons/today/joblist):
   id, or a careers page). Companies work like wiki pages: anyone can edit one,
   and each person's edit is a record in their own account (with `updatedAt`).
   The app shows:
-  1. the company's own record, if the author's handle is that domain (verified),
-  2. otherwise the most recently edited version, by anyone.
+  1. the company's own record, if the author's handle is that domain (verified:
+     the indexer checks it both ways, the domain's DNS `_atproto` record or
+     `/.well-known/atproto-did` naming the account and the account's DID
+     document naming the domain; without the snapshot, the AppView's word),
+  2. otherwise the most recently edited version, by anyone: "edited" is when
+     the indexer first saw that version (`versions.json` in the snapshot, see
+     [`indexer/seen.js`](indexer/seen.js)), not the `updatedAt` its author
+     writes, which anyone can set; without a snapshot, `updatedAt` (never in
+     the future).
 
   The company page shows the history (every author's version); anyone can
   restore an older one, which saves its content as their own new version.
   Accounts listed in `bots` (config) are crawlers: their versions are marked
   "not checked by a person yet" until a person saves or confirms a newer one.
+  So are versions from an account the indexer first saw less than
+  `versions.newAccountDays` (config) before, written over someone else's
+  version: a brand-new account cannot silently replace a long-standing page.
 - **`today.joblist.list`**: a named list of companies (by domain), in the
   curator's order. Lists can be copied; the copy keeps a `copiedFrom` link.
   An `open` list takes contributions: companies others suggest appear in it
@@ -40,7 +50,11 @@ Four record types, defined in [`lexicons/`](lexicons/today/joblist):
 - **`today.joblist.job`**: a job offer posted on joblist, in the poster's
   own account: title, company key, description, places, remote, contract,
   `url` (the full offer, or its joblist page), `apply` (a link, an email,
-  and/or "message me on Bluesky") and `expiresAt`.
+  and/or "message me on Bluesky") and `expiresAt`; optionally `salary`,
+  `status` (filled or closed offers are hidden) and `updatedAt`.
+
+Every field added later is optional; how keys are normalised and how to
+publish the lexicons: [docs/lexicons.md](docs/lexicons.md).
 
 ## Posting jobs
 
@@ -50,6 +64,13 @@ as **posted by the company** (✓); otherwise as **shared by @handle**. Offers
 show up in every job list with that company, merged with its job board's
 jobs (one per link), and get their own page at `/job/{did}/{rkey}`,
 prerendered with schema.org `JobPosting` data for search engines.
+
+Once a company speaks for itself (its own account's version is shown, or it
+posted a job itself), offers others post for it are no longer shown as its
+jobs: not in job lists, feeds, embeds or the snapshot, and their page is not
+prerendered. Opened by its link, such an offer says in red that it is not from
+the company, with no link to apply or to the offer: anyone can post, and a fake
+offer in a real company's name is how phishing collects applications.
 
 Offers are shown for 30 days by default (120 at most, see `jobPost` in
 config); expired ones are hidden everywhere, in the app and the snapshot.
@@ -76,7 +97,7 @@ Everything happens in the browser:
 | What | How |
 |---|---|
 | Find all records | the relay's `com.atproto.sync.listReposByCollection`, then `com.atproto.repo.listRecords` on each author's PDS |
-| Names and verified handles | the public Bluesky AppView (`app.bsky.actor.getProfiles`) |
+| Names and verified handles | the public Bluesky AppView (`app.bsky.actor.getProfiles`); handles that make an account a company's own are checked again both ways by the indexer ([`indexer/handles.js`](indexer/handles.js)) |
 | Open jobs | each job board's public API (Ashby, Greenhouse, Lever, Personio, Recruitee, Rippling, SmartRecruiters, Workable) |
 | Sign in and write | atproto OAuth (`@atproto/oauth-client-browser`), asking only for the app's record types |
 | Map | MapLibre with OpenFreeMap tiles |
@@ -145,6 +166,14 @@ npm run deploy   # build:site && wrangler deploy → https://joblist.today
 
 [`static/client-metadata.json`](static/client-metadata.json) must match the
 deployed origin.
+
+Only the site's own scripts may run (`kit.csp` in `vite.config.js`). The page
+view counter (Umami) is a pinned copy served from the site,
+[`static/vendor/umami.js`](static/vendor/umami.js), sending to Umami Cloud's
+collector (`analytics.hostUrl`): a third party cannot change code that runs
+next to people's sessions. Cloudflare's Web Analytics would inject its own
+beacon (`static.cloudflareinsights.com`), which the policy refuses: keep
+Web Analytics turned off for joblist.today in the Cloudflare dashboard.
 
 ## Import joblist's companies
 

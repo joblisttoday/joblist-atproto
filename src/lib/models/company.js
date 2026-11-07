@@ -1,9 +1,13 @@
 import { safeUrl } from './url.js';
+import { capRecord } from './limits.js';
 import config from '#lib/data/config.json' with { type: 'json' };
 import providers from '#lib/data/providers.json' with { type: 'json' };
 
 /**
  * @typedef {import('#lib/atproto/records.js').RepoRecord} RepoRecord
+ * @typedef {{handle: string, verified?: boolean}} Handle
+ *   verified: whether the handle was checked both ways by the indexer (indexer/handles.js);
+ *   left out when it was not, and then the AppView's handle is believed.
  * @typedef {{name?: string, address?: string, country?: string, latitude?: string, longitude?: string}} Location
  * @typedef {{provider?: string, id?: string, url?: string}} JobBoard
  * @typedef {{
@@ -23,6 +27,8 @@ import providers from '#lib/data/providers.json' with { type: 'json' };
  * }} Company
  */
 
+const DOMAIN_MAX = 253;
+
 /**
  * The record key for a website: its bare, lowercase host name.
  * @param {string} input a URL or a domain
@@ -32,30 +38,45 @@ export function toDomain(input) {
 	if (!value) return '';
 	try {
 		const url = new URL(value.includes('://') ? value : `https://${value}`);
-		return url.hostname.replace(/^www\./, '');
+		const host = url.hostname.replace(/^www\./, '');
+		// A domain name is at most 253 characters (lexicons/today/joblist/company.json).
+		return host.length <= DOMAIN_MAX ? host : '';
 	} catch {
 		return '';
 	}
 }
 
 /**
- * Whether a record is written by the organization itself
- * (the author's handle is the record's domain).
- * @param {RepoRecord} record
- * @param {Map<string, {handle: string}>} profiles
+ * Whether an account speaks for a domain: its handle is the domain, and the
+ * indexer did not find otherwise when it checked the handle both ways.
+ * @param {Map<string, Handle>} profiles
+ * @param {string} did
+ * @param {string} domain
  */
-export function isOwnRecord(record, profiles) {
-	return profiles.get(record.did)?.handle === record.rkey;
+export function speaksFor(profiles, did, domain) {
+	const profile = profiles.get(did);
+	return Boolean(domain) && profile?.handle === domain && profile.verified !== false;
 }
 
 /**
- * When a version was last edited, as its author says. A date in the future is not
- * believed (it would keep that version on top for good): such a version counts as undated.
+ * Whether a record is written by the organization itself
+ * (the author's handle is the record's domain).
+ * @param {RepoRecord} record
+ * @param {Map<string, Handle>} profiles
+ */
+export function isOwnRecord(record, profiles) {
+	return speaksFor(profiles, record.did, record.rkey);
+}
+
+/**
+ * When a version was last edited: when the indexer first saw it (seenAt, in the
+ * snapshot), else as its author says. A date in the future is not believed (it
+ * would keep that version on top for good): such a version counts as undated.
  * @param {RepoRecord} record
  * @param {number} [now]
  */
 export function editedAt(record, now = Date.now()) {
-	const date = String(record.value.updatedAt || record.value.createdAt || '');
+	const date = String(record.seenAt || record.value.updatedAt || record.value.createdAt || '');
 	return Date.parse(date) > now ? '' : date;
 }
 
@@ -71,22 +92,32 @@ export function byRecent(versions) {
  * Pick the version shown for a company, like a wiki page:
  * the organization's own record, otherwise the most recent edit by anyone.
  * @param {RepoRecord[]} versions
- * @param {Map<string, {handle: string}>} profiles
+ * @param {Map<string, Handle>} profiles
  */
 export function pickVersion(versions, profiles) {
 	return versions.find((v) => isOwnRecord(v, profiles)) || byRecent(versions)[0];
 }
 
 /**
- * Whether a version was written by a bot (config.bots) and no person
+ * Whether a version was written by a bot (config.bots), or by a new account over
+ * someone else's (newAuthor, see indexer/seen.js), and no established person
  * has saved a newer version since: nobody has checked it yet.
  * @param {RepoRecord} version
  * @param {RepoRecord[]} versions
  * @param {string[]} [bots]
  */
 export function isUnchecked(version, versions, bots = config.bots) {
-	if (!bots.includes(version.did)) return false;
-	return !versions.some((v) => !bots.includes(v.did) && editedAt(v) > editedAt(version));
+	if (!bots.includes(version.did) && !version.newAuthor) return false;
+	return !versions.some((v) => v.did !== version.did && !bots.includes(v.did) && !v.newAuthor && editedAt(v) > editedAt(version));
+}
+
+/**
+ * What to say about an unchecked version (an i18n key): the crawler's, or a new account's.
+ * @param {RepoRecord} version
+ * @param {string[]} [bots]
+ */
+export function uncheckedLabel(version, bots = config.bots) {
+	return bots.includes(version.did) ? 'company.unchecked' : 'company.unchecked.newAccount';
 }
 
 /** Fields of a company record compared between versions, with their form label. */
@@ -124,12 +155,13 @@ export function copyRecord(value, createdAt, now = new Date().toISOString()) {
 
 /**
  * @param {RepoRecord[]} versions all records sharing one key
- * @param {Map<string, {handle: string}>} profiles
+ * @param {Map<string, Handle>} profiles
  * @returns {Company}
  */
 export function toCompany(versions, profiles) {
 	const record = pickVersion(versions, profiles);
-	const v = record.value;
+	// Anyone can write a version: only what the lexicon allows is shown.
+	const v = capRecord(config.collections.company, record.value);
 	return {
 		key: record.rkey,
 		name: v.name || record.rkey,

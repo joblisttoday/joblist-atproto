@@ -1,7 +1,7 @@
 {
 	"lexicon": 1,
 	"id": "today.joblist.company",
-	"description": "A company or organization, described by anyone, like a wiki page: each author's record is one version. The record key is the organization's domain (e.g. 'example.org'). When the author's handle equals that domain, the record is the organization's own.",
+	"description": "A company or organization, described by anyone, like a wiki page: each author's record is one version. The record key is the organization's domain, normalised: the website's host name, lowercase, without 'www.' (e.g. 'example.org' for https://www.Example.org/jobs), at most 253 characters (a DNS name). When the author's handle equals that domain, the record is the organization's own.",
 	"defs": {
 		"main": {
 			"type": "record",
@@ -41,6 +41,7 @@
 				"name": { "type": "string", "maxLength": 1000, "maxGraphemes": 100, "description": "City or place name." },
 				"address": { "type": "string", "maxLength": 2000, "maxGraphemes": 200 },
 				"country": { "type": "string", "maxLength": 1000, "maxGraphemes": 100 },
+				"countryCode": { "type": "string", "minLength": 2, "maxLength": 2, "description": "ISO 3166-1 alpha-2 code of the country (e.g. 'DE'), alongside its name." },
 				"latitude": { "type": "string", "maxLength": 32, "description": "Decimal degrees, as a string." },
 				"longitude": { "type": "string", "maxLength": 32, "description": "Decimal degrees, as a string." }
 			}

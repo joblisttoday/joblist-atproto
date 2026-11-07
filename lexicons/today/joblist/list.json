@@ -16,7 +16,7 @@
 						"type": "array",
 						"maxLength": 2000,
 						"description": "Company record keys (domains), in the curator's order.",
-						"items": { "type": "string", "maxLength": 512 }
+						"items": { "type": "string", "maxLength": 253 }
 					},
 					"copiedFrom": { "type": "string", "format": "at-uri", "description": "The list this one was copied from." },
 					"open": { "type": "boolean", "description": "Anyone can add companies: companies suggested for this list (today.joblist.suggestion records) are shown in it at once, credited to who suggested them. Otherwise the author accepts or dismisses each one." },
@@ -24,7 +24,7 @@
 						"type": "array",
 						"maxLength": 2000,
 						"description": "Company record keys suggested by others that the author hid or dismissed.",
-						"items": { "type": "string", "maxLength": 512 }
+						"items": { "type": "string", "maxLength": 253 }
 					},
 					"createdAt": { "type": "string", "format": "datetime" }
 				}

@@ -3,6 +3,10 @@
 # Free: runs on GitHub Actions. Without the CRAWLER_* secrets it is a dry run
 # that still publishes the health report.
 # Secrets: CRAWLER_HANDLE, CRAWLER_APP_PASSWORD (and optionally CRAWLER_SERVICE).
+#
+# Two jobs: `crawl` runs the code with the crawler's secrets and a read-only
+# token, and hands its report over as an artifact; `report` can write to the
+# repository (the `crawl` branch, starting the snapshot) and runs no npm code.
 name: crawl
 
 on:
@@ -20,20 +24,24 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  contents: write # keep each crawl's report on the `crawl` branch
-  actions: write # start the snapshot workflow
+  contents: read
 
 jobs:
   crawl:
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version-file: .nvmrc
           cache: npm
-      - run: npm ci
+      # No install scripts: the crawler needs none (only esbuild, workerd and core-js have any).
+      - run: npm ci --ignore-scripts
       - name: Test the crawler's rules
         run: node --test 'scripts/**/*.test.js'
       - name: Crawl
@@ -48,7 +56,29 @@ jobs:
           else
             node scripts/crawl.js
           fi
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: crawl
+          path: static/snapshot/crawl/*.json
+          retention-days: 1
+          if-no-files-found: error
+
+  report:
+    needs: crawl
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write # keep each crawl's report on the `crawl` branch
+      actions: write # start the snapshot workflow
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: crawl
+          path: ${{ runner.temp }}/crawl
       - name: Keep the report on the crawl branch
+        env:
+          REPORT: ${{ runner.temp }}/crawl
         run: |
           git config user.name 'joblist crawler'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
@@ -58,11 +88,11 @@ jobs:
           else
             git worktree add --orphan -b crawl ../crawl-branch
           fi
-          cp static/snapshot/crawl/*.json ../crawl-branch/
+          cp "$REPORT"/*.json ../crawl-branch/
           git -C ../crawl-branch add -A
           git -C ../crawl-branch commit -qm "Crawl of $(date -u +%F)" || echo 'nothing changed'
           git -C ../crawl-branch push origin crawl
       - name: Rebuild the snapshot
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh workflow run snapshot.yml --ref ${{ github.event.repository.default_branch }}
+        run: gh workflow run snapshot.yml --ref ${{ github.event.repository.default_branch }} --repo ${{ github.repository }}

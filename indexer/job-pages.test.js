@@ -72,6 +72,14 @@ test('jobPages makes one page per live offer, with safe structured data', () => 
 	assert.match(jsonLd({ a: '<b>' }), /\\u003cb>/);
 });
 
+test('jobPages makes no page for what others post for a company that posts its own', () => {
+	const fake = { ...record, did: 'did:plc:x', rkey: '3fake', uri: 'at://did:plc:x/today.joblist.job/3fake' };
+	assert.deepEqual(
+		jobPages([record, fake], companies, profiles).map((p) => p.path),
+		['/job/did%3Aplc%3Aacme/3abc']
+	);
+});
+
 test("page() keeps $ patterns in text as text", async () => {
 	const { page } = await import('./html.js');
 	const html = page('<html><head><title>x</title></head><body><div></div></body></html>', { title: "A $' B $& C", description: '$`', url: 'https://joblist.today/x', body: '<p>$1</p>' });

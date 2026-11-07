@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { isRemote } from './job.js';
 import {
+	claimedCompanies,
 	daysLeft,
 	expiryDate,
 	isLive,
 	mergeJobs,
+	notFromCompany,
 	postedFirst,
 	renewed,
 	toApplyUrl,
@@ -119,7 +121,7 @@ describe('verified and merge', () => {
 		expect(toPost(record(value, 'did:plc:a'), profiles).verified).toBe(true);
 		expect(toPost(record(value, 'did:plc:b'), profiles).verified).toBe(false);
 	});
-	it('keeps one job per link: the company own post, then board jobs, then shared posts', () => {
+	it('keeps one job per link: the company own post, then board jobs; no shared posts then', () => {
 		const shared = toJob(toPost(record(value, 'did:plc:b'), profiles));
 		const own = toJob(toPost(record(value, 'did:plc:a'), profiles));
 		const other = toJob(toPost(record({ ...value, url: 'https://acme.org/jobs/2' }, 'did:plc:b'), profiles));
@@ -130,8 +132,7 @@ describe('verified and merge', () => {
 		const merged = mergeJobs([shared, other, own], board);
 		expect(merged.map((j) => [j.url, j.posted?.did])).toEqual([
 			['https://acme.org/jobs/1', 'did:plc:a'],
-			['https://acme.org/jobs/3', undefined],
-			['https://acme.org/jobs/2', 'did:plc:b']
+			['https://acme.org/jobs/3', undefined]
 		]);
 		// Without the company's own post, a shared post never replaces the board's job.
 		expect(mergeJobs([shared], board).map((j) => [j.url, j.title, j.posted?.did])).toEqual([
@@ -161,5 +162,52 @@ describe('where posted jobs are', () => {
 		const [found, kept] = withPoints([named, placed], points);
 		expect(found.point).toEqual([2.35, 48.86]);
 		expect(kept).toBe(placed);
+	});
+});
+
+describe('pay, status and edits', () => {
+	it('keeps a pay range in whole units and reads it back', () => {
+		const r = toRecord(form({ salaryMin: '60000.4', salaryMax: '50000', currency: 'eur', period: 'year' }), { page: PAGE, now: NOW });
+		expect(r.salary).toEqual({ min: 50000, max: 60000, currency: 'EUR', period: 'year' });
+		const post = toPost(record(r), new Map());
+		expect(toJob(post).salary).toEqual(r.salary);
+		expect(toForm(post, '', NOW)).toMatchObject({ salaryMin: '50000', salaryMax: '60000', currency: 'EUR', period: 'year' });
+	});
+	it('leaves out a pay range that says nothing usable', () => {
+		expect(toRecord(form({ salaryMin: 'lots', currency: 'EUR', period: 'year' }), { page: PAGE, now: NOW }).salary).toBeUndefined();
+		expect(toPost(record({ title: 'E', salary: { min: 1, currency: 'euros', period: 'year' } }), new Map()).salary).toBeUndefined();
+	});
+	it('says when an edit was made, and a filled offer is no longer live', () => {
+		const r = toRecord(form({ status: 'filled' }), { page: PAGE, createdAt: '2026-01-01T00:00:00.000Z', now: NOW });
+		expect(r).toMatchObject({ status: 'filled', createdAt: '2026-01-01T00:00:00.000Z', updatedAt: new Date(NOW).toISOString() });
+		expect(isLive(r, NOW)).toBe(false);
+		expect(isLive({ ...r, status: 'open' }, NOW)).toBe(true);
+		expect(toRecord(form({ status: 'open' }), { page: PAGE, now: NOW }).status).toBeUndefined();
+	});
+});
+
+describe('verified posts', () => {
+	it('are from an account whose handle is the company, unless the indexer found otherwise', () => {
+		const value = { title: 'E', company: 'acme.org', url: 'https://acme.org/jobs/1' };
+		expect(toPost(record(value), new Map([['did:plc:a', { handle: 'acme.org' }]])).verified).toBe(true);
+		expect(toPost(record(value), new Map([['did:plc:a', { handle: 'acme.org', verified: false }]])).verified).toBe(false);
+		expect(toPost(record(value), new Map([['did:plc:a', { handle: 'other.org' }]])).verified).toBe(false);
+	});
+});
+
+describe('jobs others post for a company that speaks for itself', () => {
+	const own = { title: 'A', url: 'https://acme.org/a', company: 'acme.org', posted: { did: 'did:plc:acme', rkey: '1', verified: true } };
+	const fake = { title: 'B', url: 'https://evil.example/b', company: 'acme.org', posted: { did: 'did:plc:x', rkey: '2', verified: false } };
+	const board = { title: 'C', url: 'https://jobs.lever.co/acme/c', company: 'acme.org' };
+	it('are claimed by its verified version or its own posts', () => {
+		const claimed = claimedCompanies([{ key: 'acme.org', verified: false }, { key: 'own.org', verified: true }], [{ company: 'acme.org', verified: true }]);
+		expect([...claimed].sort()).toEqual(['acme.org', 'own.org']);
+		expect(notFromCompany({ company: 'own.org', verified: false }, claimed)).toBe(true);
+		expect(notFromCompany({ company: 'own.org', verified: true }, claimed)).toBe(false);
+		expect(notFromCompany({ company: 'free.org', verified: false }, claimed)).toBe(false);
+	});
+	it('are left out once the company posts its own', () => {
+		expect(mergeJobs([own, fake], [board]).map((j) => j.title)).toEqual(['A', 'C']);
+		expect(mergeJobs([fake], [board]).map((j) => j.title)).toEqual(['C', 'B']);
 	});
 });

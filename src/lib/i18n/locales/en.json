@@ -216,6 +216,7 @@
 	"company.newList": "New list with this company",
 	"company.editedBy": "Edited by",
 	"company.unchecked": "Added by the crawler, not checked by a person yet",
+	"company.unchecked.newAccount": "Edited by a new account, not checked by others yet",
 	"company.confirm": "Confirm it is right",
 	"company.confirm.help": "Checked it? Confirming saves this version in your account, as checked by a person.",
 	"company.history": "History",
@@ -525,6 +526,7 @@
 
 	"job.verified": "posted by the company",
 	"job.sharedBy": "shared by",
+	"job.notFromCompany": "Not from {company}: {company} posts its own offers here, and this one was shared by someone else. To apply, go to {company}'s own website.",
 	"job.remote.onsite": "On site",
 	"job.remote.hybrid": "Hybrid",
 	"job.remote.remote": "Remote",
