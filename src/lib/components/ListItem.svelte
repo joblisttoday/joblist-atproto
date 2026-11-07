@@ -1,18 +1,25 @@
 <script>
 	import Author from './Author.svelte';
 	import { handleOf, membersOf } from '#lib/network/network.svelte.js';
+	import { jobCounts } from '#lib/network/job-counts.svelte.js';
+	import { listStats } from '#lib/models/list-filters.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
-	/** @type {{list: import('#lib/models/list.js').List, author?: boolean}} */
+	/**
+	 * A list among others: its name, what it is, how many companies and how many of them hire,
+	 * its open jobs at the end of the name's line.
+	 * @type {{list: import('#lib/models/list.js').List, author?: boolean}}
+	 */
 	let { list, author = true } = $props();
-	const count = $derived(membersOf(list).members.length);
+	const stats = $derived(listStats(membersOf(list).members.map((m) => m.key), jobCounts()));
 </script>
 
-<jl-list>
+<jl-list open={list.open || undefined} hiring={stats.hiring > 0 || undefined}>
 	<a href="/{handleOf(list.did)}/{list.rkey}">{list.name}</a>
+	{#if stats.jobs}<data value={stats.jobs}>{t('jobs.count', { count: stats.jobs })}</data>{/if}
 	{#if list.description}<p>{list.description}</p>{/if}
 	<small>
-		{t('list.companies', { count })}{#if author}{' · '}{t('list.by')} <Author did={list.did} />{/if}
+		{t('list.companies', { count: stats.companies })}{#if stats.hiring}{' · '}{t('list.hiring', { count: stats.hiring })}{/if}{#if author}{' · '}{t('list.by')} <Author did={list.did} />{/if}
 	</small>
 </jl-list>
 
@@ -24,7 +31,6 @@
 		border-bottom: var(--border);
 	}
 	a {
-		display: block;
 		font-weight: var(--font-weight-strong);
 		text-decoration: none;
 	}
@@ -36,6 +42,12 @@
 	}
 	a:hover {
 		text-decoration: underline;
+	}
+	/* Open jobs: at the end of the name's line. */
+	data {
+		float: inline-end;
+		font-size: var(--font-size-small);
+		color: var(--color-muted);
 	}
 	p {
 		margin: 0;
