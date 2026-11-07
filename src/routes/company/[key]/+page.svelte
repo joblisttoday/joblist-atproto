@@ -14,6 +14,7 @@
 	import Empty from '#lib/components/Empty.svelte';
 	import ListItem from '#lib/components/ListItem.svelte';
 	import Pending from '#lib/components/Pending.svelte';
+	import { session } from '#lib/auth/session.svelte.js';
 	import { data, listsWith, network } from '#lib/network/network.svelte.js';
 	import { boardUrl, mapPoints } from '#lib/models/company.js';
 	import { mixedAuthors } from '#lib/models/list.js';
@@ -26,6 +27,7 @@
 		if (company && company.key !== key) goto(`/company/${company.key}`, { replaceState: true });
 	});
 	const lists = $derived(listsWith(key));
+	const manager = $derived(Boolean(company) && session.handle === company?.key);
 	// Jobs come from its job board, or were posted here (by the company or anyone).
 	const hasJobs = $derived(Boolean(company && (boardUrl(company.jobBoard) || data.postedJobs.has(key))));
 	const places = $derived(
@@ -40,7 +42,8 @@
 	<jl-company-page verified={company.verified || undefined}>
 		<jl-company-main>
 			<CompanyHeader {company} />
-			<CompanyClaim {company} />
+			<!-- The company itself first sees what it can do; anyone else finds "Is this your organization?" after the jobs. -->
+			{#if manager}<CompanyClaim {company} />{/if}
 
 			<section aria-labelledby="company-jobs">
 				<h2 id="company-jobs">{t('list.tab.jobs')}</h2>
@@ -69,6 +72,7 @@
 				<CompanyInvite {company} field="locations" />
 			</section>
 
+			{#if !manager}<CompanyClaim {company} />{/if}
 			<CompanyEmbed {company} />
 			<CompanyVersions {company} />
 		</aside>
