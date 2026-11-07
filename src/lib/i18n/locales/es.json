@@ -501,6 +501,10 @@
 	"profile.bluesky": "Perfil de Bluesky",
 	"profile.company": "Cuenta de organización:",
 	"profile.notFound": "No se encontró esta cuenta.",
+	"profile.tabs": "Lo que hizo esta cuenta",
+	"profile.tab.lists": "Listas",
+	"profile.tab.jobs": "Ofertas",
+	"profile.tab.companies": "Organizaciones",
 
 	"about.source": "Código fuente",
 	"about.data": "Todos los datos son registros públicos de atproto.",

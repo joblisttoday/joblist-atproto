@@ -27,6 +27,12 @@ const appPages = [
 	['/tools', config.name]
 ];
 
+/** A profile's tabs after its lists (src/lib/data/profile-tabs.json): their path and title. */
+const profileTabs = [
+	['jobs', en['profile.jobs']],
+	['companies', en['profile.companies']]
+];
+
 /** @param {string} path */
 const url = (path) => config.url + (path === '/' ? '' : path);
 
@@ -101,18 +107,32 @@ export function sitePages({ companies, lists, profiles, jobCounts, jobTotal, upd
 			updated,
 			meta: { title: `${en['stats.title']} · ${config.name}`, description: en['stats.intro'], url: url('/stats'), body: `<h1>${escape(en['stats.title'])}</h1><p>${escape(en['stats.intro'])}</p>` }
 		},
-		...profiles.map((p) => ({
-			path: `/${p.handle}`,
-			listed: true,
-			updated: newest(p.lists),
-			meta: {
-				title: `@${p.handle} · ${config.name}`,
-				description: `Lists of companies by @${p.handle} on ${config.name}.`,
-				url: url(`/${p.handle}`),
-				body: `<h1>@${escape(p.handle)}</h1><ul>${p.lists.map((l) => `<li><a href="${escape(l.path)}">${escape(l.name)}</a></li>`).join('')}</ul>`,
-				preload: config.snapshot.preload.counts
-			}
-		})),
+		...profiles.flatMap((p) => [
+			{
+				path: `/${p.handle}`,
+				listed: true,
+				updated: newest(p.lists),
+				meta: {
+					title: `@${p.handle} · ${config.name}`,
+					description: `Lists of companies by @${p.handle} on ${config.name}.`,
+					url: url(`/${p.handle}`),
+					body: `<h1>@${escape(p.handle)}</h1><ul>${p.lists.map((l) => `<li><a href="${escape(l.path)}">${escape(l.name)}</a></li>`).join('')}</ul>`,
+					preload: config.snapshot.preload.counts
+				}
+			},
+			// Its other tabs: a page to open and to preview, kept out of search results (the lists say who it is).
+			...profileTabs.map(([tab, title]) => ({
+				path: `/${p.handle}/${tab}`,
+				listed: false,
+				meta: {
+					title: `@${p.handle} · ${title} · ${config.name}`,
+					description: `${title}: @${p.handle} on ${config.name}.`,
+					url: url(`/${p.handle}/${tab}`),
+					body: `<h1>@${escape(p.handle)}</h1>`,
+					noindex: true
+				}
+			}))
+		]),
 		...appPages.map(([path, title]) => ({
 			path,
 			listed: false,
