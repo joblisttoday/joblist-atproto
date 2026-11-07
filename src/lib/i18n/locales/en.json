@@ -295,6 +295,7 @@
 	"form.company.preview": "How it will show in the lists",
 	"form.company.preview.empty": "Write its website and name to see it here.",
 	"form.company.needsWebsite": "Its website is still missing: it makes the company's page.",
+	"form.company.taken": "This company is already on joblist: edit it from the version shown, so nothing in it is lost.",
 	"form.company.draft": "Your draft, kept in this browser.",
 	"form.company.draft.clear": "Start over",
 	"form.edit.from": "You start from the version shown, by",

@@ -52,6 +52,9 @@
 
 	const website = $derived(readWebsite(form.url, data.companies, company?.key));
 	const key = $derived(website.key);
+	// Already on joblist: improving it starts from the version shown (Edit it), not from an empty form
+	// whose saving would show a thinner version in its place.
+	const taken = $derived(!company && website.state === 'exists');
 	const badLinks = $derived(form.links.some((l) => readLink(l).state === 'invalid'));
 	const preview = $derived(previewCompany(form, key));
 	const { nameMax, descriptionMax } = config.companyForm;
@@ -167,8 +170,9 @@
 		<jl-form-actions>
 			{#if error}<p role="alert">{error}</p>{/if}
 			{#if !key}<p><small>{t('form.company.needsWebsite')}</small></p>{/if}
+			{#if taken}<p><small>{t('form.company.taken')} <a href="/add?key={encodeURIComponent(key)}">{t('form.website.improve')}</a></small></p>{/if}
 			<menu>
-				<button type="submit" disabled={busy || !key}>{busy ? t('form.saving') : company ? t('form.save') : t('form.company.submit')}</button>
+				<button type="submit" disabled={busy || !key || taken}>{busy ? t('form.saving') : company ? t('form.save') : t('form.company.submit')}</button>
 				{#if oncancel}<button type="button" onclick={oncancel}>{t('form.cancel')}</button>{/if}
 			</menu>
 		</jl-form-actions>
