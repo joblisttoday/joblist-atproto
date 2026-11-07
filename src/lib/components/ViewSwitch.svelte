@@ -5,9 +5,10 @@
 
 	/**
 	 * A list, a grid of cards (wide screens) or the map. The choice is kept, per page.
-	 * @type {{view: import('#lib/navigation/explore-view.js').ExploreView, page?: string}}
+	 * mapless: nothing found has a place, so the map has nothing to show (its button is off).
+	 * @type {{view: import('#lib/navigation/explore-view.js').ExploreView, page?: string, mapless?: boolean}}
 	 */
-	let { view = $bindable(), page = 'jobs' } = $props();
+	let { view = $bindable(), page = 'jobs', mapless = false } = $props();
 	const views = /** @type {const} */ (['list', 'grid', 'map']);
 	/** @type {Record<string, import('#lib/icons.js').IconName>} */
 	const icons = { list: 'listView', grid: 'gridView', map: 'map' };
@@ -21,7 +22,15 @@
 
 <jl-view-switch role="group" aria-label={t('explore.view')} {view}>
 	{#each views as name (name)}
-		<button type="button" data-view={name} aria-pressed={view === name} onclick={() => show(name)} title={t(`explore.view.${name}`)}>
+		{@const off = name === 'map' && mapless}
+		<button
+			type="button"
+			data-view={name}
+			aria-pressed={view === name}
+			disabled={off}
+			onclick={() => show(name)}
+			title={off ? t('explore.view.mapless') : t(`explore.view.${name}`)}
+		>
 			<Icon name={icons[name]} />
 			<span>{t(`explore.view.${name}`)}</span>
 		</button>

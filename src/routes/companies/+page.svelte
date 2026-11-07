@@ -7,6 +7,7 @@
 	import CompanyMap from '#lib/components/CompanyMap.svelte';
 	import ViewSwitch from '#lib/components/ViewSwitch.svelte';
 	import { findCompanies } from '#lib/models/company-filters.js';
+	import { mapPoints } from '#lib/models/company.js';
 	import { data } from '#lib/network/network.svelte.js';
 	import { allAccounts } from '#lib/network/accounts.svelte.js';
 	import { getSnapshotJobs } from '#lib/network/snapshot.js';
@@ -35,6 +36,8 @@
 	const found = $derived(findCompanies(companies, { query, hiring, bluesky }, counts, accounts));
 	const hiringCount = $derived(companies.filter((c) => counts.get(c.key)).length);
 	const blueskyCount = $derived(companies.filter((c) => accounts.has(c.key)).length);
+	// None found says where it is: no map to show.
+	const mapless = $derived(companies.length > 0 && !found.some((c) => mapPoints(c).length));
 
 	// The search stays in the address, to share or come back to.
 	$effect(() => {
@@ -67,7 +70,7 @@
 						</li>
 					{/if}
 				</menu>
-				<ViewSwitch bind:view page="companies" />
+				<ViewSwitch bind:view page="companies" {mapless} />
 			</jl-companies-chips>
 		</form>
 	</jl-companies-bar>

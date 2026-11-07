@@ -200,6 +200,8 @@
 	// Nothing found: the ways to find more, from the closest change to the widest.
 	const nextMinutes = $derived(config.travel.minutes.find((m) => m > (filters.within || 0)));
 	let busy = $state(false);
+	// Nothing found has a place: no map to show (once the jobs are read).
+	const mapless = $derived(!busy && jobs.length > 0 && !results.some((job) => job.point));
 	const empty = $derived(searching && !busy && jobs.length > 0 && results.length === 0);
 
 	function nextSheet() {
@@ -241,7 +243,7 @@
 	<!-- The search, and how the jobs are shown, at the same place in every view. -->
 	<jl-explore-bar>
 		<ExploreSearch bind:filters {places}>
-			{#snippet tools()}<ViewSwitch bind:view />{/snippet}
+			{#snippet tools()}<ViewSwitch bind:view {mapless} />{/snippet}
 		</ExploreSearch>
 	</jl-explore-bar>
 	<jl-explore-stage>

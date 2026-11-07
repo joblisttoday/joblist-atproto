@@ -223,6 +223,7 @@
 	"explore.view.list": "Liste",
 	"explore.view.grid": "Grille",
 	"explore.view.map": "Carte",
+	"explore.view.mapless": "Aucun résultat n’a de lieu sur la carte",
 	"job.where": "Où",
 	"job.company.more": "{count} offres chez {name}",
 	"job.company.one": "La seule offre chez {name}",

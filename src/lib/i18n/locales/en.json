@@ -223,6 +223,7 @@
 	"explore.view.list": "List",
 	"explore.view.grid": "Grid",
 	"explore.view.map": "Map",
+	"explore.view.mapless": "None found has a place on the map",
 	"job.where": "Where",
 	"job.company.more": "{count} open jobs at {name}",
 	"job.company.one": "The only open job at {name}",
