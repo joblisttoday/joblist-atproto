@@ -8,6 +8,7 @@
 	import ListItem from '#lib/components/ListItem.svelte';
 	import LocaleSwitch from '#lib/components/LocaleSwitch.svelte';
 	import MyJobPosts from '#lib/components/MyJobPosts.svelte';
+	import NotFound from '#lib/components/NotFound.svelte';
 	import ProfileHeader from '#lib/components/ProfileHeader.svelte';
 	import { resolveDid } from '#lib/atproto/identity.js';
 	import { session, signOut } from '#lib/auth/session.svelte.js';
@@ -88,8 +89,8 @@
 		</section>
 	</jl-profile>
 {:catch}
-	<h1>@{handle}</h1>
-	<p role="alert">{t('profile.notFound')}</p>
+	<!-- Not an account: most often a mistyped page address. -->
+	<NotFound title={t('notFound.title')} text={t('notFound.path', { path: `/${handle}` })} />
 {/await}
 
 <style>
