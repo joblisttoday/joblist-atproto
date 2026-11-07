@@ -27,6 +27,8 @@ import providers from '#lib/data/providers.json' with { type: 'json' };
  * }} Company
  */
 
+const DOMAIN_MAX = 253;
+
 /**
  * The record key for a website: its bare, lowercase host name.
  * @param {string} input a URL or a domain
@@ -36,7 +38,9 @@ export function toDomain(input) {
 	if (!value) return '';
 	try {
 		const url = new URL(value.includes('://') ? value : `https://${value}`);
-		return url.hostname.replace(/^www\./, '');
+		const host = url.hostname.replace(/^www\./, '');
+		// A domain name is at most 253 characters (lexicons/today/joblist/company.json).
+		return host.length <= DOMAIN_MAX ? host : '';
 	} catch {
 		return '';
 	}

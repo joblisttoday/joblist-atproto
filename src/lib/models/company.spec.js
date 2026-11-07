@@ -20,6 +20,8 @@ describe('toDomain', () => {
 		expect(toDomain('https://www.Acme.org/jobs?x=1')).toBe('acme.org');
 		expect(toDomain('acme.org')).toBe('acme.org');
 		expect(toDomain('')).toBe('');
+		expect(toDomain(`${'a'.repeat(60)}.`.repeat(5) + 'org')).toBe('');
+		expect(toDomain(`${'a'.repeat(60)}.`.repeat(4) + 'org')).toHaveLength(247);
 	});
 });
 

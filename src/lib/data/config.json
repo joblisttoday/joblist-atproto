@@ -17,6 +17,7 @@
 	},
 	"services": {
 		"relay": "https://relay1.us-east.bsky.network",
+		"relayFallbacks": ["https://relay1.us-west.bsky.network"],
 		"appview": "https://public.api.bsky.app",
 		"plc": "https://plc.directory",
 		"handleResolver": "https://public.api.bsky.app",

@@ -10,15 +10,33 @@ import { xrpcGet } from './xrpc.js';
  */
 
 /**
- * Every repo holding a collection, as listed by the relay.
+ * Every repo holding a collection, as listed by the relay, or by the next one
+ * (config.services.relayFallbacks) when it does not answer.
+ * @param {string} collection
+ * @param {string[]} [relays]
+ */
+export async function listRepos(collection, relays = [config.services.relay, ...config.services.relayFallbacks]) {
+	let failure;
+	for (const relay of relays) {
+		try {
+			return await listReposAt(relay, collection);
+		} catch (err) {
+			failure = err;
+		}
+	}
+	throw failure;
+}
+
+/**
+ * @param {string} relay
  * @param {string} collection
  */
-export async function listRepos(collection) {
+async function listReposAt(relay, collection) {
 	/** @type {string[]} */
 	const dids = [];
 	let cursor;
 	do {
-		const page = await xrpcGet(config.services.relay, 'com.atproto.sync.listReposByCollection', {
+		const page = await xrpcGet(relay, 'com.atproto.sync.listReposByCollection', {
 			collection,
 			limit: 1000,
 			cursor
