@@ -19,6 +19,21 @@
 		{
 			id: 'element',
 			code: `<script type="module" src="${scripts}joblist-jobs.js"></${'script'}>\n<joblist-jobs company="${company.key}"></joblist-jobs>`
+		},
+		{
+			id: 'page',
+			intro: t('embed.page.intro'),
+			code: [
+				'<!doctype html>',
+				'<html lang="en">',
+				'<meta charset="utf-8">',
+				'<meta name="viewport" content="width=device-width, initial-scale=1">',
+				`<title>${t('embed.title', { name: company.name }).replaceAll('<', '&lt;')}</title>`,
+				'<style>body { max-width: 48rem; margin: auto; padding: 1rem; font-family: system-ui, sans-serif; }</style>',
+				`<script type="module" src="${scripts}joblist-jobs.js"></${'script'}>`,
+				`<joblist-jobs company="${company.key}" query="" where="" search limit="100"></joblist-jobs>`,
+				'</html>'
+			].join('\n')
 		}
 	]);
 	let copied = $state('');
@@ -41,6 +56,7 @@
 		<p><small>{t('embed.intro')}</small></p>
 		{#each snippets as snippet (snippet.id)}
 			<h3>{t(`embed.${snippet.id}`)}</h3>
+			{#if 'intro' in snippet}<p><small>{snippet.intro}</small></p>{/if}
 			<pre><code>{snippet.code}</code></pre>
 			<button type="button" onclick={() => copy(snippet.id, snippet.code)}>{copied === snippet.id ? t('embed.copied') : t('embed.copy')}</button>
 		{/each}
