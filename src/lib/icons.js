@@ -27,6 +27,7 @@ import MapPin from '@lucide/svelte/icons/map-pin';
 import MapIcon from '@lucide/svelte/icons/map';
 import LayoutGrid from '@lucide/svelte/icons/layout-grid';
 import Rows3 from '@lucide/svelte/icons/rows-3';
+import Rss from '@lucide/svelte/icons/rss';
 import User from '@lucide/svelte/icons/user';
 import X from '@lucide/svelte/icons/x';
 
@@ -58,7 +59,8 @@ export const icons = {
 	place: MapPin,
 	map: MapIcon,
 	listView: Rows3,
-	gridView: LayoutGrid
+	gridView: LayoutGrid,
+	feed: Rss
 };
 
 /** @typedef {keyof typeof icons} IconName */

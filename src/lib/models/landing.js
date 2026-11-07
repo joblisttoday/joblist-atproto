@@ -8,9 +8,9 @@ import fields from '#lib/data/fields.json' with { type: 'json' };
  *
  * @typedef {{slug: string, query: string, words: string[]}} Field
  *   query: what the explorer searches for this field; words: what a job's title or department says.
- * @typedef {{t: string, u: string, c: string, l?: string, p?: string, r?: string}} LandingJob
+ * @typedef {{t: string, u: string, c: string, l?: string, p?: string, r?: string, i?: string}} LandingJob
  *   A job as these pages show it: title, link (its board, or its page here), company key,
- *   location, first seen, workplace.
+ *   location, first seen, workplace, id at its board (when the link does not end with it).
  * @typedef {{generatedAt: string, name?: string, count: number, names: Record<string, string>, jobs: LandingJob[],
  *   fields?: {slug: string, count: number}[], cities?: {slug: string, name: string, count: number}[]}} LandingFile
  *   One page's data: the newest jobs and their companies' names; a city's fields, a field's cities.
@@ -117,4 +117,22 @@ export function explorerPath({ cityName, field }) {
  */
 export function isCompanyKey(key) {
 	return typeof key === 'string' && key.length <= 253 && /^[a-z0-9][a-z0-9.-]*$/i.test(key);
+}
+
+/**
+ * The feed of an explorer search, when it has one: a city with a page, alone
+ * or with one field's search words.
+ * @param {LandingIndex | null} index
+ * @param {{query: string, where: string, remote: string}} filters
+ * @returns {{city: string, field?: string} | null}
+ */
+export function searchFeed(index, filters) {
+	const where = filters.where.trim().toLowerCase();
+	if (!index || filters.remote || !where) return null;
+	const city = index.cities.find((c) => c.name.toLowerCase() === where);
+	if (!city) return null;
+	const query = filters.query.trim().toLowerCase();
+	if (!query) return { city: city.slug };
+	const field = FIELDS.find((f) => f.query === query && city.fields?.includes(f.slug));
+	return field ? { city: city.slug, field: field.slug } : null;
 }

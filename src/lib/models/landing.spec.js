@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { explorerPath, feedPath, fieldsOf, isCompanyKey, isSlug, landingFile, landingPath, slugify } from './landing.js';
+import { explorerPath, feedPath, fieldsOf, isCompanyKey, isSlug, landingFile, landingPath, searchFeed, slugify } from './landing.js';
 
 describe('landing pages', () => {
 	it('makes addresses of place names', () => {
@@ -44,5 +44,17 @@ describe('landing pages', () => {
 		expect(landingFile({})).toBe('landing/new.json');
 		expect(explorerPath({ cityName: 'São Paulo', field: 'design' })).toBe('/?q=design&where=S%C3%A3o+Paulo');
 		expect(explorerPath({})).toBe('/');
+	});
+
+	it('finds the feed of a search in a city', () => {
+		const index = { generatedAt: '', total: 0, cities: [{ slug: 'berlin', name: 'Berlin', count: 9, fields: ['design'] }], fields: [] };
+		const search = { query: '', where: ' berlin ', remote: '' };
+		expect(searchFeed(index, search)).toEqual({ city: 'berlin' });
+		expect(searchFeed(index, { ...search, query: 'Design' })).toEqual({ city: 'berlin', field: 'design' });
+		expect(searchFeed(index, { ...search, query: 'engineer' })).toBe(null);
+		expect(searchFeed(index, { ...search, query: 'barista' })).toBe(null);
+		expect(searchFeed(index, { ...search, remote: 'remote' })).toBe(null);
+		expect(searchFeed(index, { ...search, where: 'Atlantis' })).toBe(null);
+		expect(searchFeed(null, search)).toBe(null);
 	});
 });
