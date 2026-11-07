@@ -82,6 +82,10 @@
 	--textarea-max: 60vh;
 	--reading-width: 42rem;
 	--aside-width: 22rem;
+	/* A form's preview spans its rows, beside the fields (wide screens). */
+	--form-rows: 40;
+	/* Pages of sections (Saved): as many columns as fit. */
+	--section-min: 26rem;
 	--required-mark: ' *';
 	--font-size-badge: 0.7rem;
 	--logo-stroke: 2.2;
