@@ -1,9 +1,11 @@
 import config from '#lib/data/config.json';
 import en from './locales/en.json';
 import fr from './locales/fr.json';
+import de from './locales/de.json';
+import es from './locales/es.json';
 
 /** @type {Record<string, Record<string, string>>} */
-const messages = { en, fr };
+const messages = { en, fr, de, es };
 const KEY = 'joblist.locale';
 
 export const i18n = $state({ locale: initialLocale() });

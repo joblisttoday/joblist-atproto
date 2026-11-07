@@ -507,6 +507,8 @@
 
 	"locale.en": "English",
 	"locale.fr": "Français",
+	"locale.de": "Deutsch",
+	"locale.es": "Español",
 
 	"companies.found": "{count} trouvées",
 	"companies.found.one": "1 trouvée",

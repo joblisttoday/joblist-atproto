@@ -75,7 +75,9 @@
 	},
 	"locales": [
 		"en",
-		"fr"
+		"fr",
+		"de",
+		"es"
 	],
 	"defaultLocale": "en",
 	"placeSearch": {

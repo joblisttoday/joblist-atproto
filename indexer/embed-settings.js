@@ -6,6 +6,8 @@
 import config from '../src/lib/data/config.json' with { type: 'json' };
 import en from '../src/lib/i18n/locales/en.json' with { type: 'json' };
 import fr from '../src/lib/i18n/locales/fr.json' with { type: 'json' };
+import de from '../src/lib/i18n/locales/de.json' with { type: 'json' };
+import es from '../src/lib/i18n/locales/es.json' with { type: 'json' };
 
 /** @param {Record<string, string>} locale */
 const words = (locale) => ({
@@ -28,6 +30,6 @@ export function embedSettings() {
 		dir: config.embed.dir,
 		site: config.url,
 		shown: config.embed.shown,
-		strings: { en: words(en), fr: words(fr) }
+		strings: { en: words(en), fr: words(fr), de: words(de), es: words(es) }
 	};
 }

@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import en from './locales/en.json';
 import fr from './locales/fr.json';
+import de from './locales/de.json';
+import es from './locales/es.json';
 import { formatNumber, i18n, t } from './index.svelte.js';
 
 describe('t', () => {
@@ -22,8 +24,14 @@ describe('t', () => {
 });
 
 describe('locales', () => {
-	it('say every count both ways in French too', () => {
-		const singular = Object.keys(en).filter((key) => key.endsWith('.one'));
-		expect(singular.filter((key) => !(key in fr))).toEqual([]);
-	});
+	const placeholders = (/** @type {string} */ text) => [...text.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort();
+	for (const [name, messages] of Object.entries({ fr, de, es })) {
+		it(`${name}: every key of English, with the same placeholders`, () => {
+			const strings = /** @type {Record<string, string>} */ (messages);
+			expect(Object.keys(en).filter((key) => !(key in strings))).toEqual([]);
+			expect(Object.keys(strings).filter((key) => !(key in en))).toEqual([]);
+			const differ = Object.entries(en).filter(([key, text]) => key in strings && placeholders(text).join() !== placeholders(strings[key]).join());
+			expect(differ.map(([key]) => key)).toEqual([]);
+		});
+	}
 });
