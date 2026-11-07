@@ -9,19 +9,20 @@
  */
 
 /**
- * @param {string[]} keys the list's companies
+ * @param {string[]} keys the list's companies (a company added twice counts once)
  * @param {Map<string, number>} counts open jobs by company
  * @returns {ListStats}
  */
 export function listStats(keys, counts) {
+	const unique = new Set(keys);
 	let hiring = 0;
 	let jobs = 0;
-	for (const key of keys) {
+	for (const key of unique) {
 		const count = counts.get(key) || 0;
 		if (count) hiring++;
 		jobs += count;
 	}
-	return { companies: keys.length, hiring, jobs };
+	return { companies: unique.size, hiring, jobs };
 }
 
 /**

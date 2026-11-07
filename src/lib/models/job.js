@@ -8,8 +8,9 @@ import { placeParts } from './place-names.js';
  * @typedef {'' | 'remote' | 'anywhere'} RemoteFilter
  *   remote: jobs done remotely; anywhere: remote jobs that name no country or region they are limited to.
  * @typedef {[[number, number], [number, number]]} Area [[west, south], [east, north]]
- * @typedef {{query: string, where: string, remote: RemoteFilter, pay?: boolean, near?: [number, number] | null, within?: number, area?: Area | null}} JobFilters
+ * @typedef {{query: string, where: string, remote: RemoteFilter, pay?: boolean, near?: [number, number] | null, within?: number, area?: Area | null, places?: string[]}} JobFilters
  *   pay: only the jobs whose board says what they pay.
+ *   places: only the jobs in one of them, as for `where` (a list about places: "Paris & Lyon").
  *   near: where the person is ([longitude, latitude]), to find jobs close by; never kept in the page address.
  *   area: only the jobs in it (the part of the map someone looks at).
  *   within: at most that many minutes away (by the usual travel mode), 0 for any distance.
@@ -63,11 +64,12 @@ export function remoteLimit(job) {
  * @param {JobFilters} filters
  * @param {Map<string, string>} names company names by key
  */
-export function filterJobs(jobs, { query, where, remote, pay, near, within = 0, area }, names) {
+export function filterJobs(jobs, { query, where, remote, pay, near, within = 0, area, places }, names) {
 	const what = words(query);
 	const place = where.trim() ? placeMatcher(where) : null;
+	const among = places?.length ? places.map(placeMatcher) : null;
 	const matching =
-		!what.length && !place && !remote && !pay && !area
+		!what.length && !place && !among && !remote && !pay && !area
 			? jobs
 			: jobs.filter((job) => {
 					if (pay && !job.salary) return false;
@@ -75,6 +77,7 @@ export function filterJobs(jobs, { query, where, remote, pay, near, within = 0, 
 					if (remote && !isRemote(job)) return false;
 					if (remote === 'anywhere' && remoteLimit(job)) return false;
 					if (place && !(remote && !remoteLimit(job)) && !place(job.location, isRemote(job))) return false;
+					if (among && !(remote && !remoteLimit(job)) && !among.some((p) => p(job.location, isRemote(job)))) return false;
 					if (!what.length) return true;
 					const text = searchText(job, names);
 					return what.every((w) => text.includes(w));

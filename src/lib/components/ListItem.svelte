@@ -1,17 +1,17 @@
 <script>
 	import Author from './Author.svelte';
-	import { handleOf, membersOf } from '#lib/network/network.svelte.js';
-	import { jobCounts } from '#lib/network/job-counts.svelte.js';
-	import { listStats } from '#lib/models/list-filters.js';
+	import { handleOf } from '#lib/network/network.svelte.js';
+	import { listJobStats } from '#lib/network/job-counts.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
 	 * A list among others: its name, what it is, how many companies and how many of them hire,
-	 * its open jobs at the end of the name's line.
-	 * @type {{list: import('#lib/models/list.js').List, author?: boolean}}
+	 * its open jobs at the end of the name's line (in its place for a list about one).
+	 * stats: when the page already counted them.
+	 * @type {{list: import('#lib/models/list.js').List, author?: boolean, stats?: import('#lib/models/list-filters.js').ListStats}}
 	 */
-	let { list, author = true } = $props();
-	const stats = $derived(listStats(membersOf(list).members.map((m) => m.key), jobCounts()));
+	let { list, author = true, stats: counted } = $props();
+	const stats = $derived(counted || listJobStats(list));
 </script>
 
 <jl-list open={list.open || undefined} hiring={stats.hiring > 0 || undefined}>

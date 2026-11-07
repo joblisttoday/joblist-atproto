@@ -9,11 +9,11 @@
 	import ResultsHead from '#lib/components/ResultsHead.svelte';
 	import SearchBar from '#lib/components/SearchBar.svelte';
 	import ViewSwitch from '#lib/components/ViewSwitch.svelte';
-	import { findLists, listStats } from '#lib/models/list-filters.js';
+	import { findLists } from '#lib/models/list-filters.js';
 	import { mixedAuthors } from '#lib/models/list.js';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { data, handleOf, membersOf, network } from '#lib/network/network.svelte.js';
-	import { jobCounts } from '#lib/network/job-counts.svelte.js';
+	import { listJobStats } from '#lib/network/job-counts.svelte.js';
 	import { readView } from '#lib/navigation/explore-view.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
@@ -30,7 +30,8 @@
 
 	/** The keys of each list's companies, by list uri. */
 	const members = $derived(new Map(data.lists.map((l) => [l.uri, membersOf(l).members.map((m) => m.key)])));
-	const stats = $derived(new Map([...members].map(([uri, keys]) => [uri, listStats(keys, jobCounts())])));
+	// Open offers, in its place for a list about one: as its page shows them first.
+	const stats = $derived(new Map(data.lists.map((l) => [l.uri, listJobStats(l)])));
 	const found = $derived(findLists(data.lists, { query, hiring, open, mine }, stats, { me: session.did, handleOf }));
 	const hiringCount = $derived([...stats.values()].filter((s) => s.hiring).length);
 	const openCount = $derived(data.lists.filter((l) => l.open).length);
@@ -91,7 +92,7 @@
 			</ResultsHead>
 			<ul>
 				{#each found as list (list.uri)}
-					<li><ListItem {list} {author} /></li>
+					<li><ListItem {list} {author} stats={stats.get(list.uri)} /></li>
 				{/each}
 			</ul>
 			{#if !found.length && !network.loading}

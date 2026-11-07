@@ -27,6 +27,9 @@ describe('listStats', () => {
 	it('counts the companies, those hiring, and their open jobs', () => {
 		expect(listStats(['a.org', 'b.org', 'c.org'], counts)).toEqual({ companies: 3, hiring: 2, jobs: 43 });
 	});
+	it('counts a company added twice once', () => {
+		expect(listStats(['a.org', 'a.org'], counts)).toEqual({ companies: 1, hiring: 1, jobs: 40 });
+	});
 });
 
 describe('findLists', () => {

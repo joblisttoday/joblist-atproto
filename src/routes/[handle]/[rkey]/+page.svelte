@@ -15,8 +15,8 @@
 	import { session } from '#lib/auth/session.svelte.js';
 	import { data, handleOf, membersOf, network } from '#lib/network/network.svelte.js';
 	import { loadList } from '#lib/network/load-list.js';
-	import { jobCounts } from '#lib/network/job-counts.svelte.js';
-	import { listStats } from '#lib/models/list-filters.js';
+	import { jobCounts, listJobStats } from '#lib/network/job-counts.svelte.js';
+	import { listPlace } from '#lib/models/list-place.js';
 	import { readView } from '#lib/navigation/explore-view.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
@@ -52,6 +52,10 @@
 	/** @type {import('#lib/models/job.js').JobFilters} */
 	let filters = $state({ query: '', where: '', remote: '' });
 	let offers = $state(0);
+	// A list about a place shows its companies' jobs there, unless asked for all of them (?everywhere).
+	const place = $derived(list ? listPlace(list) : null);
+	let everywhere = $state(params.has('everywhere'));
+	const places = $derived(place && !everywhere ? place.places : undefined);
 
 	const membership = $derived(list ? membersOf(list) : { members: [], pending: [] });
 	const described = $derived(membership.members.map((m) => data.companies.get(m.key)).filter((c) => c !== undefined));
@@ -71,7 +75,7 @@
 	$effect(() => {
 		if (chosen || !list || !jobCounts().size) return;
 		chosen = true;
-		if (!listStats(membership.members.map((m) => m.key), jobCounts()).jobs) show = 'companies';
+		if (!listJobStats(list).jobs) show = 'companies';
 	});
 
 	// What is shown stays in the address, to share or come back to.
@@ -79,6 +83,8 @@
 		const next = new URL(location.href);
 		if (show === 'companies') next.searchParams.set('tab', 'companies');
 		else next.searchParams.delete('tab');
+		if (place && everywhere) next.searchParams.set('everywhere', '');
+		else next.searchParams.delete('everywhere');
 		if (next.href !== location.href) replaceState(next, {});
 	});
 </script>
@@ -100,6 +106,14 @@
 							<Icon name="jobs" /> {t('list.tab.jobs')} <small>{offers.toLocaleString()}</small>
 						</button>
 					</li>
+					<!-- Next to its count, so that it shows on a phone too; off: its companies' jobs everywhere. -->
+					{#if show === 'jobs' && place}
+						<li>
+							<button type="button" aria-pressed={!everywhere} onclick={() => (everywhere = !everywhere)}>
+								<Icon name="place" /> {t('list.place.in', { place: place.name })}
+							</button>
+						</li>
+					{/if}
 					<li>
 						<button type="button" aria-pressed={show === 'companies'} onclick={() => ((show = 'companies'), (chosen = true))}>
 							<Icon name="companies" /> {t('list.tab.companies')} <small>{companies.length.toLocaleString()}</small>
@@ -117,7 +131,7 @@
 			</SearchBar>
 		{/snippet}
 
-		<ListContent {list} {companies} {credits} {missing} {show} {view} bind:filters bind:offers />
+		<ListContent {list} {companies} {credits} {missing} {show} {view} {places} bind:filters bind:offers />
 	</FullScreen>
 
 	{#if mine && membership.pending.length}
