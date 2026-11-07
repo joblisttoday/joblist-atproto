@@ -2,10 +2,12 @@
 	import Icon from './Icon.svelte';
 	import { getDescription } from '#lib/ats/index.js';
 	import { data } from '#lib/network/network.svelte.js';
+	import { textLinks } from '#lib/models/text-links.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * A job board job's description, read live from its board, as plain text.
+	 * A job board job's description, read live from its board, as plain text
+	 * (its web addresses as links, opening beside).
 	 * company: the company's name, to link its page (left out on that page).
 	 * @type {{job: import('#lib/ats/job.js').Job, company?: string}}
 	 */
@@ -23,7 +25,9 @@
 	{#await text}
 		<p><small>{t('job.description.loading')}</small></p>
 	{:then value}
-		{#each paragraphs(value) as paragraph, i (i)}<p>{paragraph}</p>{:else}<p><small>{t('job.description.none')}</small></p>{/each}
+		{#each paragraphs(value) as paragraph, i (i)}
+			<p>{#each textLinks(paragraph) as part, j (j)}{#if part.href}<a href={part.href} target="_blank" rel="noopener noreferrer">{part.text}</a>{:else}{part.text}{/if}{/each}</p>
+		{:else}<p><small>{t('job.description.none')}</small></p>{/each}
 	{/await}
 	<menu>
 		<a href={job.url} target="_blank" rel="noopener">{t('job.offer')}{elsewhere.length && job.location ? `: ${job.location}` : ''} <Icon name="external" /></a>
@@ -39,6 +43,10 @@
 	}
 	p {
 		white-space: pre-line;
+	}
+	/* Long addresses wrap rather than widen the page. */
+	p a {
+		overflow-wrap: anywhere;
 	}
 	menu {
 		display: flex;
