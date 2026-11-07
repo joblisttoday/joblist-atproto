@@ -7,6 +7,7 @@
 	import config from '#lib/data/config.json';
 	import Nav from './Nav.svelte';
 	import NetworkStatus from './NetworkStatus.svelte';
+	import PageMenu from './PageMenu.svelte';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { history } from '#lib/navigation/history.svelte.js';
 	import { navLinks } from '#lib/navigation/nav.js';
@@ -33,6 +34,8 @@
 		<!-- The explorer has its own search. -->
 		{#if page.url.pathname !== '/'}<QuickSearch />{/if}
 		<Nav />
+		<!-- The explorer has it next to its views. -->
+		{#if page.url.pathname !== '/'}<PageMenu />{/if}
 		<!-- Wide screens; phones have it in the account tab (signing in, one's page) and the footer. -->
 		<LocaleSwitch compact />
 	</header>

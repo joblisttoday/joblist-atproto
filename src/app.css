@@ -68,6 +68,7 @@
 	--chart-swatch: 0.625rem;
 	/* A long text folded to this many lines (a company's description). */
 	--fold-lines: 4;
+	--menu-width: 14rem;
 	--shadow: 0 2px 8px rgb(0 0 0 / 0.25);
 	--tap-size: 2.75rem;
 	/* Chips and small buttons: a finger's size on touch screens, more compact with a mouse. */
