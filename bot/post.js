@@ -13,6 +13,9 @@ import { t } from '../worker/text.js';
  */
 
 const encoder = new TextEncoder();
+const segmenter = new Intl.Segmenter();
+/** Bluesky's longest post, in characters as people see them. */
+const MAX = 300;
 const locale = config.defaultLocale;
 
 /**
@@ -48,8 +51,11 @@ export function weeklyPost(data) {
 		t('bot.fields', { list: now.fields.slice(0, config.bot.shown).map((f) => t(`field.${f.slug}`)).join(', ') })
 	];
 	const url = `${config.url}/stats`;
-	const before = `${lines.join('\n')}\n\n${t('bot.more')} `;
 	const shown = url.replace(/^https?:\/\//, '');
+	// Within Bluesky's 300 characters: the fields, then the cities, left out if need be.
+	const fits = (/** @type {string[]} */ l) => [...segmenter.segment(`${l.join('\n')}\n\n${t('bot.more')} ${shown}`)].length <= MAX;
+	while (lines.length > 1 && !fits(lines)) lines.pop();
+	const before = `${lines.join('\n')}\n\n${t('bot.more')} `;
 	const byteStart = encoder.encode(before).length;
 	return {
 		text: before + shown,

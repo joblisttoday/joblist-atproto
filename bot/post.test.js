@@ -23,7 +23,7 @@ const stats = {
 test('the weekly post: counts, cities and fields, a link to the trends', () => {
 	const post = weeklyPost(stats);
 	assert.ok(post);
-	assert.match(post.text, /^This week on joblist: 4,120 new jobs, 8% more than the week before\. 34,340 open now at 364 companies/);
+	assert.match(post.text, /^This week on joblist: 4,120 new jobs \(\+8% on last week\), 34,340 open at 364 companies\./);
 	assert.match(post.text, /Most open jobs: New York 1,780, alice\.bsky\.social httpsevil\.example 900, London 800\./);
 	assert.match(post.text, /Hiring the most: Engineering, Sales, Data and AI\./);
 	assert.ok(post.text.endsWith('joblist.today/stats'));
@@ -35,7 +35,9 @@ test('the weekly post: counts, cities and fields, a link to the trends', () => {
 });
 
 test('the first weeks say no change; nothing to say, no post', () => {
-	assert.match(weeklyPost({ ...stats, now: { ...stats.now, newWeekBefore: null } })?.text || '', /^This week on joblist: 4,120 new jobs\. /);
+	assert.match(weeklyPost({ ...stats, now: { ...stats.now, newWeekBefore: null } })?.text || '', /^This week on joblist: 4,120 new jobs, 34,340 open/);
+	const long = { ...stats, now: { ...stats.now, cities: stats.now.cities.map((c) => ({ ...c, name: 'Llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch' })) } };
+	assert.ok([...new Intl.Segmenter().segment(weeklyPost(long)?.text || '')].length <= 300, 'too long: lines left out');
 	assert.equal(weeklyPost(null), null);
 	assert.equal(cleanName('Zürich <b>'), 'Zürich b');
 });
