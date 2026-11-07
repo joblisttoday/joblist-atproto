@@ -75,3 +75,18 @@ test('the recent jobs: first seen in the last hours, with what a search reads', 
 	assert.match(file.jobs[1].u, /^https:\/\/joblist\.today\/[^?]+3k/, 'a posted job links to its page here');
 	assert.deepEqual(file.names, { 'acme.org': 'Acme' });
 });
+
+test('the digest: cities with a page and enough jobs first seen in the last hours, counts only', () => {
+	const jobs = [];
+	for (let i = 0; i < config.landing.minJobs.city; i++) {
+		// Half of them in the last hours, the others older.
+		const p = i % 2 ? '2026-11-07T00:30Z' : '2026-11-01T00:30Z';
+		jobs.push({ t: `Product Designer ${i}`, u: `https://a.example/${i}`, c: 'acme.org', l: 'Berlin', p });
+	}
+	const files = new Map(landingFiles(jobs, new Map(), places, '2026-11-07T01:00Z'));
+	const digest = files.get(config.bot.file);
+	const fresh = config.landing.minJobs.city / 2;
+	assert.equal(digest.total, fresh);
+	assert.deepEqual(digest.cities, fresh >= config.bot.minJobs ? [{ slug: 'berlin', name: 'Berlin', count: fresh, fields: [{ slug: 'design', count: fresh }] }] : []);
+	assert.ok(!JSON.stringify(digest).includes('acme'), 'no company named');
+});
