@@ -18,6 +18,7 @@ on:
       - 'src/lib/ats/**'
       - 'src/lib/models/**'
       - 'src/lib/data/config.json'
+      - 'src/lib/data/fields.json'
       - 'package-lock.json'
       - '.github/workflows/snapshot.yml'
 

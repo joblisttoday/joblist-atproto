@@ -118,6 +118,30 @@
 	"companies": {
 		"pageSize": 100
 	},
+	"landing": {
+		"dir": "landing",
+		"shown": 50,
+		"minJobs": { "city": 20, "field": 20, "cityField": 10 },
+		"cityAliases": {
+			"nyc": "new-york",
+			"new-york-city": "new-york",
+			"bangalore": "bengaluru",
+			"munchen": "munich",
+			"koln": "cologne",
+			"wien": "vienna",
+			"ho-chi-minh-city": "ho-chi-minh",
+			"sf": "san-francisco",
+			"washington-dc": "washington",
+			"washington-d-c": "washington",
+			"gurgaon": "gurugram",
+			"bombay": "mumbai"
+		},
+		"slugMax": 60,
+		"cacheSeconds": 1800,
+		"snapshotCacheSeconds": 900,
+		"missingCacheSeconds": 300,
+		"sitemap": "/sitemap-places.xml"
+	},
 	"links": {
 		"signup": "https://bsky.app",
 		"profile": "https://bsky.app/profile/{handle}",
