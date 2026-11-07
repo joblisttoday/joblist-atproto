@@ -3,6 +3,8 @@
 	--color-fg: #111;
 	--color-muted: #6b6b6b;
 	--color-line: #d9d9d9;
+	/* Edges of what is typed in or toggled: at least 3:1 against the page (WCAG 1.4.11). */
+	--color-control-line: #767676;
 	--color-soft: #f2f2f2;
 	--color-accent: #111;
 	--color-accent-fg: #fff;
@@ -32,6 +34,7 @@
 	--border-width: 1px;
 	--border: var(--border-width) solid var(--color-line);
 	--border-dashed: var(--border-width) dashed var(--color-line);
+	--control-border: var(--border-width) solid var(--color-control-line);
 	--focus-ring: 2px solid var(--color-focus);
 	--focus-offset: 2px;
 	/* The page uses the whole screen: fluid gutters, text kept to a readable measure, result lists in as many columns as fit. */
@@ -87,12 +90,24 @@
 	color-scheme: light dark;
 }
 
+/* What gets the keyboard is never hidden under the sticky header or the bottom navigation (WCAG 2.4.11). */
+html {
+	scroll-padding-block: var(--header-height) calc(var(--nav-height) + env(safe-area-inset-bottom));
+}
+
+@media (min-width: 48rem) {
+	html {
+		scroll-padding-block-end: 0;
+	}
+}
+
 @media (prefers-color-scheme: dark) {
 	:root {
 		--color-bg: #111;
 		--color-fg: #eee;
 		--color-muted: #9a9a9a;
 		--color-line: #333;
+		--color-control-line: #8a8a8a;
 		--color-soft: #1c1c1c;
 		--color-accent: #eee;
 		--color-accent-fg: #111;
@@ -201,7 +216,7 @@ textarea {
 	width: 100%;
 	min-height: var(--tap-size);
 	padding: var(--space-s);
-	border: var(--border);
+	border: var(--control-border);
 	border-radius: var(--radius);
 	background: var(--color-bg);
 }
@@ -232,6 +247,11 @@ button:hover:not(:disabled),
 menu > li > a:hover,
 menu > a:hover {
 	background: var(--color-soft);
+}
+
+/* A toggle off shows only its edge. */
+button[aria-pressed='false'] {
+	border: var(--control-border);
 }
 
 button[type='submit'] {

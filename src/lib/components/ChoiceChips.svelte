@@ -64,7 +64,7 @@
 		align-items: center;
 		min-height: var(--chip-height);
 		padding: 0 var(--space-m);
-		border: var(--border);
+		border: var(--control-border);
 		border-radius: var(--radius-round);
 		cursor: pointer;
 		font-size: var(--font-size-small);
