@@ -72,7 +72,9 @@ class JoblistJobs extends HTMLElement {
 		const root = /** @type {ShadowRoot} */ (this.shadowRoot);
 		const key = (this.getAttribute('company') || '').trim().toLowerCase();
 		const s = await loadSettings();
-		const lang = (this.getAttribute('lang') || document.documentElement.lang || navigator.language || 'en').slice(0, 2);
+		const asked = (this.getAttribute('lang') || document.documentElement.lang || navigator.language || 'en').slice(0, 2).toLowerCase();
+		// A language the browser does not know (a typo in lang) falls back to English.
+		const lang = /^[a-z]{2}$/.test(asked) && Intl.DateTimeFormat.supportedLocalesOf(asked).length ? asked : 'en';
 		const text = s.strings[lang] || s.strings.en;
 		const limit = Math.max(1, Number(this.getAttribute('limit')) || s.shown);
 		/** @type {any} */

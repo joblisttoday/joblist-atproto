@@ -109,6 +109,8 @@ async function use(oauthSession) {
 }
 
 function clear() {
+	// A session that ended (signed out, expired, revoked): what was written in it is not left for the next person.
+	if (session.did) forgetAll();
 	remember('none');
 	session.did = null;
 	session.handle = null;

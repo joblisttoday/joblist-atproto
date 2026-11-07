@@ -116,7 +116,7 @@ export function explorerPath({ cityName, field }) {
  * @param {unknown} key
  */
 export function isCompanyKey(key) {
-	return typeof key === 'string' && key.length <= 253 && /^[a-z0-9][a-z0-9.-]*$/i.test(key);
+	return typeof key === 'string' && key.length <= 253 && /^[a-z0-9][a-z0-9.-]*$/.test(key);
 }
 
 /**

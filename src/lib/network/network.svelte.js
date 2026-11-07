@@ -8,9 +8,10 @@ import { membership, toList } from '#lib/models/list.js';
 import { toSuggestion } from '#lib/models/suggestion.js';
 import { isLive, toJob, toPost } from '#lib/models/job-post.js';
 import { allowed } from '#lib/models/moderation.js';
+import { isCompanyKey } from '#lib/models/landing.js';
 import { Companies } from '#lib/models/companies.js';
 import { readCache, writeCache } from './cache.js';
-import { fresh, getSnapshotJobs, getSnapshotRecords } from './snapshot.js';
+import { getSnapshotJobs, getSnapshotRecords } from './snapshot.js';
 
 /**
  * @typedef {import('#lib/atproto/records.js').RepoRecord} RepoRecord
@@ -54,7 +55,7 @@ const companies = $derived.by(() => {
 	/** @type {Map<string, RepoRecord[]>} */
 	const byKey = new Map();
 	for (const r of network.companyRecords) {
-		if (!r.value?.name || !allowed(r)) continue;
+		if (!r.value?.name || !allowed(r) || !isCompanyKey(r.rkey)) continue;
 		const versions = byKey.get(r.rkey) || [];
 		versions.push(r);
 		byKey.set(r.rkey, versions);
@@ -139,10 +140,8 @@ let started = false;
 
 /**
  * Show what is known at once (local cache), then the snapshot when it is newer.
- * While the snapshot is fresh it is the network as everyone sees it, and only the
- * signed-in person's own records are read live (what they just wrote). Without a
- * fresh snapshot, every repository is read, as before there was one: fine for a
- * few accounts, too many requests for every visitor once there are thousands.
+ * The snapshot is the network as everyone sees it, and only the signed-in person's
+ * own records are read live (what they just wrote).
  */
 export async function startNetwork() {
 	if (started) return;
@@ -160,7 +159,10 @@ export async function startNetwork() {
 		network.profiles = snapshot.profiles;
 		network.loadedAt = snapshot.loadedAt;
 	}
-	if (snapshot && fresh(snapshot.loadedAt)) {
+	// An old snapshot is still the network (it says when it is from): every visitor reading
+	// every account would be thousands of requests to other people's servers. Only without
+	// any snapshot (a copy of the app with none) is every repository read.
+	if (snapshot) {
 		// Signed in (now or later): their own records, as they are now.
 		$effect.root(() => {
 			$effect(() => {

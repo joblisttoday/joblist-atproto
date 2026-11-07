@@ -17,6 +17,8 @@ import { fetchBoardJobs, firstJobs, recordJobs, toMinute } from './jobs.js';
 import { dateOffers } from './ledger.js';
 import { landingFiles } from './landing.js';
 import { blueskyAccounts } from './bluesky.js';
+import { isCompanyKey } from '../src/lib/models/landing.js';
+import { postPath } from '../src/lib/models/job-post.js';
 import { findOffices, officeKey } from './offices.js';
 import { geocode, locate, placeNames } from './places.js';
 import { suggest } from './suggest.js';
@@ -141,8 +143,9 @@ console.log(`landing: ${landing.length} files`);
 console.log(`snapshot written to ${out} in ${files['meta.json'].seconds}s`);
 
 /**
- * Each company's open jobs, as embeds read them (the fields they show), under a
- * key safe as a file name.
+ * Each company's open jobs, as embeds and feeds read them (the fields they show), under a
+ * key safe as a file name. They speak in the company's name on other sites: only its job
+ * board's jobs and those it posted itself (verified), the posted ones linking to their page here.
  * @param {{key: string, name: string}[]} companies
  * @param {import('./jobs.js').IndexedJob[]} jobs
  * @param {string} generatedAt
@@ -153,10 +156,12 @@ function companyFiles(companies, jobs, generatedAt) {
 	const byCompany = new Map();
 	for (const job of jobs) byCompany.set(job.c, [...(byCompany.get(job.c) || []), job]);
 	return companies
-		.filter((c) => /^[a-z0-9][a-z0-9.-]*$/i.test(c.key))
+		.filter((c) => isCompanyKey(c.key))
 		.map((c) => {
-			const own = (byCompany.get(c.key) || []).sort((a, b) => String(b.p || '').localeCompare(String(a.p || '')));
-			return [c.key, { generatedAt, name: c.name, jobs: own.map(({ t, u, l, p, r }) => ({ t, u, l, p, r })) }];
+			const own = (byCompany.get(c.key) || [])
+				.filter((j) => !j.s || j.v)
+				.sort((a, b) => String(b.p || '').localeCompare(String(a.p || '')));
+			return [c.key, { generatedAt, name: c.name, jobs: own.map(({ t, u, l, p, r, s }) => ({ t, u: s ? postUrl(s) || u : u, l, p, r })) }];
 		});
 }
 
@@ -168,9 +173,16 @@ function groupCompanies(companyRecords, profiles) {
 	/** @type {Map<string, typeof companyRecords>} */
 	const byKey = new Map();
 	for (const r of companyRecords) {
-		if (!r.value?.name) continue;
+		// A key is a page address and a file name: only domain-like keys (a long one stopped every run).
+		if (!r.value?.name || !isCompanyKey(r.rkey)) continue;
 		byKey.set(r.rkey, [...(byKey.get(r.rkey) || []), r]);
 	}
 	// The same company added twice is read once (companies.js).
 	return [...new Companies([...byKey.values()].map((versions) => toCompany(versions, profiles))).values()];
+}
+
+/** A posted job's page here, from its record address (at://did/collection/rkey). @param {string} uri */
+function postUrl(uri) {
+	const [did, , rkey] = uri.replace('at://', '').split('/');
+	return did && rkey ? config.url + postPath(did, rkey) : '';
 }

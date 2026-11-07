@@ -42,7 +42,7 @@ const handleOf = (/** @type {string} */ did) => profiles.get(did)?.handle || did
 /** @type {Map<string, any[]>} */
 const versionsByKey = new Map();
 for (const r of companyRecords) {
-	if (r.value?.name) versionsByKey.set(r.rkey, [...(versionsByKey.get(r.rkey) || []), r]);
+	if (r.value?.name && isCompanyKey(r.rkey)) versionsByKey.set(r.rkey, [...(versionsByKey.get(r.rkey) || []), r]);
 }
 // The same company added twice gets one page; the other's address leads to it in the app.
 const companies = new Companies([...versionsByKey.values()].map((versions) => toCompany(versions, profiles)));
