@@ -209,6 +209,14 @@
 		"rows": 1000,
 		"maxLength": 100
 	},
+	"stats": {
+		"file": "stats.json",
+		"weeks": 104,
+		"cities": 20,
+		"weekCityMin": 3,
+		"minSample": 20,
+		"shownWeeks": 26
+	},
 	"bot": {
 		"file": "landing/digest.json",
 		"hours": 24,

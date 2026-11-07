@@ -20,12 +20,13 @@ import { seeVersions } from './seen.js';
 import { landingFiles } from './landing.js';
 import { blueskyAccounts } from './bluesky.js';
 import { verifyCompanyHandles } from './handles.js';
-import { isCompanyKey } from '../src/lib/models/landing.js';
+import { indexFile, isCompanyKey } from '../src/lib/models/landing.js';
 import { postPath } from '../src/lib/models/job-post.js';
 import { findOffices, officeKey } from './offices.js';
 import { geocode, locate, placeNames } from './places.js';
 import { suggest } from './suggest.js';
 import { countsFile, newestByCompany } from './counts.js';
+import { statsFile } from './stats.js';
 
 const out = process.argv[2] || 'static/snapshot';
 const started = Date.now();
@@ -160,6 +161,12 @@ for (const [name, file] of landing) {
 	writeFileSync(join(out, name), JSON.stringify(file));
 }
 console.log(`landing: ${landing.length} files`);
+
+// The trends behind /stats: weeks kept from the last file, the newest counted again.
+const landingIndex = /** @type {any} */ (landing.find(([name]) => name === indexFile())?.[1]);
+const stats = statsFile({ ledger: dates.ledger, previous: /** @type {any} */ (await loadCache(config.stats.file)), jobs, places, cities: landingIndex?.cities || [], generatedAt });
+writeFileSync(join(out, config.stats.file), JSON.stringify(stats));
+console.log(`stats: ${stats.weeks.length} weeks since ${stats.since}`);
 console.log(`snapshot written to ${out} in ${files['meta.json'].seconds}s`);
 
 /**
