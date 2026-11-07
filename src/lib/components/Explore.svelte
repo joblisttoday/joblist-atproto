@@ -305,7 +305,8 @@
 					<a href="/jobs/new">{t('explore.publish')}</a>
 				</p>
 			{/if}
-			{#if !companies.length && first?.jobs.length && !searching}
+			<!-- The newest jobs at once, until the list has jobs of its own to show (it needs the companies first). -->
+			{#if !jobs.length && first?.jobs.length && !searching}
 				<jl-explore-first aria-busy="true">
 					<p><small>{t('explore.newest')}</small></p>
 					<ul>
