@@ -4,6 +4,10 @@
 # Secrets: SNAPSHOT_DEPLOY_KEY (write deploy key of joblist-snapshot).
 # The site itself (prerendered pages) is built and deployed by Cloudflare Workers Builds on push.
 # Also publishes the last crawl (branch `crawl`) under crawl/.
+#
+# Two jobs: `build` runs the dependencies and the indexer with no secret and a
+# read-only token, and hands the snapshot over as an artifact; `publish` holds
+# the deploy key and only pushes those files (no npm, no code from the repo).
 name: snapshot
 
 on:
@@ -19,6 +23,7 @@ on:
       - 'src/lib/models/**'
       - 'src/lib/data/config.json'
       - 'src/lib/data/fields.json'
+      - 'lexicons/**'
       - 'package-lock.json'
       - '.github/workflows/snapshot.yml'
 
@@ -27,29 +32,59 @@ concurrency:
   # A run in progress finishes (it may be looking up places for half an hour); the next one waits.
   cancel-in-progress: false
 
+permissions:
+  contents: read
+
 jobs:
-  build-and-publish:
+  build:
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version-file: .nvmrc
           cache: npm
-      - run: npm ci
+      # No install scripts: the indexer needs none (only esbuild, workerd and core-js have any, for the site build and wrangler).
+      - run: npm ci --ignore-scripts
       - name: Restore the last crawl (health and proposals, see docs/crawler.md)
-        run: |
-          mkdir -p static/snapshot/crawl
-          if git fetch --depth=1 origin crawl; then git archive FETCH_HEAD | tar -x -C static/snapshot/crawl; fi
+        id: crawl
+        continue-on-error: true # no crawl yet
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          ref: crawl
+          path: static/snapshot/crawl
+          persist-credentials: false
+      - run: rm -rf static/snapshot/crawl/.git
       - run: node indexer/index.js static/snapshot
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: snapshot
+          path: static/snapshot
+          retention-days: 1
+          if-no-files-found: error
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions: {}
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: snapshot
+          path: snapshot
       - name: Publish to joblisttoday/joblist-snapshot (one commit, no history)
         env:
           DEPLOY_KEY: ${{ secrets.SNAPSHOT_DEPLOY_KEY }}
         run: |
           mkdir -p ~/.ssh && echo "$DEPLOY_KEY" > ~/.ssh/snapshot && chmod 600 ~/.ssh/snapshot
           ssh-keyscan github.com >> ~/.ssh/known_hosts 2>/dev/null
-          cd static/snapshot
+          cd snapshot
           printf '# joblist snapshot\n\nRebuilt %s by joblist-atproto. Records belong to their authors.\n' "$(date -u +%FT%TZ)" > README.md
           touch .nojekyll
           git init -q -b gh-pages
