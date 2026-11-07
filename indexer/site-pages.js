@@ -7,6 +7,8 @@
 import config from '../src/lib/data/config.json' with { type: 'json' };
 import en from '../src/lib/i18n/locales/en.json' with { type: 'json' };
 import { escape } from './html.js';
+import { linkList } from './place-links.js';
+import { t } from '../worker/text.js';
 
 /**
  * @typedef {{path: string, meta: Parameters<typeof import('./html.js').page>[1], listed: boolean, updated?: string}} SitePage
@@ -34,12 +36,13 @@ const url = (path) => config.url + (path === '/' ? '' : path);
  *   profiles: {handle: string, lists: {name: string, path: string, updated?: string}[]}[],
  *   jobCounts: Map<string, number>,
  *   jobTotal: number,
- *   updated?: string
+ *   updated?: string,
+ *   places?: {cities: import('./place-links.js').PlaceLink[], fields: import('./place-links.js').PlaceLink[]}
  * }} site
- *   updated: when the newest job was first seen
+ *   updated: when the newest job was first seen; places: the pages per city and field to link to
  * @returns {SitePage[]}
  */
-export function sitePages({ companies, lists, profiles, jobCounts, jobTotal, updated }) {
+export function sitePages({ companies, lists, profiles, jobCounts, jobTotal, updated, places = { cities: [], fields: [] } }) {
 	/** @param {{updated?: string}[]} items */
 	const newest = (items) => items.map((i) => i.updated || '').reduce((a, b) => (b > a ? b : a), '');
 	const welcome = en['explore.welcome'].replace('{companies}', companies.length.toLocaleString('en'));
@@ -54,7 +57,7 @@ export function sitePages({ companies, lists, profiles, jobCounts, jobTotal, upd
 				title: `${config.name} · ${jobTotal.toLocaleString('en')} open jobs`,
 				description: welcome,
 				url: url('/'),
-				body: `<h1>${escape(config.name)}</h1><p>${escape(welcome)}</p><p><a href="/companies">${escape(en['companies.title'])}</a> · <a href="/lists">${escape(en['nav.lists'])}</a></p>`
+				body: `<h1>${escape(config.name)}</h1><p>${escape(welcome)}</p><p><a href="/companies">${escape(en['companies.title'])}</a> · <a href="/lists">${escape(en['nav.lists'])}</a> · <a href="/in">${escape(t('landing.cities'))}</a> · <a href="/field">${escape(t('landing.fields'))}</a></p>${linkList(t('landing.cities'), places.cities)}${linkList(t('landing.fields'), places.fields)}`
 			}
 		},
 		// The explorer at another address: the home is the page to show in results.

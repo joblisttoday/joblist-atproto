@@ -159,6 +159,7 @@
 	"landing": {
 		"dir": "landing",
 		"shown": 50,
+		"linked": 20,
 		"minJobs": { "city": 20, "field": 20, "cityField": 10 },
 		"cityAliases": {
 			"nyc": "new-york",
@@ -217,7 +218,7 @@
 	"snapshot": {
 		"path": "https://raw.githubusercontent.com/joblisttoday/joblist-snapshot/gh-pages",
 		"maxAgeHours": 12,
-		"prerenderFiles": ["records.json", "jobs.json", "meta.json", "bluesky.json"],
+		"prerenderFiles": ["records.json", "jobs.json", "meta.json", "bluesky.json", "landing/index.json"],
 		"preload": ["first.json", "records.json", "jobs.json"],
 		"refreshDelayMs": 15000
 	},

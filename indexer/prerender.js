@@ -22,6 +22,10 @@ import { organization } from './organization.js';
 import { robots, sitemap } from './sitemap.js';
 import { notFoundPage, sitePages } from './site-pages.js';
 import { embedSettings } from './embed-settings.js';
+import { linkList, placeLinks } from './place-links.js';
+import { listPlace } from '../src/lib/models/list-place.js';
+import { indexFile } from '../src/lib/models/landing.js';
+import { t } from '../worker/text.js';
 
 const [build = 'build', snapshot = 'static/snapshot'] = process.argv.slice(2);
 const template = readFileSync(join(build, 'index.html'), 'utf8');
@@ -41,6 +45,9 @@ const profiles = new Map(Object.entries(profileObject));
 const blueskyFile = join(snapshot, config.bluesky.file);
 /** @type {Record<string, {avatar?: string}>} */
 const bluesky = existsSync(blueskyFile) ? JSON.parse(readFileSync(blueskyFile, 'utf8')) : {};
+// The pages per city and field (made by the Worker), to link to them.
+const landingIndex = join(snapshot, indexFile());
+const places = placeLinks(existsSync(landingIndex) ? JSON.parse(readFileSync(landingIndex, 'utf8')) : null);
 const handleOf = (/** @type {string} */ did) => profiles.get(did)?.handle || did;
 
 /** @type {Map<string, any[]>} */
@@ -54,8 +61,13 @@ const companies = new Companies([...versionsByKey.values()].map((versions) => to
 const jobCounts = new Map();
 /** Each company's newest job, when it was first seen (ISO dates compare as text). @type {Map<string, string>} */
 const newestJob = new Map();
+/** Each company's jobs. @type {Map<string, any[]>} */
+const jobsOf = new Map();
 for (const job of jobs) {
 	jobCounts.set(job.c, (jobCounts.get(job.c) || 0) + 1);
+	const own = jobsOf.get(job.c);
+	if (own) own.push(job);
+	else jobsOf.set(job.c, [job]);
 	if ((job.p || '') > (newestJob.get(job.c) || '')) newestJob.set(job.c, job.p);
 }
 /** @param {(string | undefined)[]} dates @returns {string} the latest */
@@ -109,7 +121,7 @@ for (const record of listRecords) {
 			url: config.url + path,
 			body: `<h1>${escape(list.name)}</h1><p>${escape(summary)}</p><p>${escape(en['list.by'])} @${escape(handleOf(list.did))}</p><ul>${members
 				.map((c) => `<li><a href="/company/${escape(c.key)}">${escape(c.name)}</a></li>`)
-				.join('')}</ul>`
+				.join('')}</ul>${linkList(t('landing.cities'), places.ofPlaces(listPlace(list)?.places || []))}`
 		}),
 		true,
 		updated
@@ -120,8 +132,10 @@ for (const record of listRecords) {
 for (const company of companies.values()) {
 	const path = `/company/${company.key}`;
 	const open = jobCounts.get(company.key) || 0;
-	const places = [...new Set(company.locations.map((l) => l.name).filter(Boolean))].join(', ');
-	const description = [company.description, places, open ? `${open} open jobs` : ''].filter(Boolean).join(' · ');
+	const where = [...new Set(company.locations.map((l) => l.name).filter(Boolean))].join(', ');
+	const description = [company.description, where, open ? `${open} open jobs` : ''].filter(Boolean).join(' · ');
+	// Its jobs' cities and fields, with their pages.
+	const links = places.ofJobs(jobsOf.get(company.key) || []);
 	write(
 		path,
 		page(template, {
@@ -139,11 +153,10 @@ for (const company of companies.values()) {
 				.join('\n\t\t'),
 			body: `<h1>${escape(company.name)}</h1><p>${escape(description)}</p>${
 				company.url ? `<p><a href="${escape(company.url)}">${escape(company.url)}</a></p>` : ''
-			}<ul>${jobs
-				.filter((/** @type {any} */ j) => j.c === company.key)
+			}<ul>${(jobsOf.get(company.key) || [])
 				.slice(0, 200)
 				.map((/** @type {any} */ j) => `<li><a href="${escape(jobLink(j))}">${escape(j.t)}</a> ${escape(j.l || '')}</li>`)
-				.join('')}</ul>`
+				.join('')}</ul>${linkList(t('landing.byCity'), links.cities.slice(0, config.landing.linked))}${linkList(t('landing.byField'), links.fields)}`
 		}),
 		true,
 		newestJob.get(company.key) || company.editedAt
@@ -164,6 +177,7 @@ const site = sitePages({
 	profiles: [...byAuthor].map(([did, lists]) => ({ handle: handleOf(did), lists })),
 	jobCounts,
 	jobTotal: jobs.length,
+	places: places.top(config.landing.linked),
 	updated: latest([...newestJob.values()])
 });
 for (const { path, meta, listed: inSitemap, updated } of site) {
