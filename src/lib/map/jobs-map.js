@@ -6,7 +6,7 @@ import { createMap, cssColors, loadMapLibre } from './maplibre.js';
 /**
  * @typedef {{point: [number, number], title: string, url: string, company: string}} MapJob
  * @typedef {{top: number, right: number, bottom: number, left: number}} Insets
- * @typedef {{setJobs: (jobs: MapJob[], fit?: boolean, still?: boolean) => void, setHere: (here: [number, number] | null | undefined) => void, setSelected: (point: [number, number] | null | undefined) => void, setCovered: (covered: Insets) => void, destroy: () => void}} JobsMap
+ * @typedef {{shown: () => void, setJobs: (jobs: MapJob[], fit?: boolean, still?: boolean) => void, setHere: (here: [number, number] | null | undefined) => void, setSelected: (point: [number, number] | null | undefined) => void, setCovered: (covered: Insets) => void, destroy: () => void}} JobsMap
  *   setSelected: the job open in the page, ringed on the map and brought into view.
  *   setCovered: the part of the map under the page's panels, kept out of framing.
  *   fit: frame the jobs (after a search), else show the whole globe; still: leave the map where it is (searching the area shown).
@@ -251,6 +251,14 @@ export function mountJobsMap(node, text) {
 	})();
 
 	return {
+		// Shown again (it was hidden behind a list): its size may have changed, and what it shows is framed again.
+		shown() {
+			if (!map || !ready) return;
+			map.resize();
+			if (here) map.jumpTo({ center: here, zoom: config.map.nearZoom, padding: covered });
+			else if (fitting) frame(true);
+			else map.jumpTo({ center: globeCenter, zoom: globeZoom(), padding: covered });
+		},
 		setJobs(list, fit = false, still = false) {
 			jobs = list;
 			fitting = fit && !still;

@@ -55,6 +55,13 @@
 	onDestroy(() => map?.destroy());
 
 	$effect(() => map?.setCovered(covered));
+	// Shown again after a list: framed again, at its size now.
+	let shown = false;
+	$effect(() => {
+		const now = Boolean(active && map);
+		if (now && !shown) map?.shown();
+		shown = now;
+	});
 	$effect(() => {
 		if (!active || !map) return;
 		if (given && given.jobs === jobs && given.names === names && given.fit === fit && given.still === still) return;
