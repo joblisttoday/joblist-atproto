@@ -12,6 +12,7 @@ import { dirname, join } from 'node:path';
 import { mapPoints, toCompany } from '../src/lib/models/company.js';
 import { Companies } from '../src/lib/models/companies.js';
 import { crawlRecords } from './crawl.js';
+import { limitAccounts } from './caps.js';
 import config from '../src/lib/data/config.json' with { type: 'json' };
 import { fetchBoardJobs, firstJobs, recordJobs, toMinute } from './jobs.js';
 import { dateOffers } from './ledger.js';
@@ -27,7 +28,11 @@ const out = process.argv[2] || 'static/snapshot';
 const started = Date.now();
 const generatedAt = new Date().toISOString();
 
-const { records, profiles } = await crawlRecords();
+const crawled = await crawlRecords();
+const { profiles } = crawled;
+// Each record within its lexicon's limits, each account within its share: one account cannot bloat the snapshot.
+const { records, dropped } = limitAccounts(crawled.records);
+for (const { did, type, count } of dropped) console.warn(`records: ${count} ${type} records of ${did} left out (over ${config.limits.perAccount[/** @type {keyof typeof config.limits.perAccount} */ (type)]} per account)`);
 const companies = groupCompanies(records.company, profiles);
 console.log(`records: ${records.company.length} company, ${records.list.length} list, ${records.suggestion.length} suggestion, ${records.job.length} job, from ${profiles.size} accounts`);
 

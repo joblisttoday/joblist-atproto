@@ -1,6 +1,7 @@
 import { safeUrl } from './url.js';
 import { locationPoints } from './company.js';
 import { toSalary } from '#lib/ats/salary.js';
+import { capRecord } from './limits.js';
 import config from '#lib/data/config.json' with { type: 'json' };
 
 /**
@@ -200,7 +201,8 @@ export function postPageUrl({ did, rkey }) {
  * @returns {JobPost}
  */
 export function toPost(record, profiles) {
-	const v = record.value;
+	// Anyone can post: only what the lexicon allows is shown.
+	const v = capRecord(config.collections.job, record.value);
 	return {
 		uri: record.uri,
 		did: record.did,

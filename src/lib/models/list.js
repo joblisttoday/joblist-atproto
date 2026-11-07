@@ -1,3 +1,6 @@
+import config from '#lib/data/config.json' with { type: 'json' };
+import { capRecord } from './limits.js';
+
 /**
  * @typedef {import('#lib/atproto/records.js').RepoRecord} RepoRecord
  * @typedef {import('./suggestion.js').Suggestion} Suggestion
@@ -21,7 +24,7 @@
  * @returns {List}
  */
 export function toList(record) {
-	const v = record.value;
+	const v = capRecord(config.collections.list, record.value);
 	return {
 		uri: record.uri,
 		did: record.did,

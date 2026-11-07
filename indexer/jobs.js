@@ -1,10 +1,11 @@
 import config from '../src/lib/data/config.json' with { type: 'json' };
 import { getJobs } from '../src/lib/ats/index.js';
 import { mapLimit } from '../src/lib/atproto/xrpc.js';
-import { hasJobsApi, locationPoints } from '../src/lib/models/company.js';
+import { locationPoints } from '../src/lib/models/company.js';
 import { isLive, placeNames, toPost } from '../src/lib/models/job-post.js';
 import { workplace } from '../src/lib/models/job.js';
 import { packSalary } from '../src/lib/ats/salary.js';
+import { limitBoards } from './caps.js';
 
 /**
  * @typedef {import('../src/lib/models/company.js').Company} Company
@@ -26,7 +27,11 @@ export async function fetchBoardJobs(companies) {
 	const jobs = [];
 	/** @type {Record<string, {status: 'live' | 'empty' | 'none', jobs: number}>} */
 	const health = {};
-	await mapLimit(companies.filter(hasJobsApi), config.limits.indexerConcurrency, async (company) => {
+	// Made-up companies with job boards cannot make the run read boards without end.
+	const boards = limitBoards(companies);
+	for (const { did, count } of boards.dropped) console.warn(`boards: ${count} companies shown in ${did}'s version not read (over ${config.limits.boardsPerAccount} per account)`);
+	if (boards.overTotal) console.warn(`boards: ${boards.overTotal} companies not read (over ${config.limits.boards} in all)`);
+	await mapLimit(boards.kept, config.limits.indexerConcurrency, async (company) => {
 		const found = await getJobs(company);
 		health[company.key] = { status: found.length ? 'live' : 'empty', jobs: found.length };
 		for (const j of found) {

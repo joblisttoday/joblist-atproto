@@ -1,4 +1,5 @@
 import { safeUrl } from './url.js';
+import { capRecord } from './limits.js';
 import config from '#lib/data/config.json' with { type: 'json' };
 import providers from '#lib/data/providers.json' with { type: 'json' };
 
@@ -129,7 +130,8 @@ export function copyRecord(value, createdAt, now = new Date().toISOString()) {
  */
 export function toCompany(versions, profiles) {
 	const record = pickVersion(versions, profiles);
-	const v = record.value;
+	// Anyone can write a version: only what the lexicon allows is shown.
+	const v = capRecord(config.collections.company, record.value);
 	return {
 		key: record.rkey,
 		name: v.name || record.rkey,

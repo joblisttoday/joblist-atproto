@@ -29,6 +29,22 @@ Optional fields a poster (or another app) can add:
 Company (and job) locations can say `countryCode` (ISO 3166-1 alpha-2)
 alongside the country's name.
 
+## Limits on read
+
+Anyone can write any record: the lexicon's limits (lengths, numbers of tags,
+links, places…) are applied to every record read, by the app and the indexer
+([`src/lib/models/limits.js`](../src/lib/models/limits.js), which reads them
+from the lexicon files). Free text past its limit is cut; a link, date or code
+past its limit, a value of the wrong type or a field the lexicon does not have
+is left out.
+
+The indexer also bounds each account ([`indexer/caps.js`](../indexer/caps.js),
+numbers in `limits` of [`config.json`](../src/lib/data/config.json)): at most
+`perAccount` records of each type (200 companies, 50 lists, 50 jobs, live ones
+first, 200 suggestions), and job boards read for at most `boardsPerAccount`
+companies per author of the version shown and `boards` in all (companies' own
+versions first). Accounts in `bots` are exempt. What is left out is logged.
+
 ## Publishing them (owner only)
 
 atproto apps find a lexicon from its NSID: `today.joblist.*` is resolved by a

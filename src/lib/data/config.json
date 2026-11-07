@@ -65,7 +65,10 @@
 		"pagesPerRepo": 100,
 		"indexerConcurrency": 8,
 		"boardPageSize": 100,
-		"jobsPerBoard": 2000
+		"jobsPerBoard": 2000,
+		"perAccount": { "company": 200, "list": 50, "job": 50, "suggestion": 200 },
+		"boardsPerAccount": 100,
+		"boards": 3000
 	},
 	"locales": [
 		"en",
