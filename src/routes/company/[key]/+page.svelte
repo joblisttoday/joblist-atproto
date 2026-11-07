@@ -10,14 +10,12 @@
 	import CompanyInvite from '#lib/components/CompanyInvite.svelte';
 	import CompanyMap from '#lib/components/CompanyMap.svelte';
 	import CompanyVersions from '#lib/components/CompanyVersions.svelte';
-	import FollowFeed from '#lib/components/FollowFeed.svelte';
-	import Jobs from '#lib/components/Jobs.svelte';
+	import CompanyJobs from '#lib/components/CompanyJobs.svelte';
 	import ListItem from '#lib/components/ListItem.svelte';
 	import Pending from '#lib/components/Pending.svelte';
 	import { data, listsWith, network } from '#lib/network/network.svelte.js';
 	import { boardUrl, mapPoints } from '#lib/models/company.js';
 	import { mixedAuthors } from '#lib/models/list.js';
-	import { isCompanyKey } from '#lib/models/landing.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	const key = $derived(page.params.key || '');
@@ -37,40 +35,42 @@
 <svelte:head><title>{company?.name || key} · {config.name}</title></svelte:head>
 
 {#if company}
+	<!-- Wide screens: the company and its jobs, then at the side where it is and the lists it is in. -->
 	<jl-company-page verified={company.verified || undefined}>
-		<CompanyHeader {company} />
-		<CompanyClaim {company} />
+		<jl-company-main>
+			<CompanyHeader {company} />
+			<CompanyClaim {company} />
 
-		<section aria-labelledby="company-jobs">
-			<h2 id="company-jobs">{t('list.tab.jobs')}</h2>
-			<CompanyHiring {company} />
-			{#if hasJobs}
-				{#if isCompanyKey(company.key)}<FollowFeed feed={{ company: company.key }} />{/if}
-				<Jobs companies={[company]} />
-			{/if}
+			<section aria-labelledby="company-jobs">
+				<h2 id="company-jobs">{t('list.tab.jobs')}</h2>
+				<CompanyHiring {company} />
+				{#if hasJobs}<CompanyJobs {company} />{/if}
+			</section>
+		</jl-company-main>
+
+		<aside>
+			<section aria-labelledby="company-lists">
+				<h2 id="company-lists">{t('company.inLists')}</h2>
+				{#if lists.length}
+					<ul>{#each lists as list (list.uri)}<li><ListItem {list} author={mixedAuthors(lists)} /></li>{/each}</ul>
+				{:else}
+					<p><small>{t('company.noLists')}</small></p>
+				{/if}
+				<AddToList {key} />
+			</section>
+
+			<section aria-labelledby="company-places">
+				<h2 id="company-places">{t('form.locations')}</h2>
+				{#if places.length}
+					<ul>{#each places as place, i (i)}<li>{place}</li>{/each}</ul>
+					{#if mapPoints(company).length}<CompanyMap companies={[company]} small />{/if}
+				{/if}
+				<CompanyInvite {company} field="locations" />
+			</section>
+
 			<CompanyEmbed {company} />
-		</section>
-
-		<section aria-labelledby="company-lists">
-			<h2 id="company-lists">{t('company.inLists')}</h2>
-			{#if lists.length}
-				<ul>{#each lists as list (list.uri)}<li><ListItem {list} author={mixedAuthors(lists)} /></li>{/each}</ul>
-			{:else}
-				<p><small>{t('company.noLists')}</small></p>
-			{/if}
-			<AddToList {key} />
-		</section>
-
-		<section aria-labelledby="company-places">
-			<h2 id="company-places">{t('form.locations')}</h2>
-			{#if places.length}
-				<ul>{#each places as place, i (i)}<li>{place}</li>{/each}</ul>
-				{#if mapPoints(company).length}<CompanyMap companies={[company]} small />{/if}
-			{/if}
-			<CompanyInvite {company} field="locations" />
-		</section>
-
-		<CompanyVersions {company} />
+			<CompanyVersions {company} />
+		</aside>
 	</jl-company-page>
 {:else if network.loading}
 	<Pending />
@@ -81,11 +81,31 @@
 {/if}
 
 <style>
-	jl-company-page {
+	jl-company-page,
+	jl-company-main {
 		display: block;
 	}
 	section {
 		margin-top: var(--space-xl);
+	}
+	aside > :global(*) {
+		margin-top: var(--space-l);
+	}
+	/* Wide screens: the jobs take the width, the rest is at the side. */
+	@media (min-width: 64rem) {
+		jl-company-page {
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) var(--aside-width);
+			column-gap: var(--gutter);
+			align-items: start;
+		}
+		aside {
+			position: sticky;
+			top: var(--header-height);
+			max-height: calc(100dvh - var(--header-height));
+			overflow-y: auto;
+			padding-bottom: var(--space-l);
+		}
 	}
 	section > ul > li {
 		padding: var(--space-xs) 0;
