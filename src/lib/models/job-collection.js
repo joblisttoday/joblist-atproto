@@ -81,10 +81,11 @@ export function tidyName(name) {
  * @returns {{state: Collections, id: string}}
  */
 export function addCollection(state, name, now = new Date().toISOString()) {
+	// Random, not numbered: collections from two devices merge by id when imported.
 	const ids = new Set(state.collections.map((c) => c.id));
-	let n = state.collections.length;
-	while (ids.has(`c${n}`)) n++;
-	const id = `c${n}`;
+	let id;
+	do id = `c${Math.random().toString(36).slice(2, 12)}`;
+	while (ids.has(id));
 	return { state: { collections: [...state.collections, { id, name: tidyName(name), at: now, jobs: {} }] }, id };
 }
 
