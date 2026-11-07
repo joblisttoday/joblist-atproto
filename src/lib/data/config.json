@@ -98,6 +98,8 @@
 		"pageSize": 50,
 		"olderDays": 90,
 		"placesSuggested": 30,
+		"prepareChunk": 500,
+		"prepareWaitMs": 5000,
 		"placesShown": 3,
 		"nearbyShown": 5,
 		"typingDelayMs": 200,

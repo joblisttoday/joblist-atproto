@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { byCompany, commonPlaces, filterJobs, isOlder, isRemote, newestFirst, offerPlaces, placeNewest, placeCounts, remoteLimit, sameOffers, tidyPlace, time, workplace } from './job.js';
+import { byCompany, commonPlaces, filterJobs, isOlder, isRemote, newestFirst, offerPlaces, placeNewest, prepareJob, placeCounts, remoteLimit, sameOffers, tidyPlace, time, workplace } from './job.js';
 
 /** @param {Partial<import('#lib/ats/job.js').Job>} job */
 const job = (job) => ({ title: 'Engineer', url: 'https://x', company: 'acme.org', ...job });
@@ -206,5 +206,13 @@ describe('placeNewest', () => {
 		expect(placed.map((j) => time(j.published))).toEqual(all.map((j) => time(j.published)));
 		expect(placed.map((j) => j.url)).toEqual(['o1', 's0', 's1', 'o0', 's2', 's3', 'o3', 's4', 'o2']);
 		expect(placeNewest(sorted, [])).toEqual(sorted);
+	});
+});
+
+describe('prepareJob', () => {
+	it('reads a job for searches ahead of time, finding the same', () => {
+		const jobs = [job({ title: 'Designer', url: 'p1' }), job({ title: 'Engineer', url: 'p2' })];
+		for (const j of jobs) prepareJob(j, names);
+		expect(filterJobs(jobs, { ...none, query: 'acme design' }, names).map((j) => j.url)).toEqual(['p1']);
 	});
 });

@@ -229,6 +229,15 @@ export function isOlder(job, now = Date.now(), days = config.jobs.olderDays) {
 const searchTexts = new WeakMap();
 
 /**
+ * Reads a job for searches ahead of time (while the page is idle): the first search then only compares.
+ * @param {Job} job
+ * @param {Map<string, string>} names company names by key
+ */
+export function prepareJob(job, names) {
+	searchText(job, names);
+}
+
+/**
  * @param {Job} job
  * @param {Map<string, string>} names
  */

@@ -7,6 +7,7 @@
 	import { mapLimit } from '#lib/atproto/xrpc.js';
 	import { getSnapshotCounts, getSnapshotFirst, getSnapshotJobs } from '#lib/network/snapshot.js';
 	import { afterPaint } from '#lib/navigation/after-paint.js';
+	import { prepareSearch } from '#lib/network/prepare-search.js';
 	import { boardUrl, hasJobsApi } from '#lib/models/company.js';
 	import { byCompany, commonPlaces, filterJobs, newestFirst, offerCount, placeNewest, sameOffers, time } from '#lib/models/job.js';
 	import { mergeJobs, postedFirst, withPoints } from '#lib/models/job-post.js';
@@ -120,7 +121,12 @@
 	/** @type {string[]} */
 	let counted = $state.raw([]);
 	if (untrack(() => quick)) getSnapshotCounts().then((counts) => (counted = (counts?.places || []).slice(0, config.jobs.placesSuggested).map(([place]) => place)));
-	const places = $derived(loading ? [] : counted.length ? counted : commonPlaces(jobs));	$effect(() => {
+	const places = $derived(loading ? [] : counted.length ? counted : commonPlaces(jobs));
+	// Every job read in the explorer: they are read for searches while the page is idle.
+	$effect(() => {
+		if (quick && !loading && jobs.length) prepareSearch(jobs, names);
+	});
+	$effect(() => {
 		suggested = places;
 	});
 	// A new search starts from its first page.
