@@ -35,6 +35,8 @@
 	const found = $derived(findCompanies(companies, { query, hiring, bluesky }, counts, accounts));
 	const hiringCount = $derived(companies.filter((c) => counts.get(c.key)).length);
 	const blueskyCount = $derived(companies.filter((c) => accounts.has(c.key)).length);
+	// Adding a company starts from what was searched.
+	const addHref = $derived(query.trim() ? `/add?${new URLSearchParams({ url: query.trim() })}` : '/add');
 
 	// The search stays in the address, to share or come back to.
 	$effect(() => {
@@ -79,10 +81,18 @@
 			<jl-companies-results>
 				<p>
 					<small aria-live="polite">{t('companies.count', { count: found.length.toLocaleString(), total: companies.length.toLocaleString() })}</small>
-					<a href="/add"><Icon name="add" /> {t('companies.add')}</a>
+					<a href={addHref}><Icon name="add" /> {t('companies.add')}</a>
 				</p>
 				<Companies companies={found} {counts} searchable={false} layout={view === 'list' ? 'list' : 'grid'} />
-				{#if !found.length}<p>{t('search.none')}</p>{/if}
+				{#if !found.length}
+					<jl-companies-empty>
+						<p>{t('search.none')}</p>
+						{#if query.trim()}
+							<p>{t('companies.missing')}</p>
+							<menu><a href={addHref}><Icon name="add" /> {t('companies.add.named', { name: query.trim() })}</a></menu>
+						{/if}
+					</jl-companies-empty>
+				{/if}
 			</jl-companies-results>
 		{/if}
 	</jl-companies-stage>
@@ -166,6 +176,24 @@
 		align-items: center;
 		gap: var(--space-xs);
 		font-size: var(--font-size-small);
+	}
+
+	/* Nothing found: an invitation to add what was searched. */
+	jl-companies-empty {
+		display: block;
+		margin-top: var(--space-m);
+	}
+	jl-companies-empty p {
+		margin: 0 0 var(--space-xs);
+	}
+	jl-companies-empty menu {
+		margin: var(--space-s) 0;
+		overflow: visible;
+	}
+	jl-companies-empty menu > a {
+		background: var(--color-accent);
+		color: var(--color-accent-fg);
+		border-color: var(--color-accent);
 	}
 
 	/* Wide screens: the whole bar on one row; no navigation at the bottom. */

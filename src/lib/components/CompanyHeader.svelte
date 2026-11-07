@@ -3,6 +3,7 @@
 	import config from '#lib/data/config.json';
 	import CompanyDelete from './CompanyDelete.svelte';
 	import CompanyEdited from './CompanyEdited.svelte';
+	import CompanyInvite from './CompanyInvite.svelte';
 	import { data } from '#lib/network/network.svelte.js';
 	import { boardUrl } from '#lib/models/company.js';
 	import { accountOf } from '#lib/network/accounts.svelte.js';
@@ -34,11 +35,13 @@
 		</p>
 		<CompanyEdited {company} />
 		{#if company.description}<p>{company.description}</p>{/if}
+		<CompanyInvite {company} field="description" />
 		{#if company.tags.length}
 			<ul aria-label={t('form.tags')}>
 				{#each company.tags as tag (tag)}<li><a href="/companies?q={encodeURIComponent(tag)}">{tag}</a></li>{/each}
 			</ul>
 		{/if}
+		<CompanyInvite {company} field="tags" />
 		<menu>
 			{#if board}<a href={board} target="_blank" rel="noopener">{t('company.jobBoard')} <Icon name="external" /></a>{/if}
 			<a href="/add?key={encodeURIComponent(company.key)}">{t('company.edit')}</a>

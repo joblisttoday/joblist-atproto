@@ -1,4 +1,5 @@
 <script>
+	import CompanyInvite from './CompanyInvite.svelte';
 	import MyJobPosts from './MyJobPosts.svelte';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { data } from '#lib/network/network.svelte.js';
@@ -6,7 +7,8 @@
 
 	/**
 	 * "Post a job" on a company page, prominent for the company's own account;
-	 * the signed-in person's posts for this company, to manage them.
+	 * the signed-in person's posts for this company, to manage them; where it
+	 * posts jobs, when nobody has said yet.
 	 * @type {{company: import('#lib/models/company.js').Company}}
 	 */
 	let { company } = $props();
@@ -17,6 +19,7 @@
 
 <jl-company-hiring own={own || undefined}>
 	<menu><a {href}>{own ? t('company.post.own') : `+ ${t('company.post')}`}</a></menu>
+	<CompanyInvite {company} field="jobBoard" />
 	{#if mine.length}
 		<details>
 			<summary>{t('post.mine')} <small>{mine.length}</small></summary>

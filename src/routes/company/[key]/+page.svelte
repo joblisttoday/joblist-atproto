@@ -7,6 +7,7 @@
 	import CompanyEmbed from '#lib/components/CompanyEmbed.svelte';
 	import CompanyHeader from '#lib/components/CompanyHeader.svelte';
 	import CompanyHiring from '#lib/components/CompanyHiring.svelte';
+	import CompanyInvite from '#lib/components/CompanyInvite.svelte';
 	import CompanyMap from '#lib/components/CompanyMap.svelte';
 	import CompanyVersions from '#lib/components/CompanyVersions.svelte';
 	import Jobs from '#lib/components/Jobs.svelte';
@@ -55,13 +56,14 @@
 			<AddToList {key} />
 		</section>
 
-		{#if places.length}
-			<section aria-labelledby="company-places">
-				<h2 id="company-places">{t('form.locations')}</h2>
+		<section aria-labelledby="company-places">
+			<h2 id="company-places">{t('form.locations')}</h2>
+			{#if places.length}
 				<ul>{#each places as place, i (i)}<li>{place}</li>{/each}</ul>
 				{#if mapPoints(company).length}<CompanyMap companies={[company]} small />{/if}
-			</section>
-		{/if}
+			{/if}
+			<CompanyInvite {company} field="locations" />
+		</section>
 
 		<CompanyVersions {company} />
 	</jl-company-page>
