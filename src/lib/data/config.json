@@ -121,6 +121,18 @@
 	"lists": {
 		"related": { "shown": 6, "nameWeight": 3, "minTermLength": 3 }
 	},
+	"jobCollections": {
+		"file": "joblist-collections.json",
+		"fileMaxBytes": 5000000,
+		"max": 100,
+		"jobsMax": 5000,
+		"idMax": 40,
+		"nameMax": 80,
+		"titleMax": 300,
+		"companyMax": 200,
+		"urlMax": 2000,
+		"keyMax": 2500
+	},
 	"links": {
 		"signup": "https://bsky.app",
 		"profile": "https://bsky.app/profile/{handle}",

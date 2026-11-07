@@ -1,8 +1,11 @@
 <script>
 	import config from '#lib/data/config.json';
-	import JobMarks from '#lib/components/JobMarks.svelte';
+	import CollectionName from '#lib/components/CollectionName.svelte';
+	import CollectionsTransfer from '#lib/components/CollectionsTransfer.svelte';
+	import JobCollection from '#lib/components/JobCollection.svelte';
 	import PageHeader from '#lib/components/PageHeader.svelte';
 	import SavedSearches from '#lib/components/SavedSearches.svelte';
+	import { addCollection, kept } from '#lib/network/job-collections.svelte.js';
 	import { savedJobs } from '#lib/network/saved-jobs.svelte.js';
 	import { searches } from '#lib/network/saved-searches.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
@@ -20,11 +23,14 @@
 		<p><a href="/">{t('saved.explore')}</a></p>
 	{/if}
 </section>
-<section aria-labelledby="saved-applied">
-	<h2 id="saved-applied">{t('marks.applied')}</h2>
-	<JobMarks mark="applied" />
+{#each kept.state.collections as collection (collection.id)}
+	<JobCollection {collection} />
+{/each}
+<section aria-labelledby="saved-new">
+	<h2 id="saved-new">{t('collections.new')}</h2>
+	<CollectionName submit={t('collections.create')} onsubmit={addCollection} />
 </section>
-<section aria-labelledby="saved-hidden">
-	<h2 id="saved-hidden">{t('marks.hidden')}</h2>
-	<JobMarks mark="hidden" />
+<section aria-labelledby="saved-transfer">
+	<h2 id="saved-transfer">{t('collections.transfer')}</h2>
+	<CollectionsTransfer />
 </section>

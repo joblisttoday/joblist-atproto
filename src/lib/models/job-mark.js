@@ -2,7 +2,7 @@ import { offerKey } from './job.js';
 
 /**
  * What someone did with an offer: applied to it, or hid it from their results.
- * Kept with its title and company, to list it once the offer closed.
+ * JobMark: how marks were kept before collections (job-collection.js), read once to move them.
  * @typedef {'applied' | 'hidden'} Mark
  * @typedef {{mark: Mark, at: string, title: string, company: string, url: string}} JobMark
  * @typedef {import('#lib/ats/job.js').Job} Job
@@ -20,21 +20,11 @@ export function markKey(job) {
 /**
  * The jobs not hidden.
  * @param {Job[]} jobs
- * @param {Record<string, JobMark>} marks
+ * @param {Record<string, unknown>} hidden the Hidden collection's jobs, by markKey
  */
-export function withoutHidden(jobs, marks) {
-	const hidden = new Set(Object.keys(marks).filter((key) => marks[key].mark === 'hidden'));
-	return hidden.size ? jobs.filter((job) => !hidden.has(markKey(job))) : jobs;
-}
-
-/**
- * The marks of one kind, latest first.
- * @param {Record<string, JobMark>} marks
- * @param {Mark} mark
- * @returns {[string, JobMark][]}
- */
-export function marked(marks, mark) {
-	return Object.entries(marks)
-		.filter(([, m]) => m.mark === mark)
-		.sort(([, a], [, b]) => b.at.localeCompare(a.at));
+export function withoutHidden(jobs, hidden) {
+	const keys = Object.keys(hidden);
+	if (!keys.length) return jobs;
+	const set = new Set(keys);
+	return jobs.filter((job) => !set.has(markKey(job)));
 }
