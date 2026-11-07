@@ -8,13 +8,14 @@
  * can run this script and get the same snapshot from the same network.
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { mapPoints, toCompany } from '../src/lib/models/company.js';
 import { Companies } from '../src/lib/models/companies.js';
 import { crawlRecords } from './crawl.js';
 import config from '../src/lib/data/config.json' with { type: 'json' };
 import { fetchBoardJobs, firstJobs, recordJobs, toMinute } from './jobs.js';
 import { dateOffers } from './ledger.js';
+import { landingFiles } from './landing.js';
 import { blueskyAccounts } from './bluesky.js';
 import { findOffices, officeKey } from './offices.js';
 import { geocode, locate, placeNames } from './places.js';
@@ -129,6 +130,14 @@ for (const [name, data] of Object.entries(files)) writeFileSync(join(out, name),
 const embeds = join(out, config.embed.dir);
 mkdirSync(embeds, { recursive: true });
 for (const [key, file] of companyFiles(companies, jobs, generatedAt)) writeFileSync(join(embeds, `${key}.json`), JSON.stringify(file));
+
+// Small files for the pages per city and field and their feeds (landing.js), read by the Worker.
+const landing = landingFiles(jobs, new Map(companies.map((c) => [c.key, c.name])), places, generatedAt);
+for (const [name, file] of landing) {
+	mkdirSync(dirname(join(out, name)), { recursive: true });
+	writeFileSync(join(out, name), JSON.stringify(file));
+}
+console.log(`landing: ${landing.length} files`);
 console.log(`snapshot written to ${out} in ${files['meta.json'].seconds}s`);
 
 /**

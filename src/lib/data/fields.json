@@ -1,0 +1,72 @@
+[
+	{
+		"slug": "engineering",
+		"query": "engineer",
+		"words": ["engineer", "engineering", "developer", "software", "devops", "sre", "backend", "back-end", "frontend", "front-end", "full-stack", "fullstack", "programmer", "architect", "entwickler", "entwicklerin", "développeur", "développeuse", "ingénieur", "ingénieure"]
+	},
+	{
+		"slug": "data",
+		"query": "data",
+		"words": ["data", "analytics", "analyst", "machine learning", "ml", "ai", "bi", "business intelligence", "statistician"]
+	},
+	{
+		"slug": "design",
+		"query": "design",
+		"words": ["design", "designer", "ux", "ui", "user experience", "user research", "illustrator", "art director", "creative director", "gestalter", "gestalterin"]
+	},
+	{
+		"slug": "product",
+		"query": "product",
+		"words": ["product manager", "product owner", "product lead", "head of product", "product management", "product director", "chef de produit"]
+	},
+	{
+		"slug": "marketing",
+		"query": "marketing",
+		"words": ["marketing", "seo", "content", "brand", "growth", "communications", "social media", "copywriter", "public relations", "pr manager"]
+	},
+	{
+		"slug": "sales",
+		"query": "sales",
+		"words": ["sales", "account executive", "account manager", "business development", "sdr", "bdr", "go to market", "go-to-market", "gtm", "vertrieb", "commercial"]
+	},
+	{
+		"slug": "customer-support",
+		"query": "customer",
+		"words": ["customer success", "customer support", "customer service", "customer experience", "customer care", "support specialist", "support engineer", "help desk", "helpdesk", "kundenservice"]
+	},
+	{
+		"slug": "operations",
+		"query": "operations",
+		"words": ["operations", "logistics", "supply chain", "procurement", "purchasing", "warehouse", "office manager", "administrative", "assistant"]
+	},
+	{
+		"slug": "finance",
+		"query": "finance",
+		"words": ["finance", "financial", "accounting", "accountant", "controller", "controlling", "tax", "treasury", "payroll", "audit", "auditor", "buchhaltung", "comptable"]
+	},
+	{
+		"slug": "people",
+		"query": "recruit",
+		"words": ["recruiter", "recruiting", "recruitment", "talent acquisition", "people", "hr", "human resources", "personalwesen", "ressources humaines"]
+	},
+	{
+		"slug": "legal",
+		"query": "legal",
+		"words": ["legal", "counsel", "lawyer", "attorney", "paralegal", "compliance", "jurist", "juriste"]
+	},
+	{
+		"slug": "security",
+		"query": "security",
+		"words": ["security", "cybersecurity", "infosec", "penetration", "soc analyst"]
+	},
+	{
+		"slug": "science",
+		"query": "scientist",
+		"words": ["scientist", "research", "researcher", "laboratory", "lab", "chemist", "chemistry", "biologist", "biology", "physicist", "clinical"]
+	},
+	{
+		"slug": "hardware",
+		"query": "technician",
+		"words": ["technician", "mechanical", "electrical", "manufacturing", "production", "assembly", "machinist", "avionics", "hardware", "welder", "mechatronics", "testing", "quality"]
+	}
+]
