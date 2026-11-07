@@ -14,7 +14,8 @@
 	],
 	"lexicons": {
 		"dir": "lexicons",
-		"did": "did:plc:jqaucxlucukeif3bltpuc7zx"
+		"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
+		"permissionSet": "today.joblist.authFull"
 	},
 	"services": {
 		"relay": "https://relay1.us-east.bsky.network",

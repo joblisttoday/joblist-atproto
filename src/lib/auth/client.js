@@ -1,8 +1,12 @@
 import { BrowserOAuthClient } from '@atproto/oauth-client-browser';
 import config from '#lib/data/config.json';
 
-/** Only what the app writes: its own record types. */
-export const SCOPE = ['atproto', ...Object.values(config.collections).map((nsid) => `repo:${nsid}`)].join(' ');
+/**
+ * Only what the app writes, its own record types, as one permission set published with
+ * the lexicons (lexicons/today/joblist/authFull.json): people see "joblist" and what it
+ * does, in their language.
+ */
+export const SCOPE = `atproto include:${config.lexicons.permissionSet}`;
 
 /**
  * Production loads the published client metadata; local development

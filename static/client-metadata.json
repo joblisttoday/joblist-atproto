@@ -3,7 +3,7 @@
 	"client_name": "joblist",
 	"client_uri": "https://joblist.today",
 	"redirect_uris": ["https://joblist.today/"],
-	"scope": "atproto repo:today.joblist.company repo:today.joblist.list repo:today.joblist.job repo:today.joblist.suggestion",
+	"scope": "atproto include:today.joblist.authFull",
 	"grant_types": ["authorization_code", "refresh_token"],
 	"response_types": ["code"],
 	"application_type": "web",
