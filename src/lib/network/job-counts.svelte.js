@@ -1,28 +1,47 @@
-import { getSnapshotJobs } from './snapshot.js';
+import { getSnapshotCounts, getSnapshotJobs } from './snapshot.js';
 import { membersOf } from './network.svelte.js';
 import { offerCount } from '#lib/models/job.js';
 import { listStats } from '#lib/models/list-filters.js';
 import { listPlace, offersIn } from '#lib/models/list-place.js';
+import { placesKey } from '#lib/models/snapshot-counts.js';
 
 /**
  * How many jobs each company has open, as of the last snapshot; read once, when first asked.
  * Counted as offers, as pages show them: the same offer in several places is one (see offerCount).
- * Empty while it loads, or without a snapshot.
+ * Read from the small counts file; all the jobs are read only without it, or for a list
+ * about a place no list was about at the last snapshot. Empty while it loads, or without a snapshot.
  */
 
-/** @type {Map<string, import('#lib/ats/job.js').Job[]>} */
-let jobs = $state.raw(new Map());
 /** @type {Map<string, number>} */
 let counts = $state.raw(new Map());
+/** Offers in the places lists are about, by placesKey. @type {Map<string, Map<string, number>>} */
+let here = $state.raw(new Map());
+/** Every job by company, only once needed. @type {Map<string, import('#lib/ats/job.js').Job[]>} */
+let jobs = $state.raw(new Map());
+/** The counts file was read (or is missing). */
+let read = $state(false);
 let asked = false;
+let jobsAsked = false;
 
 function ask() {
 	if (asked) return;
 	asked = true;
+	getSnapshotCounts().then((file) => {
+		if (file) {
+			counts = file.offers;
+			here = file.here;
+		} else readJobs();
+		read = true;
+	});
+}
+
+function readJobs() {
+	if (jobsAsked) return;
+	jobsAsked = true;
 	getSnapshotJobs().then((snapshot) => {
 		if (!snapshot) return;
 		jobs = snapshot.jobs;
-		counts = new Map([...snapshot.jobs].map(([key, list]) => [key, offerCount(list)]));
+		if (!counts.size) counts = new Map([...snapshot.jobs].map(([key, list]) => [key, offerCount(list)]));
 	});
 }
 
@@ -36,8 +55,21 @@ export function jobCounts() {
 const none = [];
 
 /**
+ * Some companies' offers in some places: counted by the indexer, else from all the jobs.
+ * @param {string[]} keys
+ * @param {string[]} places
+ */
+function offersHere(keys, places) {
+	const counted = here.get(placesKey(places));
+	if (counted) return new Map(keys.map((key) => [key, counted.get(key) || 0]));
+	// A place no list was about at the last snapshot (a list made since): its jobs are read.
+	if (read) readJobs();
+	return new Map(keys.map((key) => [key, offersIn(jobs.get(key) || none, places)]));
+}
+
+/**
  * A list's companies, those hiring and their open offers: in its place when it is about one
- * (see listPlace), as its page shows them first. Each company's count is made once per snapshot.
+ * (see listPlace), as its page shows them first.
  * @param {import('#lib/models/list.js').List} list
  */
 export function listJobStats(list) {
@@ -45,9 +77,9 @@ export function listJobStats(list) {
 	const keys = membersOf(list).members.map((m) => m.key);
 	const place = listPlace(list);
 	if (!place) return listStats(keys, counts);
-	const here = listStats(keys, new Map(keys.map((key) => [key, offersIn(jobs.get(key) || none, place.places)])));
+	const inPlace = listStats(keys, offersHere(keys, place.places));
 	// Nothing there: its jobs everywhere, as its page then shows them.
-	return here.jobs ? here : listStats(keys, counts);
+	return inPlace.jobs ? inPlace : listStats(keys, counts);
 }
 
 /**
@@ -59,7 +91,7 @@ export function listJobStatsHere(list) {
 	const place = listPlace(list);
 	if (!place) return null;
 	const keys = membersOf(list).members.map((m) => m.key);
-	return listStats(keys, new Map(keys.map((key) => [key, offersIn(jobs.get(key) || none, place.places)])));
+	return listStats(keys, offersHere(keys, place.places));
 }
 
 /**

@@ -239,7 +239,7 @@ export function toJob(post) {
 		company: post.company,
 		location: placeNames(post.locations) || undefined,
 		published: post.createdAt,
-		remote: post.remote,
+		remote: post.remote || undefined,
 		salary: post.salary,
 		posted: { did: post.did, rkey: post.rkey, verified: post.verified },
 		point: at && [at.lon, at.lat]
@@ -294,14 +294,18 @@ export function notFromCompany(post, claimed) {
  * job board, then posts shared by others. A shared post with a board job's link
  * never replaces it: anyone can post, only the company and its board say what the job is.
  * Once the company posts its own, others' posts for it are left out.
+ * A new list, in that order; the board has each link once (tens of thousands: only the few
+ * posted jobs are looked for in it).
  * @param {Job[]} posted
  * @param {Job[]} board
  */
 export function mergeJobs(posted, board) {
 	const seen = new Set();
-	const own = posted.filter((job) => job.posted?.verified);
-	const shared = own.length ? [] : posted.filter((job) => !job.posted?.verified);
-	return [...own, ...board, ...shared].filter((job) => !seen.has(job.url) && seen.add(job.url));
+	const once = (/** @type {Job} */ job) => !seen.has(job.url) && seen.add(job.url);
+	const own = posted.filter((job) => job.posted?.verified && once(job));
+	const kept = own.length ? board.filter((job) => !seen.has(job.url)) : [...board];
+	const shared = own.length ? [] : posted.filter((job) => !job.posted?.verified && once(job) && !board.some((b) => b.url === job.url));
+	return [...own, ...kept, ...shared];
 }
 
 /**

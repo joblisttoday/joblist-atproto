@@ -5,7 +5,7 @@ import { getSnapshotJobs } from './snapshot.js';
 
 /**
  * The jobs saved searches are counted on, outside the explorer: those of the
- * snapshot (read by every page anyway) and those posted here.
+ * snapshot (read only with saved searches: they are large) and those posted here.
  * @typedef {import('#lib/ats/job.js').Job} Job
  */
 
@@ -16,7 +16,7 @@ function read() {
 	if (asked) return;
 	asked = true;
 	getSnapshotJobs().then((snapshot) => {
-		if (snapshot) board = [...snapshot.jobs.values()].flat();
+		if (snapshot) board = snapshot.all;
 	});
 }
 

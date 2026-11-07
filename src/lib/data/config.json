@@ -45,6 +45,7 @@
 		"globeCenter": [10, 30],
 		"globeSpan": 90,
 		"frameDelayMs": 600,
+		"loadWaitMs": 3000,
 		"center": [
 			13.405,
 			52.52
@@ -116,6 +117,8 @@
 		"pageSize": 50,
 		"olderDays": 90,
 		"placesSuggested": 30,
+		"prepareChunk": 500,
+		"prepareWaitMs": 5000,
 		"placesShown": 3,
 		"nearbyShown": 5,
 		"typingDelayMs": 200,
@@ -238,7 +241,13 @@
 		"path": "https://raw.githubusercontent.com/joblisttoday/joblist-snapshot/gh-pages",
 		"maxAgeHours": 12,
 		"prerenderFiles": ["records.json", "jobs.json", "meta.json", "bluesky.json", "landing/index.json"],
-		"preload": ["first.json", "records.json", "jobs.json"],
+		"preload": {
+			"page": ["records.json"],
+			"counts": ["records.json", "counts.json"],
+			"company": ["records.json", "jobs.json"],
+			"list": ["records.json", "counts.json", "jobs.json"],
+			"explore": ["first.json", "records.json", "jobs.json"]
+		},
 		"refreshDelayMs": 15000
 	},
 	"crawler": {

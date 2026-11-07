@@ -50,11 +50,12 @@ function preview(image) {
 /**
  * The app's HTML shell with page-specific head tags and a no-JavaScript body.
  * @param {string} template build/index.html
- * @param {{title: string, description: string, url: string, body: string, type?: string, head?: string, noindex?: boolean, image?: string}} meta
+ * @param {{title: string, description: string, url: string, body: string, type?: string, head?: string, noindex?: boolean, image?: string, preload?: string[]}} meta
  *   type: the og:type (default website); head: more tags, like jsonLd(); noindex: a page for people, not search results;
- *   image: the page's picture for link previews (default: the site's)
+ *   image: the page's picture for link previews (default: the site's);
+ *   preload: the snapshot files the page starts from (config snapshot.preload), fetched while the app loads
  */
-export function page(template, { title, description, url, body, type = 'website', head: extra = '', noindex = false, image }) {
+export function page(template, { title, description, url, body, type = 'website', head: extra = '', noindex = false, image, preload = config.snapshot.preload.page }) {
 	const text = plain(description).slice(0, 300);
 	const head = [
 		`<title>${escape(title)}</title>`,
@@ -67,8 +68,9 @@ export function page(template, { title, description, url, body, type = 'website'
 		`<meta property="og:description" content="${escape(text)}">`,
 		`<meta property="og:url" content="${escape(url)}">`,
 		...preview(image),
-		// The data every page starts from: fetched while the app itself loads, not after.
-		...config.snapshot.preload.map(
+		// The data the page starts from: fetched while the app itself loads, not after.
+		// Only what it shows: all the jobs are large, and a phone reads them for seconds.
+		...preload.map(
 			(/** @type {string} */ name) => `<link rel="preload" as="fetch" crossorigin="anonymous" href="${escape(`${config.snapshot.path}/${name}`)}">`
 		),
 		extra

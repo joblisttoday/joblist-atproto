@@ -1,6 +1,8 @@
 <script>
 	import { onDestroy } from 'svelte';
+	import config from '#lib/data/config.json';
 	import { mountJobsMap } from '#lib/map/jobs-map.js';
+	import { whenIdle } from '#lib/navigation/after-paint.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
@@ -33,9 +35,21 @@
 	/** @type {{jobs: unknown, names: unknown, fit: boolean, still: boolean} | null} */
 	let given = null;
 
+	// MapLibre is large: loaded once the first jobs are shown and the page is idle,
+	// or after a while without jobs (none found).
+	let ready = $state(false);
+	$effect(() => {
+		if (!active || ready) return;
+		if (!jobs.length) {
+			const timer = setTimeout(() => (ready = true), config.map.loadWaitMs);
+			return () => clearTimeout(timer);
+		}
+		return whenIdle(() => (ready = true), config.map.loadWaitMs);
+	});
+
 	// Made the first time the map is shown, kept after.
 	$effect(() => {
-		if (!active || map) return;
+		if (!active || map || !ready) return;
 		map = mountJobsMap(figure, { label: (count) => t('map.jobs', { count }), onpick: onpick && ((urls) => onpick(urls)), onmoved: onmoved && ((area) => onmoved(area)) });
 	});
 	onDestroy(() => map?.destroy());

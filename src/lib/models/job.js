@@ -30,11 +30,13 @@ const words = (text) => text.toLowerCase().split(/\s+/).filter(Boolean);
 /**
  * Where the work happens: what the job board or the poster says, else what the location
  * or title says ("Remote - USA", "Berlin (Hybrid)"; on site only from the location).
+ * '' is "read already, not said" (the snapshot's jobs, see snapshot-job.js).
  * @param {Job} job
  * @returns {'onsite' | 'hybrid' | 'remote' | undefined}
  */
 export function workplace(job) {
 	if (job.remote === 'onsite' || job.remote === 'hybrid' || job.remote === 'remote') return job.remote;
+	if (job.remote === '') return undefined;
 	if (remoteText.test(job.location || '') || remoteTitle.test(job.title)) return 'remote';
 	if (hybridText.test(job.location || '') || hybridTitle.test(job.title)) return 'hybrid';
 	if (onsiteText.test(job.location || '')) return 'onsite';
@@ -103,22 +105,23 @@ function band(km) {
  * @returns {Job[]}
  */
 export function sameOffers(jobs) {
-	/** @type {Map<string, Job>} */
-	const first = new Map();
+	const keys = jobs.map((job) => (job.posted ? '' : offerKey(job)));
+	/** @type {Map<string, Job[]>} */
+	const groups = new Map();
+	jobs.forEach((job, i) => {
+		if (!keys[i]) return;
+		const group = groups.get(keys[i]);
+		if (group) group.push(job);
+		else groups.set(keys[i], [job]);
+	});
 	/** @type {Job[]} */
 	const out = [];
-	for (const job of jobs) {
-		const key = offerKey(job);
-		const kept = job.posted ? undefined : first.get(key);
-		if (kept) {
-			// Added to, not copied: an employer may have hundreds of the same offer.
-			(kept.also ||= []).push(job);
-			continue;
-		}
-		const copy = { ...job, also: undefined };
-		if (!job.posted) first.set(key, copy);
-		out.push(copy);
-	}
+	jobs.forEach((job, i) => {
+		if (!keys[i]) return void out.push(job);
+		const group = /** @type {Job[]} */ (groups.get(keys[i]));
+		// Only an offer in several places is a new job (most are one): the jobs given are never changed.
+		if (group[0] === job) out.push(group.length > 1 ? { ...job, also: group.slice(1) } : job);
+	});
 	return out;
 }
 
@@ -205,14 +208,9 @@ export function placeCounts(jobs, limit) {
  */
 export function time(value) {
 	if (!value) return 0;
-	const key = String(value);
-	let ms = times.get(key);
-	if (ms === undefined) {
-		ms = Date.parse(key.includes(' ') ? key.replace(' UTC', 'Z').replace(' ', 'T') : key);
-		if (!Number.isFinite(ms)) ms = 0;
-		times.set(key, ms);
-	}
-	return ms;
+	const text = String(value);
+	const ms = Date.parse(text.includes(' ') ? text.replace(' UTC', 'Z').replace(' ', 'T') : text);
+	return Number.isFinite(ms) ? ms : 0;
 }
 
 /**
@@ -227,11 +225,17 @@ export function isOlder(job, now = Date.now(), days = config.jobs.olderDays) {
 	return !job.posted && at > 0 && now - at > days * 864e5;
 }
 
-/** Dates already read: sorting tens of thousands of jobs reads each many times. */
-const times = new Map();
-
 /** What a job is searched by, made once per job. */
 const searchTexts = new WeakMap();
+
+/**
+ * Reads a job for searches ahead of time (while the page is idle): the first search then only compares.
+ * @param {Job} job
+ * @param {Map<string, string>} names company names by key
+ */
+export function prepareJob(job, names) {
+	searchText(job, names);
+}
 
 /**
  * @param {Job} job
@@ -252,20 +256,50 @@ function searchText(job, names) {
  * @param {Job[]} jobs
  */
 export function newestFirst(jobs) {
-	const times = new Map(jobs.map((job) => [job, time(job.published)]));
-	jobs.sort((a, b) => /** @type {number} */ (times.get(b)) - /** @type {number} */ (times.get(a)));
+	// Positions are sorted, by dates read into a plain array: much faster than comparing jobs
+	// (tens of thousands on a phone), and runs already in order (each company's) are kept.
+	const times = jobs.map((job) => time(job.published));
+	const order = Array.from(jobs.keys()).sort((a, b) => times[b] - times[a] || a - b);
+	const sorted = order.map((i) => jobs[i]);
+	for (let i = 0; i < sorted.length; i++) jobs[i] = sorted[i];
 }
 
-/** What makes two jobs the same offer, made once per job. @type {WeakMap<Job, string>} */
-const offerKeys = new WeakMap();
-/** @param {Job} job */
-export function offerKey(job) {
-	let key = offerKeys.get(job);
-	if (key === undefined) {
-		key = `${job.company}\n${job.title.trim().toLowerCase()}`;
-		offerKeys.set(job, key);
+/**
+ * Jobs newest first, from jobs in that order already and a few others: only the few
+ * are sorted, then each is placed among the others (after those of its time).
+ * The same jobs as newestFirst([...sorted, ...others]), in a new list.
+ * @param {Job[]} sorted newest first
+ * @param {Job[]} others
+ */
+export function placeNewest(sorted, others) {
+	const few = [...others];
+	newestFirst(few);
+	const out = [];
+	let from = 0;
+	for (const job of few) {
+		const at = time(job.published);
+		// The first of the sorted jobs older than it (dates read only where looked).
+		let low = from;
+		let high = sorted.length;
+		while (low < high) {
+			const mid = (low + high) >> 1;
+			if (time(sorted[mid].published) >= at) low = mid + 1;
+			else high = mid;
+		}
+		for (let i = from; i < low; i++) out.push(sorted[i]);
+		out.push(job);
+		from = low;
 	}
-	return key;
+	for (let i = from; i < sorted.length; i++) out.push(sorted[i]);
+	return out;
+}
+
+/**
+ * What makes two jobs the same offer (made each time: faster than keeping it for tens of thousands of jobs).
+ * @param {Job} job
+ */
+export function offerKey(job) {
+	return `${job.company}\n${job.title.trim().toLowerCase()}`;
 }
 
 /**

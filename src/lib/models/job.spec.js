@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { byCompany, commonPlaces, filterJobs, isOlder, isRemote, newestFirst, offerPlaces, placeCounts, remoteLimit, sameOffers, tidyPlace, time, workplace } from './job.js';
+import { byCompany, commonPlaces, filterJobs, isOlder, isRemote, newestFirst, offerPlaces, placeNewest, prepareJob, placeCounts, remoteLimit, sameOffers, tidyPlace, time, workplace } from './job.js';
 
 /** @param {Partial<import('#lib/ats/job.js').Job>} job */
 const job = (job) => ({ title: 'Engineer', url: 'https://x', company: 'acme.org', ...job });
@@ -177,6 +177,8 @@ describe('sameOffers', () => {
 		expect(merged.map((j) => j.url)).toEqual(['1', '3', '4']);
 		expect(offerPlaces(merged[0])).toEqual(['Sweden', 'Nigeria']);
 		expect(jobs[0].also).toBeUndefined();
+		// An offer in one place is the job itself, not a copy (tens of thousands of them).
+		expect(merged[1]).toBe(jobs[2]);
 	});
 });
 
@@ -191,5 +193,26 @@ describe('offerCount', () => {
 		]);
 		expect(offerCount(jobs)).toBe(sameOffers(jobs).length);
 		expect(offerCount(jobs)).toBe(3);
+	});
+});
+
+describe('placeNewest', () => {
+	it('places a few jobs among jobs sorted already, as sorting them all would', () => {
+		const sorted = ['2026-11-05', '2026-11-04', '2026-11-02', '2026-11-01', undefined].map((published, i) => job({ url: `s${i}`, published }));
+		const others = ['2026-11-03', '2026-11-06', undefined, '2026-11-01'].map((published, i) => job({ url: `o${i}`, published, posted: { did: 'd', rkey: `${i}`, verified: true } }));
+		const placed = placeNewest(sorted, others);
+		const all = [...sorted, ...others];
+		newestFirst(all);
+		expect(placed.map((j) => time(j.published))).toEqual(all.map((j) => time(j.published)));
+		expect(placed.map((j) => j.url)).toEqual(['o1', 's0', 's1', 'o0', 's2', 's3', 'o3', 's4', 'o2']);
+		expect(placeNewest(sorted, [])).toEqual(sorted);
+	});
+});
+
+describe('prepareJob', () => {
+	it('reads a job for searches ahead of time, finding the same', () => {
+		const jobs = [job({ title: 'Designer', url: 'p1' }), job({ title: 'Engineer', url: 'p2' })];
+		for (const j of jobs) prepareJob(j, names);
+		expect(filterJobs(jobs, { ...none, query: 'acme design' }, names).map((j) => j.url)).toEqual(['p1']);
 	});
 });

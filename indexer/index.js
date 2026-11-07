@@ -25,6 +25,7 @@ import { postPath } from '../src/lib/models/job-post.js';
 import { findOffices, officeKey } from './offices.js';
 import { geocode, locate, placeNames } from './places.js';
 import { suggest } from './suggest.js';
+import { countsFile, newestByCompany } from './counts.js';
 
 const out = process.argv[2] || 'static/snapshot';
 const started = Date.now();
@@ -73,6 +74,8 @@ for (const job of jobs) {
 }
 console.log(`places: ${looked} looked up, ${Object.keys(places).length} known, ${jobs.filter((j) => j.g).length} jobs located`);
 console.log(`offices: ${searched} looked up, ${Object.values(offices).filter(Boolean).length} found`);
+// Each company's newest first: the app sorts all of them quickly from there.
+newestByCompany(jobs);
 
 // Boards the crawler found closed (their page gone): the app says so instead of "no open jobs".
 const crawlHealth = join(out, 'crawl', 'health.json');
@@ -95,6 +98,8 @@ const files = {
 	// `checked`: companies whose board was read, so the app knows an empty result is real.
 	// gone: companies whose job board closed, as the last crawl found.
 	'jobs.json': { generatedAt, checked: Object.keys(board.health), gone, jobs },
+	// What pages that only count jobs need (companies, lists, the search box): small, instead of every job.
+	'counts.json': countsFile(jobs, records.list, generatedAt),
 	// The newest offers, small: the list shows them at once, while jobs.json loads.
 	// With their companies' names: the page shows them before it reads the companies.
 	'first.json': (() => {

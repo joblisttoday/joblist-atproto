@@ -123,7 +123,8 @@ for (const record of listRecords) {
 			noindex: !open,
 			body: `<h1>${escape(list.name)}</h1><p>${escape(summary)}</p><p>${escape(en['list.by'])} @${escape(handleOf(list.did))}</p><ul>${members
 				.map((c) => `<li><a href="/company/${escape(c.key)}">${escape(c.name)}</a></li>`)
-				.join('')}</ul>${linkList(t('landing.cities'), places.ofPlaces(listPlace(list)?.places || []))}`
+				.join('')}</ul>${linkList(t('landing.cities'), places.ofPlaces(listPlace(list)?.places || []))}`,
+			preload: config.snapshot.preload.list
 		}),
 		open > 0,
 		updated
@@ -160,7 +161,8 @@ for (const company of companies.values()) {
 			}<ul>${(jobsOf.get(company.key) || [])
 				.slice(0, 200)
 				.map((/** @type {any} */ j) => `<li><a href="${escape(jobLink(j))}">${escape(j.t)}</a> ${escape(j.l || '')}</li>`)
-				.join('')}</ul>${linkList(t('landing.byCity'), links.cities.slice(0, config.landing.linked))}${linkList(t('landing.byField'), links.fields)}`
+				.join('')}</ul>${linkList(t('landing.byCity'), links.cities.slice(0, config.landing.linked))}${linkList(t('landing.byField'), links.fields)}`,
+			preload: config.snapshot.preload.company
 		}),
 		open > 0,
 		newestJob.get(company.key) || company.editedAt

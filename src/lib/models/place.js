@@ -91,6 +91,16 @@ function searchable(location, remote) {
 }
 
 /**
+ * Reads a location for place searches ahead of time (while the page is idle): the first
+ * search then only compares, instead of reading thousands of locations at once.
+ * @param {string | undefined} location
+ * @param {boolean} remote
+ */
+export function prepareLocation(location, remote) {
+	searchable(location || '', remote);
+}
+
+/**
  * Whether a location is in the place someone typed: every word of it starts a word of the location.
  * remote: the job is remote, so a city also matches its country ("berlin" is in a job limited to Germany).
  * @param {string | undefined} location

@@ -154,8 +154,7 @@ let started = false;
 export async function startNetwork() {
 	if (started) return;
 	started = true;
-	// The jobs download alongside the records, not after them.
-	getSnapshotJobs();
+	// Only the pages showing jobs read them (they are large): the others count them from a small file.
 	const cached = readCache();
 	if (cached) Object.assign(network, cached);
 	const snapshot = await getSnapshotRecords();
