@@ -9,7 +9,8 @@
  *
  * In order: (a) health check of every company's shown version, (b) repairs,
  * and boards for companies on Bluesky that have none, (c) new companies from
- * lists and hiring posts, (d) the crawler's writes.
+ * lists and from Bluesky accounts whose handle is their domain, (d) the
+ * crawler's writes. Only public data is read: nobody is contacted.
  * Rules and sources: docs/crawler.md.
  */
 import { mkdirSync, writeFileSync } from 'node:fs';
@@ -18,6 +19,7 @@ import config from '../src/lib/data/config.json' with { type: 'json' };
 import { mapLimit } from '../src/lib/atproto/xrpc.js';
 import { crawlRecords } from '../indexer/crawl.js';
 import { suggest } from '../indexer/suggest.js';
+import { followerAccounts, pickAccounts, searchAccounts, verifyAccounts } from './lib/accounts.js';
 import { applyWrites, botDid, botSession } from './lib/bot.js';
 import { companiesToConnect, connectBoard, loadBluesky, mergeConnection } from './lib/connect.js';
 import { discoverCompany } from './lib/discover.js';
@@ -111,7 +113,7 @@ const connected = await mapLimit(toConnect, settings.bluesky.concurrency, async 
 repairs.splice(0, repairs.length, ...repairsByKey.values());
 step(`boards for companies on Bluesky: looked at ${toConnect.length}, found ${count(connected, (c) => c.changes)}`);
 
-// (c) New companies: keys in lists, suggestions and jobs without a record, and domain accounts posting about hiring.
+// (c) New companies: keys in lists, suggestions and jobs without a record, and Bluesky accounts whose handle is a domain.
 const fromLists = suggest(
 	[...versionsByKey.keys()].map((key) => /** @type {any} */ ({ key })),
 	records
@@ -122,12 +124,32 @@ try {
 } catch (error) {
 	console.warn(`hiring posts unavailable: ${/** @type {Error} */ (error).message}`);
 }
-/** @type {{domain: string, name?: string, source: string}[]} */
+const listed = new Set(fromLists.map((s) => s.key));
+const unavailable = (/** @type {string} */ what) => (/** @type {Error} */ error) => {
+	console.warn(`${what} unavailable: ${error.message}`);
+	return /** @type {import('./lib/accounts.js').DomainAccount[]} */ ([]);
+};
+// Followers first: following joblist says more than a word in a profile.
+const listening = [
+	await followerAccounts(config.services.appview, settings.bluesky).catch(unavailable('Bluesky followers')),
+	await searchAccounts(config.services.appview, settings.bluesky).catch(unavailable('Bluesky profile search'))
+];
+const known = (/** @type {string} */ domain) => versionsByKey.has(domain) || listed.has(domain);
+// Every hiring account, then at most maxAccounts more from profile search and followers.
+const fromHiring = pickAccounts([hiring.accounts.map((a) => ({ did: a.did, handle: a.handle, source: `hiring posts of @${a.handle}` }))], { known, hosted: config.hostedHandles, max: Infinity });
+const hiringKeys = new Set(fromHiring.accounts.map((a) => a.handle));
+const fromProfiles = pickAccounts(listening, { known: (d) => known(d) || hiringKeys.has(d), hosted: config.hostedHandles, max: settings.bluesky.maxAccounts });
+const accounts = await verifyAccounts([...fromHiring.accounts, ...fromProfiles.accounts], settings.bluesky.concurrency);
+/** @type {{domain: string, source: string}[]} */
 const candidates = [
 	...fromLists.map((s) => ({ domain: s.key, source: `lists and suggestions (${s.mentions} mentions)` })),
-	...hiring.accounts.map((a) => ({ domain: a.handle, name: a.displayName, source: `hiring posts of @${a.handle}` }))
+	// Profile names are not used: the name comes from the company's own website.
+	...accounts.verified.map((a) => ({ domain: a.handle, source: a.source }))
 ].filter((c) => !versionsByKey.has(c.domain));
-const looked = await mapLimit(candidates, settings.concurrency, async (c) => ({ ...c, ...(await discoverCompany(c.domain, { name: c.name, source: c.source, openJobs })) }));
+const looked = [
+	...(await mapLimit(candidates, settings.concurrency, async (c) => ({ ...c, ...(await discoverCompany(c.domain, { source: c.source, openJobs })) }))),
+	...accounts.rejected.map((r) => ({ domain: r.key, source: r.source, reason: r.reason }))
+];
 const discoveries = looked.flatMap((l) => (l.found ? [l.found] : []));
 step(`discovery done: ${candidates.length} candidates, ${discoveries.length} with a live board`);
 
@@ -159,6 +181,8 @@ const summary = {
 	discovery: {
 		fromLists: { candidates: fromLists.length, found: count(discoveries, (d) => d.source.startsWith('lists')) },
 		fromHiringPosts: { via: hiring.via, posts: hiring.posts, domainAccounts: hiring.accounts.length, new: count(candidates, (c) => c.source.startsWith('hiring')), found: count(discoveries, (d) => d.source.startsWith('hiring')) },
+		fromProfiles: { accounts: listening.flat().length, domainAccounts: fromProfiles.accounts.length, overCap: fromProfiles.dropped, new: count(candidates, (c) => !c.source.startsWith('hiring') && !c.source.startsWith('lists')), found: count(discoveries, (d) => !d.source.startsWith('hiring') && !d.source.startsWith('lists')) },
+		handlesNotVerified: accounts.rejected.length,
 		openJobsBoards: openJobs ? [...openJobs.values()].reduce((n, b) => n + b.length, 0) : 0
 	},
 	writes: { total: writes.length, repairs: count(writes, (w) => w.kind === 'repair'), newCompanies: count(writes, (w) => w.kind === 'new'), create: count(writes, (w) => w.action === 'create'), update: count(writes, (w) => w.action === 'update') },

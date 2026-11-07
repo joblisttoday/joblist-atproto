@@ -299,6 +299,11 @@
 			"pages": 5
 		},
 		"bluesky": {
+			"queries": ["careers", "jobs", "hiring", "join our team", "open roles"],
+			"pages": 1,
+			"followersOf": ["joblist.today"],
+			"followerPages": 3,
+			"maxAccounts": 40,
 			"maxConnect": 30,
 			"concurrency": 4
 		}

@@ -47,9 +47,15 @@ node --test 'scripts/**/*.test.js'          # the rules, unit tested
    - keys used in lists, in suggestions for a list
      (`today.joblist.suggestion`) or in job records that have no company
      record ([`indexer/suggest.js`](../indexer/suggest.js));
-   - accounts **whose handle is their own domain** (acme.com, not
-     acme.bsky.social) that posted about hiring (Bluesky post search,
-     queries in config). The handle proves the domain.
+   - Bluesky accounts **whose handle is their own domain** (acme.com, not
+     acme.bsky.social nor another of `hostedHandles`), from public, read-only
+     listings ([`scripts/lib/accounts.js`](../scripts/lib/accounts.js)):
+     every account that posted about hiring (post search, `search.queries`),
+     then at most `bluesky.maxAccounts` (40) more among the followers of
+     `bluesky.followersOf` (joblist.today) and the profiles matching
+     `bluesky.queries` (careers, jobs, hiring…). Each handle is checked both
+     ways, as above; one that fails is reported, not looked at. Names in
+     profiles are not used: the name comes from the company's website.
 
    A candidate becomes a company only with a **live job board** that is
    linked from its own website, or found in Open Jobs and linking back to
@@ -102,6 +108,7 @@ Every run saves two files (default `static/snapshot/crawl/`, set by
 | companies' websites and boards | health, links to their boards | the web at that moment |
 | [Open Jobs](https://github.com/elliottdehn/open-jobs) `slugs.json` (CC0), pinned to commit `a6bb3ab` | board ids, as a lookup only | yes, pinned file |
 | Bluesky post search (`app.bsky.feed.searchPosts`) | domain accounts hiring now | no, recent posts |
+| Bluesky profile search and followers (`searchActors`, `getFollowers` on `public.api.bsky.app`) | domain accounts that may be companies | no, the network at that moment |
 | the snapshot's `bluesky.json` | companies whose domain is their Bluesky handle | yes, public |
 | DNS-over-HTTPS, `/.well-known/atproto-did`, plc.directory | handles checked both ways | the network at that moment |
 
@@ -216,6 +223,12 @@ Personio) are right. Of the moved domains, the country versions
 wrong and are now excluded; the 21 left are rebrands to the same name.
 Earlier hand checks of the repair: boards 20 of 20, websites 25 of 25
 ([growing-the-list.md](growing-the-list.md)).
+
+7 November 2026, discovery only (`--limit 20`, 77 s): 794 hiring posts
+gave 61 domain accounts, the profile search 40 more (36 over the cap), 2
+handles failed the check both ways; 1 new company with a live board
+(greenhouse, linked from its website). The 28 companies on Bluesky
+without a board (mostly atproto apps) have none to find yet.
 
 Few new companies come from hiring posts: most domain accounts posting
 "hiring" are job boards, newsrooms or people, and have no board linked
