@@ -392,6 +392,7 @@
 	"form.location": "Lieu {number}",
 	"form.list.name.placeholder": "ex. Coopératives à Lyon",
 	"form.list.add.help": "Tapez un nom, un tag ou un lieu, puis touchez les entreprises à ajouter : la recherche reste, pour en ajouter plusieurs.",
+	"form.list.add.hiring": "Celles qui recrutent le plus, ou tapez un nom, un tag ou un lieu :",
 	"form.list.noMatch": "Personne ne l'a encore décrite.",
 	"form.list.suggestions": "Entreprises à ajouter",
 	"form.list.open": "Qui ajoute des entreprises",

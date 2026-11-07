@@ -44,6 +44,8 @@
 	/>
 	{#if query.trim() && !found.length}
 		<small id="{id}-help">{t('form.list.noMatch')} <a href="/add?url={encodeURIComponent(query.trim())}">{t('company.describe')}</a></small>
+	{:else if !query.trim() && found.length}
+		<small id="{id}-help">{t('form.list.add.hiring')}</small>
 	{:else}
 		<small id="{id}-help">{t('form.list.add.help')}</small>
 	{/if}

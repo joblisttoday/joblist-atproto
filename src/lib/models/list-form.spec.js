@@ -69,8 +69,9 @@ describe('findCompanies', () => {
 	];
 	const jobs = new Map([['zcoop.org', 5]]);
 
-	it('finds nothing before something is typed', () => {
-		expect(findCompanies(companies, [], ' ', jobs, 8)).toEqual([]);
+	it('offers the companies hiring most before something is typed', () => {
+		expect(findCompanies(companies, [], ' ', jobs, 8).map((c) => c.key)).toEqual(['zcoop.org']);
+		expect(findCompanies(companies, ['zcoop.org'], '', jobs, 8)).toEqual([]);
 	});
 
 	it('ranks names starting with the words first, then by open jobs', () => {

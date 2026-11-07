@@ -82,7 +82,13 @@ export function previewList(form, did) {
  */
 export function findCompanies(companies, chosen, query, jobs, limit) {
 	const words = query.toLowerCase().split(/\s+/).filter(Boolean);
-	if (!words.length) return [];
+	// Nothing typed yet: the companies hiring most, to start from.
+	if (!words.length) {
+		return [...companies]
+			.filter((c) => !chosen.includes(c.key) && jobs.get(c.key))
+			.sort((a, b) => (jobs.get(b.key) || 0) - (jobs.get(a.key) || 0))
+			.slice(0, limit);
+	}
 	const start = words.join(' ');
 	const rank = (/** @type {Company} */ c) => (c.name.toLowerCase().startsWith(start) || c.key.startsWith(start) ? 0 : 1);
 	return [...companies]

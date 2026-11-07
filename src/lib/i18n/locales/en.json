@@ -391,6 +391,7 @@
 	"form.location": "Location {number}",
 	"form.list.name.placeholder": "e.g. Co-ops in Lyon",
 	"form.list.add.help": "Type a name, a tag or a place, then tap the companies to add: the search stays, to add several.",
+	"form.list.add.hiring": "Hiring most now, or type a name, a tag or a place:",
 	"form.list.noMatch": "Nobody has described it yet.",
 	"form.list.suggestions": "Companies to add",
 	"form.list.open": "Who adds companies",
