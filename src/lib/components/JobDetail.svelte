@@ -78,7 +78,7 @@
 					<a href="/company/{job.company}">{name}</a>
 				</h2>
 				{#if atCompany > 1}
-					<p><a href="/company/{job.company}">{t('job.company.more', { count: atCompany.toLocaleString(), name })}</a></p>
+					<p><a href="/company/{job.company}">{t('job.company.more', { count: atCompany, name })}</a></p>
 				{:else if atCompany === 1}
 					<p><small>{t('job.company.one', { name })}</small></p>
 				{/if}
