@@ -12,7 +12,6 @@
 import config from '../src/lib/data/config.json' with { type: 'json' };
 import { postPageUrl } from '../src/lib/models/job-post.js';
 import { FIELDS, fieldsOf, indexFile, landingFile, slugify } from '../src/lib/models/landing.js';
-import { digestFile } from './digest.js';
 import { placeKey, placeNames } from './places.js';
 
 /**
@@ -183,8 +182,7 @@ export function landingFiles(jobs, names, places, generatedAt) {
 			}
 		],
 		[landingFile({}), file(sorted)],
-		[config.searchFeed.file, recentFile(sorted, generatedAt, names)],
-		[config.bot.file, digestFile({ sorted, groups, cities, pairs, cityName: (slug) => nameOf(spellings, slug), generatedAt })]
+		[config.searchFeed.file, recentFile(sorted, generatedAt, names)]
 	];
 	for (const city of cities) {
 		const own = pairs.filter((p) => p.city === city).map(({ field }) => ({ slug: field, count: count(`in/${city}/${field}`) }));

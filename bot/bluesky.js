@@ -1,6 +1,6 @@
 /**
  * The few calls the bot makes to its own account's PDS, with fetch only (no npm
- * package runs where its password is). Far under the PDS limits: a dozen posts a day.
+ * package runs where its password is). One post a week.
  */
 import config from '../src/lib/data/config.json' with { type: 'json' };
 import { getPds, resolveDid } from '../src/lib/atproto/identity.js';
@@ -42,11 +42,11 @@ export async function signIn(handle, password) {
 }
 
 /**
- * When the account last started a digest (its first post carries config.bot.tag), from its newest posts.
+ * When the account last posted the trends (its posts carry config.bot.tag), from its newest posts.
  * @param {Session} session
  * @returns {Promise<number>} 0: none found
  */
-export async function lastDigest({ pds, did }) {
+export async function lastPost({ pds, did }) {
 	const params = new URLSearchParams({ repo: did, collection: POST, limit: '50' });
 	const { records = [] } = await call(`${pds}/xrpc/com.atproto.repo.listRecords?${params}`, {});
 	const times = records
@@ -56,25 +56,16 @@ export async function lastDigest({ pds, did }) {
 }
 
 /**
- * Posts a thread, each post a reply to the one before.
  * @param {Session} session
- * @param {import('./thread.js').Post[]} posts
- * @param {number} pauseMs between two posts
- * @returns {Promise<Ref[]>}
+ * @param {import('./post.js').Post} post
+ * @returns {Promise<Ref>}
  */
-export async function postThread({ pds, did, token }, posts, pauseMs) {
-	/** @type {Ref[]} */
-	const refs = [];
-	for (const post of posts) {
-		if (refs.length) await new Promise((done) => setTimeout(done, pauseMs));
-		const reply = refs.length ? { root: refs[0], parent: /** @type {Ref} */ (refs.at(-1)) } : undefined;
-		const record = { $type: POST, ...post, ...(reply && { reply }), langs: [config.defaultLocale], createdAt: new Date().toISOString() };
-		const { uri, cid } = await call(`${pds}/xrpc/com.atproto.repo.createRecord`, {
-			method: 'POST',
-			headers: { 'content-type': 'application/json', authorization: `Bearer ${token}` },
-			body: JSON.stringify({ repo: did, collection: POST, record })
-		});
-		refs.push({ uri, cid });
-	}
-	return refs;
+export async function createPost({ pds, did, token }, post) {
+	const record = { $type: POST, ...post, langs: [config.defaultLocale], createdAt: new Date().toISOString() };
+	const { uri, cid } = await call(`${pds}/xrpc/com.atproto.repo.createRecord`, {
+		method: 'POST',
+		headers: { 'content-type': 'application/json', authorization: `Bearer ${token}` },
+		body: JSON.stringify({ repo: did, collection: POST, record })
+	});
+	return { uri, cid };
 }

@@ -2,7 +2,7 @@
 # publishes it to the public repo joblisttoday/joblist-snapshot (GitHub Pages),
 # which the app reads. Free, and needs no Cloudflare credentials.
 # Secrets: SNAPSHOT_DEPLOY_KEY (write deploy key of joblist-snapshot);
-# optional BOT_HANDLE and BOT_APP_PASSWORD: the account that posts the day's new jobs (bot/).
+# optional BOT_HANDLE and BOT_APP_PASSWORD: the account that posts the week's trends (bot/).
 # The site itself (prerendered pages) is built and deployed by Cloudflare Workers Builds on push.
 # Also publishes the last crawl (branch `crawl`) under crawl/.
 #
@@ -94,8 +94,8 @@ jobs:
           git -c user.name=joblist -c user.email=1502484+4www@users.noreply.github.com commit -qm "Snapshot $(date -u +%FT%TZ)"
           GIT_SSH_COMMAND="ssh -i ~/.ssh/snapshot" git push -qf git@github.com:joblisttoday/joblist-snapshot.git gh-pages
 
-  # The day's new jobs on Bluesky (bot/index.js), at most once a day: counts per city, never
-  # a mention. A dry run until the BOT_* secrets are set. No npm: the bot uses fetch only.
+  # The week's trends on Bluesky (bot/index.js), at most once a week: counts, never a
+  # mention. A dry run until the BOT_* secrets are set. No npm: the bot uses fetch only.
   announce:
     needs: publish
     runs-on: ubuntu-latest
@@ -113,7 +113,7 @@ jobs:
         with:
           name: snapshot
           path: snapshot
-      - name: Post the day's thread
+      - name: Post the week's trends
         env:
           BOT_HANDLE: ${{ secrets.BOT_HANDLE }}
           BOT_APP_PASSWORD: ${{ secrets.BOT_APP_PASSWORD }}

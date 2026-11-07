@@ -218,14 +218,9 @@
 		"shownWeeks": 26
 	},
 	"bot": {
-		"file": "landing/digest.json",
-		"hours": 24,
-		"minHours": 20,
-		"minJobs": 10,
-		"cities": 10,
-		"fields": 3,
-		"tag": "joblistdigest",
-		"pauseMs": 1500
+		"minHours": 160,
+		"tag": "joblistweekly",
+		"shown": 3
 	},
 	"links": {
 		"signup": "https://bsky.app",
