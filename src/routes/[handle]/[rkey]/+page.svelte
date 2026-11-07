@@ -15,8 +15,7 @@
 	import { session } from '#lib/auth/session.svelte.js';
 	import { data, handleOf, membersOf, network } from '#lib/network/network.svelte.js';
 	import { loadList } from '#lib/network/load-list.js';
-	import { jobCounts } from '#lib/network/job-counts.svelte.js';
-	import { listStats } from '#lib/models/list-filters.js';
+	import { jobCounts, listJobStats } from '#lib/network/job-counts.svelte.js';
 	import { listPlace } from '#lib/models/list-place.js';
 	import { readView } from '#lib/navigation/explore-view.js';
 	import { t } from '#lib/i18n/index.svelte.js';
@@ -76,7 +75,7 @@
 	$effect(() => {
 		if (chosen || !list || !jobCounts().size) return;
 		chosen = true;
-		if (!listStats(membership.members.map((m) => m.key), jobCounts()).jobs) show = 'companies';
+		if (!listJobStats(list).jobs) show = 'companies';
 	});
 
 	// What is shown stays in the address, to share or come back to.

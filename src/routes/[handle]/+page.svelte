@@ -10,9 +10,9 @@
 	import ProfileHeader from '#lib/components/ProfileHeader.svelte';
 	import { resolveDid } from '#lib/atproto/identity.js';
 	import { session, signOut } from '#lib/auth/session.svelte.js';
-	import { data, handleOf, membersOf } from '#lib/network/network.svelte.js';
-	import { jobCounts } from '#lib/network/job-counts.svelte.js';
-	import { findLists, listStats } from '#lib/models/list-filters.js';
+	import { data, handleOf } from '#lib/network/network.svelte.js';
+	import { listJobStats } from '#lib/network/job-counts.svelte.js';
+	import { findLists } from '#lib/models/list-filters.js';
 	import { isLive, toJob } from '#lib/models/job-post.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
@@ -21,7 +21,7 @@
 
 	/** @param {import('#lib/models/list.js').List[]} lists */
 	function usefulFirst(lists) {
-		const stats = new Map(lists.map((l) => [l.uri, listStats(membersOf(l).members.map((m) => m.key), jobCounts())]));
+		const stats = new Map(lists.map((l) => [l.uri, listJobStats(l)]));
 		return findLists(lists, { query: '', hiring: false, open: false, mine: false }, stats, { handleOf });
 	}
 
