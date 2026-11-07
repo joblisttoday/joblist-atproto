@@ -16,19 +16,24 @@ export const noFilters = { query: '', where: '', remote: '' };
  * @type {Record<AddressFilter, string>}
  */
 const params = { query: 'q', where: 'where', remote: 'remote' };
+/** Only jobs showing their pay: ?pay=1 */
+const payParam = 'pay';
 
 /**
- * Filters from a page address: /jobs?q=frontend&where=berlin&remote=remote
+ * Filters from a page address: /jobs?q=frontend&where=berlin&remote=remote&pay=1
  * @param {{get: (name: string) => string | null}} search the address's search params
  * @returns {JobFilters}
  */
 export function fromParams(search) {
 	const remote = search.get(params.remote) || '';
-	return {
+	/** @type {JobFilters} */
+	const filters = {
 		query: search.get(params.query) || '',
 		where: search.get(params.where) || '',
 		remote: remote === 'remote' || remote === 'anywhere' ? remote : ''
 	};
+	if (search.get(payParam) === '1') filters.pay = true;
+	return filters;
 }
 
 /**
@@ -41,6 +46,7 @@ export function toParams(filters) {
 		const value = filters[/** @type {AddressFilter} */ (field)].trim();
 		if (value) search.set(name, value);
 	}
+	if (filters.pay) search.set(payParam, '1');
 	const text = search.toString();
 	return text ? `?${text}` : '';
 }
@@ -78,10 +84,10 @@ export function nearby(near) {
 }
 
 /** @param {JobFilters} filters */
-function normalize({ query, where, remote }) {
+function normalize({ query, where, remote, pay }) {
 	/** @param {string} s */
 	const tidy = (s) => s.trim().toLowerCase().replace(/\s+/g, ' ');
-	return { query: tidy(query), where: tidy(where), remote };
+	return { query: tidy(query), where: tidy(where), remote, pay };
 }
 
 /**

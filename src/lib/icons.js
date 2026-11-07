@@ -6,6 +6,7 @@
 import ArrowLeft from '@lucide/svelte/icons/arrow-left';
 import ArrowUpRight from '@lucide/svelte/icons/arrow-up-right';
 import BadgeCheck from '@lucide/svelte/icons/badge-check';
+import Banknote from '@lucide/svelte/icons/banknote';
 import Bike from '@lucide/svelte/icons/bike';
 import Bookmark from '@lucide/svelte/icons/bookmark';
 import BookmarkCheck from '@lucide/svelte/icons/bookmark-check';
@@ -44,6 +45,7 @@ export const icons = {
 	signin: LogIn,
 	near: LocateFixed,
 	remote: House,
+	pay: Banknote,
 	area: ScanSearch,
 	close: X,
 	back: ArrowLeft,

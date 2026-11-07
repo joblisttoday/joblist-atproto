@@ -94,6 +94,11 @@
 					<button type="button" onclick={() => (filters.where = country.name)}>{t('explore.remoteFrom', { country: country.label })}</button>
 				</li>
 			{/if}
+			<li>
+				<button type="button" aria-pressed={filters.pay ? 'true' : 'false'} onclick={() => (filters.pay = !filters.pay)}>
+					<Icon name="pay" /> {t('jobs.filter.pay')}
+				</button>
+			</li>
 		</menu>
 		{@render tools?.()}
 		</jl-explore-chips>

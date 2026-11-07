@@ -1,5 +1,6 @@
 import { getJson, joinPlace, onceFor } from './job.js';
 import { htmlToText } from './text.js';
+import { toPeriod, toSalary } from './salary.js';
 
 /** @type {import('./index.js').Fetcher} */
 export default async function recruitee(id) {
@@ -11,7 +12,8 @@ export default async function recruitee(id) {
 		location: j.location || joinPlace(j.city, j.country),
 		department: j.department,
 		published: j.published_at,
-		remote: j.remote ? 'remote' : j.hybrid ? 'hybrid' : j.on_site ? 'onsite' : undefined
+		remote: j.remote ? 'remote' : j.hybrid ? 'hybrid' : j.on_site ? 'onsite' : undefined,
+		salary: j.salary ? toSalary({ ...j.salary, period: toPeriod(j.salary.period) }) : undefined
 	}));
 }
 

@@ -95,6 +95,7 @@
 	},
 	"jobs": {
 		"pageSize": 50,
+		"olderDays": 90,
 		"placesSuggested": 30,
 		"placesShown": 3,
 		"nearbyShown": 5,
@@ -113,7 +114,9 @@
 			"teletravail",
 			"fernarbeit",
 			"mobiles arbeiten"
-		]
+		],
+		"hybridWords": ["hybrid", "hybride"],
+		"onsiteWords": ["on-site", "onsite", "on site", "in-office", "in office", "office-based", "office based", "in-person", "in person", "sur site", "vor ort"]
 	},
 	"companies": {
 		"pageSize": 100

@@ -2,8 +2,9 @@
 	import Icon from './Icon.svelte';
 	import config from '#lib/data/config.json';
 	import JobDescription from './JobDescription.svelte';
-	import { offerPlaces, time, workplace } from '#lib/models/job.js';
+	import { isOlder, offerPlaces, time, workplace } from '#lib/models/job.js';
 	import { travelMinutes } from '#lib/models/distance.js';
+	import { payAmount } from '#lib/models/salary.js';
 	import { postPath } from '#lib/models/job-post.js';
 	import { handleOf } from '#lib/network/network.svelte.js';
 	import { markOf } from '#lib/network/job-marks.svelte.js';
@@ -39,10 +40,14 @@
 					minutes: travelMinutes(job.km)
 				})
 	);
-	// Where and for whom on one line; how far, how and when as chips.
+	// What it pays, when its board says.
+	const pay = $derived(job.salary ? t(`job.salary.${job.salary.period}`, { amount: payAmount(job.salary, i18n.locale) }) : '');
+	// Where and for whom on one line; how far, how, how much and when as chips.
 	const line = $derived([location, job.department].filter(Boolean).join(' · '));
-	const chips = $derived([distance, place, ago(time(job.published), i18n.locale)].filter(Boolean));
+	const chips = $derived([distance, place, pay, ago(time(job.published), i18n.locale)].filter(Boolean));
 	const applied = $derived(markOf(job) === 'applied');
+	// First seen long ago: still listed, said so beside its date.
+	const older = $derived(isOlder(job));
 	// Each company keeps its color, from its key.
 	// Its Bluesky picture, when the company is there; else its initial.
 	const avatar = $derived(company ? accountOf(job.company)?.avatar : undefined);
@@ -52,7 +57,7 @@
 	let open = $state(expanded);
 </script>
 
-<jl-job posted={posted ? (posted.verified ? 'company' : 'shared') : undefined} {open} fresh={fresh || undefined} selected={selected || undefined} applied={applied || undefined}>
+<jl-job posted={posted ? (posted.verified ? 'company' : 'shared') : undefined} older={older || undefined} {open} fresh={fresh || undefined} selected={selected || undefined} applied={applied || undefined}>
 	{#if company}<jl-avatar style="--hue: {hue}" aria-hidden="true">{#if avatar}<img src={thumbnail(avatar)} alt="" loading="lazy" />{:else}{company.trim().charAt(0).toUpperCase()}{/if}</jl-avatar>{/if}
 	{#if posted}
 		<a href={postPath(posted.did, posted.rkey)}>{job.title}</a>
@@ -69,14 +74,14 @@
 		<button type="button" onclick={onselect} aria-current={selected ? 'true' : undefined}>
 			<strong>{#if fresh}<mark>{t('job.new')}</mark> {/if}{job.title}</strong>
 			<small>{company ? `${company}${line ? ' · ' : ''}` : ''}{line}</small>
-			<jl-chips>{#if applied}<mark><Icon name="applied" /> {t('marks.applied')}</mark>{/if}{#each chips as chip (chip)}<span>{#if chip === distance}<Icon name={travelIcon} />{' '}{/if}{chip}</span>{/each}</jl-chips>
+			<jl-chips>{#if applied}<mark><Icon name="applied" /> {t('marks.applied')}</mark>{/if}{#each chips as chip (chip)}<span>{#if chip === distance}<Icon name={travelIcon} />{' '}{/if}{chip}</span>{/each}{#if older}<em title={t('job.older.hint', { days: config.jobs.olderDays })}>{t('job.older')}</em>{/if}</jl-chips>
 		</button>
 	{:else}
 		<details bind:open>
 			<summary>
 				<strong>{#if fresh}<mark>{t('job.new')}</mark> {/if}{job.title}</strong>
 				<small>{company ? `${company}${line ? ' · ' : ''}` : ''}{line}</small>
-				<jl-chips>{#if applied}<mark><Icon name="applied" /> {t('marks.applied')}</mark>{/if}{#each chips as chip (chip)}<span>{#if chip === distance}<Icon name={travelIcon} />{' '}{/if}{chip}</span>{/each}</jl-chips>
+				<jl-chips>{#if applied}<mark><Icon name="applied" /> {t('marks.applied')}</mark>{/if}{#each chips as chip (chip)}<span>{#if chip === distance}<Icon name={travelIcon} />{' '}{/if}{chip}</span>{/each}{#if older}<em title={t('job.older.hint', { days: config.jobs.olderDays })}>{t('job.older')}</em>{/if}</jl-chips>
 			</summary>
 			{#if open}{@render actions?.()}<JobDescription {job} {company} />{/if}
 		</details>
@@ -184,5 +189,10 @@
 	mark {
 		background: none;
 		color: var(--color-ok);
+	}
+	/* An offer listed for long: told, not hidden. */
+	jl-chips > em {
+		font-style: normal;
+		color: var(--color-warn);
 	}
 </style>

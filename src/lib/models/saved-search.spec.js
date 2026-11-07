@@ -11,6 +11,11 @@ describe('search addresses', () => {
 		expect(toParams({ query: ' ', where: '', remote: '' })).toBe('');
 		expect(isEmpty({ query: '', where: '', remote: '' })).toBe(true);
 	});
+	it('keeps "shows pay" as pay=1', () => {
+		expect(toParams({ ...search, pay: true })).toBe('?q=frontend&where=Berlin&remote=remote&pay=1');
+		expect(fromParams(new URLSearchParams('pay=1'))).toEqual({ query: '', where: '', remote: '', pay: true });
+		expect(sameSearch(search, { ...search, pay: true })).toBe(false);
+	});
 	it('ignores an unknown remote value', () => {
 		expect(fromParams(new URLSearchParams('remote=yes')).remote).toBe('');
 	});

@@ -3,15 +3,18 @@ import { getJobs } from '../src/lib/ats/index.js';
 import { mapLimit } from '../src/lib/atproto/xrpc.js';
 import { hasJobsApi, locationPoints } from '../src/lib/models/company.js';
 import { isLive, placeNames, toPost } from '../src/lib/models/job-post.js';
+import { workplace } from '../src/lib/models/job.js';
+import { packSalary } from '../src/lib/ats/salary.js';
 
 /**
  * @typedef {import('../src/lib/models/company.js').Company} Company
  * @typedef {import('../src/lib/atproto/records.js').RepoRecord} RepoRecord
- * @typedef {{t: string, u: string, c: string, l?: string, d?: string, p?: string, i?: string, r?: string, s?: string, v?: 1, g?: [number, number]}} IndexedJob
+ * @typedef {{t: string, u: string, c: string, l?: string, d?: string, p?: string, i?: string, r?: string, s?: string, v?: 1, g?: [number, number], m?: [number, number, string, string]}} IndexedJob
  *   Compact job (every phone downloads all of them): title, url, company key, location, department,
  *   published (to the minute), id at its board (left out when the url ends with it),
  *   where the work happens (onsite, hybrid, remote), source (a record uri; none for a job board),
- *   verified, where it is ([longitude, latitude]).
+ *   verified, where it is ([longitude, latitude]),
+ *   pay when the board gives it ([min, max, currency, period], 0 for an unknown bound: see src/lib/ats/salary.js).
  */
 
 /**
@@ -35,7 +38,9 @@ export async function fetchBoardJobs(companies) {
 				d: j.department || undefined,
 				p: toMinute(j.published),
 				i: j.id && !j.url.endsWith(`/${j.id}`) ? j.id : undefined,
-				r: j.remote || undefined
+				// What the board says, else what its location or title says ("Remote - USA", "Hybrid").
+				r: workplace(j) || undefined,
+				m: packSalary(j.salary)
 			});
 		}
 	});

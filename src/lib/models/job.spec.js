@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { byCompany, commonPlaces, filterJobs, isRemote, newestFirst, offerPlaces, remoteLimit, sameOffers, tidyPlace, time, workplace } from './job.js';
+import { byCompany, commonPlaces, filterJobs, isOlder, isRemote, newestFirst, offerPlaces, placeCounts, remoteLimit, sameOffers, tidyPlace, time, workplace } from './job.js';
 
 /** @param {Partial<import('#lib/ats/job.js').Job>} job */
 const job = (job) => ({ title: 'Engineer', url: 'https://x', company: 'acme.org', ...job });
@@ -17,6 +17,13 @@ describe('isRemote', () => {
 		expect(workplace(job({ location: 'Remote', remote: 'hybrid' }))).toBe('hybrid');
 		expect(isRemote(job({ title: 'Remote Sensing Engineer', location: 'Munich' }))).toBe(false);
 		expect(isRemote(job({ title: 'Engineer - Remote' }))).toBe(true);
+	});
+	it('reads hybrid and on site from the location, and a marked hybrid from the title', () => {
+		expect(workplace(job({ location: 'Berlin - Hybrid' }))).toBe('hybrid');
+		expect(workplace(job({ title: 'Designer (Hybrid)' }))).toBe('hybrid');
+		expect(workplace(job({ title: 'Hybrid Cloud Engineer' }))).toBe(undefined);
+		expect(workplace(job({ location: 'Paris (On-site)' }))).toBe('onsite');
+		expect(workplace(job({ location: 'Paris' }))).toBe(undefined);
 	});
 });
 
@@ -44,6 +51,10 @@ describe('tidyPlace', () => {
 });
 
 describe('filterJobs', () => {
+	it('keeps only the jobs that show their pay', () => {
+		const paid = job({ url: 'https://x/1', salary: { min: 1, currency: 'EUR', period: 'hour' } });
+		expect(filterJobs([paid, job({ url: 'https://x/2' })], { ...none, pay: true }, names)).toEqual([paid]);
+	});
 	const jobs = [
 		job({ title: 'Designer', location: 'Berlin, Germany', published: '2024-01-01' }),
 		job({ title: 'Engineer', location: 'Paris', published: '2024-02-01', url: 'b' }),
@@ -111,6 +122,21 @@ describe('commonPlaces', () => {
 		const jobs = [job({ location: 'Berlin, Germany' }), job({ location: 'Berlin' }), job({ location: 'Paris' })];
 		expect(commonPlaces(jobs, 2)).toEqual(['Berlin', 'Germany']);
 	});
+	it('counts spellings of a place together, under the most used one', () => {
+		const jobs = [
+			job({ location: 'San Francisco, CA' }),
+			job({ location: 'San Francisco, California' }),
+			job({ location: 'Los Angeles, California' }),
+			job({ location: 'USA' }),
+			job({ location: 'Remote - United States' }),
+			job({ location: 'United States' })
+		];
+		expect(placeCounts(jobs, 3)).toEqual([['California', 3], ['United States', 3], ['San Francisco', 2]]);
+	});
+	it('leaves out work-place words', () => {
+		const jobs = [job({ location: 'Remote' }), job({ location: 'Hybrid' }), job({ location: 'Remote job' }), job({ location: 'On-site, Paris' })];
+		expect(commonPlaces(jobs)).toEqual(['Paris']);
+	});
 });
 
 describe('time', () => {
@@ -118,6 +144,18 @@ describe('time', () => {
 		expect(time('2024-01-01 10:00:00 UTC')).toBe(Date.parse('2024-01-01T10:00:00Z'));
 		expect(time('nope')).toBe(0);
 		expect(time(undefined)).toBe(0);
+	});
+});
+
+describe('isOlder', () => {
+	const now = Date.parse('2026-11-07T00:00Z');
+	it('marks board offers first seen more than the given days ago', () => {
+		expect(isOlder(job({ published: '2026-07-01T00:00Z' }), now, 90)).toBe(true);
+		expect(isOlder(job({ published: '2026-10-01T00:00Z' }), now, 90)).toBe(false);
+	});
+	it('never marks undated offers, nor offers posted on joblist (they expire)', () => {
+		expect(isOlder(job({}), now, 90)).toBe(false);
+		expect(isOlder(job({ published: '2026-01-01T00:00Z', posted: { did: 'did:x', rkey: 'r', verified: false } }), now, 90)).toBe(false);
 	});
 });
 

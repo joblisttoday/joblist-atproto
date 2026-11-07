@@ -1,13 +1,15 @@
 import config from '#lib/data/config.json' with { type: 'json' };
 import { distanceKm, inArea, travelMinutes } from './distance.js';
 import { placeMatcher, remoteRegion } from './place.js';
+import { placeParts } from './place-names.js';
 
 /**
  * @typedef {import('#lib/ats/job.js').Job} Job
  * @typedef {'' | 'remote' | 'anywhere'} RemoteFilter
  *   remote: jobs done remotely; anywhere: remote jobs that name no country or region they are limited to.
  * @typedef {[[number, number], [number, number]]} Area [[west, south], [east, north]]
- * @typedef {{query: string, where: string, remote: RemoteFilter, near?: [number, number] | null, within?: number, area?: Area | null}} JobFilters
+ * @typedef {{query: string, where: string, remote: RemoteFilter, pay?: boolean, near?: [number, number] | null, within?: number, area?: Area | null}} JobFilters
+ *   pay: only the jobs whose board says what they pay.
  *   near: where the person is ([longitude, latitude]), to find jobs close by; never kept in the page address.
  *   area: only the jobs in it (the part of the map someone looks at).
  *   within: at most that many minutes away (by the usual travel mode), 0 for any distance.
@@ -17,19 +19,24 @@ const remoteWords = config.jobs.remoteWords;
 const remoteText = new RegExp(`\\b(${remoteWords.join('|')})\\b`, 'i');
 // In a title, only a marked remote counts: "Designer (Remote)", "Engineer – Remote", not "Remote Sensing Engineer".
 const remoteTitle = new RegExp(`([(\\[|,]|\\s[-–]\\s)\\s*(${remoteWords.join('|')})\\b`, 'i');
+const hybridText = new RegExp(`\\b(${config.jobs.hybridWords.join('|')})\\b`, 'i');
+const hybridTitle = new RegExp(`([(\\[|,]|\\s[-–]\\s)\\s*(${config.jobs.hybridWords.join('|')})\\b`, 'i');
+const onsiteText = new RegExp(`\\b(${config.jobs.onsiteWords.join('|')})\\b`, 'i');
 
 /** @param {string} text */
 const words = (text) => text.toLowerCase().split(/\s+/).filter(Boolean);
 
 /**
- * Where the work happens: what the job board or the poster says, else what the location or title says.
+ * Where the work happens: what the job board or the poster says, else what the location
+ * or title says ("Remote - USA", "Berlin (Hybrid)"; on site only from the location).
  * @param {Job} job
  * @returns {'onsite' | 'hybrid' | 'remote' | undefined}
  */
 export function workplace(job) {
 	if (job.remote === 'onsite' || job.remote === 'hybrid' || job.remote === 'remote') return job.remote;
 	if (remoteText.test(job.location || '') || remoteTitle.test(job.title)) return 'remote';
-	if (/\bhybrid\b/i.test(`${job.location || ''} ${job.title}`)) return 'hybrid';
+	if (hybridText.test(job.location || '') || hybridTitle.test(job.title)) return 'hybrid';
+	if (onsiteText.test(job.location || '')) return 'onsite';
 	return undefined;
 }
 
@@ -56,13 +63,14 @@ export function remoteLimit(job) {
  * @param {JobFilters} filters
  * @param {Map<string, string>} names company names by key
  */
-export function filterJobs(jobs, { query, where, remote, near, within = 0, area }, names) {
+export function filterJobs(jobs, { query, where, remote, pay, near, within = 0, area }, names) {
 	const what = words(query);
 	const place = where.trim() ? placeMatcher(where) : null;
 	const matching =
-		!what.length && !place && !remote && !area
+		!what.length && !place && !remote && !pay && !area
 			? jobs
 			: jobs.filter((job) => {
+					if (pay && !job.salary) return false;
 					if (area && !(job.point && inArea(job.point, area))) return false;
 					if (remote && !isRemote(job)) return false;
 					if (remote === 'anywhere' && remoteLimit(job)) return false;
@@ -157,21 +165,35 @@ export function commonPlaces(jobs, limit = config.jobs.placesSuggested) {
 }
 
 /**
- * The places named most in jobs, with how many jobs name them.
+ * The places named most in jobs, with how many jobs name them. Spellings of the same
+ * place count together ("CA" and "California", "USA" and "United States"), under the
+ * most used one; work-place words ("Remote", "Hybrid") are not places.
  * @param {Job[]} jobs
  * @param {number} limit
  * @returns {[string, number][]}
  */
 export function placeCounts(jobs, limit) {
+	// Far fewer locations than jobs: each is read once.
 	/** @type {Map<string, number>} */
+	const locations = new Map();
+	for (const job of jobs) locations.set(job.location || '', (locations.get(job.location || '') || 0) + 1);
+	/** @type {Map<string, {count: number, names: Map<string, number>}>} */
 	const counts = new Map();
-	for (const job of jobs) {
-		for (const part of (job.location || '').split(/[,;/|]/)) {
-			const place = part.trim();
-			if (place.length > 1) counts.set(place, (counts.get(place) || 0) + 1);
+	for (const [location, jobCount] of locations) {
+		const seen = new Set();
+		for (const { key, name } of placeParts(location)) {
+			if (seen.has(key)) continue;
+			seen.add(key);
+			const place = counts.get(key) || { count: 0, names: new Map() };
+			place.count += jobCount;
+			place.names.set(name, (place.names.get(name) || 0) + jobCount);
+			counts.set(key, place);
 		}
 	}
-	return [...counts].sort((a, b) => b[1] - a[1]).slice(0, limit);
+	return [...counts.values()]
+		.sort((a, b) => b.count - a.count)
+		.slice(0, limit)
+		.map(({ count, names }) => [[...names].reduce((a, b) => (b[1] > a[1] ? b : a))[0], count]);
 }
 
 /**
@@ -188,6 +210,18 @@ export function time(value) {
 		times.set(key, ms);
 	}
 	return ms;
+}
+
+/**
+ * Whether a job board offer was first seen more than `days` ago: still listed,
+ * but maybe filled. Shown as such, never hidden (offers posted on joblist expire instead).
+ * @param {Job} job
+ * @param {number} [now]
+ * @param {number} [days]
+ */
+export function isOlder(job, now = Date.now(), days = config.jobs.olderDays) {
+	const at = time(job.published);
+	return !job.posted && at > 0 && now - at > days * 864e5;
 }
 
 /** Dates already read: sorting tens of thousands of jobs reads each many times. */

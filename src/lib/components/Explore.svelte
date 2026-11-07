@@ -61,7 +61,7 @@
 	/** @param {import('#lib/models/saved-search.js').SavedSearch} search */
 	function open(search) {
 		since = search.seen;
-		filters = { query: search.query, where: search.where, remote: search.remote, near: search.near ?? null, within: search.within || 0 };
+		filters = { query: search.query, where: search.where, remote: search.remote, pay: search.pay, near: search.near ?? null, within: search.within || 0 };
 		markSeen(search);
 	}
 
@@ -330,6 +330,9 @@
 					{/if}
 					{#if filters.remote}
 						<li><button type="button" onclick={() => (filters.remote = '')}>{t('explore.notOnlyRemote')}</button></li>
+					{/if}
+					{#if filters.pay}
+						<li><button type="button" onclick={() => (filters.pay = false)}>{t('explore.notOnlyPay')}</button></li>
 					{/if}
 					{#if filters.where}
 						<li><button type="button" onclick={() => (filters.where = '')}>{t('explore.clear', { text: filters.where })}</button></li>
