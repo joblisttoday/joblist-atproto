@@ -1,61 +1,53 @@
 <script>
 	import config from '#lib/data/config.json';
 	import webmcp from '#lib/data/webmcp.json';
-	import { createRecord, putRecord } from '#lib/atproto/write.js';
+	import ChoiceChips from './ChoiceChips.svelte';
+	import ListCompanyOrder from './ListCompanyOrder.svelte';
+	import ListCompanyPicker from './ListCompanyPicker.svelte';
+	import ListItem from './ListItem.svelte';
 	import { session } from '#lib/auth/session.svelte.js';
-	import { data, upsertLocal } from '#lib/network/network.svelte.js';
-	import { toRecord } from '#lib/models/list.js';
-	import { searchText } from '#lib/models/company.js';
-	import { t } from '#lib/i18n/index.svelte.js';
+	import { saveList } from '#lib/network/save-list.js';
+	import { clearListDraft, readListDraft, writeListDraft } from '#lib/network/list-draft.js';
+	import { listDraftApplies, previewList, resumeDraft, toListForm } from '#lib/models/list-form.js';
+	import { i18n, t } from '#lib/i18n/index.svelte.js';
+	import { untrack } from 'svelte';
 
 	/**
+	 * Make a list of companies, or edit one of the signed-in person's lists.
 	 * @type {{
 	 *   list?: import('#lib/models/list.js').List | null,
-	 *   initial?: {name?: string, description?: string, companies?: string[], copiedFrom?: string, open?: boolean},
-	 *   onsaved: (rkey: string) => void,
+	 *   initial?: import('#lib/models/list-form.js').ListStart,
+	 *   onsaved: (saved: {rkey: string, name: string, added: boolean}) => void,
 	 *   oncancel?: () => void
 	 * }}
 	 */
 	let { list = null, initial = {}, onsaved, oncancel } = $props();
 
-	// The form starts from the list as it is now; the page remounts it for another list.
-	const initialForm = () => ({
-		name: list?.name ?? initial.name ?? '',
-		description: list?.description ?? initial.description ?? '',
-		companies: [...(list?.companies ?? initial.companies ?? [])],
-		copiedFrom: list?.copiedFrom ?? initial.copiedFrom,
-		// New lists are open to contributions; their author can still hide any.
-		open: list?.open ?? initial.open ?? true,
-		hidden: [...(list?.hidden ?? [])]
+	// An edit starts from the list as it is (the page remounts the form for another one);
+	// a new list from the draft kept in this browser, when it is the same list.
+	const draft = untrack(() => (list ? null : readListDraft(toListForm(null))));
+	let restored = $state(untrack(() => listDraftApplies(draft, initial)));
+	let form = $state(untrack(() => (restored && draft ? resumeDraft(draft, initial) : toListForm(list, initial))));
+	$effect(() => {
+		if (!list) writeListDraft($state.snapshot(form));
 	});
-	let form = $state(initialForm());
-	// WebMCP: an AI assistant may name and describe the list; the person picks companies and saves.
-	const tool = webmcp.forms.list;
-	let query = $state('');
+	function startOver() {
+		clearListDraft();
+		restored = false;
+		form = toListForm(null, initial);
+	}
+
+	const { nameMax, descriptionMax } = config.listForm;
+	const preview = $derived(previewList(form, session.did || ''));
+	const openOptions = $derived([
+		{ value: 'open', label: t('form.list.open.yes') },
+		{ value: 'closed', label: t('form.list.open.no') }
+	]);
 	let busy = $state(false);
 	/** @type {string | null} */
 	let error = $state(null);
-
-	const suggestions = $derived.by(() => {
-		const words = query.toLowerCase().split(/\s+/).filter(Boolean);
-		if (!words.length) return [];
-		return [...data.companies.values()]
-			.filter((c) => !form.companies.includes(c.key))
-			.filter((c) => {
-				const text = searchText(c);
-				return words.every((w) => text.includes(w));
-			})
-			.slice(0, 8);
-	});
-
-	/**
-	 * @param {number} i
-	 * @param {number} to
-	 */
-	function move(i, to) {
-		const [key] = form.companies.splice(i, 1);
-		form.companies.splice(to, 0, key);
-	}
+	// WebMCP: an AI assistant may name and describe the list; the person picks companies and saves.
+	const tool = webmcp.forms.list;
 
 	/** @param {SubmitEvent} event */
 	async function submit(event) {
@@ -63,19 +55,9 @@
 		busy = true;
 		error = null;
 		try {
-			const record = toRecord(form, list?.createdAt);
-			const res = list
-				? await putRecord(config.collections.list, list.rkey, record)
-				: await createRecord(config.collections.list, record);
-			const rkey = res.uri.split('/').pop() || '';
-			upsertLocal('list', {
-				did: /** @type {string} */ (session.did),
-				rkey,
-				uri: res.uri,
-				cid: res.cid,
-				value: record
-			});
-			onsaved(rkey);
+			const rkey = await saveList($state.snapshot(form), list);
+			if (!list) clearListDraft();
+			onsaved({ rkey, name: form.name.trim(), added: !list });
 		} catch (err) {
 			error = err instanceof Error ? err.message : String(err);
 		} finally {
@@ -84,116 +66,174 @@
 	}
 </script>
 
-<jl-list-form>
+<jl-list-form editing={list ? true : undefined}>
+	{#if list}
+		<p><small>{t('form.list.editing', { name: list.name })}</small></p>
+	{/if}
 	<form onsubmit={submit} toolname={tool.toolname} tooldescription={tool.tooldescription}>
 		<p><small data-required>{t('form.required')}</small></p>
-		<label for="list-name">{t('form.list.name')}</label>
-		<input id="list-name" name="name" toolparamdescription={tool.params.name} bind:value={form.name} required maxlength="100" placeholder={t('form.list.name.placeholder')} />
+		<jl-form-fields>
+			{#if restored}
+				<p><small>{t('form.list.draft')} <button type="button" onclick={startOver}>{t('form.list.draft.clear')}</button></small></p>
+			{/if}
 
-		<label for="list-description">{t('form.list.description')}</label>
-		<textarea id="list-description" name="description" toolparamdescription={tool.params.description} bind:value={form.description} maxlength="3000"></textarea>
-
-		<label><input type="checkbox" bind:checked={form.open} aria-describedby="list-open-help" /> {t('form.list.open')}</label>
-		<small id="list-open-help">{t('form.list.open.help')}</small>
-
-		<fieldset>
-			<legend>{t('form.list.companies')} ({form.companies.length})</legend>
-			<label for="list-add">{t('form.list.add')}</label>
+			<label for="list-name">{t('form.list.name')}</label>
 			<input
-				id="list-add"
-				type="search"
-				bind:value={query}
-				placeholder={t('search.companies')}
-				autocomplete="off"
-				enterkeyhint="search"
-				aria-describedby="list-add-help"
+				id="list-name"
+				name="name"
+				toolparamdescription={tool.params.name}
+				bind:value={form.name}
+				required
+				maxlength={nameMax}
+				placeholder={t('form.list.name.placeholder')}
+				aria-describedby="list-name-help"
 			/>
-			{#if query && !suggestions.length}
-				<small id="list-add-help">{t('form.list.noMatch')} <a href="/add?url={encodeURIComponent(query)}">{t('company.describe')}</a></small>
-			{:else}
-				<small id="list-add-help">{t('form.list.add.help')}</small>
-			{/if}
-			{#if suggestions.length}
-				<ul aria-label={t('form.list.suggestions')}>
-					{#each suggestions as company (company.key)}
-						<li>
-							<button type="button" onclick={() => (form.companies.unshift(company.key), (query = ''))}>
-								<span>+ {company.name}</span> <small>{company.key}</small>
-							</button>
-						</li>
-					{/each}
-				</ul>
-			{/if}
-			<ol>
-				{#each form.companies as key, i (key)}
-					<li>
-						<span>
-							{data.companies.get(key)?.name || key}
-							{#if !data.companies.has(key)}<small>{t('form.list.unknown')}</small>{/if}
-						</span>
-						<button type="button" onclick={() => move(i, i - 1)} disabled={i === 0} aria-label={t('form.list.up')}>↑</button>
-						<button
-							type="button"
-							onclick={() => move(i, i + 1)}
-							disabled={i === form.companies.length - 1}
-							aria-label={t('form.list.down')}>↓</button>
-						<button type="button" onclick={() => form.companies.splice(i, 1)} aria-label={t('form.list.remove')}>×</button>
-					</li>
-				{/each}
-			</ol>
-		</fieldset>
+			<small id="list-name-help">{t('form.list.name.help')}</small>
 
-		{#if error}<p role="alert">{error}</p>{/if}
-		<menu>
-			<button type="submit" disabled={busy}>{busy ? t('form.saving') : t('form.save')}</button>
-			{#if oncancel}<button type="button" onclick={oncancel}>{t('form.cancel')}</button>{/if}
-		</menu>
+			<label for="list-description">{t('form.list.description')}</label>
+			<textarea
+				id="list-description"
+				name="description"
+				toolparamdescription={tool.params.description}
+				bind:value={form.description}
+				maxlength={descriptionMax}
+				placeholder={t('form.list.description.placeholder')}
+				aria-describedby="list-description-help"
+			></textarea>
+			<small id="list-description-help">
+				{t('form.list.description.help')}
+				<data value={form.description.length}>{form.description.length.toLocaleString(i18n.locale)} / {descriptionMax.toLocaleString(i18n.locale)}</data>
+			</small>
+
+			<ChoiceChips
+				name="open"
+				legend={t('form.list.open')}
+				options={openOptions}
+				bind:value={() => (form.open ? 'open' : 'closed'), (value) => (form.open = value === 'open')}
+				required
+				help={t(form.open ? 'form.list.open.yes.help' : 'form.list.open.no.help')}
+			/>
+
+			<fieldset>
+				<legend>{t('form.list.companies')} <data value={form.companies.length}>{form.companies.length.toLocaleString(i18n.locale)}</data></legend>
+				<ListCompanyPicker bind:companies={form.companies} />
+				<ListCompanyOrder bind:companies={form.companies} />
+			</fieldset>
+		</jl-form-fields>
+
+		<aside aria-labelledby="list-preview">
+			<h2 id="list-preview">{t('form.list.preview')}</h2>
+			{#if preview}
+				<jl-preview inert><ListItem list={preview} author={Boolean(session.did)} /></jl-preview>
+			{:else}
+				<p><small>{t('form.list.preview.empty')}</small></p>
+			{/if}
+		</aside>
+
+		<jl-form-actions>
+			{#if error}<p role="alert">{error}</p>{/if}
+			<menu>
+				<button type="submit" disabled={busy}>{busy ? t('form.saving') : list ? t('form.save') : t('form.list.submit')}</button>
+				{#if oncancel}<button type="button" onclick={oncancel}>{t('form.cancel')}</button>{/if}
+			</menu>
+		</jl-form-actions>
 	</form>
 </jl-list-form>
 
 <style>
-	ul {
-		margin: var(--space-s) 0;
-		border: var(--border);
-		border-radius: var(--radius);
-		overflow: hidden;
-	}
-	ul button {
-		width: 100%;
-		justify-content: space-between;
-		text-align: left;
-		border: none;
-		border-bottom: var(--border);
-		border-radius: 0;
-	}
-	ul li:last-child button {
-		border-bottom: none;
-	}
-	ol {
-		margin-top: var(--space-m);
-		counter-reset: company;
-	}
-	ol li {
-		display: flex;
-		align-items: center;
-		gap: var(--space-xs);
-		padding: var(--space-xs) 0;
-		border-bottom: var(--border);
-		counter-increment: company;
-	}
-	ol span {
-		flex: 1;
-	}
-	ol span::before {
-		content: counter(company) '. ';
-		color: var(--color-muted);
-	}
-	ol small {
+	jl-list-form {
 		display: block;
 	}
-	ol button {
-		min-width: var(--tap-size);
+	/* Editing: whose list it is, and that saving changes it for everyone. */
+	jl-list-form > p {
+		max-width: var(--reading-width);
+		margin: 0 0 var(--space-s);
+		padding: var(--space-s) var(--space-m);
+		border-radius: var(--radius);
+		background: var(--color-soft);
+	}
+	jl-form-fields,
+	jl-form-actions,
+	jl-preview {
+		display: block;
+	}
+	/* The description grows with what is written. */
+	textarea {
+		field-sizing: content;
+		min-height: var(--textarea-min);
+		max-height: var(--textarea-max);
+	}
+	jl-form-fields > small {
+		display: block;
+	}
+	small:has(> data) {
+		display: flex;
+		justify-content: space-between;
+		gap: var(--space-s);
+	}
+	data {
+		flex: none;
+		font-variant-numeric: tabular-nums;
+	}
+	fieldset {
+		margin: var(--space-l) 0 0;
 		padding: 0;
-		border-color: transparent;
+		border: 0;
+	}
+	legend {
+		display: flex;
+		gap: var(--space-s);
+		padding: 0;
+		font-weight: var(--font-weight-strong);
+	}
+	legend data {
+		color: var(--color-muted);
+	}
+	/* The list as it will show: under the fields on phones, beside them on wide screens. */
+	aside {
+		margin-top: var(--space-l);
+		padding: 0 var(--space-m);
+		border: var(--border);
+		border-radius: var(--radius);
+	}
+	aside h2 {
+		margin: var(--space-s) 0 0;
+		font-size: var(--font-size-small);
+		color: var(--color-muted);
+	}
+	aside p {
+		margin: var(--space-s) 0;
+	}
+	aside :global(jl-list) {
+		border-bottom: 0;
+	}
+	jl-form-actions p {
+		margin: var(--space-m) 0 0;
+	}
+	@media (min-width: 64rem) {
+		form {
+			display: grid;
+			grid-template-columns: minmax(0, var(--reading-width)) minmax(0, var(--aside-width));
+			column-gap: var(--gutter);
+			align-items: start;
+		}
+		form > :not(aside) {
+			grid-column: 1;
+		}
+		aside {
+			grid-column: 2;
+			grid-row: 1 / 4;
+			position: sticky;
+			top: calc(var(--header-height) + var(--space-m));
+			margin-top: 0;
+		}
+	}
+	p small button {
+		min-height: 0;
+		padding: 0;
+		border: 0;
+		background: none;
+		text-decoration: underline;
+		font-size: inherit;
 	}
 </style>
