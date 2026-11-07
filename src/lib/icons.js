@@ -3,7 +3,9 @@
  * nav.json names them, and one place decides how each meaning looks.
  * Only these are bundled.
  */
+import ArrowDown from '@lucide/svelte/icons/arrow-down';
 import ArrowLeft from '@lucide/svelte/icons/arrow-left';
+import ArrowUp from '@lucide/svelte/icons/arrow-up';
 import ArrowUpRight from '@lucide/svelte/icons/arrow-up-right';
 import BadgeCheck from '@lucide/svelte/icons/badge-check';
 import Banknote from '@lucide/svelte/icons/banknote';
@@ -56,6 +58,8 @@ export const icons = {
 	area: ScanSearch,
 	close: X,
 	back: ArrowLeft,
+	up: ArrowUp,
+	down: ArrowDown,
 	external: ArrowUpRight,
 	verified: BadgeCheck,
 	bike: Bike,

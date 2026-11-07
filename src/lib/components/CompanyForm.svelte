@@ -7,11 +7,15 @@
 	import CompanyWebsiteField from './CompanyWebsiteField.svelte';
 	import LinkFields from './LinkFields.svelte';
 	import LocationFields from './LocationFields.svelte';
+	import SaveHint from './SaveHint.svelte';
+	import SaveResumed from './SaveResumed.svelte';
+	import SaveSignIn from './SaveSignIn.svelte';
 	import TagInput from './TagInput.svelte';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { data } from '#lib/network/network.svelte.js';
 	import { saveCompany } from '#lib/network/save-company.js';
 	import { clearCompanyDraft, readCompanyDraft, writeCompanyDraft } from '#lib/network/company-draft.js';
+	import { backToSave, leftToSave } from '#lib/network/drafts.js';
 	import { toForm } from '#lib/models/company.js';
 	import { draftApplies, previewCompany, readLink, readWebsite, saveOutcome } from '#lib/models/company-form.js';
 	import { withPrefill } from '#lib/models/paste.js';
@@ -31,10 +35,11 @@
 	 */
 	let { company = null, prefill = {}, focus = '', onsaved, oncancel } = $props();
 
-	// An edit starts from the version shown; a new company from the draft kept in this
-	// browser (when it is the same company), its gaps filled from what was pasted.
-	const draft = untrack(() => (company ? null : readCompanyDraft(toForm(null))));
-	let restored = $state(untrack(() => Boolean(draft && draftApplies(draft, prefill))));
+	// An edit starts from the version shown (or from the edit kept while signing in to save it);
+	// a new company from the draft kept in this browser (when it is the same company),
+	// its gaps filled from what was pasted.
+	const draft = untrack(() => (company && !backToSave('company') ? null : readCompanyDraft(toForm(null))));
+	let restored = $state(untrack(() => Boolean(draft && draftApplies(draft, company ? { url: company.key } : prefill))));
 	/** @param {import('#lib/models/company.js').CompanyForm} start */
 	const fill = (start) => {
 		const form = withPrefill(start, untrack(() => prefill));
@@ -47,7 +52,7 @@
 	function startOver() {
 		clearCompanyDraft();
 		restored = false;
-		form = fill(toForm(null));
+		form = fill(toForm(company));
 	}
 
 	const website = $derived(readWebsite(form.url, data.companies, company?.key));
@@ -63,6 +68,9 @@
 	let error = $state(null);
 	// WebMCP: an AI assistant may fill this form; the person still checks it and saves.
 	const tool = webmcp.forms.company;
+	/** @type {SaveSignIn | undefined} */
+	let signin = $state();
+	const submitLabel = $derived(company ? t('form.save') : t('form.company.submit'));
 
 	/** @type {HTMLFormElement} */
 	let formElement;
@@ -86,12 +94,18 @@
 			error = t('form.link.fix');
 			return;
 		}
+		// Signed out: what is written stays in this browser while signing in (an edit too), then is saved from here.
+		if (!session.did) {
+			if (company) writeCompanyDraft($state.snapshot(form));
+			return signin?.ask();
+		}
 		busy = true;
 		try {
 			const outcome = saveOutcome(company, session.handle || '');
 			const added = !company;
 			const key = await saveCompany(form, company);
-			if (added) clearCompanyDraft();
+			if (added || restored) clearCompanyDraft();
+			leftToSave(null);
 			onsaved({ key, name: form.name.trim(), outcome, added });
 		} catch (err) {
 			error = err instanceof Error ? err.message : String(err);
@@ -106,6 +120,7 @@
 	<form bind:this={formElement} onsubmit={submit} toolname={tool.toolname} tooldescription={tool.tooldescription}>
 		<p><small data-required>{t('form.required')}</small></p>
 		<jl-form-fields>
+			<SaveResumed form="company" label={submitLabel} />
 			{#if restored}
 				<p><small>{t('form.company.draft')} <button type="button" onclick={startOver}>{t('form.company.draft.clear')}</button></small></p>
 			{/if}
@@ -171,12 +186,14 @@
 			{#if error}<p role="alert">{error}</p>{/if}
 			{#if !key}<p><small>{t('form.company.needsWebsite')}</small></p>{/if}
 			{#if taken}<p><small>{t('form.company.taken')} <a href="/add?key={encodeURIComponent(key)}">{t('form.website.improve')}</a></small></p>{/if}
+			<SaveHint />
 			<menu>
-				<button type="submit" disabled={busy || !key || taken}>{busy ? t('form.saving') : company ? t('form.save') : t('form.company.submit')}</button>
+				<button type="submit" disabled={busy || !key || taken}>{busy ? t('form.saving') : submitLabel}</button>
 				{#if oncancel}<button type="button" onclick={oncancel}>{t('form.cancel')}</button>{/if}
 			</menu>
 		</jl-form-actions>
 	</form>
+	<SaveSignIn bind:this={signin} form="company" />
 </jl-company-form>
 
 <style>

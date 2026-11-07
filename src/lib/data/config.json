@@ -131,6 +131,15 @@
 		"tagSuggestions": 8,
 		"boardCheckDelayMs": 600
 	},
+	"listForm": {
+		"nameMax": 100,
+		"descriptionMax": 3000,
+		"companiesMax": 2000,
+		"suggestions": 8
+	},
+	"saveSignIn": {
+		"returnMinutes": 30
+	},
 	"lists": {
 		"related": { "shown": 6, "nameWeight": 3, "minTermLength": 3 }
 	},

@@ -31,6 +31,7 @@
 	--radius-round: 999px;
 	--border-width: 1px;
 	--border: var(--border-width) solid var(--color-line);
+	--border-dashed: var(--border-width) dashed var(--color-line);
 	--focus-ring: 2px solid var(--color-focus);
 	--focus-offset: 2px;
 	/* The page uses the whole screen: fluid gutters, text kept to a readable measure, result lists in as many columns as fit. */

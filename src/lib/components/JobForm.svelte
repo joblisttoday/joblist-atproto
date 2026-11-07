@@ -7,11 +7,15 @@
 	import JobItem from './JobItem.svelte';
 	import JobPoster from './JobPoster.svelte';
 	import LocationFields from './LocationFields.svelte';
+	import SaveHint from './SaveHint.svelte';
+	import SaveResumed from './SaveResumed.svelte';
+	import SaveSignIn from './SaveSignIn.svelte';
 	import { expiryDate, placeNames, toApplyUrl, toForm } from '#lib/models/job-post.js';
 	import { postJob, updateJob } from '#lib/network/save-job.js';
 	import { data } from '#lib/network/network.svelte.js';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { clearDraft, readDraft, writeDraft } from '#lib/network/job-draft.js';
+	import { leftToSave } from '#lib/network/drafts.js';
 	import { longDate } from '#lib/i18n/dates.js';
 	import { i18n, t } from '#lib/i18n/index.svelte.js';
 	import { untrack } from 'svelte';
@@ -87,12 +91,17 @@
 	const back = '/jobs/new';
 	// WebMCP: an AI assistant may fill this form; the person checks it and posts.
 	const tool = webmcp.forms.job;
+	/** @type {SaveSignIn | undefined} */
+	let signin = $state();
+	const submitLabel = $derived(post ? t('form.save') : t('post.submit'));
 
 	/** @param {SubmitEvent} event */
 	async function submit(event) {
 		event.preventDefault();
 		tried = true;
 		if (!form.company || !canApply) return;
+		// Signed out: the offer stays in this browser while signing in, then is posted from here.
+		if (!session.did) return signin?.ask();
 		busy = true;
 		error = null;
 		try {
@@ -102,6 +111,7 @@
 			} else {
 				const rkey = await postJob(form);
 				clearDraft();
+				leftToSave(null);
 				onsaved(rkey);
 			}
 		} catch (err) {
@@ -115,6 +125,7 @@
 <jl-job-form editing={post ? true : undefined}>
 	<form onsubmit={submit} toolname={tool.toolname} tooldescription={tool.tooldescription}>
 		<p><small data-required>{t('form.required')}</small></p>
+		<SaveResumed form="job" label={submitLabel} />
 		{#if restored}
 			<p><small>{t('post.draft')} <button type="button" onclick={startOver}>{t('post.draft.clear')}</button></small></p>
 		{/if}
@@ -191,13 +202,15 @@
 		{/if}
 
 		{#if error}<p role="alert">{error}</p>{/if}
+		<SaveHint />
 		<menu>
 			<button type="submit" disabled={busy || !form.company}>
-				{busy ? t('form.saving') : post ? t('form.save') : t('post.submit')}
+				{busy ? t('form.saving') : submitLabel}
 			</button>
 			{#if oncancel}<button type="button" onclick={oncancel}>{t('form.cancel')}</button>{/if}
 		</menu>
 	</form>
+	<SaveSignIn bind:this={signin} form="job" />
 </jl-job-form>
 
 <style>
