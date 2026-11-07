@@ -6,6 +6,7 @@ import { page } from '../indexer/html.js';
 import { sitemap } from '../indexer/sitemap.js';
 import { feedPath, fieldOf, isSlug, landingPath } from '../src/lib/models/landing.js';
 import { atom } from './feed.js';
+import { searchFeed } from './search-feed.js';
 import { indexMeta, landingMeta } from './pages.js';
 import { pageTitle, t } from './text.js';
 
@@ -37,10 +38,11 @@ export function render(found, data, template) {
 }
 
 /**
- * @param {{city?: string, field?: string, company?: string}} found
+ * @param {{city?: string, field?: string, company?: string, search?: string}} found
  * @param {any} data
  */
 function feed(found, data) {
+	if (found.search) return searchFeed(found.search, data);
 	const jobs = Array.isArray(data?.jobs) ? data.jobs : [];
 	if (found.company) {
 		// A company's file (index.js companyFiles): its jobs, without its key on each.

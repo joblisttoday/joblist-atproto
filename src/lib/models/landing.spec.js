@@ -40,6 +40,7 @@ describe('landing pages', () => {
 		expect(feedPath({ city: 'berlin', field: 'design' })).toBe('/feed/in/berlin/design.xml');
 		expect(feedPath({})).toBe('/feed/new.xml');
 		expect(feedPath({ company: 'acme.org' })).toBe('/feed/company/acme.org.xml');
+		expect(feedPath({ search: '?q=design&where=Lisbon' })).toBe('/feed/search.xml?q=design&where=Lisbon');
 		expect(landingFile({ field: 'design' })).toBe('landing/field/design.json');
 		expect(landingFile({})).toBe('landing/new.json');
 		expect(landingFile({ city: 'berlin', page: 2 })).toBe('landing/in/berlin.2.json');

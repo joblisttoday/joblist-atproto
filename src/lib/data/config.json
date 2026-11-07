@@ -202,6 +202,13 @@
 		"missingCacheSeconds": 300,
 		"sitemap": "/sitemap-places.xml"
 	},
+	"searchFeed": {
+		"path": "/feed/search.xml",
+		"file": "landing/recent.json",
+		"hours": 24,
+		"rows": 1000,
+		"maxLength": 100
+	},
 	"links": {
 		"signup": "https://bsky.app",
 		"profile": "https://bsky.app/profile/{handle}",

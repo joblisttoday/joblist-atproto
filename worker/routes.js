@@ -1,5 +1,6 @@
 import config from '../src/lib/data/config.json' with { type: 'json' };
 import { feedPath, fieldOf, indexFile, isCompanyKey, isSlug, landingFile, landingPath, pageNumber, pagedPath } from '../src/lib/models/landing.js';
+import { fromParams, toParams } from '../src/lib/models/saved-search.js';
 
 /**
  * The addresses this Worker answers (wrangler.jsonc: assets.run_worker_first),
@@ -8,7 +9,7 @@ import { feedPath, fieldOf, indexFile, isCompanyKey, isSlug, landingFile, landin
  *
  * @typedef {{kind: 'cities'} | {kind: 'fields'} | {kind: 'sitemap'}
  *   | {kind: 'page', city?: string, field?: string, page?: number}
- *   | {kind: 'feed', city?: string, field?: string, company?: string}
+ *   | {kind: 'feed', city?: string, field?: string, company?: string, search?: string}
  *   | {kind: 'redirect', location: string}} Route
  */
 
@@ -41,11 +42,19 @@ export function route(pathname) {
 /**
  * A route with the page of older jobs the address asks for (?page=2); an address
  * with a page that is not one (?page=1, ?page=x) leads to the first.
+ * A search's feed with its search, as the explorer writes it (one cached feed per search);
+ * without one, it is the feed of every new job.
  * @param {Route} found
  * @param {URLSearchParams} query
  * @returns {Route}
  */
 export function withPage(found, query) {
+	if (found.kind === 'feed' && found.search !== undefined) {
+		const { query: words, where, remote, pay } = fromParams(query);
+		const most = config.searchFeed.maxLength;
+		const search = toParams({ query: words.slice(0, most), where: where.slice(0, most), remote, pay });
+		return search ? { kind: 'feed', search } : { kind: 'redirect', location: feedPath({}) };
+	}
 	if (found.kind !== 'page') return found;
 	const page = pageNumber(query.get('page'));
 	if (page === null) return { kind: 'redirect', location: landingPath(found) };
@@ -69,6 +78,7 @@ function feed(parts) {
 	if (!last.endsWith('.xml')) return null;
 	const [by, ...rest] = [...parts.slice(0, -1), last.slice(0, -'.xml'.length)];
 	if (by === 'new' && !rest.length) return { kind: 'feed' };
+	if (`/feed/${by}.xml` === config.searchFeed.path && !rest.length) return { kind: 'feed', search: '' };
 	if (by === 'company' && rest.length === 1 && isCompanyKey(rest[0])) return { kind: 'feed', company: rest[0] };
 	if (by !== 'in' && by !== 'field') return null;
 	const pieces = rest.length && pick(rest, by === 'in' ? 'city' : 'field');
@@ -115,6 +125,7 @@ export function pathOf(found) {
  */
 export function fileOf(found) {
 	if (found.kind === 'feed' && found.company) return `${config.embed.dir}/${found.company}.json`;
+	if (found.kind === 'feed' && found.search !== undefined) return config.searchFeed.file;
 	if (found.kind === 'page' || found.kind === 'feed') return landingFile(found);
 	return indexFile();
 }

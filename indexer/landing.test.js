@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import config from '../src/lib/data/config.json' with { type: 'json' };
-import { citiesOf, landingFiles } from './landing.js';
+import { citiesOf, landingFiles, recentFile } from './landing.js';
 
 const places = { 'berlin, germany': [13.4, 52.5], berlin: [13.4, 52.5], nyc: [-74, 40.7], 'new york': [-74, 40.7], germany: 0 };
 
@@ -60,4 +60,18 @@ test('older jobs in pages of their own, up to a limit', () => {
 	assert.equal(second.jobs[0].t, `Job ${total - 1 - shown}`);
 	assert.ok(files.has(`landing/in/berlin.${pages}.json`));
 	assert.ok(!files.has(`landing/in/berlin.${pages + 1}.json`));
+});
+
+test('the recent jobs: first seen in the last hours, with what a search reads', () => {
+	const jobs = [
+		{ t: 'Designer', u: 'https://a.example/1', c: 'acme.org', l: 'Lisbon', d: 'Design', p: '2026-11-07T00:30Z', m: /** @type {[number, number, string, string]} */ ([1, 2, 'EUR', 'year']) },
+		{ t: 'Posted', u: 'https://x.example', c: 'acme.org', p: '2026-11-06T09:00Z', s: 'at://did:plc:abc/today.joblist.job/3k' },
+		{ t: 'Old', u: 'https://a.example/2', c: 'acme.org', p: '2026-11-05T00:00Z' }
+	];
+	const file = recentFile(jobs, '2026-11-07T01:00Z', new Map([['acme.org', 'Acme']]));
+	assert.deepEqual(file.jobs.map((j) => j.t), ['Designer', 'Posted']);
+	assert.equal(file.jobs[0].d, 'Design');
+	assert.deepEqual(file.jobs[0].m, [1, 2, 'EUR', 'year']);
+	assert.match(file.jobs[1].u, /^https:\/\/joblist\.today\/[^?]+3k/, 'a posted job links to its page here');
+	assert.deepEqual(file.names, { 'acme.org': 'Acme' });
 });

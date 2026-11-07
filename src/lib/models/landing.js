@@ -8,9 +8,10 @@ import fields from '#lib/data/fields.json' with { type: 'json' };
  *
  * @typedef {{slug: string, query: string, words: string[]}} Field
  *   query: what the explorer searches for this field; words: what a job's title or department says.
- * @typedef {{t: string, u: string, c: string, l?: string, p?: string, r?: string, i?: string}} LandingJob
+ * @typedef {{t: string, u: string, c: string, l?: string, d?: string, p?: string, r?: string, i?: string, m?: [number, number, string, string]}} LandingJob
  *   A job as these pages show it: title, link (its board, or its page here), company key,
- *   location, first seen, workplace, id at its board (when the link does not end with it).
+ *   location, department and pay (the recent jobs searched by feeds only), first seen, workplace,
+ *   id at its board (when the link does not end with it).
  * @typedef {{generatedAt: string, name?: string, count: number, names: Record<string, string>, jobs: LandingJob[],
  *   fields?: {slug: string, count: number}[], cities?: {slug: string, name: string, count: number}[], page?: number, pages?: number}} LandingFile
  *   One page's data: the newest jobs and their companies' names; a city's fields, a field's cities;
@@ -78,10 +79,13 @@ export function landingPath({ city, field }) {
 }
 
 /**
- * The page's feed: /feed/in/berlin.xml…; /feed/new.xml for every new job.
- * @param {{city?: string, field?: string, company?: string}} page
+ * The page's feed: /feed/in/berlin.xml…; /feed/new.xml for every new job;
+ * /feed/search.xml?q=design&where=Lisbon for any explorer search.
+ * @param {{city?: string, field?: string, company?: string, search?: string}} page
+ *   search: an explorer search's address query ("?q=design", see saved-search.js toParams)
  */
-export function feedPath({ city, field, company }) {
+export function feedPath({ city, field, company, search }) {
+	if (search !== undefined) return `${config.searchFeed.path}${search}`;
 	if (company) return `/feed/company/${company}.xml`;
 	if (!city && !field) return '/feed/new.xml';
 	return `/feed${landingPath({ city, field })}.xml`;

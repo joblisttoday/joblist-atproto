@@ -19,6 +19,18 @@ test('feeds', () => {
 	assert.deepEqual(route('/feed/company/acme.org.xml'), { kind: 'feed', company: 'acme.org' });
 });
 
+test('the feed of any search, kept as the explorer writes it', () => {
+	const search = route('/feed/search.xml');
+	assert.ok(search);
+	const found = withPage(search, new URLSearchParams('where=Lisbon&q=design&remote=nonsense&near=1,2&utm=x'));
+	assert.deepEqual(found, { kind: 'feed', search: '?q=design&where=Lisbon' });
+	assert.equal(pathOf(found), '/feed/search.xml?q=design&where=Lisbon');
+	assert.equal(fileOf(found), 'landing/recent.json');
+	assert.deepEqual(withPage(search, new URLSearchParams('')), { kind: 'redirect', location: '/feed/new.xml' });
+	const long = withPage(search, new URLSearchParams(`q=${'a'.repeat(5000)}`));
+	assert.ok(long.kind === 'feed' && (long.search || '').length < 200, 'a long search is cut');
+});
+
 test('anything else is not ours', () => {
 	for (const path of [
 		'/',

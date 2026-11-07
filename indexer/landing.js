@@ -71,6 +71,28 @@ function newest(jobs, most = landing.shown) {
 }
 
 /**
+ * The jobs first seen in the last hours (config.searchFeed), for the feeds of any
+ * search (worker/search-feed.js): with what a search reads (department, pay), and
+ * few enough for a Worker to search them in a few milliseconds.
+ * @param {IndexedJob[]} sorted newest first
+ * @param {string} generatedAt
+ * @param {Map<string, string>} names company names by key
+ */
+export function recentFile(sorted, generatedAt, names) {
+	const since = Date.parse(generatedAt) - config.searchFeed.hours * 36e5;
+	const recent = [];
+	for (const job of sorted) {
+		if (recent.length >= config.searchFeed.rows) break;
+		const at = Date.parse(job.p || '');
+		// Newest first: the first older one ends them.
+		if (!(at >= since)) break;
+		recent.push({ t: job.t, u: jobLink(job), c: job.c, l: job.l, d: job.d, p: job.p, r: job.r, i: job.i, m: job.m });
+	}
+	const companies = Object.fromEntries(recent.map((j) => [j.c, names.get(j.c) || j.c]));
+	return { generatedAt, count: recent.length, names: companies, jobs: recent };
+}
+
+/**
  * The most common spelling of each city ("Bangalore" over "bangalore").
  * @param {Map<string, Map<string, number>>} spellings
  * @param {string} slug
@@ -159,7 +181,8 @@ export function landingFiles(jobs, names, places, generatedAt) {
 				fields: fields.map((slug) => ({ slug, count: count(`field/${slug}`), updated: updated(`field/${slug}`) }))
 			}
 		],
-		[landingFile({}), file(sorted)]
+		[landingFile({}), file(sorted)],
+		[config.searchFeed.file, recentFile(sorted, generatedAt, names)]
 	];
 	for (const city of cities) {
 		const own = pairs.filter((p) => p.city === city).map(({ field }) => ({ slug: field, count: count(`in/${city}/${field}`) }));
