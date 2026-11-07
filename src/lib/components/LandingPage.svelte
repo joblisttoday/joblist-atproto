@@ -5,20 +5,29 @@
 	import PageHeader from './PageHeader.svelte';
 	import Pending from './Pending.svelte';
 	import config from '#lib/data/config.json';
-	import { explorerPath, landingPath } from '#lib/models/landing.js';
+	import { page as route } from '$app/state';
+	import { explorerPath, landingPath, pageNumber, pagedPath } from '#lib/models/landing.js';
 	import { getLandingPage } from '#lib/network/landing.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
 	 * The newest jobs of a city, a field, or a field in a city (/in/berlin/design),
-	 * from the same file the Worker made this page's HTML from.
+	 * and pages of older ones (?page=2), from the same files the Worker made this page's HTML from.
 	 * @type {{city?: string, field?: string}}
 	 */
 	let { city, field } = $props();
 	/** The page's file; undefined while it loads, null when there is none. */
 	let page = $state.raw(/** @type {Awaited<ReturnType<typeof getLandingPage>> | undefined} */ (undefined));
-	// svelte-ignore state_referenced_locally
-	getLandingPage({ city, field }).then((found) => (page = found));
+	const number = $derived(pageNumber(route.url.searchParams.get('page')) || 1);
+	$effect(() => {
+		const asked = number;
+		page = undefined;
+		getLandingPage({ city, field, page: asked }).then((found) => {
+			if (asked === number) page = found;
+		});
+	});
+	const pages = $derived(Math.max(number, page?.pages || 1));
+	const nth = $derived(number > 1 ? ` · ${t('landing.page', { page: number, pages })}` : '');
 	const fieldName = $derived(field ? t(`field.${field}`) : '');
 	const cityName = $derived(page?.name || city || '');
 
@@ -30,7 +39,7 @@
 	}
 </script>
 
-<svelte:head><title>{title(cityName)} · {config.name}</title></svelte:head>
+<svelte:head><title>{title(cityName)}{nth} · {config.name}</title></svelte:head>
 
 {#if page === undefined}
 	<Pending />
@@ -46,6 +55,13 @@
 					<li><JobItem {job} company={page.names[job.company] || job.company} /></li>
 				{/each}
 			</ul>
+			{#if pages > 1}
+				<nav>
+					{#if number > 1}<a href={pagedPath({ city, field, page: number - 1 })} rel="prev">{t('landing.newer')}</a> ·{/if}
+					{t('landing.page', { page: number, pages })}
+					{#if number < pages}· <a href={pagedPath({ city, field, page: number + 1 })} rel="next">{t('landing.older')}</a>{/if}
+				</nav>
+			{/if}
 			{#if page.fields?.length && !field}
 				<section aria-labelledby="landing-by">
 					<h2 id="landing-by">{t('landing.byField')}</h2>

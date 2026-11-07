@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { fileOf, pathOf, route } from './routes.js';
+import { fileOf, pathOf, route, withPage } from './routes.js';
 
 test('pages per city and field', () => {
 	assert.deepEqual(route('/in'), { kind: 'cities' });
@@ -23,7 +23,6 @@ test('anything else is not ours', () => {
 	for (const path of [
 		'/',
 		'/inside',
-		'/in/Berlin',
 		'/in/s%C3%A3o-paulo',
 		'/in/berlin/nonsense',
 		'/in/berlin/design/more',
@@ -37,7 +36,10 @@ test('anything else is not ours', () => {
 		'/feed/company/a/b.xml',
 		'/feed/field/unknown.xml',
 		'//evil.example/',
-		'/in//'
+		'/in//',
+		'/In/Nonsense/Path',
+		'/In/s%C3%A3o-paulo',
+		'/Company/X'
 	])
 		assert.equal(route(path), null, path);
 });
@@ -46,6 +48,25 @@ test('a trailing slash leads to the page, never elsewhere', () => {
 	assert.deepEqual(route('/in/berlin/'), { kind: 'redirect', location: '/in/berlin' });
 	assert.deepEqual(route('/field/'), { kind: 'redirect', location: '/field' });
 	assert.equal(route('//evil.example/in/'), null);
+});
+
+test('capitals lead to the page in small letters', () => {
+	assert.deepEqual(route('/in/Berlin'), { kind: 'redirect', location: '/in/berlin' });
+	assert.deepEqual(route('/IN/Berlin/Design/'), { kind: 'redirect', location: '/in/berlin/design' });
+	assert.deepEqual(route('/Field/Design'), { kind: 'redirect', location: '/field/design' });
+	assert.deepEqual(route('/feed/in/Berlin.xml'), { kind: 'redirect', location: '/feed/in/berlin.xml' });
+});
+
+test('pages of older jobs', () => {
+	const berlin = /** @type {import('./routes.js').Route} */ ({ kind: 'page', city: 'berlin' });
+	const second = withPage(berlin, new URLSearchParams('page=2'));
+	assert.deepEqual(second, { kind: 'page', city: 'berlin', page: 2 });
+	assert.equal(pathOf(second), '/in/berlin?page=2');
+	assert.equal(fileOf(second), 'landing/in/berlin.2.json');
+	assert.deepEqual(withPage(berlin, new URLSearchParams('utm=x')), berlin);
+	for (const q of ['page=1', 'page=x', 'page=0'])
+		assert.deepEqual(withPage(berlin, new URLSearchParams(q)), { kind: 'redirect', location: '/in/berlin' }, q);
+	assert.deepEqual(withPage({ kind: 'cities' }, new URLSearchParams('page=2')), { kind: 'cities' });
 });
 
 test('each route has its path and snapshot file', () => {

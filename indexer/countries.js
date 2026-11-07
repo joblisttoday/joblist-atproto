@@ -16,7 +16,8 @@ for (const a of letters)
 		const name = regionNames.of(a + b);
 		if (name && name !== a + b) {
 			names.add(name.toLowerCase());
-			codes.set(name.toLowerCase(), a + b);
+			// The code in use, not an old one of the same name (DD, FX: Germany, France).
+			if (new Intl.Locale(`und-${a}${b}`).region === a + b) codes.set(name.toLowerCase(), a + b);
 		}
 	}
 for (const city of config.geocode.cityCountries) names.delete(city);

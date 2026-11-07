@@ -70,20 +70,24 @@ function feed(found, data) {
 }
 
 /**
- * Every page per city and field, for search engines.
+ * Every page per city and field, for search engines, with when it last changed
+ * (its newest job; the pages of a city and a field: not known, left out).
  * @param {any} index landing/index.json
+ * @returns {{path: string, updated?: string}[]}
  */
 export function placePaths(index) {
 	const known = (/** @type {any} */ slug) => !!fieldOf(slug);
 	const cities = (index?.cities || []).filter((/** @type {any} */ c) => isSlug(c?.slug));
 	const fields = (index?.fields || []).filter((/** @type {any} */ f) => known(f?.slug));
+	const date = (/** @type {any} */ value) => (typeof value === 'string' ? value : undefined);
+	const newest = [...cities, ...fields].map((x) => date(x.updated) || '').reduce((a, b) => (b > a ? b : a), '') || undefined;
 	return [
-		'/in',
-		'/field',
-		...cities.map((/** @type {any} */ c) => landingPath({ city: c.slug })),
-		...fields.map((/** @type {any} */ f) => landingPath({ field: f.slug })),
+		{ path: '/in', updated: newest },
+		{ path: '/field', updated: newest },
+		...cities.map((/** @type {any} */ c) => ({ path: landingPath({ city: c.slug }), updated: date(c.updated) })),
+		...fields.map((/** @type {any} */ f) => ({ path: landingPath({ field: f.slug }), updated: date(f.updated) })),
 		...cities.flatMap((/** @type {any} */ c) =>
-			(Array.isArray(c.fields) ? c.fields : []).filter(known).map((/** @type {string} */ field) => landingPath({ city: c.slug, field }))
+			(Array.isArray(c.fields) ? c.fields : []).filter(known).map((/** @type {string} */ field) => ({ path: landingPath({ city: c.slug, field }) }))
 		)
 	];
 }

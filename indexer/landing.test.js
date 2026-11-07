@@ -25,8 +25,9 @@ test('pages for cities and fields with enough jobs, newest first', () => {
 	jobs.push({ t: 'Posted Designer', u: 'https://c.example', c: 'acme.org', l: 'Berlin', p: '2026-11-07T00:00:00.000Z', s: 'at://did:plc:abc/today.joblist.job/3k' });
 	const files = new Map(landingFiles(jobs, new Map([['acme.org', 'Acme']]), places, '2026-11-07T01:00Z'));
 	const index = files.get('landing/index.json');
-	assert.deepEqual(index.cities, [{ slug: 'berlin', name: 'Berlin', count: many + 1, fields: ['design'] }]);
-	assert.deepEqual(index.fields, [{ slug: 'design', count: many + 1 }]);
+	const updated = '2026-11-07T00:00:00.000Z';
+	assert.deepEqual(index.cities, [{ slug: 'berlin', name: 'Berlin', count: many + 1, updated, fields: ['design'] }]);
+	assert.deepEqual(index.fields, [{ slug: 'design', count: many + 1, updated }]);
 	assert.equal(index.total, many + 2);
 	const berlin = files.get('landing/in/berlin.json');
 	assert.equal(berlin.name, 'Berlin');
@@ -41,4 +42,22 @@ test('pages for cities and fields with enough jobs, newest first', () => {
 	assert.ok(files.has('landing/in/berlin/design.json'));
 	assert.ok(!files.has('landing/in/new-york.json'));
 	assert.equal(files.get('landing/new.json').count, many + 2);
+});
+
+test('older jobs in pages of their own, up to a limit', () => {
+	const { shown, pages } = config.landing;
+	const total = shown * (pages + 1);
+	/** @type {import('./jobs.js').IndexedJob[]} */
+	const jobs = Array.from({ length: total }, (_, i) => ({ t: `Job ${i}`, u: `https://a.example/${i}`, c: 'acme.org', l: 'Berlin', p: new Date(Date.UTC(2026, 0, 1) + i * 6e4).toISOString() }));
+	const files = new Map(landingFiles(jobs, new Map(), places, '2026-11-07T01:00Z'));
+	const first = files.get('landing/in/berlin.json');
+	assert.equal(first.page, 1);
+	assert.equal(first.pages, pages);
+	assert.equal(first.jobs.length, shown);
+	assert.equal(first.count, total);
+	const second = files.get('landing/in/berlin.2.json');
+	assert.equal(second.page, 2);
+	assert.equal(second.jobs[0].t, `Job ${total - 1 - shown}`);
+	assert.ok(files.has(`landing/in/berlin.${pages}.json`));
+	assert.ok(!files.has(`landing/in/berlin.${pages + 1}.json`));
 });

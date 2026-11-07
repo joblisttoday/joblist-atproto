@@ -2,6 +2,7 @@
 	"name": "joblist",
 	"url": "https://joblist.today",
 	"source": "https://github.com/joblisttoday/joblist-atproto",
+	"shareImage": { "path": "/og.png", "width": 1200, "height": 630 },
 	"collections": {
 		"company": "today.joblist.company",
 		"list": "today.joblist.list",
@@ -158,6 +159,8 @@
 	"landing": {
 		"dir": "landing",
 		"shown": 50,
+		"linked": 20,
+		"pages": 10,
 		"minJobs": { "city": 20, "field": 20, "cityField": 10 },
 		"cityAliases": {
 			"nyc": "new-york",
@@ -216,7 +219,7 @@
 	"snapshot": {
 		"path": "https://raw.githubusercontent.com/joblisttoday/joblist-snapshot/gh-pages",
 		"maxAgeHours": 12,
-		"prerenderFiles": ["records.json", "jobs.json", "meta.json"],
+		"prerenderFiles": ["records.json", "jobs.json", "meta.json", "bluesky.json", "landing/index.json"],
 		"preload": ["first.json", "records.json", "jobs.json"],
 		"refreshDelayMs": 15000
 	},

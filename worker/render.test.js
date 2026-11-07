@@ -47,12 +47,41 @@ test('a page escapes what the jobs say and drops links that are not web links', 
 	assert.doesNotMatch(html.slice(html.indexOf('ld+json')), /<\/script>.*<\/script>/s);
 });
 
+test('pages of older jobs link to each other and are their own canonical', () => {
+	const first = landingMeta({ city: 'berlin' }, { ...evil, pages: 3, page: 1 });
+	assert.match(first.head || '', /<link rel="next" href="https:\/\/joblist\.today\/in\/berlin\?page=2">/);
+	assert.doesNotMatch(first.head || '', /rel="prev"/);
+	assert.match(first.body, /<a href="\/in\/berlin\?page=2" rel="next">Older jobs<\/a>/);
+	const second = landingMeta({ city: 'berlin', page: 2 }, { ...evil, pages: 3, page: 2 });
+	assert.equal(second.url, 'https://joblist.today/in/berlin?page=2');
+	assert.equal(second.title, 'Jobs in Berlin<script> · Page 2 of 3 · joblist');
+	assert.match(second.head || '', /<link rel="prev" href="https:\/\/joblist\.today\/in\/berlin">/);
+	assert.match(second.head || '', /<link rel="next" href="https:\/\/joblist\.today\/in\/berlin\?page=3">/);
+	assert.match(second.body, /<ol start="51">/);
+	const html = render({ kind: 'page', city: 'berlin', page: 2 }, { ...evil, pages: 2 }, template).body;
+	assert.match(html, /<link rel="canonical" href="https:\/\/joblist\.today\/in\/berlin\?page=2">/);
+	assert.doesNotMatch(html, /rel="next"/);
+	// One page only: no links between pages.
+	assert.doesNotMatch(landingMeta({ city: 'berlin' }, evil).body, /Older jobs/);
+});
+
 test('the indexes list cities and fields', () => {
 	const index = { cities: [{ slug: 'berlin', name: 'Berlin', count: 500, fields: ['design', 'nope'] }, { slug: '../x', name: 'X', count: 1 }], fields: [{ slug: 'design', count: 40 }, { slug: 'nope', count: 3 }] };
 	assert.match(indexMeta('cities', index).body, /<a href="\/in\/berlin">Berlin<\/a> \(500 open jobs\)/);
 	assert.doesNotMatch(indexMeta('cities', index).body, /\.\.\/x/);
 	assert.match(indexMeta('fields', index).body, /<a href="\/field\/design">Design<\/a>/);
-	assert.deepEqual(placePaths(index), ['/in', '/field', '/in/berlin', '/field/design', '/in/berlin/design']);
+	assert.deepEqual(
+		placePaths(index).map((p) => p.path),
+		['/in', '/field', '/in/berlin', '/field/design', '/in/berlin/design']
+	);
+	const datedIndex = { cities: [{ ...index.cities[0], updated: '2026-11-02T17:49Z' }], fields: [{ slug: 'design', updated: '2026-11-01T00:00Z' }] };
+	const dated = placePaths(datedIndex);
+	assert.deepEqual(dated.slice(0, 3), [
+		{ path: '/in', updated: '2026-11-02T17:49Z' },
+		{ path: '/field', updated: '2026-11-02T17:49Z' },
+		{ path: '/in/berlin', updated: '2026-11-02T17:49Z' }
+	]);
+	assert.match(render({ kind: 'sitemap' }, datedIndex, '').body, /<loc>https:\/\/joblist\.today\/in\/berlin<\/loc><lastmod>2026-11-02T17:49:00Z<\/lastmod>/);
 });
 
 test('feeds are valid XML whatever the jobs say', () => {

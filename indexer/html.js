@@ -1,4 +1,5 @@
 import config from '../src/lib/data/config.json' with { type: 'json' };
+import en from '../src/lib/i18n/locales/en.json' with { type: 'json' };
 
 /** @param {unknown} value */
 export function escape(value) {
@@ -18,24 +19,54 @@ export function jsonLd(data) {
 }
 
 /**
+ * A text as a search result shows it: without hashtags ("#hiring #rust"), on one line.
+ * @param {string} text
+ */
+export function plain(text) {
+	return text
+		.replace(/(^|\s)#[\p{N}_]*\p{L}[\p{L}\p{N}_]*/gu, '$1')
+		.replace(/\s+/g, ' ')
+		.replace(/\s+([,.;:!?])/g, '$1')
+		.replace(/^[\s·,.;:]+|[\s·,;:]+$/g, '')
+		.trim();
+}
+
+/**
+ * The picture of a link preview: the page's own (a company's logo, square), else the site's (wide).
+ * @param {string} [image]
+ */
+function preview(image) {
+	if (image) return [`<meta property="og:image" content="${escape(image)}">`, `<meta name="twitter:card" content="summary">`];
+	const { path, width, height } = config.shareImage;
+	return [
+		`<meta property="og:image" content="${escape(config.url + path)}">`,
+		`<meta property="og:image:width" content="${width}">`,
+		`<meta property="og:image:height" content="${height}">`,
+		`<meta property="og:image:alt" content="${escape(en['share.image'])}">`,
+		`<meta name="twitter:card" content="summary_large_image">`
+	];
+}
+
+/**
  * The app's HTML shell with page-specific head tags and a no-JavaScript body.
  * @param {string} template build/index.html
- * @param {{title: string, description: string, url: string, body: string, type?: string, head?: string, noindex?: boolean}} meta
- *   type: the og:type (default website); head: more tags, like jsonLd(); noindex: a page for people, not search results
+ * @param {{title: string, description: string, url: string, body: string, type?: string, head?: string, noindex?: boolean, image?: string}} meta
+ *   type: the og:type (default website); head: more tags, like jsonLd(); noindex: a page for people, not search results;
+ *   image: the page's picture for link previews (default: the site's)
  */
-export function page(template, { title, description, url, body, type = 'website', head: extra = '', noindex = false }) {
-	const text = description.slice(0, 300);
+export function page(template, { title, description, url, body, type = 'website', head: extra = '', noindex = false, image }) {
+	const text = plain(description).slice(0, 300);
 	const head = [
 		`<title>${escape(title)}</title>`,
 		noindex ? `<meta name="robots" content="noindex">` : '',
 		`<meta name="description" content="${escape(text)}">`,
 		`<link rel="canonical" href="${escape(url)}">`,
 		`<meta property="og:type" content="${escape(type)}">`,
-		`<meta property="og:site_name" content="joblist">`,
+		`<meta property="og:site_name" content="${escape(config.name)}">`,
 		`<meta property="og:title" content="${escape(title)}">`,
 		`<meta property="og:description" content="${escape(text)}">`,
 		`<meta property="og:url" content="${escape(url)}">`,
-		`<meta name="twitter:card" content="summary">`,
+		...preview(image),
 		// The data every page starts from: fetched while the app itself loads, not after.
 		...config.snapshot.preload.map(
 			(/** @type {string} */ name) => `<link rel="preload" as="fetch" crossorigin="anonymous" href="${escape(`${config.snapshot.path}/${name}`)}">`

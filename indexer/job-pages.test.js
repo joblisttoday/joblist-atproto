@@ -32,11 +32,30 @@ test('jobPosting describes the offer for search engines', () => {
 	assert.deepEqual(schema.applicantLocationRequirements, [{ '@type': 'Country', name: 'DE' }]);
 });
 
-test('jobPosting: a remote offer with no country stays at its places', () => {
-	const post = toPost({ ...record, value: { ...value, locations: [{ name: 'Berlin' }] } }, profiles);
-	const schema = jobPosting(post, companies.get('acme.org'));
-	assert.equal(schema.jobLocationType, undefined);
-	assert.equal(schema.applicantLocationRequirements, undefined);
+test('jobPosting: a remote offer with no country is remote, from the countries of its company', () => {
+	const post = toPost({ ...record, value: { ...value, locations: [] } }, profiles);
+	const schema = jobPosting(post, /** @type {any} */ ({ ...companies.get('acme.org'), locations: [{ name: 'Paris', country: 'France' }] }));
+	assert.equal(schema.jobLocationType, 'TELECOMMUTE');
+	assert.equal(schema.jobLocation, undefined);
+	assert.deepEqual(schema.applicantLocationRequirements, [{ '@type': 'Country', name: 'FR' }]);
+	const nowhere = jobPosting(post, companies.get('acme.org'));
+	assert.equal(nowhere.jobLocationType, 'TELECOMMUTE');
+	assert.equal(nowhere.applicantLocationRequirements, undefined);
+});
+
+test('jobPosting: a place that is a country counts as one', () => {
+	const post = toPost({ ...record, value: { ...value, locations: [{ name: 'Germany' }] } }, profiles);
+	assert.deepEqual(jobPosting(post, undefined).applicantLocationRequirements, [{ '@type': 'Country', name: 'DE' }]);
+});
+
+test('jobPosting: identifier, logo and direct application', () => {
+	const schema = jobPosting(toPost(record, profiles), companies.get('acme.org'), 'https://cdn.example/a.jpg');
+	assert.equal(schema.identifier.value, record.uri);
+	assert.equal(schema.hiringOrganization.logo, 'https://cdn.example/a.jpg');
+	// Applying by email from the offer's own page here.
+	assert.equal(schema.directApply, true);
+	const form = toPost({ ...record, value: { ...value, apply: { url: 'https://acme.org/apply' } } }, profiles);
+	assert.equal(jobPosting(form, undefined).directApply, false);
 });
 
 test('jobPages makes one page per live offer, with safe structured data', () => {
@@ -47,6 +66,9 @@ test('jobPages makes one page per live offer, with safe structured data', () => 
 	assert.ok(!pages[0].meta.head.slice(0, -'</script>'.length).includes('</script>'));
 	assert.match(pages[0].meta.body, /Build things\.<br>With us\./);
 	assert.match(pages[0].meta.body, /mailto:jobs@acme\.org/);
+	assert.equal(pages[0].meta.title, 'Engineer </script> at Acme');
+	const logo = jobPages([record], companies, new Map([['did:plc:acme', { handle: 'acme.org', avatar: 'https://cdn.example/p.jpg' }]]))[0];
+	assert.match(logo.meta.head, /"logo":"https:\/\/cdn\.example\/p\.jpg"/);
 	assert.match(jsonLd({ a: '<b>' }), /\\u003cb>/);
 });
 
@@ -56,4 +78,23 @@ test("page() keeps $ patterns in text as text", async () => {
 	assert.ok(html.includes("A $' B $&amp; C") || html.includes("A $' B $& C"));
 	assert.ok(html.includes('<p>$1</p>'));
 	assert.equal((html.match(/<\/head>/g) || []).length, 1);
+});
+
+test('meta descriptions leave hashtags out', async () => {
+	const { page, plain } = await import('./html.js');
+	assert.equal(plain('We hire! #rust #remote'), 'We hire!');
+	assert.equal(plain('C# developer, issue #12 · Berlin'), 'C# developer, issue #12 · Berlin');
+	const html = page('<html><head></head><body></body></html>', { title: 'T', description: 'Rockets #space', url: 'https://joblist.today/x', body: '' });
+	assert.match(html, /<meta name="description" content="Rockets">/);
+});
+
+test('page() shows the site picture in link previews, or the page\'s own', async () => {
+	const { page } = await import('./html.js');
+	const shell = '<html><head><title>x</title></head><body></body></html>';
+	const site = page(shell, { title: 'T', description: 'D', url: 'https://joblist.today/x', body: '' });
+	assert.match(site, /<meta property="og:image" content="https:\/\/joblist\.today\/og\.png">/);
+	assert.match(site, /<meta name="twitter:card" content="summary_large_image">/);
+	const own = page(shell, { title: 'T', description: 'D', url: 'https://joblist.today/x', body: '', image: 'https://cdn.example/a.jpg' });
+	assert.match(own, /<meta property="og:image" content="https:\/\/cdn\.example\/a\.jpg">/);
+	assert.doesNotMatch(own, /og\.png/);
 });

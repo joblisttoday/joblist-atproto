@@ -6,7 +6,7 @@
  *   node indexer/fetch-snapshot.js [snapshot-dir]
  */
 import { mkdirSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import config from '../src/lib/data/config.json' with { type: 'json' };
 
 const [out = 'static/snapshot'] = process.argv.slice(2);
@@ -14,6 +14,7 @@ mkdirSync(out, { recursive: true });
 for (const name of config.snapshot.prerenderFiles) {
 	const res = await fetch(`${config.snapshot.path}/${name}`);
 	if (!res.ok) throw new Error(`${name}: ${res.status}`);
+	mkdirSync(dirname(join(out, name)), { recursive: true });
 	writeFileSync(join(out, name), await res.text());
 	console.log(`fetched ${name}`);
 }

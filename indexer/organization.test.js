@@ -17,6 +17,8 @@ test('describes the company with its website, links and places', () => {
 	assert.deepEqual(schema.sameAs, ['https://github.com/acme']);
 	assert.equal(schema.location.length, 1);
 	assert.equal(schema.location[0].address.addressCountry, 'DE');
+	assert.equal(organization({ ...company, locations: [{ name: 'Paris', country: 'France' }] }, 'x').location[0].address.addressCountry, 'FR');
+	assert.equal(organization(company, 'x', 'https://cdn.example/a.jpg').logo, 'https://cdn.example/a.jpg');
 });
 
 test('leaves out what the company does not have', () => {

@@ -7,10 +7,12 @@
 import config from '../src/lib/data/config.json' with { type: 'json' };
 import en from '../src/lib/i18n/locales/en.json' with { type: 'json' };
 import { escape } from './html.js';
+import { linkList } from './place-links.js';
+import { t } from '../worker/text.js';
 
 /**
- * @typedef {{path: string, meta: Parameters<typeof import('./html.js').page>[1], listed: boolean}} SitePage
- *   listed: in the sitemap.
+ * @typedef {{path: string, meta: Parameters<typeof import('./html.js').page>[1], listed: boolean, updated?: string}} SitePage
+ *   listed: in the sitemap; updated: when it last changed, for the sitemap.
  */
 
 /** The app's pages for people (their own data, forms): shells, kept out of search results. */
@@ -30,14 +32,19 @@ const url = (path) => config.url + (path === '/' ? '' : path);
 /**
  * @param {{
  *   companies: {key: string, name: string}[],
- *   lists: {name: string, path: string, count: number}[],
- *   profiles: {handle: string, lists: {name: string, path: string}[]}[],
+ *   lists: {name: string, path: string, count: number, updated?: string}[],
+ *   profiles: {handle: string, lists: {name: string, path: string, updated?: string}[]}[],
  *   jobCounts: Map<string, number>,
- *   jobTotal: number
+ *   jobTotal: number,
+ *   updated?: string,
+ *   places?: {cities: import('./place-links.js').PlaceLink[], fields: import('./place-links.js').PlaceLink[]}
  * }} site
+ *   updated: when the newest job was first seen; places: the pages per city and field to link to
  * @returns {SitePage[]}
  */
-export function sitePages({ companies, lists, profiles, jobCounts, jobTotal }) {
+export function sitePages({ companies, lists, profiles, jobCounts, jobTotal, updated, places = { cities: [], fields: [] } }) {
+	/** @param {{updated?: string}[]} items */
+	const newest = (items) => items.map((i) => i.updated || '').reduce((a, b) => (b > a ? b : a), '');
 	const welcome = en['explore.welcome'].replace('{companies}', companies.length.toLocaleString('en'));
 	const hiring = [...companies].sort((a, b) => (jobCounts.get(b.key) || 0) - (jobCounts.get(a.key) || 0));
 	/** @type {SitePage[]} */
@@ -45,11 +52,12 @@ export function sitePages({ companies, lists, profiles, jobCounts, jobTotal }) {
 		{
 			path: '/',
 			listed: true,
+			updated,
 			meta: {
-				title: `${config.name} · ${jobTotal.toLocaleString('en')} open jobs`,
+				title: `${config.name} · ${t('jobs.count', { count: jobTotal })}`,
 				description: welcome,
 				url: url('/'),
-				body: `<h1>${escape(config.name)}</h1><p>${escape(welcome)}</p><p><a href="/companies">${escape(en['companies.title'])}</a> · <a href="/lists">${escape(en['nav.lists'])}</a></p>`
+				body: `<h1>${escape(config.name)}</h1><p>${escape(welcome)}</p><p><a href="/companies">${escape(en['companies.title'])}</a> · <a href="/lists">${escape(en['nav.lists'])}</a> · <a href="/in">${escape(t('landing.cities'))}</a> · <a href="/field">${escape(t('landing.fields'))}</a></p>${linkList(t('landing.cities'), places.cities)}${linkList(t('landing.fields'), places.fields)}`
 			}
 		},
 		// The explorer at another address: the home is the page to show in results.
@@ -57,6 +65,7 @@ export function sitePages({ companies, lists, profiles, jobCounts, jobTotal }) {
 		{
 			path: '/companies',
 			listed: true,
+			updated,
 			meta: {
 				title: `${en['companies.title']} · ${config.name}`,
 				description: en['companies.intro'],
@@ -64,7 +73,7 @@ export function sitePages({ companies, lists, profiles, jobCounts, jobTotal }) {
 				body: `<h1>${escape(en['companies.title'])}</h1><p>${escape(en['companies.intro'])}</p><ul>${hiring
 					.map((c) => {
 						const open = jobCounts.get(c.key);
-						return `<li><a href="/company/${escape(c.key)}">${escape(c.name)}</a>${open ? ` (${open} open jobs)` : ''}</li>`;
+						return `<li><a href="/company/${escape(c.key)}">${escape(c.name)}</a>${open ? ` (${escape(t('jobs.count', { count: open }))})` : ''}</li>`;
 					})
 					.join('')}</ul>`
 			}
@@ -72,18 +81,20 @@ export function sitePages({ companies, lists, profiles, jobCounts, jobTotal }) {
 		{
 			path: '/lists',
 			listed: true,
+			updated: newest(lists),
 			meta: {
 				title: `${en['nav.lists']} · ${config.name}`,
 				description: en['home.intro'],
 				url: url('/lists'),
 				body: `<h1>${escape(en['home.title'])}</h1><p>${escape(en['home.intro'])}</p><ul>${lists
-					.map((l) => `<li><a href="${escape(l.path)}">${escape(l.name)}</a> (${l.count} companies)</li>`)
+					.map((l) => `<li><a href="${escape(l.path)}">${escape(l.name)}</a> (${escape(t('list.companies', { count: l.count }))})</li>`)
 					.join('')}</ul>`
 			}
 		},
 		...profiles.map((p) => ({
 			path: `/${p.handle}`,
 			listed: true,
+			updated: newest(p.lists),
 			meta: {
 				title: `@${p.handle} · ${config.name}`,
 				description: `Lists of companies by @${p.handle} on ${config.name}.`,
