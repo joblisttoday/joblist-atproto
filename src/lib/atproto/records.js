@@ -4,7 +4,9 @@ import { xrpcGet } from './xrpc.js';
 
 /**
  * @typedef {{uri: string, cid: string, value: Record<string, any>}} AtRecord
- * @typedef {{did: string, rkey: string, uri: string, cid: string, value: Record<string, any>}} RepoRecord
+ * @typedef {{did: string, rkey: string, uri: string, cid: string, value: Record<string, any>, seenAt?: string, newAuthor?: boolean}} RepoRecord
+ *   seenAt, newAuthor: set by the snapshot on company versions (indexer/seen.js): when the
+ *   indexer first saw this version, and whether a new account wrote it over someone else's.
  */
 
 /**

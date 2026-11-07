@@ -1,6 +1,6 @@
 import config from '#lib/data/config.json';
 import { describe, expect, it } from 'vitest';
-import { boardUrl, changedFields, copyRecord, editedAt, isUnchecked, pickVersion, toCompany, toDomain, toForm, toRecord } from './company.js';
+import { boardUrl, changedFields, copyRecord, editedAt, isUnchecked, pickVersion, toCompany, toDomain, toForm, toRecord, uncheckedLabel } from './company.js';
 
 /** @param {string} did @param {string} createdAt */
 const version = (did, createdAt) => ({ did, rkey: 'acme.org', uri: `at://${did}/x/acme.org`, cid: '', value: { name: did, createdAt } });
@@ -69,6 +69,22 @@ describe('isUnchecked', () => {
 	});
 	it('is false when there are no bots', () => {
 		expect(isUnchecked(version('did:bot', '2026-02-01'), [], [])).toBe(false);
+	});
+	it('flags a new account over someone else until an established person saves a newer one', () => {
+		const fresh = { ...version('did:new', '2026-02-01'), newAuthor: true };
+		expect(isUnchecked(fresh, [fresh, version('did:a', '2026-01-01')], bots)).toBe(true);
+		expect(uncheckedLabel(fresh, bots)).toBe('company.unchecked.newAccount');
+		expect(isUnchecked(fresh, [fresh, { ...version('did:other', '2026-03-01'), newAuthor: true }], bots)).toBe(true);
+		expect(isUnchecked(fresh, [fresh, version('did:a', '2026-03-01')], bots)).toBe(false);
+	});
+});
+
+describe('versions dated by the snapshot', () => {
+	it('are ordered by when the indexer first saw them, not the date their author gives', () => {
+		const honest = { ...version('did:a', '2026-01-01'), seenAt: '2026-03-01T00:00:00.000Z' };
+		const claims = { ...version('did:b', '2026-02-20'), value: { name: 'b', createdAt: '2026-02-20', updatedAt: '2026-04-01' }, seenAt: '2026-02-21T00:00:00.000Z' };
+		expect(editedAt(claims)).toBe('2026-02-21T00:00:00.000Z');
+		expect(pickVersion([claims, honest], new Map()).did).toBe('did:a');
 	});
 });
 

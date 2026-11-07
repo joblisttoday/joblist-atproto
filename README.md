@@ -26,12 +26,19 @@ Four record types, defined in [`lexicons/`](lexicons/today/joblist):
      the indexer checks it both ways, the domain's DNS `_atproto` record or
      `/.well-known/atproto-did` naming the account and the account's DID
      document naming the domain; without the snapshot, the AppView's word),
-  2. otherwise the most recently edited version, by anyone.
+  2. otherwise the most recently edited version, by anyone: "edited" is when
+     the indexer first saw that version (`versions.json` in the snapshot, see
+     [`indexer/seen.js`](indexer/seen.js)), not the `updatedAt` its author
+     writes, which anyone can set; without a snapshot, `updatedAt` (never in
+     the future).
 
   The company page shows the history (every author's version); anyone can
   restore an older one, which saves its content as their own new version.
   Accounts listed in `bots` (config) are crawlers: their versions are marked
   "not checked by a person yet" until a person saves or confirms a newer one.
+  So are versions from an account the indexer first saw less than
+  `versions.newAccountDays` (config) before, written over someone else's
+  version: a brand-new account cannot silently replace a long-standing page.
 - **`today.joblist.list`**: a named list of companies (by domain), in the
   curator's order. Lists can be copied; the copy keeps a `copiedFrom` link.
   An `open` list takes contributions: companies others suggest appear in it

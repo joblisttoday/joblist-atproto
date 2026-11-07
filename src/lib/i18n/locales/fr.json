@@ -215,6 +215,7 @@
 	"company.newList": "Nouvelle liste avec cette entreprise",
 	"company.editedBy": "Modifiée par",
 	"company.unchecked": "Ajoutée par le robot, pas encore vérifiée par une personne",
+	"company.unchecked.newAccount": "Modifiée par un nouveau compte, pas encore vérifiée par d'autres",
 	"company.confirm": "Confirmer qu'elle est juste",
 	"company.confirm.help": "Vous avez vérifié ? Confirmer enregistre cette version dans votre compte, vérifiée par une personne.",
 	"company.history": "Historique",

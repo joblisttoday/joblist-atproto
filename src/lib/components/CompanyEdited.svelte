@@ -3,6 +3,7 @@
 	import EditTime from './EditTime.svelte';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { saveVersion } from '#lib/network/save-version.js';
+	import { uncheckedLabel } from '#lib/models/company.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/** @type {{company: import('#lib/models/company.js').Company}} */
@@ -28,7 +29,7 @@
 <jl-company-edited unchecked={company.unchecked || undefined}>
 	<p>
 		<small>
-			{#if company.unchecked}{t('company.unchecked')}{:else}{t('company.editedBy')} <Author did={company.record.did} />{/if}
+			{#if company.unchecked}{t(uncheckedLabel(company.record))}{:else}{t('company.editedBy')} <Author did={company.record.did} />{/if}
 			· <EditTime datetime={company.editedAt} />
 		</small>
 	</p>

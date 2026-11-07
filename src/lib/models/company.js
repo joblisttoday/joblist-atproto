@@ -65,13 +65,14 @@ export function isOwnRecord(record, profiles) {
 }
 
 /**
- * When a version was last edited, as its author says. A date in the future is not
- * believed (it would keep that version on top for good): such a version counts as undated.
+ * When a version was last edited: when the indexer first saw it (seenAt, in the
+ * snapshot), else as its author says. A date in the future is not believed (it
+ * would keep that version on top for good): such a version counts as undated.
  * @param {RepoRecord} record
  * @param {number} [now]
  */
 export function editedAt(record, now = Date.now()) {
-	const date = String(record.value.updatedAt || record.value.createdAt || '');
+	const date = String(record.seenAt || record.value.updatedAt || record.value.createdAt || '');
 	return Date.parse(date) > now ? '' : date;
 }
 
@@ -94,15 +95,25 @@ export function pickVersion(versions, profiles) {
 }
 
 /**
- * Whether a version was written by a bot (config.bots) and no person
+ * Whether a version was written by a bot (config.bots), or by a new account over
+ * someone else's (newAuthor, see indexer/seen.js), and no established person
  * has saved a newer version since: nobody has checked it yet.
  * @param {RepoRecord} version
  * @param {RepoRecord[]} versions
  * @param {string[]} [bots]
  */
 export function isUnchecked(version, versions, bots = config.bots) {
-	if (!bots.includes(version.did)) return false;
-	return !versions.some((v) => !bots.includes(v.did) && editedAt(v) > editedAt(version));
+	if (!bots.includes(version.did) && !version.newAuthor) return false;
+	return !versions.some((v) => v.did !== version.did && !bots.includes(v.did) && !v.newAuthor && editedAt(v) > editedAt(version));
+}
+
+/**
+ * What to say about an unchecked version (an i18n key): the crawler's, or a new account's.
+ * @param {RepoRecord} version
+ * @param {string[]} [bots]
+ */
+export function uncheckedLabel(version, bots = config.bots) {
+	return bots.includes(version.did) ? 'company.unchecked' : 'company.unchecked.newAccount';
 }
 
 /** Fields of a company record compared between versions, with their form label. */
