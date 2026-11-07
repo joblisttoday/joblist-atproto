@@ -1,6 +1,7 @@
 <script>
+	import LocaleSwitch from './LocaleSwitch.svelte';
 	import config from '#lib/data/config.json';
-	import { i18n, setLocale, t } from '#lib/i18n/index.svelte.js';
+	import { t } from '#lib/i18n/index.svelte.js';
 </script>
 
 <jl-footer>
@@ -11,12 +12,7 @@
 		<p>
 			<small><a href="/in">{t('landing.cities')}</a> · <a href="/field">{t('landing.fields')}</a></small>
 		</p>
-		<label>
-			<small>{t('about.language')}</small>
-			<select value={i18n.locale} onchange={(e) => setLocale(e.currentTarget.value)}>
-				{#each config.locales as locale (locale)}<option value={locale}>{t(`locale.${locale}`)}</option>{/each}
-			</select>
-		</label>
+		<LocaleSwitch />
 	</footer>
 </jl-footer>
 
@@ -35,15 +31,5 @@
 	}
 	p {
 		margin: 0;
-	}
-	label {
-		display: flex;
-		align-items: center;
-		gap: var(--space-s);
-		margin: 0;
-		font-weight: normal;
-	}
-	select {
-		width: auto;
 	}
 </style>

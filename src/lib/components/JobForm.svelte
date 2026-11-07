@@ -255,6 +255,26 @@
 		flex: none;
 		font-variant-numeric: tabular-nums;
 	}
+	/* Wide screens: the fields at a readable width, the job as it will show beside them. */
+	@media (min-width: 64rem) {
+		form {
+			display: grid;
+			grid-template-columns: minmax(0, var(--reading-width)) minmax(0, var(--aside-width));
+			column-gap: var(--gutter);
+			align-items: start;
+		}
+		form > :global(*) {
+			grid-column: 1;
+		}
+		/* Beside all the fields (as many rows as the form has). */
+		form > section {
+			grid-column: 2;
+			grid-row: 1 / span var(--form-rows);
+			position: sticky;
+			top: calc(var(--header-height) + var(--space-m));
+			margin-top: 0;
+		}
+	}
 	p small button {
 		min-height: 0;
 		padding: 0;

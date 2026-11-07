@@ -25,7 +25,8 @@
 			{/if}
 		</small>
 	</p>
-	{#if list.description}<p title={list.description}>{list.description}</p>{/if}
+	<!-- What it is about, cut to fit; a tap shows all of it. -->
+	{#if list.description}<details><summary>{list.description}</summary></details>{/if}
 </jl-list-header>
 
 <style>
@@ -45,7 +46,8 @@
 		-webkit-box-orient: vertical;
 		overflow: hidden;
 	}
-	p {
+	p,
+	summary {
 		grid-column: 1 / -1;
 		max-width: none;
 		margin: 0;
@@ -57,8 +59,24 @@
 		-webkit-box-orient: vertical;
 		overflow: hidden;
 	}
+	details {
+		grid-column: 1 / -1;
+	}
+	summary {
+		padding: 0;
+		font-weight: normal;
+		list-style: none;
+	}
+	summary::-webkit-details-marker {
+		display: none;
+	}
+	details[open] summary {
+		display: block;
+		max-height: var(--textarea-max);
+		overflow-y: auto;
+	}
 	@media (min-width: 64rem) {
-		p:last-child {
+		summary {
 			-webkit-line-clamp: 2;
 			line-clamp: 2;
 		}

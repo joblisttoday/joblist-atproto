@@ -19,7 +19,7 @@
 	{#if avatar}<img src={thumbnail(avatar)} alt="" loading="lazy" />{/if}
 	<a href="/company/{company.key}">{company.name}</a>
 	{#if company.verified}<span title={t('company.verified', { domain: company.key })}><Icon name="verified" label={t('company.verified', { domain: company.key })} /></span>{/if}
-	{#if jobs}<data value={jobs}>{jobs === 1 ? t('jobs.count.one') : t('jobs.count', { count: jobs.toLocaleString() })}</data>{/if}
+	{#if jobs}<data value={jobs}>{t('jobs.count', { count: jobs })}</data>{/if}
 	{#if about}<small>{about}</small>{/if}
 	{#if children}<jl-company-aside>{@render children()}</jl-company-aside>{/if}
 </jl-company>

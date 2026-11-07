@@ -45,3 +45,10 @@
 		</menu>
 	</form>
 </jl-add-link>
+
+<style>
+	/* The link field at a readable width on wide screens. */
+	form {
+		max-width: var(--reading-width);
+	}
+</style>

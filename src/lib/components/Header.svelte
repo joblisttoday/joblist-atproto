@@ -1,5 +1,6 @@
 <script>
 	import Icon from './Icon.svelte';
+	import LocaleSwitch from './LocaleSwitch.svelte';
 	import Logo from './Logo.svelte';
 	import QuickSearch from './QuickSearch.svelte';
 	import { page } from '$app/state';
@@ -11,9 +12,10 @@
 	import { navLinks } from '#lib/navigation/nav.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
-	// The app name is always there; deeper pages also get a way back.
+	// The app name is always there; deeper pages also get a way back
+	// (and the pages only wide screens have a tab for, such as posting a job: a form, left with Back).
 	const topLevel = $derived(
-		[...navLinks(session.handle).map((l) => l.href), '/signin'].includes(page.url.pathname)
+		[...navLinks(session.handle).filter((l) => !l.wide).map((l) => l.href), '/signin'].includes(page.url.pathname)
 	);
 
 	/** @param {MouseEvent} event */
@@ -31,6 +33,8 @@
 		<!-- The explorer has its own search. -->
 		{#if page.url.pathname !== '/'}<QuickSearch />{/if}
 		<Nav />
+		<!-- Wide screens; phones have it in the account tab (signing in, one's page) and the footer. -->
+		<LocaleSwitch compact />
 	</header>
 	<NetworkStatus />
 </jl-header>
@@ -78,5 +82,10 @@
 	}
 	header > :global(jl-nav) {
 		margin-left: auto;
+	}
+	@media not (min-width: 64rem) {
+		header > :global(jl-locale-switch) {
+			display: none;
+		}
 	}
 </style>

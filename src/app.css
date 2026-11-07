@@ -55,7 +55,10 @@
 	--radius-large: 1rem;
 	--shadow: 0 2px 8px rgb(0 0 0 / 0.25);
 	--tap-size: 2.75rem;
-	--chip-height: 2.25rem;
+	/* Chips and small buttons: a finger's size on touch screens, more compact with a mouse. */
+	--chip-height: var(--tap-size);
+	--chip-height-fine: 2.25rem;
+	--chips-fade: var(--space-l);
 	--avatar-size: 4rem;
 	--avatar-small: 2.5rem;
 	--avatar-saturation: 45%;
@@ -89,6 +92,10 @@
 	--reading-width: 42rem;
 	--hidden-size: 1px;
 	--aside-width: 22rem;
+	/* A form's preview spans its rows, beside the fields (wide screens). */
+	--form-rows: 40;
+	/* Pages of sections (Saved): as many columns as fit. */
+	--section-min: 26rem;
 	--required-mark: ' *';
 	--font-size-badge: 0.7rem;
 	--logo-stroke: 2.2;
@@ -102,9 +109,16 @@ html {
 	scroll-padding-block: var(--header-height) calc(var(--nav-height) + env(safe-area-inset-bottom));
 }
 
-@media (min-width: 48rem) {
+/* Wide screens (64rem, the shared breakpoint): the navigation is in the header. */
+@media (min-width: 64rem) {
 	html {
 		scroll-padding-block-end: 0;
+	}
+}
+
+@media (hover: hover) and (pointer: fine) {
+	:root {
+		--chip-height: var(--chip-height-fine);
 	}
 }
 
@@ -152,12 +166,14 @@ main p {
 	max-width: var(--measure);
 }
 
-/* Room for the bottom navigation on phones. */
+/* Room for the bottom navigation on phones and tablets.
+   One breakpoint for the whole layout (navigation, header, explorer): (min-width: 64rem),
+   the same as config.layout.wide (media queries cannot read CSS variables). */
 body {
 	padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom));
 }
 
-@media (min-width: 48rem) {
+@media (min-width: 64rem) {
 	body {
 		padding-bottom: 0;
 	}
@@ -228,6 +244,23 @@ textarea {
 	background: var(--color-bg);
 }
 
+/* Choosing a file: its button looks like the others. */
+input[type='file'] {
+	border-style: dashed;
+	cursor: pointer;
+}
+input[type='file']::file-selector-button {
+	min-height: var(--chip-height);
+	margin-inline-end: var(--space-s);
+	padding: 0 var(--space-m);
+	border: var(--border);
+	border-radius: var(--radius);
+	background: var(--color-soft);
+	color: var(--color-fg);
+	font: inherit;
+	cursor: pointer;
+}
+
 textarea {
 	min-height: calc(var(--tap-size) * 2);
 	resize: vertical;
@@ -275,6 +308,36 @@ button[type='submit']:hover:not(:disabled) {
 button:disabled {
 	opacity: 0.5;
 	cursor: default;
+}
+
+/* Contribute (add a company, a list, a job, a missing part): one look everywhere,
+   a round chip with a plus; "main" when it is what the page is for. */
+a[data-add],
+button[data-add] {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-xs);
+	min-height: var(--chip-height);
+	padding: 0 var(--space-m);
+	border: var(--border-dashed);
+	border-color: var(--color-muted);
+	border-radius: var(--radius-round);
+	background: var(--color-bg);
+	color: var(--color-fg);
+	font-size: var(--font-size-small);
+	text-decoration: none;
+}
+a[data-add]:hover,
+button[data-add]:hover:not(:disabled) {
+	border-style: solid;
+	background: var(--color-soft);
+}
+a[data-add='main'],
+a[data-add='main']:hover {
+	border: var(--border-width) solid var(--color-accent);
+	background: var(--color-accent);
+	color: var(--color-accent-fg);
+	font-weight: var(--font-weight-strong);
 }
 
 label {
@@ -344,6 +407,46 @@ menu {
 	gap: var(--space-s);
 	margin: var(--space-m) 0;
 	padding: 0;
+}
+
+/* A row of chips swiped sideways fades at the side where more chips are hidden. */
+@property --chips-fade-start {
+	syntax: '<length>';
+	inherits: false;
+	initial-value: 0px;
+}
+@property --chips-fade-end {
+	syntax: '<length>';
+	inherits: false;
+	initial-value: 0px;
+}
+@keyframes chips-fade {
+	from {
+		--chips-fade-start: 0px;
+		--chips-fade-end: var(--chips-fade);
+	}
+	10% {
+		--chips-fade-start: var(--chips-fade);
+	}
+	90% {
+		--chips-fade-end: var(--chips-fade);
+	}
+	to {
+		--chips-fade-start: var(--chips-fade);
+		--chips-fade-end: 0px;
+	}
+}
+jl-search-chips > menu,
+jl-explore-chips > menu {
+	mask-image: linear-gradient(
+		to right,
+		transparent,
+		black var(--chips-fade-start),
+		black calc(100% - var(--chips-fade-end)),
+		transparent
+	);
+	animation: chips-fade linear both;
+	animation-timeline: scroll(self inline);
 }
 
 [role='alert'] {

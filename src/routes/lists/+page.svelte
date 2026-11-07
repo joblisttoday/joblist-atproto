@@ -1,4 +1,5 @@
 <script>
+	import Empty from '#lib/components/Empty.svelte';
 	import Icon from '#lib/components/Icon.svelte';
 	import { page } from '$app/state';
 	import { replaceState } from '$app/navigation';
@@ -15,7 +16,7 @@
 	import { data, handleOf, membersOf, network } from '#lib/network/network.svelte.js';
 	import { listJobStats } from '#lib/network/job-counts.svelte.js';
 	import { readView } from '#lib/navigation/explore-view.js';
-	import { t } from '#lib/i18n/index.svelte.js';
+	import { formatNumber, t } from '#lib/i18n/index.svelte.js';
 
 	/**
 	 * Every list, like the companies page: a search bar at the top (words, lists hiring,
@@ -26,7 +27,7 @@
 	let hiring = $state(false);
 	let open = $state(false);
 	let mine = $state(false);
-	let view = $state(readView('lists', 'list'));
+	let view = $state(readView('lists', 'grid'));
 
 	/** The keys of each list's companies, by list uri. */
 	const members = $derived(new Map(data.lists.map((l) => [l.uri, membersOf(l).members.map((m) => m.key)])));
@@ -63,20 +64,20 @@
 			{#snippet chips()}
 				<li>
 					<button type="button" aria-pressed={hiring} onclick={() => (hiring = !hiring)}>
-						<Icon name="jobs" /> {t('lists.hiring')} <small>{hiringCount}</small>
+						<Icon name="jobs" /> {t('lists.hiring')} <small>{formatNumber(hiringCount)}</small>
 					</button>
 				</li>
 				{#if openCount}
 					<li>
 						<button type="button" aria-pressed={open} onclick={() => (open = !open)}>
-							{t('lists.open')} <small>{openCount}</small>
+							{t('lists.open')} <small>{formatNumber(openCount)}</small>
 						</button>
 					</li>
 				{/if}
 				{#if mineCount}
 					<li>
 						<button type="button" aria-pressed={mine} onclick={() => (mine = !mine)}>
-							<Icon name="me" /> {t('lists.mine')} <small>{mineCount}</small>
+							<Icon name="me" /> {t('lists.mine')} <small>{formatNumber(mineCount)}</small>
 						</button>
 					</li>
 				{/if}
@@ -90,7 +91,7 @@
 	{:else}
 		<jl-lists-results {view}>
 			<ResultsHead count={t('lists.count', { count: found.length, total: data.lists.length })}>
-				<a href="/lists/new"><Icon name="add" /> {t('list.new')}</a>
+				<a href="/lists/new" data-add><Icon name="add" /> {t('list.new')}</a>
 			</ResultsHead>
 			<ul>
 				{#each found as list (list.uri)}
@@ -98,7 +99,9 @@
 				{/each}
 			</ul>
 			{#if !found.length && !network.loading}
-				<p>{data.lists.length ? t('search.none') : t('home.empty')}</p>
+				<Empty text={data.lists.length ? t('search.none') : t('home.empty')}>
+					<a href="/lists/new" data-add="main"><Icon name="add" /> {t('list.new')}</a>
+				</Empty>
 			{/if}
 		</jl-lists-results>
 	{/if}

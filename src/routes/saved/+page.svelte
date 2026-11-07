@@ -2,6 +2,8 @@
 	import config from '#lib/data/config.json';
 	import CollectionName from '#lib/components/CollectionName.svelte';
 	import CollectionsTransfer from '#lib/components/CollectionsTransfer.svelte';
+	import Empty from '#lib/components/Empty.svelte';
+	import Icon from '#lib/components/Icon.svelte';
 	import JobCollection from '#lib/components/JobCollection.svelte';
 	import PageHeader from '#lib/components/PageHeader.svelte';
 	import SavedSearches from '#lib/components/SavedSearches.svelte';
@@ -14,23 +16,34 @@
 <svelte:head><title>{t('saved.title')} · {config.name}</title></svelte:head>
 
 <PageHeader title={t('saved.title')} intro={t('saved.intro')} />
-<section aria-labelledby="saved-searches">
-	<h2 id="saved-searches">{t('saved.searches')}</h2>
-	{#if searches.list.length}
-		<SavedSearches jobs={savedJobs.jobs} names={savedJobs.names} />
-	{:else}
-		<p>{t('saved.empty')}</p>
-		<p><a href="/">{t('saved.explore')}</a></p>
-	{/if}
-</section>
-{#each kept.state.collections as collection (collection.id)}
-	<JobCollection {collection} />
-{/each}
-<section aria-labelledby="saved-new">
-	<h2 id="saved-new">{t('collections.new')}</h2>
-	<CollectionName submit={t('collections.create')} onsubmit={addCollection} />
-</section>
-<section aria-labelledby="saved-transfer">
-	<h2 id="saved-transfer">{t('collections.transfer')}</h2>
-	<CollectionsTransfer />
-</section>
+<!-- Wide screens: its parts side by side, in as many columns as fit. -->
+<jl-saved>
+	<section aria-labelledby="saved-searches">
+		<h2 id="saved-searches">{t('saved.searches')}</h2>
+		{#if searches.list.length}
+			<SavedSearches jobs={savedJobs.jobs} names={savedJobs.names} />
+		{:else}
+			<Empty text={t('saved.empty')}><a href="/"><Icon name="search" /> {t('saved.explore')}</a></Empty>
+		{/if}
+	</section>
+	{#each kept.state.collections as collection (collection.id)}
+		<JobCollection {collection} />
+	{/each}
+	<section aria-labelledby="saved-new">
+		<h2 id="saved-new">{t('collections.new')}</h2>
+		<CollectionName submit={t('collections.create')} onsubmit={addCollection} />
+	</section>
+	<section aria-labelledby="saved-transfer">
+		<h2 id="saved-transfer">{t('collections.transfer')}</h2>
+		<CollectionsTransfer />
+	</section>
+</jl-saved>
+
+<style>
+	jl-saved {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--section-min)), 1fr));
+		column-gap: var(--column-gap);
+		align-items: start;
+	}
+</style>

@@ -301,7 +301,7 @@
 		<jl-explore-results id="explore-results" hidden={pickedJobs ? true : undefined}>
 			{#if !searching}
 				<p>
-					{t('explore.welcome', { companies: companies.length.toLocaleString() })}
+					{t('explore.welcome', { companies: companies.length })}
 					<a href="/jobs/new">{t('explore.publish')}</a>
 				</p>
 			{/if}

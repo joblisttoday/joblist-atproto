@@ -38,7 +38,7 @@
 				<Icon name={list.companies.includes(key) ? 'added' : 'add'} /> {list.name}
 			</button>
 		{/each}
-		<a href="/lists/new?add={encodeURIComponent(key)}"><Icon name="add" /> {t('company.newList')}</a>
+		<a href="/lists/new?add={encodeURIComponent(key)}" data-add><Icon name="add" /> {t('company.newList')}</a>
 	</menu>
 	{#if error}<p role="alert">{error}</p>{/if}
 </jl-add-to-list>

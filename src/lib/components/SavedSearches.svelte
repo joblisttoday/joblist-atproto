@@ -45,7 +45,7 @@
 						{label(search)}
 						{#if search.near}{#if label(search)} · {/if}<Icon name="near" /> {near(search.within)}{/if}
 					</strong>
-					{#if all !== null}<small>{t('saved.matching', { count: all.toLocaleString() })}</small>{/if}
+					{#if all !== null}<small>{t('saved.matching', { count: all })}</small>{/if}
 				</a>
 				{#if fresh}<mark>{t('searches.new', { count: fresh })}</mark>{/if}
 				<button type="button" onclick={() => forgetSearch(search)}><Icon name="close" label={t('saved.remove', { name: label(search) || near(search.within) })} /></button>

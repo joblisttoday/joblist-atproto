@@ -37,11 +37,16 @@ export function setLocale(locale) {
  */
 export function t(key, vars = {}) {
 	// "{count} jobs" can have a "….one" variant for a count of 1.
-	if (vars.count === 1 && `${key}.one` in messages[config.defaultLocale]) key = `${key}.one`;
+	if (vars.count === 1 && (`${key}.one` in (messages[i18n.locale] || {}) || `${key}.one` in messages[config.defaultLocale])) key = `${key}.one`;
 	const text = messages[i18n.locale]?.[key] ?? messages[config.defaultLocale][key] ?? key;
 	return text.replace(/\{(\w+)\}/g, (_, name) => {
 		const value = vars[name];
-		if (typeof value === 'number') return value.toLocaleString(i18n.locale);
+		if (typeof value === 'number') return formatNumber(value);
 		return String(value ?? `{${name}}`);
 	});
+}
+
+/** A number as written in the site's language (1,234 in English, 1 234 in French). @param {number} value */
+export function formatNumber(value) {
+	return value.toLocaleString(i18n.locale);
 }

@@ -29,7 +29,7 @@
 				{#if company.verified}· <span><Icon name="verified" /> {t('company.verified', { domain: company.key })}</span>{/if}
 				{#if account}
 					· <a href={config.links.profile.replace('{handle}', account.handle)} target="_blank" rel="noopener">{t('company.onBluesky', { handle: account.handle })}</a>
-					{#if account.followers}· {t('company.followers', { count: account.followers.toLocaleString() })}{/if}
+					{#if account.followers}· {t('company.followers', { count: account.followers })}{/if}
 				{/if}
 			</small>
 		</p>

@@ -1,6 +1,6 @@
 <script>
 	import JobItem from './JobItem.svelte';
-	import { t } from '#lib/i18n/index.svelte.js';
+	import { formatNumber, t } from '#lib/i18n/index.svelte.js';
 
 	/** @type {{key: string, name: string, jobs: import('#lib/ats/job.js').Job[]}} */
 	let { key, name, jobs } = $props();
@@ -10,7 +10,7 @@
 
 <jl-job-group>
 	<details bind:open>
-		<summary>{name} <small>{jobs.length}</small></summary>
+		<summary>{name} <small>{formatNumber(jobs.length)}</small></summary>
 		{#if open}
 			<ul>{#each jobs as job (job.url)}<li><JobItem {job} /></li>{/each}</ul>
 			<p><a href="/company/{key}">{t('jobs.aboutCompany', { name })}</a></p>
