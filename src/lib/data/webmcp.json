@@ -13,7 +13,7 @@
 				"boardId": "The company's id at the job board provider, e.g. 'acme' in https://jobs.lever.co/acme.",
 				"careersUrl": "The company's careers page, when its jobs are not on a known provider. A job board link also works.",
 				"tags": "Comma-separated lowercase tags, e.g. 'climate, open-source, coop'.",
-				"links": "Other links about the company, one per line."
+				"links": "Another public page of the company (its Bluesky or LinkedIn profile, Wikipedia…)."
 			}
 		},
 		"list": {
