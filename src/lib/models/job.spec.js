@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { byCompany, commonPlaces, filterJobs, isOlder, isRemote, newestFirst, offerPlaces, remoteLimit, sameOffers, tidyPlace, time, workplace } from './job.js';
+import { byCompany, commonPlaces, filterJobs, isOlder, isRemote, newestFirst, offerPlaces, placeCounts, remoteLimit, sameOffers, tidyPlace, time, workplace } from './job.js';
 
 /** @param {Partial<import('#lib/ats/job.js').Job>} job */
 const job = (job) => ({ title: 'Engineer', url: 'https://x', company: 'acme.org', ...job });
@@ -17,6 +17,13 @@ describe('isRemote', () => {
 		expect(workplace(job({ location: 'Remote', remote: 'hybrid' }))).toBe('hybrid');
 		expect(isRemote(job({ title: 'Remote Sensing Engineer', location: 'Munich' }))).toBe(false);
 		expect(isRemote(job({ title: 'Engineer - Remote' }))).toBe(true);
+	});
+	it('reads hybrid and on site from the location, and a marked hybrid from the title', () => {
+		expect(workplace(job({ location: 'Berlin - Hybrid' }))).toBe('hybrid');
+		expect(workplace(job({ title: 'Designer (Hybrid)' }))).toBe('hybrid');
+		expect(workplace(job({ title: 'Hybrid Cloud Engineer' }))).toBe(undefined);
+		expect(workplace(job({ location: 'Paris (On-site)' }))).toBe('onsite');
+		expect(workplace(job({ location: 'Paris' }))).toBe(undefined);
 	});
 });
 
@@ -110,6 +117,21 @@ describe('commonPlaces', () => {
 	it('counts location parts', () => {
 		const jobs = [job({ location: 'Berlin, Germany' }), job({ location: 'Berlin' }), job({ location: 'Paris' })];
 		expect(commonPlaces(jobs, 2)).toEqual(['Berlin', 'Germany']);
+	});
+	it('counts spellings of a place together, under the most used one', () => {
+		const jobs = [
+			job({ location: 'San Francisco, CA' }),
+			job({ location: 'San Francisco, California' }),
+			job({ location: 'Los Angeles, California' }),
+			job({ location: 'USA' }),
+			job({ location: 'Remote - United States' }),
+			job({ location: 'United States' })
+		];
+		expect(placeCounts(jobs, 3)).toEqual([['California', 3], ['United States', 3], ['San Francisco', 2]]);
+	});
+	it('leaves out work-place words', () => {
+		const jobs = [job({ location: 'Remote' }), job({ location: 'Hybrid' }), job({ location: 'Remote job' }), job({ location: 'On-site, Paris' })];
+		expect(commonPlaces(jobs)).toEqual(['Paris']);
 	});
 });
 

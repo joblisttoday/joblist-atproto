@@ -3,6 +3,7 @@ import { getJobs } from '../src/lib/ats/index.js';
 import { mapLimit } from '../src/lib/atproto/xrpc.js';
 import { hasJobsApi, locationPoints } from '../src/lib/models/company.js';
 import { isLive, placeNames, toPost } from '../src/lib/models/job-post.js';
+import { workplace } from '../src/lib/models/job.js';
 
 /**
  * @typedef {import('../src/lib/models/company.js').Company} Company
@@ -35,7 +36,8 @@ export async function fetchBoardJobs(companies) {
 				d: j.department || undefined,
 				p: toMinute(j.published),
 				i: j.id && !j.url.endsWith(`/${j.id}`) ? j.id : undefined,
-				r: j.remote || undefined
+				// What the board says, else what its location or title says ("Remote - USA", "Hybrid").
+				r: workplace(j) || undefined
 			});
 		}
 	});

@@ -30,11 +30,28 @@ const anywhere = places.anywhere.map(clean);
 const noise = places.remoteNoise.map(clean);
 
 /**
+ * A US state written as its code after a comma ("San Francisco, CA"), unless a
+ * place other than the United States follows: "Madrid, MD, Spain" is not Maryland.
+ */
+const usState = new RegExp(
+	`,\\s*(${Object.keys(places.usStates).join('|')})\\b(?!\\s*,(?!\\s*(US|USA|U\\.S\\.A?\\.?|United States)\\b))`,
+	'g'
+);
+
+/**
+ * A location with its US state codes written out: "Austin, TX" → "Austin, Texas".
+ * @param {string} text
+ */
+export function expandStates(text) {
+	return text.replace(usState, (_, code) => `, ${places.usStates[/** @type {keyof typeof places.usStates} */ (code)]}`);
+}
+
+/**
  * A place text with one spelling per place, between spaces: " united states berlin ".
  * @param {string} text
  */
 export function canonical(text) {
-	let out = clean(text);
+	let out = clean(expandStates(text));
 	for (const [other, usual] of spellings) {
 		while (out.includes(other)) out = out.replace(other, usual);
 	}
