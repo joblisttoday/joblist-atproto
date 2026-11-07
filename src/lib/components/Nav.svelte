@@ -127,7 +127,7 @@
 		border-top-color: var(--color-fg);
 	}
 
-	@media (min-width: 48rem) {
+	@media (min-width: 64rem) {
 		jl-nav {
 			position: static;
 			background: none;

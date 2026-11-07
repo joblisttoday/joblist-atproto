@@ -40,7 +40,7 @@
 		overflow: hidden;
 	}
 	/* Wide screens: no navigation at the bottom. */
-	@media (min-width: 48rem) {
+	@media (min-width: 64rem) {
 		jl-full-screen {
 			bottom: 0;
 		}

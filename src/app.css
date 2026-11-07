@@ -130,12 +130,14 @@ main p {
 	max-width: var(--measure);
 }
 
-/* Room for the bottom navigation on phones. */
+/* Room for the bottom navigation on phones and tablets.
+   One breakpoint for the whole layout (navigation, header, explorer): (min-width: 64rem),
+   the same as config.layout.wide (media queries cannot read CSS variables). */
 body {
 	padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom));
 }
 
-@media (min-width: 48rem) {
+@media (min-width: 64rem) {
 	body {
 		padding-bottom: 0;
 	}

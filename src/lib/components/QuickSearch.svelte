@@ -211,7 +211,7 @@
 	}
 
 	/* Wide screens: always a box in the header, its offers under it. */
-	@media (min-width: 48rem) {
+	@media (min-width: 64rem) {
 		jl-search,
 		jl-search[open] {
 			position: relative;
