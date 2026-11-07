@@ -3,6 +3,7 @@
 	import { goto } from '$app/navigation';
 	import config from '#lib/data/config.json';
 	import LocaleSwitch from '#lib/components/LocaleSwitch.svelte';
+	import ProfileSwitch from '#lib/components/ProfileSwitch.svelte';
 	import SignIn from '#lib/components/SignIn.svelte';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { nextPath } from '#lib/navigation/next.js';
@@ -18,4 +19,6 @@
 <h1>{t('signin.title')}</h1>
 <p>{t('signin.intro')}</p>
 <SignIn />
+<!-- Signing in adds the account to the profile in use: another account, another profile. -->
+<ProfileSwitch />
 <LocaleSwitch />

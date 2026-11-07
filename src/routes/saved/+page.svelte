@@ -6,6 +6,7 @@
 	import Icon from '#lib/components/Icon.svelte';
 	import JobCollection from '#lib/components/JobCollection.svelte';
 	import PageHeader from '#lib/components/PageHeader.svelte';
+	import ProfileSwitch from '#lib/components/ProfileSwitch.svelte';
 	import SavedSearches from '#lib/components/SavedSearches.svelte';
 	import { addCollection, kept } from '#lib/network/job-collections.svelte.js';
 	import { savedJobs } from '#lib/network/saved-jobs.svelte.js';
@@ -16,6 +17,7 @@
 <svelte:head><title>{t('saved.title')} · {config.name}</title></svelte:head>
 
 <PageHeader title={t('saved.title')} intro={t('saved.intro')} />
+<ProfileSwitch />
 <!-- Wide screens: its parts side by side, in as many columns as fit. -->
 <jl-saved>
 	<section aria-labelledby="saved-searches">

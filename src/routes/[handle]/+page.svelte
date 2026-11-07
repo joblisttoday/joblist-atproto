@@ -11,6 +11,7 @@
 	import MyJobPosts from '#lib/components/MyJobPosts.svelte';
 	import NotFound from '#lib/components/NotFound.svelte';
 	import ProfileHeader from '#lib/components/ProfileHeader.svelte';
+	import ProfileSwitch from '#lib/components/ProfileSwitch.svelte';
 	import { resolveDid } from '#lib/atproto/identity.js';
 	import { session, signOut } from '#lib/auth/session.svelte.js';
 	import { data, handleOf } from '#lib/network/network.svelte.js';
@@ -50,6 +51,7 @@
 			{#if self}
 				<menu><button type="button" onclick={out}>{t('me.signout')}</button></menu>
 				<LocaleSwitch />
+				<ProfileSwitch />
 			{/if}
 		</ProfileHeader>
 
