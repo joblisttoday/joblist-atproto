@@ -40,10 +40,14 @@
 	const KEYS = [...searchKeys, 'view', config.jobs.jobParam];
 	/** The filters an address says. @param {URLSearchParams} params */
 	const filtersOf = (params) => ({ ...fromParams(params), area: areaOf(params.get('area')) });
-	/** The view an address says, else the one this person last chose. @param {URLSearchParams} params */
+	/**
+	 * The view an address says, else the one this person last chose, else the list on a phone
+	 * (the most jobs on a small screen, the map one tap away) and the map on wide screens.
+	 * @param {URLSearchParams} params
+	 */
 	const viewOf = (params) => {
 		const asked = params.get('view');
-		return asked === 'list' || asked === 'grid' || asked === 'map' ? asked : readView();
+		return asked === 'list' || asked === 'grid' || asked === 'map' ? asked : readView('jobs', matchMedia(config.layout.wide).matches ? 'map' : 'list');
 	};
 	const arrivedAt = readAddress(KEYS);
 	let filters = $state(filtersOf(arrivedAt));
@@ -80,9 +84,9 @@
 	searches.opening = null;
 	if (arrived) open(arrived);
 
-	// The page's state as its address keeps it: the view only when not the page's own (the map).
+	// The page's state as its address keeps it, its view too: a link opens as it was shared.
 	/** @param {import('#lib/models/job.js').JobFilters} f @param {string} v @param {string} [job] */
-	const addressFor = (f, v, job) => addressOf({ ...searchState(f), view: v === 'map' ? '' : v, [config.jobs.jobParam]: job }, path);
+	const addressFor = (f, v, job) => addressOf({ ...searchState(f), view: v, [config.jobs.jobParam]: job }, path);
 
 	// A shallow replace changes the address, not page.url: compare with the location.
 	// Not before the session is ready: a sign-in comes back to this page with its own answer.
