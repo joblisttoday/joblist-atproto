@@ -1,7 +1,8 @@
 <script>
 	import DialogHeader from './DialogHeader.svelte';
 	import SignIn from './SignIn.svelte';
-	import { leftToSave } from '#lib/network/drafts.js';
+	import { backToSave, leftToSave } from '#lib/network/drafts.js';
+	import { session } from '#lib/auth/session.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
@@ -20,6 +21,11 @@
 		leftToSave(form);
 		dialog.showModal();
 	}
+
+	// Back from a sign-in that failed: open again, saying why, the form still filled in.
+	$effect(() => {
+		if (session.ready && !session.did && session.error && backToSave(form)) ask();
+	});
 </script>
 
 <jl-save-signin>

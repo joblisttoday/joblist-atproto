@@ -1,7 +1,7 @@
 import { goto } from '$app/navigation';
 import { getProfiles } from '#lib/atproto/identity.js';
 import { nextPath } from '#lib/navigation/next.js';
-import { forgetAll } from '#lib/network/drafts.js';
+import { carryDrafts, forgetAll } from '#lib/network/drafts.js';
 import { signingIn } from '#lib/navigation/address.js';
 import { attachAccount, currentProfile, detachAccount, profiles, profilesKept, removeProfile } from '#lib/profiles/profiles.js';
 
@@ -44,14 +44,23 @@ export async function initSession() {
 		if (!(await mayHaveSession())) return;
 		client = await (await auth()).loadClient(clear);
 		if (signingIn()) {
-			const result = await client.init();
+			const from = currentProfile().id;
+			const result = await client.init().catch((err) => {
+				// Signing in failed: back where it started, saying why, rather than on the home page.
+				session.error = err instanceof Error ? err.message : String(err);
+				return null;
+			});
+			const back = takeBack();
 			if (result && 'state' in result) {
-				// Back from signing in: an account already in another profile opens that profile.
-				if (attachAccount(result.session.sub)) return location.replace(result.state || '/');
+				// An account already in another profile opens that profile, with what was being written.
+				if (attachAccount(result.session.sub)) {
+					carryDrafts(from, currentProfile().id);
+					return location.replace(result.state || back || '/');
+				}
 				await use(result.session);
-				if (result.state) await goto(result.state, { replace: true });
-				return;
 			}
+			if (result?.state || back) await goto(result?.state || back || '/', { replace: true });
+			return;
 		}
 		// Each profile its own account, restored by name (signed in before profiles: the last one).
 		const did = currentProfile().did || (profilesKept() ? null : (await client.init().catch(() => null))?.session.sub);
@@ -75,9 +84,10 @@ export async function initSession() {
 export async function signIn(handle) {
 	const { loadClient, SCOPE } = await auth();
 	if (!client) client = await loadClient(clear);
-	// Back to the page signing in started from (/signin?next=… names it).
-	const { pathname, search } = window.location;
-	const back = pathname === '/signin' ? nextPath(new URLSearchParams(search)) || '/' : pathname + search;
+	// Back to the page signing in started from (/signin?next=… names it), as it was (after the "#" too).
+	const { pathname, search, hash } = window.location;
+	const back = pathname === '/signin' ? nextPath(new URLSearchParams(search)) || '/' : pathname + search + hash;
+	keepBack(back);
 	await client.signIn(handle.trim().replace(/^@/, ''), { scope: SCOPE, state: back });
 }
 
@@ -109,6 +119,27 @@ export async function forgetProfile(id) {
 		}
 	}
 	removeProfile(id);
+}
+
+/** Where signing in started, in this tab: back there even when it fails. */
+const BACK = 'joblist.signInBack.v1';
+/** @param {string} path */
+function keepBack(path) {
+	try {
+		sessionStorage.setItem(BACK, path);
+	} catch {
+		// storage blocked: a sign-in that succeeds still comes back
+	}
+}
+function takeBack() {
+	try {
+		const path = sessionStorage.getItem(BACK);
+		sessionStorage.removeItem(BACK);
+		// Only a path of this site.
+		return path && path.startsWith('/') && !path.startsWith('//') ? path : null;
+	} catch {
+		return null;
+	}
 }
 
 /** @param {import('@atproto/oauth-client-browser').OAuthSession} oauthSession */

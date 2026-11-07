@@ -7,10 +7,16 @@ import { scoped } from '#lib/profiles/profiles.js';
  * or signing in on the way (which leaves the page), does not lose it. Drafts stay
  * in this browser, and signing out clears them for the next person.
  */
+const KEYS = {
+	job: 'joblist.jobDraft.v1',
+	company: 'joblist.companyDraft.v1',
+	list: 'joblist.listDraft.v1'
+};
+/** The current profile's (profiles.js). */
 const DRAFTS = {
-	job: scoped('joblist.jobDraft.v1'),
-	company: scoped('joblist.companyDraft.v1'),
-	list: scoped('joblist.listDraft.v1')
+	job: scoped(KEYS.job),
+	company: scoped(KEYS.company),
+	list: scoped(KEYS.list)
 };
 /** Left a form to sign in and save it (this tab only). */
 const RETURN = 'joblist.saveAfterSignIn.v1';
@@ -49,6 +55,22 @@ export function forget(name) {
 		localStorage.removeItem(DRAFTS[name]);
 	} catch {
 		// nothing kept
+	}
+}
+
+/**
+ * Signing in opened another profile (the account is its): what was being written goes with it.
+ * @param {string} from profile id
+ * @param {string} to profile id
+ */
+export function carryDrafts(from, to) {
+	try {
+		for (const key of Object.values(KEYS)) {
+			const draft = localStorage.getItem(scoped(key, from));
+			if (draft) localStorage.setItem(scoped(key, to), draft);
+		}
+	} catch {
+		// storage blocked: nothing was kept
 	}
 }
 
