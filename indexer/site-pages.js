@@ -9,8 +9,8 @@ import en from '../src/lib/i18n/locales/en.json' with { type: 'json' };
 import { escape } from './html.js';
 
 /**
- * @typedef {{path: string, meta: Parameters<typeof import('./html.js').page>[1], listed: boolean}} SitePage
- *   listed: in the sitemap.
+ * @typedef {{path: string, meta: Parameters<typeof import('./html.js').page>[1], listed: boolean, updated?: string}} SitePage
+ *   listed: in the sitemap; updated: when it last changed, for the sitemap.
  */
 
 /** The app's pages for people (their own data, forms): shells, kept out of search results. */
@@ -30,14 +30,18 @@ const url = (path) => config.url + (path === '/' ? '' : path);
 /**
  * @param {{
  *   companies: {key: string, name: string}[],
- *   lists: {name: string, path: string, count: number}[],
- *   profiles: {handle: string, lists: {name: string, path: string}[]}[],
+ *   lists: {name: string, path: string, count: number, updated?: string}[],
+ *   profiles: {handle: string, lists: {name: string, path: string, updated?: string}[]}[],
  *   jobCounts: Map<string, number>,
- *   jobTotal: number
+ *   jobTotal: number,
+ *   updated?: string
  * }} site
+ *   updated: when the newest job was first seen
  * @returns {SitePage[]}
  */
-export function sitePages({ companies, lists, profiles, jobCounts, jobTotal }) {
+export function sitePages({ companies, lists, profiles, jobCounts, jobTotal, updated }) {
+	/** @param {{updated?: string}[]} items */
+	const newest = (items) => items.map((i) => i.updated || '').reduce((a, b) => (b > a ? b : a), '');
 	const welcome = en['explore.welcome'].replace('{companies}', companies.length.toLocaleString('en'));
 	const hiring = [...companies].sort((a, b) => (jobCounts.get(b.key) || 0) - (jobCounts.get(a.key) || 0));
 	/** @type {SitePage[]} */
@@ -45,6 +49,7 @@ export function sitePages({ companies, lists, profiles, jobCounts, jobTotal }) {
 		{
 			path: '/',
 			listed: true,
+			updated,
 			meta: {
 				title: `${config.name} · ${jobTotal.toLocaleString('en')} open jobs`,
 				description: welcome,
@@ -57,6 +62,7 @@ export function sitePages({ companies, lists, profiles, jobCounts, jobTotal }) {
 		{
 			path: '/companies',
 			listed: true,
+			updated,
 			meta: {
 				title: `${en['companies.title']} · ${config.name}`,
 				description: en['companies.intro'],
@@ -72,6 +78,7 @@ export function sitePages({ companies, lists, profiles, jobCounts, jobTotal }) {
 		{
 			path: '/lists',
 			listed: true,
+			updated: newest(lists),
 			meta: {
 				title: `${en['nav.lists']} · ${config.name}`,
 				description: en['home.intro'],
@@ -84,6 +91,7 @@ export function sitePages({ companies, lists, profiles, jobCounts, jobTotal }) {
 		...profiles.map((p) => ({
 			path: `/${p.handle}`,
 			listed: true,
+			updated: newest(p.lists),
 			meta: {
 				title: `@${p.handle} · ${config.name}`,
 				description: `Lists of companies by @${p.handle} on ${config.name}.`,

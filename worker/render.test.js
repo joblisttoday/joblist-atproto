@@ -52,7 +52,18 @@ test('the indexes list cities and fields', () => {
 	assert.match(indexMeta('cities', index).body, /<a href="\/in\/berlin">Berlin<\/a> \(500 open jobs\)/);
 	assert.doesNotMatch(indexMeta('cities', index).body, /\.\.\/x/);
 	assert.match(indexMeta('fields', index).body, /<a href="\/field\/design">Design<\/a>/);
-	assert.deepEqual(placePaths(index), ['/in', '/field', '/in/berlin', '/field/design', '/in/berlin/design']);
+	assert.deepEqual(
+		placePaths(index).map((p) => p.path),
+		['/in', '/field', '/in/berlin', '/field/design', '/in/berlin/design']
+	);
+	const datedIndex = { cities: [{ ...index.cities[0], updated: '2026-11-02T17:49Z' }], fields: [{ slug: 'design', updated: '2026-11-01T00:00Z' }] };
+	const dated = placePaths(datedIndex);
+	assert.deepEqual(dated.slice(0, 3), [
+		{ path: '/in', updated: '2026-11-02T17:49Z' },
+		{ path: '/field', updated: '2026-11-02T17:49Z' },
+		{ path: '/in/berlin', updated: '2026-11-02T17:49Z' }
+	]);
+	assert.match(render({ kind: 'sitemap' }, datedIndex, '').body, /<loc>https:\/\/joblist\.today\/in\/berlin<\/loc><lastmod>2026-11-02T17:49:00Z<\/lastmod>/);
 });
 
 test('feeds are valid XML whatever the jobs say', () => {

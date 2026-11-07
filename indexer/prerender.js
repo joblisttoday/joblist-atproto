@@ -52,7 +52,14 @@ for (const r of companyRecords) {
 const companies = new Companies([...versionsByKey.values()].map((versions) => toCompany(versions, profiles)));
 /** @type {Map<string, number>} */
 const jobCounts = new Map();
-for (const job of jobs) jobCounts.set(job.c, (jobCounts.get(job.c) || 0) + 1);
+/** Each company's newest job, when it was first seen (ISO dates compare as text). @type {Map<string, string>} */
+const newestJob = new Map();
+for (const job of jobs) {
+	jobCounts.set(job.c, (jobCounts.get(job.c) || 0) + 1);
+	if ((job.p || '') > (newestJob.get(job.c) || '')) newestJob.set(job.c, job.p);
+}
+/** @param {(string | undefined)[]} dates @returns {string} the latest */
+const latest = (dates) => dates.reduce((a, b) => ((b || '') > (a || '') ? b : a), '') || '';
 
 /**
  * Posted jobs link to their page here, job board jobs to the board.
@@ -63,15 +70,15 @@ function jobLink(job) {
 	return did ? postPath(did, rkey) : job.u;
 }
 
-/** Every prerendered page meant for search results, for the sitemap. */
-/** @type {string[]} */
+/** Every prerendered page meant for search results, for the sitemap, with when it last changed. */
+/** @type {{path: string, updated?: string}[]} */
 const paths = [];
-/** The lists, for their index and their authors' pages. @type {{name: string, path: string, count: number, did: string}[]} */
+/** The lists, for their index and their authors' pages. @type {{name: string, path: string, count: number, did: string, updated: string}[]} */
 const listed = [];
 
-/** @param {string} path @param {string} html @param {boolean} [inSitemap] */
-function write(path, html, inSitemap = true) {
-	if (inSitemap) paths.push(path);
+/** @param {string} path @param {string} html @param {boolean} [inSitemap] @param {string} [updated] */
+function write(path, html, inSitemap = true, updated = '') {
+	if (inSitemap) paths.push({ path, updated });
 	// Files are named by the decoded path (job pages have encoded DIDs in their links).
 	const dir = join(build, decodeURIComponent(path));
 	// Paths come from records: none may lead out of the build.
@@ -91,7 +98,9 @@ for (const record of listRecords) {
 	const open = members.reduce((n, c) => n + (jobCounts.get(c.key) || 0), 0);
 	const path = `/${handleOf(list.did)}/${list.rkey}`;
 	const summary = `${members.length} companies, ${open} open jobs. ${list.description || ''}`.trim();
-	listed.push({ name: list.name, path, count: members.length, did: list.did });
+	// Changed when edited, or when one of its companies has a new job.
+	const updated = latest([record.value.updatedAt, record.value.createdAt, ...members.map((c) => newestJob.get(c.key))]);
+	listed.push({ name: list.name, path, count: members.length, did: list.did, updated });
 	write(
 		path,
 		page(template, {
@@ -101,7 +110,9 @@ for (const record of listRecords) {
 			body: `<h1>${escape(list.name)}</h1><p>${escape(summary)}</p><p>${escape(en['list.by'])} @${escape(handleOf(list.did))}</p><ul>${members
 				.map((c) => `<li><a href="/company/${escape(c.key)}">${escape(c.name)}</a></li>`)
 				.join('')}</ul>`
-		})
+		}),
+		true,
+		updated
 	);
 	count++;
 }
@@ -132,13 +143,15 @@ for (const company of companies.values()) {
 				.slice(0, 200)
 				.map((/** @type {any} */ j) => `<li><a href="${escape(jobLink(j))}">${escape(j.t)}</a> ${escape(j.l || '')}</li>`)
 				.join('')}</ul>`
-		})
+		}),
+		true,
+		newestJob.get(company.key) || company.editedAt
 	);
 	count++;
 }
 
-for (const { path, meta } of jobPages(jobRecords, companies, profiles, bluesky)) {
-	write(path, page(template, meta));
+for (const { path, meta, updated } of jobPages(jobRecords, companies, profiles, bluesky)) {
+	write(path, page(template, meta), true, updated);
 	count++;
 }
 
@@ -149,12 +162,13 @@ const site = sitePages({
 	lists: [...listed].sort((a, b) => b.count - a.count),
 	profiles: [...byAuthor].map(([did, lists]) => ({ handle: handleOf(did), lists })),
 	jobCounts,
-	jobTotal: jobs.length
+	jobTotal: jobs.length,
+	updated: latest([...newestJob.values()])
 });
-for (const { path, meta, listed: inSitemap } of site) {
+for (const { path, meta, listed: inSitemap, updated } of site) {
 	if (path === '/') writeFileSync(join(build, 'index.html'), page(template, meta));
-	else write(path, page(template, meta), inSitemap);
-	if (path === '/') paths.unshift('/');
+	else write(path, page(template, meta), inSitemap, updated);
+	if (path === '/') paths.unshift({ path, updated });
 	count++;
 }
 // Anything else: a real 404, on which the app still starts (a company added since this build).

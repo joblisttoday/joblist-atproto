@@ -14,8 +14,8 @@ import fields from '#lib/data/fields.json' with { type: 'json' };
  * @typedef {{generatedAt: string, name?: string, count: number, names: Record<string, string>, jobs: LandingJob[],
  *   fields?: {slug: string, count: number}[], cities?: {slug: string, name: string, count: number}[]}} LandingFile
  *   One page's data: the newest jobs and their companies' names; a city's fields, a field's cities.
- * @typedef {{generatedAt: string, total: number, cities: {slug: string, name: string, count: number, fields: string[]}[], fields: {slug: string, count: number}[]}} LandingIndex
- *   cities[].fields: the fields with a page in that city.
+ * @typedef {{generatedAt: string, total: number, cities: {slug: string, name: string, count: number, updated?: string, fields: string[]}[], fields: {slug: string, count: number, updated?: string}[]}} LandingIndex
+ *   cities[].fields: the fields with a page in that city; updated: when its newest job was first seen.
  */
 
 /** @type {Field[]} */

@@ -112,6 +112,8 @@ export function landingFiles(jobs, names, places, generatedAt) {
 		for (const field of fields) add(`field/${field}`, job);
 	}
 	const count = (/** @type {string} */ key) => groups.get(key)?.length || 0;
+	// When a page last changed: its newest job (groups are newest first).
+	const updated = (/** @type {string} */ key) => groups.get(key)?.[0]?.p || undefined;
 	const cities = [...groups.keys()]
 		.filter((key) => /^in\/[^/]+$/.test(key) && count(key) >= landing.minJobs.city)
 		.map((key) => key.slice(3))
@@ -136,9 +138,10 @@ export function landingFiles(jobs, names, places, generatedAt) {
 					slug,
 					name: nameOf(spellings, slug),
 					count: count(`in/${slug}`),
+					updated: updated(`in/${slug}`),
 					fields: pairs.filter((p) => p.city === slug).map((p) => p.field)
 				})),
-				fields: fields.map((slug) => ({ slug, count: count(`field/${slug}`) }))
+				fields: fields.map((slug) => ({ slug, count: count(`field/${slug}`), updated: updated(`field/${slug}`) }))
 			}
 		],
 		[landingFile({}), file(sorted)]

@@ -119,6 +119,7 @@ export function jobPages(records, companies, profiles, bluesky = {}) {
 			const title = en['job.at'].replace('{title}', post.title).replace('{company}', name);
 			return {
 				path: postPath(post.did, post.rkey),
+				updated: post.record.value.updatedAt || post.createdAt,
 				meta: {
 					title,
 					description: [placeNames(post.locations), post.description].filter(Boolean).join(' · ') || title,
