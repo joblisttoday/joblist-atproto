@@ -135,6 +135,7 @@
 	"list.copiedFrom": "copied from",
 	"list.tab.companies": "Companies",
 	"list.tab.jobs": "Jobs",
+	"list.place.in": "In {place}",
 	"list.copy": "Make a copy",
 	"list.edit": "Edit",
 	"list.delete": "Delete",

@@ -60,6 +60,12 @@ describe('filterJobs', () => {
 		job({ title: 'Engineer', location: 'Paris', published: '2024-02-01', url: 'b' }),
 		job({ title: 'Engineer', location: 'Remote', url: 'c' })
 	];
+	it('keeps the jobs in any of several places, a remote job limited to their country too', () => {
+		const lyon = job({ location: 'Lyon, France', url: 'd' });
+		const france = job({ location: 'Remote - France', url: 'e' });
+		const found = filterJobs([...jobs, lyon, france], { ...none, places: ['Paris', 'Lyon'] }, names);
+		expect(found.map((j) => j.url)).toEqual(['b', 'd', 'e']);
+	});
 	it('sorts newest first, undated last (once, before filtering)', () => {
 		const sorted = [...jobs];
 		newestFirst(sorted);
