@@ -94,7 +94,7 @@
 		{#if offered.length}
 			<p><small>{t('form.location.suggested')}</small></p>
 			<menu>
-				{#each offered as place (locationLabel(place))}
+				{#each offered as place, i (i)}
 					<li><button type="button" onclick={() => add(place)}><Icon name="add" /> {locationLabel(place)}</button></li>
 				{/each}
 			</menu>
@@ -112,7 +112,7 @@
 		/>
 		{#if found.length}
 			<ul aria-label={t('form.location.found')}>
-				{#each found as place (place.label)}
+				{#each found as place, i (`${i}:${place.label}`)}
 					<li><button type="button" onclick={() => add(place.location)}><Icon name="place" /> {place.label}</button></li>
 				{/each}
 			</ul>

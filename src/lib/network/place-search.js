@@ -1,5 +1,5 @@
 import config from '#lib/data/config.json';
-import { toFoundPlace } from '#lib/models/place-search.js';
+import { toFoundPlace, uniquePlaces } from '#lib/models/place-search.js';
 
 /**
  * Cities and places whose name starts as typed, in the reader's language.
@@ -17,5 +17,5 @@ export async function searchPlaces(text, lang, signal) {
 	const res = await fetch(url, { signal });
 	if (!res.ok) return [];
 	const { features = [] } = await res.json();
-	return features.map(toFoundPlace).filter(Boolean);
+	return uniquePlaces(features.map(toFoundPlace));
 }

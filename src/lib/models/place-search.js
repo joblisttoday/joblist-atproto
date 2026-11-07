@@ -41,3 +41,14 @@ export function samePlace(a, b) {
 	const key = (/** @type {Location} */ l) => locationLabel(l).trim().toLowerCase();
 	return key(a) !== '' && key(a) === key(b);
 }
+
+/**
+ * Found places, each name once: a city and its district or county often have the
+ * same one ("Paris, Île-de-France, France" twice); the first, the closest match, is kept.
+ * @param {(FoundPlace | null)[]} found
+ * @returns {FoundPlace[]}
+ */
+export function uniquePlaces(found) {
+	const seen = new Set();
+	return /** @type {FoundPlace[]} */ (found.filter((place) => place && !seen.has(place.label) && seen.add(place.label)));
+}
