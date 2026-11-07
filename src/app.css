@@ -51,7 +51,10 @@
 	--radius-large: 1rem;
 	--shadow: 0 2px 8px rgb(0 0 0 / 0.25);
 	--tap-size: 2.75rem;
-	--chip-height: 2.25rem;
+	/* Chips and small buttons: a finger's size on touch screens, more compact with a mouse. */
+	--chip-height: var(--tap-size);
+	--chip-height-fine: 2.25rem;
+	--chips-fade: var(--space-l);
 	--avatar-size: 4rem;
 	--avatar-small: 2.5rem;
 	--avatar-saturation: 45%;
@@ -85,6 +88,12 @@
 	--logo-open: 450ms cubic-bezier(0.3, 1.5, 0.5, 1);
 
 	color-scheme: light dark;
+}
+
+@media (hover: hover) and (pointer: fine) {
+	:root {
+		--chip-height: var(--chip-height-fine);
+	}
 }
 
 @media (prefers-color-scheme: dark) {
@@ -319,6 +328,46 @@ menu {
 	gap: var(--space-s);
 	margin: var(--space-m) 0;
 	padding: 0;
+}
+
+/* A row of chips swiped sideways fades at the side where more chips are hidden. */
+@property --chips-fade-start {
+	syntax: '<length>';
+	inherits: false;
+	initial-value: 0px;
+}
+@property --chips-fade-end {
+	syntax: '<length>';
+	inherits: false;
+	initial-value: 0px;
+}
+@keyframes chips-fade {
+	from {
+		--chips-fade-start: 0px;
+		--chips-fade-end: var(--chips-fade);
+	}
+	10% {
+		--chips-fade-start: var(--chips-fade);
+	}
+	90% {
+		--chips-fade-end: var(--chips-fade);
+	}
+	to {
+		--chips-fade-start: var(--chips-fade);
+		--chips-fade-end: 0px;
+	}
+}
+jl-search-chips > menu,
+jl-explore-chips > menu {
+	mask-image: linear-gradient(
+		to right,
+		transparent,
+		black var(--chips-fade-start),
+		black calc(100% - var(--chips-fade-end)),
+		transparent
+	);
+	animation: chips-fade linear both;
+	animation-timeline: scroll(self inline);
 }
 
 [role='alert'] {

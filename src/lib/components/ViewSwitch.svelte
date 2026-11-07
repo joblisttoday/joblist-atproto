@@ -47,6 +47,7 @@
 	button {
 		gap: var(--space-xs);
 		min-height: var(--chip-height);
+		min-width: var(--chip-height);
 		padding: 0 var(--space-s);
 		border: 0;
 		border-radius: 0;
