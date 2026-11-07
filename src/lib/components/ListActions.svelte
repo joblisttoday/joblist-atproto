@@ -1,10 +1,9 @@
 <script>
-	import { goto } from '$app/navigation';
 	import config from '#lib/data/config.json';
 	import Icon from './Icon.svelte';
-	import { deleteRecord } from '#lib/atproto/write.js';
+	import ListDelete from './ListDelete.svelte';
 	import { session } from '#lib/auth/session.svelte.js';
-	import { handleOf, removeLocal } from '#lib/network/network.svelte.js';
+	import { handleOf } from '#lib/network/network.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
@@ -18,8 +17,8 @@
 	const id = $props.id();
 
 	let copied = $state(false);
-	/** @type {string | null} */
-	let error = $state(null);
+	/** @type {ListDelete | undefined} */
+	let deleting = $state();
 	const mine = $derived(list.did === session.did);
 	const path = $derived(`/${handleOf(list.did)}/${list.rkey}`);
 	// Signed out, "Suggest" signs in first and comes back here with it open.
@@ -36,15 +35,10 @@
 		}
 	}
 
-	async function remove() {
-		if (!confirm(t('list.confirmDelete'))) return;
-		try {
-			await deleteRecord(config.collections.list, list.rkey);
-			removeLocal('list', list.uri);
-			await goto(`/${session.handle}`);
-		} catch (err) {
-			error = err instanceof Error ? err.message : String(err);
-		}
+	// The small menu closes, and the dialog says what deleting does.
+	function remove() {
+		document.getElementById(`${id}-more`)?.hidePopover();
+		deleting?.ask();
 	}
 </script>
 
@@ -81,7 +75,7 @@
 			</menu>
 		</li>
 	</menu>
-	{#if error}<p role="alert">{error}</p>{/if}
+	{#if mine}<ListDelete bind:this={deleting} {list} />{/if}
 </jl-list-actions>
 
 <style>
@@ -142,8 +136,5 @@
 		border: 0;
 		border-radius: var(--radius);
 		font-size: var(--font-size);
-	}
-	p {
-		margin: var(--space-xs) 0 0;
 	}
 </style>
