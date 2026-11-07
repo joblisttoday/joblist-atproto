@@ -161,7 +161,7 @@
 		"countryAliases": { "uk": "gb", "usa": "us", "united states": "us", "uae": "ae" },
 		"placesFile": "places-2.json",
 		"officesFile": "offices.json",
-		"ignoreWords": ["hybrid", "on-site", "onsite", "on site", "office", "headquarters", "hq", "multiple locations", "various locations", "flexible", "friendly", "travel required", "jobs?", "global", "worldwide", "international", "distributed", "emea", "apac", "latam", "americas", "nordics", "dach", "benelux"]
+		"ignoreWords": ["hybrid", "on-site", "onsite", "on site", "office", "headquarters", "hq", "multiple locations", "various locations", "flexible", "friendly", "travel required", "jobs?", "global", "worldwide", "international", "distributed", "emea", "apac", "latam", "americas", "amer", "namer", "nordics", "dach", "benelux"]
 	},
 	"travel": {
 		"kmPerHour": { "walk": 5, "bike": 15 },
