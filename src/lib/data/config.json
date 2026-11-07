@@ -11,6 +11,10 @@
 	"bots": [
 		"did:plc:jqaucxlucukeif3bltpuc7zx"
 	],
+	"lexicons": {
+		"dir": "lexicons",
+		"did": "did:plc:jqaucxlucukeif3bltpuc7zx"
+	},
 	"services": {
 		"relay": "https://relay1.us-east.bsky.network",
 		"appview": "https://public.api.bsky.app",
@@ -263,6 +267,7 @@
 			"internship",
 			"volunteer"
 		],
+		"status": ["open", "filled", "closed"],
 		"schemaEmployment": {
 			"full-time": "FULL_TIME",
 			"part-time": "PART_TIME",

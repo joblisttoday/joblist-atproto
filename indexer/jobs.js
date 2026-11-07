@@ -105,6 +105,7 @@ export function recordJobs(records, profiles, now = Date.now()) {
 				s: post.uri
 			};
 			if (post.verified) job.v = 1;
+			if (post.salary) job.m = packSalary(post.salary);
 			// Where it is, when the poster says it.
 			const [at] = locationPoints(post.locations);
 			if (at) job.g = [at.lon, at.lat];

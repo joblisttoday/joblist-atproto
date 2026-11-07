@@ -40,7 +40,11 @@ Four record types, defined in [`lexicons/`](lexicons/today/joblist):
 - **`today.joblist.job`**: a job offer posted on joblist, in the poster's
   own account: title, company key, description, places, remote, contract,
   `url` (the full offer, or its joblist page), `apply` (a link, an email,
-  and/or "message me on Bluesky") and `expiresAt`.
+  and/or "message me on Bluesky") and `expiresAt`; optionally `salary`,
+  `status` (filled or closed offers are hidden) and `updatedAt`.
+
+Every field added later is optional; how keys are normalised and how to
+publish the lexicons: [docs/lexicons.md](docs/lexicons.md).
 
 ## Posting jobs
 

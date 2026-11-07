@@ -163,3 +163,24 @@ describe('where posted jobs are', () => {
 		expect(kept).toBe(placed);
 	});
 });
+
+describe('pay, status and edits', () => {
+	it('keeps a pay range in whole units and reads it back', () => {
+		const r = toRecord(form({ salaryMin: '60000.4', salaryMax: '50000', currency: 'eur', period: 'year' }), { page: PAGE, now: NOW });
+		expect(r.salary).toEqual({ min: 50000, max: 60000, currency: 'EUR', period: 'year' });
+		const post = toPost(record(r), new Map());
+		expect(toJob(post).salary).toEqual(r.salary);
+		expect(toForm(post, '', NOW)).toMatchObject({ salaryMin: '50000', salaryMax: '60000', currency: 'EUR', period: 'year' });
+	});
+	it('leaves out a pay range that says nothing usable', () => {
+		expect(toRecord(form({ salaryMin: 'lots', currency: 'EUR', period: 'year' }), { page: PAGE, now: NOW }).salary).toBeUndefined();
+		expect(toPost(record({ title: 'E', salary: { min: 1, currency: 'euros', period: 'year' } }), new Map()).salary).toBeUndefined();
+	});
+	it('says when an edit was made, and a filled offer is no longer live', () => {
+		const r = toRecord(form({ status: 'filled' }), { page: PAGE, createdAt: '2026-01-01T00:00:00.000Z', now: NOW });
+		expect(r).toMatchObject({ status: 'filled', createdAt: '2026-01-01T00:00:00.000Z', updatedAt: new Date(NOW).toISOString() });
+		expect(isLive(r, NOW)).toBe(false);
+		expect(isLive({ ...r, status: 'open' }, NOW)).toBe(true);
+		expect(toRecord(form({ status: 'open' }), { page: PAGE, now: NOW }).status).toBeUndefined();
+	});
+});
