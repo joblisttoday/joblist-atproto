@@ -221,6 +221,8 @@
 	"searches.forget": "L'oublier",
 	"searches.private": "Gardée dans ce navigateur uniquement, jamais publiée.",
 	"job.new": "Nouveau",
+	"job.older": "En ligne depuis longtemps",
+	"job.older.hint": "Vue pour la première fois il y a plus de {days} jours : elle est peut-être déjà pourvue.",
 	"job.places.more": "et {count} autres lieux",
 	"job.places.more.one": "et 1 autre lieu",
 

@@ -190,6 +190,18 @@ export function time(value) {
 	return ms;
 }
 
+/**
+ * Whether a job board offer was first seen more than `days` ago: still listed,
+ * but maybe filled. Shown as such, never hidden (offers posted on joblist expire instead).
+ * @param {Job} job
+ * @param {number} [now]
+ * @param {number} [days]
+ */
+export function isOlder(job, now = Date.now(), days = config.jobs.olderDays) {
+	const at = time(job.published);
+	return !job.posted && at > 0 && now - at > days * 864e5;
+}
+
 /** Dates already read: sorting tens of thousands of jobs reads each many times. */
 const times = new Map();
 

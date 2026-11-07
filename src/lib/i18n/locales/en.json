@@ -220,6 +220,8 @@
 	"searches.forget": "Forget it",
 	"searches.private": "Kept in this browser only, never published.",
 	"job.new": "New",
+	"job.older": "Open for a while",
+	"job.older.hint": "First seen more than {days} days ago: it may already be filled.",
 	"job.places.more": "and {count} more places",
 	"job.places.more.one": "and 1 more place",
 

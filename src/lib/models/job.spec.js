@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { byCompany, commonPlaces, filterJobs, isRemote, newestFirst, offerPlaces, remoteLimit, sameOffers, tidyPlace, time, workplace } from './job.js';
+import { byCompany, commonPlaces, filterJobs, isOlder, isRemote, newestFirst, offerPlaces, remoteLimit, sameOffers, tidyPlace, time, workplace } from './job.js';
 
 /** @param {Partial<import('#lib/ats/job.js').Job>} job */
 const job = (job) => ({ title: 'Engineer', url: 'https://x', company: 'acme.org', ...job });
@@ -118,6 +118,18 @@ describe('time', () => {
 		expect(time('2024-01-01 10:00:00 UTC')).toBe(Date.parse('2024-01-01T10:00:00Z'));
 		expect(time('nope')).toBe(0);
 		expect(time(undefined)).toBe(0);
+	});
+});
+
+describe('isOlder', () => {
+	const now = Date.parse('2026-11-07T00:00Z');
+	it('marks board offers first seen more than the given days ago', () => {
+		expect(isOlder(job({ published: '2026-07-01T00:00Z' }), now, 90)).toBe(true);
+		expect(isOlder(job({ published: '2026-10-01T00:00Z' }), now, 90)).toBe(false);
+	});
+	it('never marks undated offers, nor offers posted on joblist (they expire)', () => {
+		expect(isOlder(job({}), now, 90)).toBe(false);
+		expect(isOlder(job({ published: '2026-01-01T00:00Z', posted: { did: 'did:x', rkey: 'r', verified: false } }), now, 90)).toBe(false);
 	});
 });
 
