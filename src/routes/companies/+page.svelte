@@ -5,11 +5,14 @@
 	import config from '#lib/data/config.json';
 	import Companies from '#lib/components/Companies.svelte';
 	import CompanyMap from '#lib/components/CompanyMap.svelte';
+	import FullScreen from '#lib/components/FullScreen.svelte';
+	import ResultsHead from '#lib/components/ResultsHead.svelte';
+	import SearchBar from '#lib/components/SearchBar.svelte';
 	import ViewSwitch from '#lib/components/ViewSwitch.svelte';
 	import { findCompanies } from '#lib/models/company-filters.js';
 	import { data } from '#lib/network/network.svelte.js';
 	import { allAccounts } from '#lib/network/accounts.svelte.js';
-	import { getSnapshotJobs } from '#lib/network/snapshot.js';
+	import { jobCounts } from '#lib/network/job-counts.svelte.js';
 	import { readView } from '#lib/navigation/explore-view.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
@@ -26,11 +29,7 @@
 
 	const companies = $derived([...data.companies.values()]);
 	// How many jobs each company has open, as of the last snapshot.
-	/** @type {Map<string, number>} */
-	let counts = $state.raw(new Map());
-	getSnapshotJobs().then((snapshot) => {
-		if (snapshot) counts = new Map([...snapshot.jobs].map(([key, jobs]) => [key, jobs.length]));
-	});
+	const counts = $derived(jobCounts());
 	const accounts = $derived(allAccounts());
 	const found = $derived(findCompanies(companies, { query, hiring, bluesky }, counts, accounts));
 	const hiringCount = $derived(companies.filter((c) => counts.get(c.key)).length);
@@ -48,135 +47,43 @@
 
 <svelte:head><title>{t('companies.title')} · {config.name}</title></svelte:head>
 
-<jl-companies-page {view}>
-	<jl-companies-bar>
-		<form role="search" onsubmit={(e) => e.preventDefault()}>
-			<input type="search" bind:value={query} placeholder={t('search.companies')} aria-label={t('search.companies')} enterkeyhint="search" />
-			<jl-companies-chips>
-				<menu aria-label={t('companies.filters')}>
+<FullScreen {view}>
+	{#snippet bar()}
+		<SearchBar bind:query label={t('search.companies')} filters={t('companies.filters')}>
+			{#snippet chips()}
+				<li>
+					<button type="button" aria-pressed={hiring} onclick={() => (hiring = !hiring)}>
+						<Icon name="jobs" /> {t('companies.hiring')} <small>{hiringCount}</small>
+					</button>
+				</li>
+				{#if blueskyCount}
 					<li>
-						<button type="button" aria-pressed={hiring} onclick={() => (hiring = !hiring)}>
-							<Icon name="jobs" /> {t('companies.hiring')} <small>{hiringCount}</small>
+						<button type="button" aria-pressed={bluesky} onclick={() => (bluesky = !bluesky)}>
+							{t('companies.onBluesky')} <small>{blueskyCount}</small>
 						</button>
 					</li>
-					{#if blueskyCount}
-						<li>
-							<button type="button" aria-pressed={bluesky} onclick={() => (bluesky = !bluesky)}>
-								{t('companies.onBluesky')} <small>{blueskyCount}</small>
-							</button>
-						</li>
-					{/if}
-				</menu>
-				<ViewSwitch bind:view page="companies" />
-			</jl-companies-chips>
-		</form>
-	</jl-companies-bar>
+				{/if}
+			{/snippet}
+			{#snippet tools()}<ViewSwitch bind:view page="companies" />{/snippet}
+		</SearchBar>
+	{/snippet}
 
-	<jl-companies-stage>
-		{#if view === 'map'}
-			<CompanyMap companies={found} full />
-		{:else}
-			<jl-companies-results>
-				<p>
-					<small aria-live="polite">{t('companies.count', { count: found.length.toLocaleString(), total: companies.length.toLocaleString() })}</small>
-					<a href="/add"><Icon name="add" /> {t('companies.add')}</a>
-				</p>
-				<Companies companies={found} {counts} searchable={false} layout={view === 'list' ? 'list' : 'grid'} />
-				{#if !found.length}<p>{t('search.none')}</p>{/if}
-			</jl-companies-results>
-		{/if}
-	</jl-companies-stage>
-</jl-companies-page>
+	{#if view === 'map'}
+		<CompanyMap companies={found} full />
+	{:else}
+		<jl-companies-results>
+			<ResultsHead count={t('companies.count', { count: found.length, total: companies.length })}>
+				<a href="/add"><Icon name="add" /> {t('companies.add')}</a>
+			</ResultsHead>
+			<Companies companies={found} {counts} searchable={false} layout={view === 'list' ? 'list' : 'grid'} />
+			{#if !found.length}<p>{t('search.none')}</p>{/if}
+		</jl-companies-results>
+	{/if}
+</FullScreen>
 
 <style>
-	/* The whole screen under the header and above the navigation: the bar, then the companies. */
-	jl-companies-page {
-		position: fixed;
-		inset: var(--header-height) 0 calc(var(--nav-height) + env(safe-area-inset-bottom)) 0;
-		z-index: 1;
-		display: flex;
-		flex-direction: column;
-		background: var(--color-bg);
-	}
-	jl-companies-bar {
-		flex: none;
-		padding: var(--space-s) var(--gutter);
-		border-bottom: var(--border);
-	}
-	form {
-		display: grid;
-		gap: var(--space-s);
-	}
-	jl-companies-chips {
-		display: flex;
-		align-items: center;
-		gap: var(--space-xs);
-		min-width: 0;
-	}
-	menu {
-		flex: 1;
-		min-width: 0;
-		flex-wrap: nowrap;
-		margin: 0;
-		gap: var(--space-xs);
-		overflow-x: auto;
-		scrollbar-width: none;
-	}
-	menu > li {
-		flex: none;
-	}
-	menu button {
-		min-height: var(--chip-height);
-		padding: 0 var(--space-m);
-		border-radius: var(--radius-round);
-		font-size: var(--font-size-small);
-	}
-	menu button[aria-pressed='true'] {
-		background: var(--color-accent);
-		color: var(--color-accent-fg);
-		border-color: var(--color-accent);
-	}
-	menu small {
-		opacity: 0.7;
-	}
-	jl-companies-stage {
-		position: relative;
-		flex: 1;
-		min-height: 0;
-		overflow-y: auto;
-		overscroll-behavior: contain;
-	}
-	jl-companies-page[view='map'] jl-companies-stage {
-		overflow: hidden;
-	}
 	jl-companies-results {
 		display: block;
 		padding: 0 var(--gutter) var(--space-l);
-	}
-	jl-companies-results > p {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: var(--space-s);
-		margin: var(--space-s) 0 0;
-		color: var(--color-muted);
-	}
-	jl-companies-results > p > a {
-		display: inline-flex;
-		align-items: center;
-		gap: var(--space-xs);
-		font-size: var(--font-size-small);
-	}
-
-	/* Wide screens: the whole bar on one row; no navigation at the bottom. */
-	@media (min-width: 48rem) {
-		jl-companies-page {
-			bottom: 0;
-		}
-	}
-	@media (min-width: 64rem) {
-		form {
-			grid-template-columns: minmax(0, 1fr) auto;
-		}
 	}
 </style>
