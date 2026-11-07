@@ -3,6 +3,7 @@
 	import config from '#lib/data/config.json';
 	import { goto } from '$app/navigation';
 	import { filterJobs, offerCount } from '#lib/models/job.js';
+	import { feedPath } from '#lib/models/landing.js';
 	import { newCount, searchId, toParams } from '#lib/models/saved-search.js';
 	import { forgetSearch, searches } from '#lib/network/saved-searches.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
@@ -48,6 +49,11 @@
 					{#if all !== null}<small>{t('saved.matching', { count: all })}</small>{/if}
 				</a>
 				{#if fresh}<mark>{t('searches.new', { count: fresh })}</mark>{/if}
+				{#if !search.near && toParams(search)}
+					<a href={feedPath({ search: toParams(search) })} type="application/atom+xml" data-sveltekit-reload title={t('landing.follow.help')}>
+						<Icon name="feed" label={t('searches.follow', { name: label(search) })} />
+					</a>
+				{/if}
 				<button type="button" onclick={() => forgetSearch(search)}><Icon name="close" label={t('saved.remove', { name: label(search) || near(search.within) })} /></button>
 			</li>
 		{/each}
@@ -69,7 +75,7 @@
 		gap: var(--space-s);
 		border-bottom: var(--border);
 	}
-	a {
+	a:first-child {
 		flex: 1;
 		display: flex;
 		flex-direction: column;
@@ -88,6 +94,14 @@
 		background: var(--color-accent);
 		color: var(--color-accent-fg);
 		font-size: var(--font-size-small);
+	}
+	a[type] {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: var(--tap-size);
+		min-height: var(--tap-size);
+		color: var(--color-muted);
 	}
 	button {
 		min-width: var(--tap-size);

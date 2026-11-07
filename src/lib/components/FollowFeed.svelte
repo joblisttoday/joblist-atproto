@@ -7,7 +7,7 @@
 	/**
 	 * A link to follow these jobs in a feed reader (an Atom feed made by the Worker),
 	 * also told to browsers and readers in the page's head.
-	 * @type {{feed: {city?: string, field?: string, company?: string}}}
+	 * @type {{feed: {city?: string, field?: string, company?: string, search?: string}}}
 	 */
 	let { feed } = $props();
 	const href = $derived(feedPath(feed));

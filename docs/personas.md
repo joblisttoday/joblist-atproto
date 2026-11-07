@@ -23,9 +23,10 @@ Wants remote work they are allowed to take from their country.
 Has a job, looks now and then: wants the new jobs of their saved searches,
 and nothing else.
 - **Today:** the Saved tab counts the new jobs of their searches; /saved
-  shows them per search.
-- **Missing:** a way to be told without opening the site: feeds, or browser
-  notifications.
+  shows them per search. Any search can be followed in a feed reader
+  (`/feed/search.xml?q=…`), made from its address only: nothing is stored.
+- **Missing:** browser notifications (they would need the searches stored
+  on a server: not unless asked for).
 
 ### Company first
 Knows where they want to work, or wants to find out who hires in a city or
