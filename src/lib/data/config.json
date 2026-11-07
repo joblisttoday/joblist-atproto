@@ -118,6 +118,9 @@
 	"companies": {
 		"pageSize": 100
 	},
+	"lists": {
+		"related": { "shown": 6, "nameWeight": 3, "minTermLength": 3 }
+	},
 	"links": {
 		"signup": "https://bsky.app",
 		"profile": "https://bsky.app/profile/{handle}",
