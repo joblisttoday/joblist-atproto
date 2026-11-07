@@ -4,12 +4,13 @@
  */
 import config from '../src/lib/data/config.json' with { type: 'json' };
 import { escape, jsonLd } from '../indexer/html.js';
-import { explorerPath, feedPath, isCompanyKey, landingPath } from '../src/lib/models/landing.js';
+import { explorerPath, feedPath, isCompanyKey, landingPath, pagedPath } from '../src/lib/models/landing.js';
 import { fieldName, pageTitle, t, toItem } from './text.js';
 
 /**
  * @typedef {Parameters<typeof import('../indexer/html.js').page>[1]} Meta
- * @typedef {{city?: string, field?: string}} Page
+ * @typedef {{city?: string, field?: string, page?: number}} Page
+ *   page: of older jobs, from 1
  */
 
 const site = config.name;
@@ -43,7 +44,27 @@ function jobHtml(job) {
 }
 
 /**
- * A page of jobs: /in/berlin, /field/design, /in/berlin/design.
+ * The links between the pages of older jobs: in the head for search engines, and for readers.
+ * @param {Page} page
+ * @param {number} pages how many there are
+ */
+function pageLinks(page, pages) {
+	const n = page.page || 1;
+	const newer = n > 1 ? pagedPath({ ...page, page: n - 1 }) : '';
+	const older = n < pages ? pagedPath({ ...page, page: n + 1 }) : '';
+	return {
+		head: [newer && `<link rel="prev" href="${escape(config.url + newer)}">`, older && `<link rel="next" href="${escape(config.url + older)}">`].filter(Boolean),
+		body:
+			newer || older
+				? `<nav>${[newer && `<a href="${escape(newer)}" rel="prev">${escape(t('landing.newer'))}</a>`, escape(t('landing.page', { page: n, pages })), older && `<a href="${escape(older)}" rel="next">${escape(t('landing.older'))}</a>`]
+						.filter(Boolean)
+						.join(' · ')}</nav>`
+				: ''
+	};
+}
+
+/**
+ * A page of jobs: /in/berlin, /field/design, /in/berlin/design, and their older jobs (?page=2).
  * @param {Page} page
  * @param {any} data its snapshot file (indexer/landing.js)
  * @returns {Meta}
@@ -52,10 +73,14 @@ export function landingMeta(page, data) {
 	const cityName = String(data?.name || page.city || '');
 	const title = pageTitle(page, cityName);
 	const count = Number(data?.count) || 0;
-	const path = landingPath(page);
+	const n = page.page || 1;
+	const pages = Math.max(n, Number(data?.pages) || 1);
+	const nth = n > 1 ? ` · ${t('landing.page', { page: n, pages })}` : '';
+	const paging = pageLinks(page, pages);
+	const path = pagedPath(page);
 	const feed = feedPath(page);
 	const jobs = (Array.isArray(data?.jobs) ? data.jobs : []).map((/** @type {any} */ row) => toItem(row, data.names)).filter(Boolean);
-	const description = `${title}: ${t('landing.intro', { count })}`;
+	const description = `${title}${nth}: ${t('landing.intro', { count })}`;
 	/** @type {{name: string, path: string, count: number}[]} */
 	const related = page.city
 		? (data?.fields || []).filter((/** @type {any} */ f) => f && !page.field).map((/** @type {any} */ f) => ({
@@ -74,19 +99,20 @@ export function landingMeta(page, data) {
 		{ name: site, path: '/' },
 		page.city ? { name: t('landing.cities'), path: '/in' } : { name: t('landing.fields'), path: '/field' },
 		...(page.city && page.field ? [{ name: t('landing.city', { city: cityName }), path: landingPath({ city: page.city }) }] : []),
-		{ name: title, path }
+		{ name: title, path: landingPath(page) }
 	];
 	return {
-		title: `${title} · ${site}`,
+		title: `${title}${nth} · ${site}`,
 		description,
 		url: config.url + path,
-		head: [feedLink(title, feed), breadcrumbs(trail)].join('\n\t\t'),
+		head: [feedLink(title, feed), breadcrumbs(trail), ...paging.head].join('\n\t\t'),
 		body: [
 			`<nav><a href="/in">${escape(t('landing.cities'))}</a> · <a href="/field">${escape(t('landing.fields'))}</a></nav>`,
 			`<h1>${escape(title)}</h1>`,
 			`<p>${escape(t('landing.intro', { count }))}</p>`,
 			`<p><a href="${escape(explorerPath({ cityName: page.city ? cityName : '', field: page.field }))}">${escape(t('landing.explore'))}</a> · <a href="${escape(feed)}" type="application/atom+xml">${escape(t('landing.follow'))}</a></p>`,
-			`<ol>${jobs.map(jobHtml).join('')}</ol>`,
+			`<ol${n > 1 ? ` start="${(n - 1) * config.landing.shown + 1}"` : ''}>${jobs.map(jobHtml).join('')}</ol>`,
+			paging.body,
 			links.length
 				? `<h2>${escape(t(page.city ? 'landing.byField' : 'landing.byCity'))}</h2><ul>${links
 						.map((r) => `<li><a href="${escape(r.path)}">${escape(r.name)}</a> (${escape(t('landing.count', { count: r.count }))})</li>`)

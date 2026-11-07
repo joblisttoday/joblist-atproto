@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { fileOf, pathOf, route } from './routes.js';
+import { fileOf, pathOf, route, withPage } from './routes.js';
 
 test('pages per city and field', () => {
 	assert.deepEqual(route('/in'), { kind: 'cities' });
@@ -55,6 +55,18 @@ test('capitals lead to the page in small letters', () => {
 	assert.deepEqual(route('/IN/Berlin/Design/'), { kind: 'redirect', location: '/in/berlin/design' });
 	assert.deepEqual(route('/Field/Design'), { kind: 'redirect', location: '/field/design' });
 	assert.deepEqual(route('/feed/in/Berlin.xml'), { kind: 'redirect', location: '/feed/in/berlin.xml' });
+});
+
+test('pages of older jobs', () => {
+	const berlin = /** @type {import('./routes.js').Route} */ ({ kind: 'page', city: 'berlin' });
+	const second = withPage(berlin, new URLSearchParams('page=2'));
+	assert.deepEqual(second, { kind: 'page', city: 'berlin', page: 2 });
+	assert.equal(pathOf(second), '/in/berlin?page=2');
+	assert.equal(fileOf(second), 'landing/in/berlin.2.json');
+	assert.deepEqual(withPage(berlin, new URLSearchParams('utm=x')), berlin);
+	for (const q of ['page=1', 'page=x', 'page=0'])
+		assert.deepEqual(withPage(berlin, new URLSearchParams(q)), { kind: 'redirect', location: '/in/berlin' }, q);
+	assert.deepEqual(withPage({ kind: 'cities' }, new URLSearchParams('page=2')), { kind: 'cities' });
 });
 
 test('each route has its path and snapshot file', () => {

@@ -28,8 +28,8 @@ export function getLandingIndex() {
 }
 
 /**
- * One page's newest jobs, as the app shows jobs.
- * @param {{city?: string, field?: string}} page
+ * One page's newest jobs (or, from page 2, older ones), as the app shows jobs.
+ * @param {{city?: string, field?: string, page?: number}} page
  * @returns {Promise<(Omit<LandingFile, 'jobs'> & {jobs: import('#lib/ats/job.js').Job[]}) | null>}
  */
 export async function getLandingPage(page) {

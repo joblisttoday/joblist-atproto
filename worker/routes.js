@@ -1,5 +1,5 @@
 import config from '../src/lib/data/config.json' with { type: 'json' };
-import { feedPath, fieldOf, indexFile, isCompanyKey, isSlug, landingFile, landingPath } from '../src/lib/models/landing.js';
+import { feedPath, fieldOf, indexFile, isCompanyKey, isSlug, landingFile, landingPath, pageNumber, pagedPath } from '../src/lib/models/landing.js';
 
 /**
  * The addresses this Worker answers (wrangler.jsonc: assets.run_worker_first),
@@ -7,7 +7,7 @@ import { feedPath, fieldOf, indexFile, isCompanyKey, isSlug, landingFile, landin
  * field, a plain slug or a company key, is not ours: the static 404 answers.
  *
  * @typedef {{kind: 'cities'} | {kind: 'fields'} | {kind: 'sitemap'}
- *   | {kind: 'page', city?: string, field?: string}
+ *   | {kind: 'page', city?: string, field?: string, page?: number}
  *   | {kind: 'feed', city?: string, field?: string, company?: string}
  *   | {kind: 'redirect', location: string}} Route
  */
@@ -36,6 +36,20 @@ export function route(pathname) {
 	if (first === 'field') return page(rest, 'field');
 	if (first === 'feed') return feed(rest);
 	return null;
+}
+
+/**
+ * A route with the page of older jobs the address asks for (?page=2); an address
+ * with a page that is not one (?page=1, ?page=x) leads to the first.
+ * @param {Route} found
+ * @param {URLSearchParams} query
+ * @returns {Route}
+ */
+export function withPage(found, query) {
+	if (found.kind !== 'page') return found;
+	const page = pageNumber(query.get('page'));
+	if (page === null) return { kind: 'redirect', location: landingPath(found) };
+	return page > 1 ? { ...found, page } : found;
 }
 
 /**
@@ -87,7 +101,7 @@ export function pathOf(found) {
 		case 'sitemap':
 			return config.landing.sitemap;
 		case 'page':
-			return landingPath(found);
+			return pagedPath(found);
 		case 'feed':
 			return feedPath(found);
 		default:

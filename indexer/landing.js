@@ -54,8 +54,9 @@ function jobLink(job) {
 /**
  * The newest jobs of a page, one per company and title, as the page shows them.
  * @param {IndexedJob[]} jobs newest first
+ * @param {number} [most] how many
  */
-function newest(jobs) {
+function newest(jobs, most = landing.shown) {
 	const seen = new Set();
 	/** @type {LandingJob[]} */
 	const shown = [];
@@ -64,7 +65,7 @@ function newest(jobs) {
 		if (seen.has(key)) continue;
 		seen.add(key);
 		shown.push({ t: job.t, u: jobLink(job), c: job.c, l: job.l, p: job.p, r: job.r, i: job.i });
-		if (shown.length >= landing.shown) break;
+		if (shown.length >= most) break;
 	}
 	return shown;
 }
@@ -121,11 +122,25 @@ export function landingFiles(jobs, names, places, generatedAt) {
 	const fields = FIELDS.map((f) => f.slug).filter((slug) => count(`field/${slug}`) >= landing.minJobs.field);
 	const pairs = cities.flatMap((city) => fields.filter((field) => count(`in/${city}/${field}`) >= landing.minJobs.cityField).map((field) => ({ city, field })));
 
-	/** @param {IndexedJob[]} group @param {Partial<LandingFile>} extra */
-	const file = (group, extra = {}) => {
-		const shown = newest(group);
+	/** @param {IndexedJob[]} group @param {Partial<LandingFile>} extra @param {LandingJob[]} [shown] */
+	const file = (group, extra = {}, shown = newest(group)) => {
 		const companies = Object.fromEntries(shown.map((j) => [j.c, names.get(j.c) || j.c]));
 		return { generatedAt, ...extra, count: group.length, names: companies, jobs: shown };
+	};
+	/**
+	 * A page's files: its newest jobs, then pages of older ones (config.landing.pages at most).
+	 * @param {{city?: string, field?: string}} page
+	 * @param {IndexedJob[]} group
+	 * @param {Partial<LandingFile>} extra
+	 * @returns {[string, LandingFile][]}
+	 */
+	const paged = (page, group, extra) => {
+		const all = newest(group, landing.shown * landing.pages);
+		const pages = Math.max(1, Math.ceil(all.length / landing.shown));
+		return Array.from({ length: pages }, (_, i) => [
+			landingFile({ ...page, page: i + 1 }),
+			file(group, { ...extra, page: i + 1, pages }, all.slice(i * landing.shown, (i + 1) * landing.shown))
+		]);
 	};
 	/** @type {[string, any][]} */
 	const out = [
@@ -148,17 +163,17 @@ export function landingFiles(jobs, names, places, generatedAt) {
 	];
 	for (const city of cities) {
 		const own = pairs.filter((p) => p.city === city).map(({ field }) => ({ slug: field, count: count(`in/${city}/${field}`) }));
-		out.push([landingFile({ city }), file(groups.get(`in/${city}`) || [], { name: nameOf(spellings, city), fields: own })]);
+		out.push(...paged({ city }, groups.get(`in/${city}`) || [], { name: nameOf(spellings, city), fields: own }));
 	}
 	for (const field of fields) {
 		const own = pairs
 			.filter((p) => p.field === field)
 			.map(({ city }) => ({ slug: city, name: nameOf(spellings, city), count: count(`in/${city}/${field}`) }))
 			.sort((a, b) => b.count - a.count);
-		out.push([landingFile({ field }), file(groups.get(`field/${field}`) || [], { cities: own })]);
+		out.push(...paged({ field }, groups.get(`field/${field}`) || [], { cities: own }));
 	}
 	for (const { city, field } of pairs) {
-		out.push([landingFile({ city, field }), file(groups.get(`in/${city}/${field}`) || [], { name: nameOf(spellings, city) })]);
+		out.push(...paged({ city, field }, groups.get(`in/${city}/${field}`) || [], { name: nameOf(spellings, city) }));
 	}
 	return out;
 }

@@ -16,7 +16,8 @@ import { page } from '../indexer/html.js';
 import { headers, pagePolicy } from './http.js';
 import { unavailableMeta } from './pages.js';
 import { render } from './render.js';
-import { fileOf, pathOf, route } from './routes.js';
+import { pageNumber } from '../src/lib/models/landing.js';
+import { fileOf, pathOf, route, withPage } from './routes.js';
 
 /**
  * @typedef {{ASSETS: {fetch: typeof fetch}, CF_VERSION_METADATA?: {id: string}, SNAPSHOT?: string}} Env
@@ -62,16 +63,24 @@ async function snapshotFile(env, name) {
  */
 async function answer(request, env, ctx) {
 	const url = new URL(request.url);
-	const found = route(url.pathname);
+	const path = route(url.pathname);
 	// Not ours (wrong slug, unknown field): the site's 404 page.
-	if (!found) return env.ASSETS.fetch(request);
+	if (!path) return env.ASSETS.fetch(request);
+	const found = withPage(path, url.searchParams);
 	if (request.method !== 'GET' && request.method !== 'HEAD') return new Response(null, { status: 405, headers: { Allow: 'GET, HEAD' } });
-	if (found.kind === 'redirect') return new Response(null, { status: 301, headers: { Location: found.location } });
+	if (found.kind === 'redirect') {
+		// The page of older jobs asked for stays asked for (/in/Berlin?page=2), checked like any.
+		const page = path.kind === 'redirect' && /^\/(in|field)\//.test(found.location) ? pageNumber(url.searchParams.get('page')) : 1;
+		const location = page && page > 1 ? `${found.location}?page=${page}` : found.location;
+		return new Response(null, { status: 301, headers: { Location: location } });
+	}
 
-	// One cached answer per page and deploy, whatever the query string: a page cached before
-	// a deploy would start the app from files that deploy removed.
+	// One cached answer per page and deploy, whatever else the query string says: a page cached
+	// before a deploy would start the app from files that deploy removed.
 	const version = env.CF_VERSION_METADATA?.id || 'dev';
-	const key = new Request(`${url.origin}${pathOf(found)}?v=${encodeURIComponent(version)}`);
+	const cacheUrl = new URL(pathOf(found), url.origin);
+	cacheUrl.searchParams.set('v', version);
+	const key = new Request(cacheUrl);
 	const cache = /** @type {any} */ (caches).default;
 	const cached = await cache.match(key);
 	if (cached) return cached;

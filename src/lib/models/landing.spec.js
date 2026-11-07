@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { explorerPath, feedPath, fieldsOf, isCompanyKey, isSlug, landingFile, landingPath, searchFeed, slugify } from './landing.js';
+import { explorerPath, feedPath, fieldsOf, isCompanyKey, isSlug, landingFile, landingPath, pageNumber, pagedPath, searchFeed, slugify } from './landing.js';
 
 describe('landing pages', () => {
 	it('makes addresses of place names', () => {
@@ -42,6 +42,16 @@ describe('landing pages', () => {
 		expect(feedPath({ company: 'acme.org' })).toBe('/feed/company/acme.org.xml');
 		expect(landingFile({ field: 'design' })).toBe('landing/field/design.json');
 		expect(landingFile({})).toBe('landing/new.json');
+		expect(landingFile({ city: 'berlin', page: 2 })).toBe('landing/in/berlin.2.json');
+		expect(landingFile({ city: 'berlin', page: 1 })).toBe('landing/in/berlin.json');
+	});
+
+	it('numbers the pages of older jobs', () => {
+		expect(pagedPath({ city: 'berlin', page: 2 })).toBe('/in/berlin?page=2');
+		expect(pagedPath({ field: 'design', page: 1 })).toBe('/field/design');
+		expect(pageNumber(null)).toBe(1);
+		expect(pageNumber('3')).toBe(3);
+		for (const v of ['1', '0', 'x', '02', '-2', '2.5', '999']) expect(pageNumber(v)).toBe(null);
 		expect(explorerPath({ cityName: 'São Paulo', field: 'design' })).toBe('/?q=design&where=S%C3%A3o+Paulo');
 		expect(explorerPath({})).toBe('/');
 	});

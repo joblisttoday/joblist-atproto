@@ -12,8 +12,9 @@ import fields from '#lib/data/fields.json' with { type: 'json' };
  *   A job as these pages show it: title, link (its board, or its page here), company key,
  *   location, first seen, workplace, id at its board (when the link does not end with it).
  * @typedef {{generatedAt: string, name?: string, count: number, names: Record<string, string>, jobs: LandingJob[],
- *   fields?: {slug: string, count: number}[], cities?: {slug: string, name: string, count: number}[]}} LandingFile
- *   One page's data: the newest jobs and their companies' names; a city's fields, a field's cities.
+ *   fields?: {slug: string, count: number}[], cities?: {slug: string, name: string, count: number}[], page?: number, pages?: number}} LandingFile
+ *   One page's data: the newest jobs and their companies' names; a city's fields, a field's cities;
+ *   which page of them it is (from 1) of how many (config.landing.pages at most, of config.landing.shown jobs each).
  * @typedef {{generatedAt: string, total: number, cities: {slug: string, name: string, count: number, updated?: string, fields: string[]}[], fields: {slug: string, count: number, updated?: string}[]}} LandingIndex
  *   cities[].fields: the fields with a page in that city; updated: when its newest job was first seen.
  */
@@ -87,13 +88,32 @@ export function feedPath({ city, field, company }) {
 }
 
 /**
- * The page's file in the snapshot (relative to the snapshot's root).
- * @param {{city?: string, field?: string}} page none: the newest jobs
+ * The page's file in the snapshot (relative to the snapshot's root): its next pages of
+ * older jobs have their own (landing/in/berlin.2.json).
+ * @param {{city?: string, field?: string, page?: number}} page none: the newest jobs
  */
-export function landingFile({ city, field }) {
+export function landingFile({ city, field, page = 1 }) {
 	const { dir } = config.landing;
 	if (!city && !field) return `${dir}/new.json`;
-	return `${dir}${landingPath({ city, field })}.json`;
+	return `${dir}${landingPath({ city, field })}${page > 1 ? `.${page}` : ''}.json`;
+}
+
+/**
+ * Where a page of a city's or a field's jobs is: /in/berlin, /in/berlin?page=2.
+ * @param {{city?: string, field?: string, page?: number}} page
+ */
+export function pagedPath({ city, field, page = 1 }) {
+	return `${landingPath({ city, field })}${page > 1 ? `?page=${page}` : ''}`;
+}
+
+/**
+ * The page number an address asks for: 1 when none; null when it is not one ("?page=x", "?page=1").
+ * @param {string | null} value the ?page= of the address
+ */
+export function pageNumber(value) {
+	if (value === null) return 1;
+	const n = /^[1-9]\d{0,2}$/.test(value) ? Number(value) : 0;
+	return n > 1 && n <= config.landing.pages ? n : null;
 }
 
 export const indexFile = () => `${config.landing.dir}/index.json`;
