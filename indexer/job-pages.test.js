@@ -32,11 +32,30 @@ test('jobPosting describes the offer for search engines', () => {
 	assert.deepEqual(schema.applicantLocationRequirements, [{ '@type': 'Country', name: 'DE' }]);
 });
 
-test('jobPosting: a remote offer with no country stays at its places', () => {
-	const post = toPost({ ...record, value: { ...value, locations: [{ name: 'Berlin' }] } }, profiles);
-	const schema = jobPosting(post, companies.get('acme.org'));
-	assert.equal(schema.jobLocationType, undefined);
-	assert.equal(schema.applicantLocationRequirements, undefined);
+test('jobPosting: a remote offer with no country is remote, from the countries of its company', () => {
+	const post = toPost({ ...record, value: { ...value, locations: [] } }, profiles);
+	const schema = jobPosting(post, /** @type {any} */ ({ ...companies.get('acme.org'), locations: [{ name: 'Paris', country: 'France' }] }));
+	assert.equal(schema.jobLocationType, 'TELECOMMUTE');
+	assert.equal(schema.jobLocation, undefined);
+	assert.deepEqual(schema.applicantLocationRequirements, [{ '@type': 'Country', name: 'FR' }]);
+	const nowhere = jobPosting(post, companies.get('acme.org'));
+	assert.equal(nowhere.jobLocationType, 'TELECOMMUTE');
+	assert.equal(nowhere.applicantLocationRequirements, undefined);
+});
+
+test('jobPosting: a place that is a country counts as one', () => {
+	const post = toPost({ ...record, value: { ...value, locations: [{ name: 'Germany' }] } }, profiles);
+	assert.deepEqual(jobPosting(post, undefined).applicantLocationRequirements, [{ '@type': 'Country', name: 'DE' }]);
+});
+
+test('jobPosting: identifier, logo and direct application', () => {
+	const schema = jobPosting(toPost(record, profiles), companies.get('acme.org'), 'https://cdn.example/a.jpg');
+	assert.equal(schema.identifier.value, record.uri);
+	assert.equal(schema.hiringOrganization.logo, 'https://cdn.example/a.jpg');
+	// Applying by email from the offer's own page here.
+	assert.equal(schema.directApply, true);
+	const form = toPost({ ...record, value: { ...value, apply: { url: 'https://acme.org/apply' } } }, profiles);
+	assert.equal(jobPosting(form, undefined).directApply, false);
 });
 
 test('jobPages makes one page per live offer, with safe structured data', () => {
@@ -47,6 +66,9 @@ test('jobPages makes one page per live offer, with safe structured data', () => 
 	assert.ok(!pages[0].meta.head.slice(0, -'</script>'.length).includes('</script>'));
 	assert.match(pages[0].meta.body, /Build things\.<br>With us\./);
 	assert.match(pages[0].meta.body, /mailto:jobs@acme\.org/);
+	assert.equal(pages[0].meta.title, 'Engineer </script> at Acme');
+	const logo = jobPages([record], companies, new Map([['did:plc:acme', { handle: 'acme.org', avatar: 'https://cdn.example/p.jpg' }]]))[0];
+	assert.match(logo.meta.head, /"logo":"https:\/\/cdn\.example\/p\.jpg"/);
 	assert.match(jsonLd({ a: '<b>' }), /\\u003cb>/);
 });
 

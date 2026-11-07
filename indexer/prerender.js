@@ -6,7 +6,7 @@
  *
  *   node indexer/prerender.js [build-dir] [snapshot-dir]
  */
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve, sep } from 'node:path';
 import config from '../src/lib/data/config.json' with { type: 'json' };
 import en from '../src/lib/i18n/locales/en.json' with { type: 'json' };
@@ -37,6 +37,10 @@ const suggestions = suggestionRecords
 	.map(toSuggestion);
 const { jobs } = JSON.parse(readFileSync(join(snapshot, 'jobs.json'), 'utf8'));
 const profiles = new Map(Object.entries(profileObject));
+// Companies on Bluesky, for their pictures (a snapshot from before it has none).
+const blueskyFile = join(snapshot, config.bluesky.file);
+/** @type {Record<string, {avatar?: string}>} */
+const bluesky = existsSync(blueskyFile) ? JSON.parse(readFileSync(blueskyFile, 'utf8')) : {};
 const handleOf = (/** @type {string} */ did) => profiles.get(did)?.handle || did;
 
 /** @type {Map<string, any[]>} */
@@ -133,7 +137,7 @@ for (const company of companies.values()) {
 	count++;
 }
 
-for (const { path, meta } of jobPages(jobRecords, companies, profiles)) {
+for (const { path, meta } of jobPages(jobRecords, companies, profiles, bluesky)) {
 	write(path, page(template, meta));
 	count++;
 }
