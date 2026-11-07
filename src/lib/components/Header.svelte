@@ -19,6 +19,11 @@
 		[...navLinks(session.handle).filter((l) => !l.wide).map((l) => l.href), '/signin'].includes(page.url.pathname)
 	);
 
+	// Phones: these pages take the whole screen, their own bar at the top (config.layout.bare).
+	const bare = $derived(config.layout.bare.includes(page.route.id || ''));
+	// Their own search bar, their own menu in it: none here (config.layout.ownMenu).
+	const ownMenu = $derived(config.layout.ownMenu.includes(page.route.id || ''));
+
 	/** @param {MouseEvent} event */
 	function back(event) {
 		if (!history.inApp) return;
@@ -27,15 +32,15 @@
 	}
 </script>
 
-<jl-header>
+<jl-header bare={bare || undefined}>
 	<header>
 		<a href="/" aria-current={page.url.pathname === '/' ? 'page' : undefined}><Logo /><b>{config.name}</b></a>
 		{#if !topLevel}<a href="/" onclick={back}><Icon name="back" /> {t('nav.back')}</a>{/if}
 		<!-- The explorer has its own search. -->
 		{#if page.url.pathname !== '/'}<QuickSearch />{/if}
 		<Nav />
-		<!-- The explorer has it next to its views. -->
-		{#if page.url.pathname !== '/'}<PageMenu />{/if}
+		<!-- Pages with their own menu have it next to their views. -->
+		{#if !ownMenu}<PageMenu />{/if}
 		<!-- Wide screens; phones have it in the account tab (signing in, one's page) and the footer. -->
 		<LocaleSwitch compact />
 	</header>
@@ -43,17 +48,18 @@
 </jl-header>
 
 <style>
-	/* Phones: pages using the whole screen (the explorer) keep only the navigation. */
+	/* Phones: pages using the whole screen keep only the navigation (fixed at the bottom). */
 	@media not (min-width: 64rem) {
-		:global(body:has(jl-explore)) jl-header {
+		jl-header[bare] {
 			border: 0;
 		}
-		:global(body:has(jl-explore)) header {
+		jl-header[bare] header {
 			min-height: 0;
 			padding: 0;
 		}
-		:global(body:has(jl-explore)) header > a,
-		:global(body:has(jl-explore)) jl-header > :global(jl-network-status) {
+		jl-header[bare] header > a,
+		jl-header[bare] header > :global(jl-search),
+		jl-header[bare] > :global(jl-network-status) {
 			display: none;
 		}
 	}

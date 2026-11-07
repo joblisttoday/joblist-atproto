@@ -31,7 +31,9 @@
 		"finePointer": "(hover: hover) and (pointer: fine)",
 		"sheetPeekBelow": 0.3,
 		"sheetFullAbove": 0.72,
-		"copiedMs": 3000
+		"copiedMs": 3000,
+		"bare": ["/", "/companies", "/lists"],
+		"ownMenu": ["/", "/companies", "/lists", "/[handle]/[rkey]"]
 	},
 	"map": {
 		"style": "https://tiles.openfreemap.org/styles/positron",

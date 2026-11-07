@@ -8,6 +8,7 @@
 	import FullScreen from '#lib/components/FullScreen.svelte';
 	import ResultsHead from '#lib/components/ResultsHead.svelte';
 	import SearchBar from '#lib/components/SearchBar.svelte';
+	import PageMenu from '#lib/components/PageMenu.svelte';
 	import ViewSwitch from '#lib/components/ViewSwitch.svelte';
 	import { findCompanies } from '#lib/models/company-filters.js';
 	import { mapPoints } from '#lib/models/company.js';
@@ -67,7 +68,7 @@
 					</li>
 				{/if}
 			{/snippet}
-			{#snippet tools()}<ViewSwitch bind:view page="companies" {mapless} />{/snippet}
+			{#snippet tools()}<ViewSwitch bind:view page="companies" {mapless} /><PageMenu />{/snippet}
 		</SearchBar>
 	{/snippet}
 

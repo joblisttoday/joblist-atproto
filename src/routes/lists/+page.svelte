@@ -8,6 +8,7 @@
 	import ListItem from '#lib/components/ListItem.svelte';
 	import ResultsHead from '#lib/components/ResultsHead.svelte';
 	import SearchBar from '#lib/components/SearchBar.svelte';
+	import PageMenu from '#lib/components/PageMenu.svelte';
 	import ViewSwitch from '#lib/components/ViewSwitch.svelte';
 	import { findLists } from '#lib/models/list-filters.js';
 	import { mixedAuthors } from '#lib/models/list.js';
@@ -79,7 +80,7 @@
 					</li>
 				{/if}
 			{/snippet}
-			{#snippet tools()}<ViewSwitch bind:view page="lists" />{/snippet}
+			{#snippet tools()}<ViewSwitch bind:view page="lists" /><PageMenu />{/snippet}
 		</SearchBar>
 	{/snippet}
 

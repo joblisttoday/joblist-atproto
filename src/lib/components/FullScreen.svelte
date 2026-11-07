@@ -1,4 +1,7 @@
 <script>
+	import { page } from '$app/state';
+	import config from '#lib/data/config.json';
+
 	/**
 	 * A page given the whole screen, under the header and above the navigation (phones):
 	 * a bar at the top, then what the page shows, which alone scrolls.
@@ -6,9 +9,11 @@
 	 * @type {{view?: string, bar: import('svelte').Snippet, children: import('svelte').Snippet}}
 	 */
 	let { view = '', bar, children } = $props();
+	// Phones: no header above it (config.layout.bare), the bar goes to the top of the screen.
+	const bare = $derived(config.layout.bare.includes(page.route.id || ''));
 </script>
 
-<jl-full-screen {view}>
+<jl-full-screen {view} bare={bare || undefined}>
 	<jl-full-screen-bar>{@render bar()}</jl-full-screen-bar>
 	<jl-full-screen-stage>{@render children()}</jl-full-screen-stage>
 </jl-full-screen>
@@ -38,6 +43,14 @@
 	}
 	jl-full-screen[view='map'] jl-full-screen-stage {
 		overflow: hidden;
+	}
+	@media not (min-width: 64rem) {
+		jl-full-screen[bare] {
+			top: 0;
+		}
+		jl-full-screen[bare] jl-full-screen-bar {
+			padding-top: calc(env(safe-area-inset-top) + var(--space-s));
+		}
 	}
 	/* Wide screens: no navigation at the bottom. */
 	@media (min-width: 64rem) {
