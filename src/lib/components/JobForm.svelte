@@ -93,13 +93,28 @@
 	const tool = webmcp.forms.job;
 	/** @type {SaveSignIn | undefined} */
 	let signin = $state();
+	/** @type {JobCompanyField | undefined} */
+	let companyField = $state();
 	const submitLabel = $derived(post ? t('form.save') : t('post.submit'));
+
+	/**
+	 * Sent without a company: said before the browser checks the other fields, as it comes first.
+	 * @param {MouseEvent} event
+	 */
+	function checkCompany(event) {
+		if (form.company) return;
+		event.preventDefault();
+		tried = true;
+		companyField?.focus();
+	}
 
 	/** @param {SubmitEvent} event */
 	async function submit(event) {
 		event.preventDefault();
 		tried = true;
-		if (!form.company || !canApply) return;
+		// Without a company, the keyboard goes to it, where the error says why.
+		if (!form.company) return companyField?.focus();
+		if (!canApply) return document.getElementById('apply-to')?.focus();
 		// Signed out: the offer stays in this browser while signing in, then is posted from here.
 		if (!session.did) return signin?.ask();
 		busy = true;
@@ -129,7 +144,7 @@
 		{#if restored}
 			<p><small>{t('post.draft')} <button type="button" onclick={startOver}>{t('post.draft.clear')}</button></small></p>
 		{/if}
-		<JobCompanyField bind:company={form.company} {back} locked={Boolean(post)} />
+		<JobCompanyField bind:this={companyField} bind:company={form.company} {back} locked={Boolean(post)} missing={tried && !form.company} />
 		{#if form.company}<JobPoster company={form.company} />{/if}
 
 		<label for="job-title">{t('post.jobTitle')}</label>
@@ -204,7 +219,7 @@
 		{#if error}<p role="alert">{error}</p>{/if}
 		<SaveHint />
 		<menu>
-			<button type="submit" disabled={busy || !form.company}>
+			<button type="submit" disabled={busy} onclick={checkCompany}>
 				{busy ? t('form.saving') : submitLabel}
 			</button>
 			{#if oncancel}<button type="button" onclick={oncancel}>{t('form.cancel')}</button>{/if}

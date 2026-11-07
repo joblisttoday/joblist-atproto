@@ -6,4 +6,6 @@
 
 <svelte:head><title>{config.name} · {t('jobs.title')}</title></svelte:head>
 
+<jl-visually-hidden><h1>{t('jobs.title')}</h1></jl-visually-hidden>
+
 <Explore path="/" />

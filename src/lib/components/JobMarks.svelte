@@ -7,7 +7,7 @@
 	import { i18n, t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * The jobs of one collection (Applied, Hidden or a named one): each opens in the
+	 * The jobs of one collection (Saved, Applied, Hidden or a named one): each opens in the
 	 * explorer, or leaves the collection.
 	 * @type {{collection: import('#lib/models/job-collection.js').Collection}}
 	 */

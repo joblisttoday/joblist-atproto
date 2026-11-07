@@ -1,4 +1,5 @@
 <script>
+	import DialogHeader from './DialogHeader.svelte';
 	import SignIn from './SignIn.svelte';
 	import { leftToSave } from '#lib/network/drafts.js';
 	import { t } from '#lib/i18n/index.svelte.js';
@@ -23,7 +24,7 @@
 
 <jl-save-signin>
 	<dialog bind:this={dialog} onclose={() => leftToSave(null)} aria-labelledby="{id}-title" aria-describedby="{id}-text">
-		<h2 id="{id}-title">{t(`save.signin.${form}`)}</h2>
+		<DialogHeader id="{id}-title" title={t(`save.signin.${form}`)} />
 		<p id="{id}-text">{t('save.signin.text')}</p>
 		<SignIn />
 		<form method="dialog">
@@ -38,7 +39,8 @@
 	}
 	dialog {
 		width: min(100% - 2 * var(--gutter), var(--measure));
-		padding: var(--space-m) var(--space-l);
+		--dialog-padding: var(--space-l);
+		padding: 0 var(--dialog-padding) var(--space-m);
 		border: var(--border);
 		border-radius: var(--radius-large);
 		background: var(--color-bg);
@@ -46,10 +48,6 @@
 	}
 	dialog::backdrop {
 		background: var(--backdrop);
-	}
-	h2 {
-		margin-top: var(--space-s);
-		font-size: var(--font-size-large);
 	}
 	menu {
 		justify-content: flex-end;

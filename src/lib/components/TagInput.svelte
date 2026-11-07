@@ -3,6 +3,7 @@
 	import config from '#lib/data/config.json';
 	import { addTags, popularTags, splitTags } from '#lib/models/company-form.js';
 	import { data } from '#lib/network/network.svelte.js';
+	import { focusNear } from '#lib/navigation/focus.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
@@ -43,6 +44,16 @@
 		}
 	}
 
+	/** @type {HTMLUListElement | undefined} */
+	let chosen = $state();
+	const input = () => document.getElementById(`${id}-input`);
+
+	/** Removed, the keyboard goes to the tag now at its place, or the input. @param {string} tag @param {number} i */
+	function remove(tag, i) {
+		tags = tags.filter((x) => x !== tag);
+		focusNear(() => chosen, i, 'button', input);
+	}
+
 	/** @param {string} tag */
 	function pick(tag) {
 		tags = addTags(tags, [tag]);
@@ -54,11 +65,11 @@
 <jl-tag-input full={full || undefined}>
 	<label for="{id}-input">{t('form.tags')}</label>
 	{#if tags.length}
-		<ul aria-label={t('form.tags.chosen')}>
-			{#each tags as tag (tag)}
+		<ul bind:this={chosen} aria-label={t('form.tags.chosen')}>
+			{#each tags as tag, i (tag)}
 				<li>
 					{tag}
-					<button type="button" onclick={() => (tags = tags.filter((x) => x !== tag))}>
+					<button type="button" onclick={() => remove(tag, i)}>
 						<Icon name="close" label={t('form.tags.remove', { tag })} />
 					</button>
 				</li>

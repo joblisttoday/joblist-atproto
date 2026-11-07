@@ -55,6 +55,8 @@
 
 <svelte:head><title>{t('nav.lists')} · {config.name}</title></svelte:head>
 
+<jl-visually-hidden><h1>{t('nav.lists')}</h1></jl-visually-hidden>
+
 <FullScreen {view}>
 	{#snippet bar()}
 		<SearchBar bind:query label={t('search.lists')} filters={t('lists.filters')}>

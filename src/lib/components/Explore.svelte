@@ -211,8 +211,11 @@
 	// The sheet follows a finger on its handle, then settles at the closest size; a tap steps through them.
 	/** @type {{y: number, from: number, height: number, moved: boolean} | null} */
 	let drag = $state(null);
+	/** A drag ended: the click that follows it is not a tap. */
+	let dragged = false;
 	/** @param {PointerEvent} event */
 	function grab(event) {
+		dragged = false;
 		drag = { y: event.clientY, from: panel.offsetHeight, height: panel.offsetHeight, moved: false };
 		/** @type {HTMLElement} */ (event.currentTarget).setPointerCapture(event.pointerId);
 	}
@@ -225,12 +228,17 @@
 	}
 	function settle() {
 		if (!drag) return;
-		if (!drag.moved) nextSheet();
-		else {
+		dragged = drag.moved;
+		if (drag.moved) {
 			const share = drag.height / /** @type {HTMLElement} */ (panel.parentElement).clientHeight;
 			sheet = share < config.layout.sheetPeekBelow ? 'peek' : share < config.layout.sheetFullAbove ? 'half' : 'full';
 		}
 		drag = null;
+	}
+	/** A tap, a key or a screen reader steps through the sizes. */
+	function tap() {
+		if (!dragged) nextSheet();
+		dragged = false;
 	}
 </script>
 
@@ -267,12 +275,14 @@
 	<jl-explore-panel {sheet} bind:this={panel} dragging={drag ? true : undefined} style:--sheet-drag={drag ? `${drag.height}px` : undefined}>
 		<button
 			type="button"
-			aria-label={t('explore.sheet')}
+			aria-label={t(`explore.sheet.${sheet}`)}
+			aria-expanded={sheet === 'full'}
+			aria-controls="explore-results"
+			onclick={tap}
 			onpointerdown={grab}
 			onpointermove={slide}
 			onpointerup={settle}
 			onpointercancel={() => (drag = null)}
-			onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), nextSheet())}
 		>
 			<span></span>
 		</button>
@@ -288,7 +298,7 @@
 			</jl-explore-place>
 		{/if}
 		<!-- Kept while a job is open, so its search and its place in the list are still there after. -->
-		<jl-explore-results hidden={pickedJobs ? true : undefined}>
+		<jl-explore-results id="explore-results" hidden={pickedJobs ? true : undefined}>
 			{#if !searching}
 				<p>
 					{t('explore.welcome', { companies: companies.length.toLocaleString() })}
@@ -400,6 +410,8 @@
 		height: var(--sheet-half);
 		overflow-y: auto;
 		overscroll-behavior: contain;
+		/* What gets the keyboard stays below the handle stuck at its top. */
+		scroll-padding-top: calc(var(--handle-height) + var(--space-xs));
 		padding: 0 var(--gutter) var(--space-l);
 		background: var(--color-bg);
 		border-radius: var(--radius-large) var(--radius-large) 0 0;

@@ -3,6 +3,8 @@
 	--color-fg: #111;
 	--color-muted: #6b6b6b;
 	--color-line: #d9d9d9;
+	/* Edges of what is typed in or toggled: at least 3:1 against the page (WCAG 1.4.11). */
+	--color-control-line: #767676;
 	--color-soft: #f2f2f2;
 	--color-accent: #111;
 	--color-accent-fg: #fff;
@@ -14,6 +16,7 @@
 	--font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 	--font-size: 1rem;
 	--font-size-small: 0.875rem;
+	--font-size-label: 0.75rem;
 	--font-size-large: 1.375rem;
 	--font-size-xl: clamp(1.375rem, 1rem + 2vw, 2.25rem);
 	--font-weight-strong: 600;
@@ -32,6 +35,7 @@
 	--border-width: 1px;
 	--border: var(--border-width) solid var(--color-line);
 	--border-dashed: var(--border-width) dashed var(--color-line);
+	--control-border: var(--border-width) solid var(--color-control-line);
 	--focus-ring: 2px solid var(--color-focus);
 	--focus-offset: 2px;
 	/* The page uses the whole screen: fluid gutters, text kept to a readable measure, result lists in as many columns as fit. */
@@ -73,11 +77,17 @@
 	--search-width-wide: 48rem;
 	--card-min: 20rem;
 	--dialog-width: 72rem;
+	--dialog-bar-height: calc(var(--chip-height) + 2 * var(--space-xs));
+	/* Set by a dialog to its header's real height. */
+	--dialog-header-height: var(--dialog-bar-height);
 	--backdrop: rgb(0 0 0 / 0.45);
 	--account-width: 12rem;
+	--tooltip-width: 14rem;
+	--hidden-size: 1px;
 	--textarea-min: 8rem;
 	--textarea-max: 60vh;
 	--reading-width: 42rem;
+	--hidden-size: 1px;
 	--aside-width: 22rem;
 	--required-mark: ' *';
 	--font-size-badge: 0.7rem;
@@ -87,12 +97,24 @@
 	color-scheme: light dark;
 }
 
+/* What gets the keyboard is never hidden under the sticky header or the bottom navigation (WCAG 2.4.11). */
+html {
+	scroll-padding-block: var(--header-height) calc(var(--nav-height) + env(safe-area-inset-bottom));
+}
+
+@media (min-width: 48rem) {
+	html {
+		scroll-padding-block-end: 0;
+	}
+}
+
 @media (prefers-color-scheme: dark) {
 	:root {
 		--color-bg: #111;
 		--color-fg: #eee;
 		--color-muted: #9a9a9a;
 		--color-line: #333;
+		--color-control-line: #8a8a8a;
 		--color-soft: #1c1c1c;
 		--color-accent: #eee;
 		--color-accent-fg: #111;
@@ -201,7 +223,7 @@ textarea {
 	width: 100%;
 	min-height: var(--tap-size);
 	padding: var(--space-s);
-	border: var(--border);
+	border: var(--control-border);
 	border-radius: var(--radius);
 	background: var(--color-bg);
 }
@@ -232,6 +254,11 @@ button:hover:not(:disabled),
 menu > li > a:hover,
 menu > a:hover {
 	background: var(--color-soft);
+}
+
+/* A toggle off shows only its edge. */
+button[aria-pressed='false'] {
+	border: var(--control-border);
 }
 
 button[type='submit'] {
@@ -327,9 +354,71 @@ menu {
 	display: none !important;
 }
 
+/* A search field keeps its name in sight, small on its top edge (the placeholder is only an example). */
+jl-search-field {
+	position: relative;
+	display: block;
+	min-width: 0;
+}
+jl-search-field label {
+	position: absolute;
+	inset-block-start: 0;
+	inset-inline-start: var(--space-s);
+	translate: 0 -50%;
+	margin: 0;
+	padding: 0 var(--space-xs);
+	background: var(--color-bg);
+	color: var(--color-muted);
+	font-size: var(--font-size-label);
+	font-weight: normal;
+	line-height: var(--line-height-tight);
+	pointer-events: none;
+}
+
+/* Heard by screen readers, not shown: a page's title where its search bar says what it is. */
+jl-visually-hidden {
+	position: absolute;
+	width: var(--hidden-size);
+	height: var(--hidden-size);
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+}
+
 @media (prefers-reduced-motion: reduce) {
 	*,
 	*::before,
+/* A search field keeps its name in sight, small on its top edge (the placeholder is only an example). */
+jl-search-field {
+	position: relative;
+	display: block;
+	min-width: 0;
+}
+jl-search-field label {
+	position: absolute;
+	inset-block-start: 0;
+	inset-inline-start: var(--space-s);
+	translate: 0 -50%;
+	margin: 0;
+	padding: 0 var(--space-xs);
+	background: var(--color-bg);
+	color: var(--color-muted);
+	font-size: var(--font-size-label);
+	font-weight: normal;
+	line-height: var(--line-height-tight);
+	pointer-events: none;
+}
+
+/* Heard by screen readers, not shown: a page's title where its search bar says what it is. */
+jl-visually-hidden {
+	position: absolute;
+	width: var(--hidden-size);
+	height: var(--hidden-size);
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+}
+
 	*::after {
 		transition: none !important;
 		animation: none !important;

@@ -23,6 +23,7 @@
 	 *   onselect: (job: import('#lib/ats/job.js').Job) => void
 	 * }}
 	 *   jobs: the results it was opened from (its neighbours are among them); all: every job read.
+	 *   Its title is the dialog's header.
 	 */
 	let { job, jobs, all, names, onback, onselect } = $props();
 
@@ -55,11 +56,10 @@
 </script>
 
 <jl-job-detail>
-	<button type="button" onclick={onback} {@attach (node) => node.focus({ preventScroll: true })}><Icon name="close" /> {t('explore.close')}</button>
 	<jl-job-read>
 		<article>
 			{#key job.url}
-				<JobItem {job} company={name} expanded>
+				<JobItem {job} company={name} read>
 					{#snippet actions()}
 						<menu>
 							<a href={apply} target={job.posted ? undefined : '_blank'} rel={job.posted ? undefined : 'noopener'}>{t('explore.apply')}{#if !job.posted}<Icon name="external" />{/if}</a>
@@ -107,40 +107,33 @@
 <style>
 	jl-job-detail {
 		display: block;
-		max-width: calc(var(--reading-width) + var(--aside-width) + var(--column-gap));
-		margin-inline: auto;
-	}
-	jl-job-detail > button {
-		min-height: var(--chip-height);
-		padding: 0 var(--space-m);
-		border-radius: var(--radius-round);
-		font-size: var(--font-size-small);
-		margin: var(--space-xs) 0 var(--space-s);
 	}
 	jl-job-read {
 		display: block;
+		margin-top: var(--space-s);
 	}
-	article {
+	/* Text keeps a readable measure; the offer itself uses the dialog's width. */
+	article :global(jl-job-description p) {
 		max-width: var(--reading-width);
 	}
 	/* Apply: the page's main action, kept in reach while the job is read. */
-	jl-job-detail :global(details > menu) {
+	jl-job-detail :global(jl-job-body > menu) {
 		position: sticky;
-		top: calc(-1 * var(--space-s));
+		top: var(--dialog-header-height);
 		z-index: 1;
 		padding-block: var(--space-s);
 		background: var(--color-bg);
 	}
-	jl-job-detail :global(details > menu > a:first-child) {
+	jl-job-detail :global(jl-job-body > menu > a:first-child) {
 		background: var(--color-accent);
 		color: var(--color-accent-fg);
 		border-color: var(--color-accent);
 	}
-	jl-job-detail :global(details > menu > a:first-child:hover) {
+	jl-job-detail :global(jl-job-body > menu > a:first-child:hover) {
 		background: var(--color-accent);
 		opacity: 0.85;
 	}
-	jl-job-detail :global(details > menu > button[aria-pressed='true']) {
+	jl-job-detail :global(jl-job-body > menu > button[aria-pressed='true']) {
 		background: var(--color-soft);
 		color: var(--color-ok);
 	}
@@ -170,13 +163,13 @@
 	@media (min-width: 64rem) {
 		jl-job-read {
 			display: grid;
-			grid-template-columns: minmax(0, var(--reading-width)) var(--aside-width);
+			grid-template-columns: minmax(0, 1fr) var(--aside-width);
 			column-gap: var(--column-gap);
 			align-items: start;
 		}
 		aside {
 			position: sticky;
-			top: 0;
+			top: var(--dialog-header-height);
 		}
 		aside section:first-child {
 			margin-top: var(--space-s);

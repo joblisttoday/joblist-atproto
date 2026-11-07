@@ -40,21 +40,22 @@
 
 <jl-explore-search>
 	<form role="search" onsubmit={(e) => e.preventDefault()}>
-		<input
-			type="search"
-			bind:value={query.value}
-			placeholder={t('explore.what')}
-			aria-label={t('jobs.filter.what')}
-			enterkeyhint="search"
-		/>
-		<input
-			type="search"
-			bind:value={where.value}
-			placeholder={t('explore.where')}
-			aria-label={t('jobs.filter.where')}
-			list="{id}-places"
-			enterkeyhint="search"
-		/>
+		<!-- Each field keeps its name in sight, small on its edge: the placeholder is only an example. -->
+		<jl-search-field>
+			<label for="{id}-what">{t('explore.what')}</label>
+			<input id="{id}-what" type="search" bind:value={query.value} placeholder={t('explore.what.example')} enterkeyhint="search" />
+		</jl-search-field>
+		<jl-search-field>
+			<label for="{id}-where">{t('explore.where')}</label>
+			<input
+				id="{id}-where"
+				type="search"
+				bind:value={where.value}
+				placeholder={t('explore.where.example')}
+				list="{id}-places"
+				enterkeyhint="search"
+			/>
+		</jl-search-field>
 		<datalist id="{id}-places">
 			{#each places as place (place)}<option value={place}></option>{/each}
 		</datalist>

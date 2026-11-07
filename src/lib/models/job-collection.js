@@ -1,11 +1,12 @@
 import config from '#lib/data/config.json' with { type: 'json' };
 
 /**
- * Collections of jobs someone keeps: the built-in Applied and Hidden, and the ones
- * they name ("Dream jobs"). Kept in the browser only: job hunting is private.
+ * Collections of jobs someone keeps: the built-in Saved (one tap), Applied and Hidden,
+ * and the ones they name ("Dream jobs"). Kept in the browser only: job hunting is private.
+ * Collections kept before Saved existed get it, empty, when read (job-collection-check.js).
  * Jobs are keyed by markKey (job-mark.js) and kept with their title and company,
  * to list them once the offer closed.
- * @typedef {'applied' | 'hidden'} Builtin
+ * @typedef {'saved' | 'applied' | 'hidden'} Builtin
  * @typedef {{title: string, company: string, url: string, at: string}} SavedJob at: when it was saved
  * @typedef {{id: string, name: string, at: string, jobs: Record<string, SavedJob>}} Collection
  *   name: empty for the built-in ones (named by the interface, in each language)
@@ -14,7 +15,9 @@ import config from '#lib/data/config.json' with { type: 'json' };
 
 const limits = config.jobCollections;
 /** @type {Builtin[]} */
-export const BUILTIN = ['applied', 'hidden'];
+export const BUILTIN = ['saved', 'applied', 'hidden'];
+/** A job is either applied to or hidden, never both. */
+const EXCLUSIVE = ['applied', 'hidden'];
 export const FORMAT = 'joblist.collections';
 
 /** @param {string} id */
@@ -55,7 +58,7 @@ function update(state, id, change) {
  */
 export function toggleJob(state, id, key, job, now = new Date().toISOString()) {
 	if (collectionOf(state, id)?.jobs[key]) return removeJob(state, id, key);
-	const other = isBuiltin(id) ? BUILTIN.find((b) => b !== id) : undefined;
+	const other = EXCLUSIVE.includes(id) ? EXCLUSIVE.find((b) => b !== id) : undefined;
 	const cleared = other ? removeJob(state, other, key) : state;
 	return update(cleared, id, (c) => ({ ...c, jobs: { ...c.jobs, [key]: { ...job, at: now } } }));
 }
@@ -106,6 +109,15 @@ export function deleteCollection(state, id) {
  */
 export function namedWith(state, key) {
 	return state.collections.filter((c) => !isBuiltin(c.id) && c.jobs[key]).map((c) => c.id);
+}
+
+/**
+ * The collections a job is saved in: Saved, and the named ones.
+ * @param {Collections} state
+ * @param {string} key
+ */
+export function savedIn(state, key) {
+	return state.collections.filter((c) => (c.id === 'saved' || !isBuiltin(c.id)) && c.jobs[key]).map((c) => c.id);
 }
 
 /**

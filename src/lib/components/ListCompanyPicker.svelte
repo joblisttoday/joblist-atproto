@@ -5,6 +5,7 @@
 	import { data } from '#lib/network/network.svelte.js';
 	import { jobCounts } from '#lib/network/job-counts.svelte.js';
 	import { findCompanies } from '#lib/models/list-form.js';
+	import { focusNear } from '#lib/navigation/focus.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
@@ -20,11 +21,21 @@
 	const found = $derived(findCompanies(data.companies.values(), companies, query, jobCounts(), config.listForm.suggestions));
 	const full = $derived(companies.length >= config.listForm.companiesMax);
 
-	/** @param {import('#lib/models/company.js').Company} company */
-	function add(company) {
+	/** @type {HTMLUListElement | undefined} */
+	let list = $state();
+	/** @type {HTMLInputElement | undefined} */
+	let search = $state();
+
+	/**
+	 * Added, it leaves the suggestions: the keyboard goes on to the next one, or back to the search.
+	 * @param {import('#lib/models/company.js').Company} company
+	 * @param {number} index
+	 */
+	function add(company, index) {
 		if (full) return;
 		companies.push(company.key);
 		added = company.name;
+		focusNear(() => list, index, 'button:not(:disabled)', () => search);
 	}
 	/** @param {import('#lib/models/company.js').Company} company */
 	const where = (company) => [...new Set(company.locations.map((l) => l.name).filter(Boolean))].slice(0, 2).join(', ');
@@ -34,6 +45,7 @@
 	<label for="{id}-search">{t('form.list.add')}</label>
 	<input
 		id="{id}-search"
+		bind:this={search}
 		type="search"
 		bind:value={query}
 		placeholder={t('search.companies')}
@@ -49,11 +61,11 @@
 	{:else}
 		<small id="{id}-help">{t('form.list.add.help')}</small>
 	{/if}
-	<ul id="{id}-found" aria-label={t('form.list.suggestions')}>
-		{#each found as company (company.key)}
+	<ul id="{id}-found" bind:this={list} aria-label={t('form.list.suggestions')}>
+		{#each found as company, i (company.key)}
 			{@const jobs = jobCounts().get(company.key) || 0}
 			<li>
-				<button type="button" onclick={() => add(company)} disabled={full}>
+				<button type="button" onclick={() => add(company, i)} disabled={full}>
 					<CompanyMark key={company.key} name={company.name} />
 					<span>
 						{company.name}
