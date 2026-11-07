@@ -1,6 +1,7 @@
 import * as model from '#lib/models/job-collection.js';
 import { cleanCollections, fromMarks, readCollectionsFile } from '#lib/models/job-collection-check.js';
 import { markKey } from '#lib/models/job-mark.js';
+import { scoped } from '#lib/profiles/profiles.js';
 
 /**
  * The jobs someone keeps (Saved, Applied, Hidden and the collections they name), in this
@@ -10,9 +11,10 @@ import { markKey } from '#lib/models/job-mark.js';
  * @typedef {import('#lib/ats/job.js').Job} Job
  */
 
-const KEY = 'joblist.collections.v1';
+/** The current profile's (profiles.js). */
+const KEY = scoped('joblist.collections.v1');
 // Before collections: the applied and hidden marks, read once to start from them (and left in place).
-const MARKS_KEY = 'joblist.marks.v1';
+const MARKS_KEY = scoped('joblist.marks.v1');
 
 /** @returns {Collections} */
 function read() {

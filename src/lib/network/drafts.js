@@ -1,5 +1,6 @@
 import config from '#lib/data/config.json';
 import { overEmpty, returningToSave } from '#lib/models/form-draft.js';
+import { scoped } from '#lib/profiles/profiles.js';
 
 /**
  * What is being written in a form, kept in this browser until it is saved: a reload,
@@ -7,9 +8,9 @@ import { overEmpty, returningToSave } from '#lib/models/form-draft.js';
  * in this browser, and signing out clears them for the next person.
  */
 const DRAFTS = {
-	job: 'joblist.jobDraft.v1',
-	company: 'joblist.companyDraft.v1',
-	list: 'joblist.listDraft.v1'
+	job: scoped('joblist.jobDraft.v1'),
+	company: scoped('joblist.companyDraft.v1'),
+	list: scoped('joblist.listDraft.v1')
 };
 /** Left a form to sign in and save it (this tab only). */
 const RETURN = 'joblist.saveAfterSignIn.v1';

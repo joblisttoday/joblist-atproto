@@ -1,4 +1,5 @@
 import { nearby, sameSearch } from '#lib/models/saved-search.js';
+import { scoped } from '#lib/profiles/profiles.js';
 
 /**
  * Job searches kept in this browser only: what someone looks for says they
@@ -8,7 +9,8 @@ import { nearby, sameSearch } from '#lib/models/saved-search.js';
  * @typedef {import('#lib/models/job.js').JobFilters} JobFilters
  */
 
-const KEY = 'joblist.searches.v1';
+/** The current profile's (profiles.js). */
+const KEY = scoped('joblist.searches.v1');
 
 /** @returns {SavedSearch[]} */
 function read() {

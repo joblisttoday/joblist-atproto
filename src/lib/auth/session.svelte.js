@@ -2,6 +2,8 @@ import { goto } from '$app/navigation';
 import { getProfiles } from '#lib/atproto/identity.js';
 import { nextPath } from '#lib/navigation/next.js';
 import { forgetAll } from '#lib/network/drafts.js';
+import { signingIn } from '#lib/navigation/address.js';
+import { attachAccount, currentProfile, detachAccount, profiles, profilesKept, removeProfile } from '#lib/profiles/profiles.js';
 
 // The OAuth and API libraries are large: load them after the first paint.
 const auth = () => import('./client.js');
@@ -24,46 +26,41 @@ export const session = $state({
 });
 
 /**
- * Whether this browser has a session to restore: the sign-in code (large) loads only then,
- * or on the way back from signing in. Kept in this browser: the account signed in, or "none".
+ * Whether there is a session to restore: the sign-in code (large) loads only then, on the
+ * way back from signing in, or when the current profile has an account (profiles.js).
  */
-const KEY = 'joblist.session.v1';
-/** @param {string} value */
-function remember(value) {
-	try {
-		localStorage.setItem(KEY, value);
-	} catch {
-		// storage blocked: the sign-in code loads on each visit
-	}
-}
 async function mayHaveSession() {
-	// Back from the sign-in page (its answer is in the address fragment).
-	if (/[#&]state=/.test(location.hash) && /[#&](code|error)=/.test(location.hash)) return true;
-	let known = null;
-	try {
-		known = localStorage.getItem(KEY);
-	} catch {
-		return true;
-	}
-	if (known) return known !== 'none';
-	// Not known yet (a first visit, or signed in before this was kept): ask the sign-in store, once.
+	if (signingIn()) return true;
+	if (currentProfile().did) return true;
+	if (profilesKept()) return false;
+	// Neither kept yet (signed in before either was): ask the sign-in store, once.
 	const databases = (await indexedDB.databases?.().catch(() => null)) ?? null;
-	if (!databases) return true;
-	const stored = databases.some((db) => db.name === '@atproto-oauth-client');
-	if (!stored) remember('none');
-	return stored;
+	return !databases || databases.some((db) => db.name === '@atproto-oauth-client');
 }
 
-/** Restore the last session, or finish a sign-in redirect. Call once. */
+/** Finish a sign-in, or restore the current profile's account. Call once. */
 export async function initSession() {
 	try {
 		if (!(await mayHaveSession())) return;
 		client = await (await auth()).loadClient(clear);
-		const result = await client.init();
-		if (result) {
-			await use(result.session);
-			if (result.state) await goto(result.state, { replace: true });
-		} else remember('none');
+		if (signingIn()) {
+			const result = await client.init();
+			if (result && 'state' in result) {
+				// Back from signing in: an account already in another profile opens that profile.
+				if (attachAccount(result.session.sub)) return location.replace(result.state || '/');
+				await use(result.session);
+				if (result.state) await goto(result.state, { replace: true });
+				return;
+			}
+		}
+		// Each profile its own account, restored by name (signed in before profiles: the last one).
+		const did = currentProfile().did || (profilesKept() ? null : (await client.init().catch(() => null))?.session.sub);
+		if (!did) return;
+		try {
+			await use(await client.restore(did));
+		} catch {
+			detachAccount(did);
+		}
 	} catch (err) {
 		session.error = err instanceof Error ? err.message : String(err);
 	} finally {
@@ -84,7 +81,7 @@ export async function signIn(handle) {
 	await client.signIn(handle.trim().replace(/^@/, ''), { scope: SCOPE, state: back });
 }
 
-/** Sign out: what was being written in this browser goes too, for whoever uses it next. */
+/** Sign out of this profile's account: what was being written goes too, for whoever uses it next. */
 export async function signOut() {
 	forgetAll();
 	if (client && session.did) {
@@ -97,21 +94,42 @@ export async function signOut() {
 	clear();
 }
 
+/**
+ * A profile gone from this browser, with what it kept, and signed out of its account.
+ * @param {string} id
+ */
+export async function forgetProfile(id) {
+	const did = profiles().list.find((p) => p.id === id)?.did;
+	if (did) {
+		try {
+			client ??= await (await auth()).loadClient(clear);
+			await client.revoke(did);
+		} catch {
+			// gone from this browser either way
+		}
+	}
+	removeProfile(id);
+}
+
 /** @param {import('@atproto/oauth-client-browser').OAuthSession} oauthSession */
 async function use(oauthSession) {
 	session.did = oauthSession.sub;
-	remember(oauthSession.sub);
 	const { Agent } = await import('@atproto/api');
 	session.agent = new Agent(oauthSession);
-	const profiles = await getProfiles([oauthSession.sub]);
-	session.handle = profiles.get(oauthSession.sub)?.handle || oauthSession.sub;
-	session.avatar = profiles.get(oauthSession.sub)?.avatar || null;
+	const found = await getProfiles([oauthSession.sub]);
+	session.handle = found.get(oauthSession.sub)?.handle || oauthSession.sub;
+	session.avatar = found.get(oauthSession.sub)?.avatar || null;
+	attachAccount(oauthSession.sub, session.handle);
 }
 
-function clear() {
+/** @param {string} [ended] the account whose session ended (the client says which) */
+function clear(ended) {
 	// A session that ended (signed out, expired, revoked): what was written in it is not left for the next person.
+	const did = typeof ended === 'string' ? ended : session.did;
+	if (did) detachAccount(did);
+	// Another profile's account: this one's session stays.
+	if (did && session.did && did !== session.did) return;
 	if (session.did) forgetAll();
-	remember('none');
 	session.did = null;
 	session.handle = null;
 	session.avatar = null;

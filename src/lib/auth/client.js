@@ -7,7 +7,7 @@ export const SCOPE = ['atproto', ...Object.values(config.collections).map((nsid)
 /**
  * Production loads the published client metadata; local development
  * (http://127.0.0.1) uses an atproto loopback client id.
- * @param {() => void} onSessionDeleted
+ * @param {(sub: string) => void} onSessionDeleted the account whose session ended
  */
 export function loadClient(onSessionDeleted) {
 	const { protocol, hostname, port, origin } = window.location;
