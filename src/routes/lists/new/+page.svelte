@@ -4,7 +4,6 @@
 	import { tick } from 'svelte';
 	import ListForm from '#lib/components/ListForm.svelte';
 	import ListSaved from '#lib/components/ListSaved.svelte';
-	import RequireSession from '#lib/components/RequireSession.svelte';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { data } from '#lib/network/network.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
@@ -44,9 +43,7 @@
 {:else}
 	<h1>{t('form.list.title')}</h1>
 	<p><small>{t('form.list.intro')}</small></p>
-	<RequireSession>
-		{#key initial}
-			<ListForm {initial} {onsaved} oncancel={() => history.back()} />
-		{/key}
-	</RequireSession>
+	{#key initial}
+		<ListForm {initial} {onsaved} oncancel={() => history.back()} />
+	{/key}
 {/if}

@@ -37,7 +37,7 @@
 		</small>
 		<label>
 			<input type="checkbox" name="bluesky" toolparamdescription={params.bluesky} bind:checked={bluesky} />
-			{t('post.bluesky', { handle: session.handle || '' })}
+			{session.handle ? t('post.bluesky', { handle: session.handle }) : t('post.bluesky.signedOut')}
 		</label>
 		{#if missing}<p role="alert">{t('post.apply.missing')}</p>{/if}
 	</fieldset>

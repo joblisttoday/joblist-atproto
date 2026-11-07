@@ -1,6 +1,7 @@
 import { goto } from '$app/navigation';
 import { getProfiles } from '#lib/atproto/identity.js';
 import { nextPath } from '#lib/navigation/next.js';
+import { forgetAll } from '#lib/network/drafts.js';
 
 // The OAuth and API libraries are large: load them after the first paint.
 const auth = () => import('./client.js');
@@ -83,7 +84,9 @@ export async function signIn(handle) {
 	await client.signIn(handle.trim().replace(/^@/, ''), { scope: SCOPE, state: back });
 }
 
+/** Sign out: what was being written in this browser goes too, for whoever uses it next. */
 export async function signOut() {
+	forgetAll();
 	if (client && session.did) {
 		try {
 			await client.revoke(session.did);

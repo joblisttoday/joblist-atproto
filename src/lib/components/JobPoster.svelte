@@ -5,7 +5,7 @@
 
 	/**
 	 * Who the offer will be shown as posted by: the company itself when the
-	 * signed-in handle is its domain, otherwise shared by this person.
+	 * signed-in handle is its domain, otherwise shared by this person (once signed in).
 	 * @type {{company: string}}
 	 */
 	let { company } = $props();
@@ -16,7 +16,7 @@
 	{#if verified}
 		<p><Icon name="verified" /> {t('post.as.company')}</p>
 	{:else}
-		<p>{t('post.as.shared', { handle: session.handle || '' })}</p>
+		<p>{session.handle ? t('post.as.shared', { handle: session.handle }) : t('post.as.signedOut')}</p>
 		<small>{t('post.as.shared.help', { domain: company })}</small>
 	{/if}
 </jl-job-poster>

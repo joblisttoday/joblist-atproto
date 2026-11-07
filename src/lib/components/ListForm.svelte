@@ -5,9 +5,13 @@
 	import ListCompanyOrder from './ListCompanyOrder.svelte';
 	import ListCompanyPicker from './ListCompanyPicker.svelte';
 	import ListItem from './ListItem.svelte';
+	import SaveHint from './SaveHint.svelte';
+	import SaveResumed from './SaveResumed.svelte';
+	import SaveSignIn from './SaveSignIn.svelte';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { saveList } from '#lib/network/save-list.js';
 	import { clearListDraft, readListDraft, writeListDraft } from '#lib/network/list-draft.js';
+	import { leftToSave } from '#lib/network/drafts.js';
 	import { listDraftApplies, previewList, resumeDraft, toListForm } from '#lib/models/list-form.js';
 	import { i18n, t } from '#lib/i18n/index.svelte.js';
 	import { untrack } from 'svelte';
@@ -48,15 +52,21 @@
 	let error = $state(null);
 	// WebMCP: an AI assistant may name and describe the list; the person picks companies and saves.
 	const tool = webmcp.forms.list;
+	/** @type {SaveSignIn | undefined} */
+	let signin = $state();
+	const submitLabel = $derived(list ? t('form.save') : t('form.list.submit'));
 
 	/** @param {SubmitEvent} event */
 	async function submit(event) {
 		event.preventDefault();
+		// Signed out: the list stays in this browser while signing in, then is saved from here.
+		if (!session.did) return signin?.ask();
 		busy = true;
 		error = null;
 		try {
 			const rkey = await saveList($state.snapshot(form), list);
 			if (!list) clearListDraft();
+			leftToSave(null);
 			onsaved({ rkey, name: form.name.trim(), added: !list });
 		} catch (err) {
 			error = err instanceof Error ? err.message : String(err);
@@ -73,6 +83,7 @@
 	<form onsubmit={submit} toolname={tool.toolname} tooldescription={tool.tooldescription}>
 		<p><small data-required>{t('form.required')}</small></p>
 		<jl-form-fields>
+			<SaveResumed form="list" label={submitLabel} />
 			{#if restored}
 				<p><small>{t('form.list.draft')} <button type="button" onclick={startOver}>{t('form.list.draft.clear')}</button></small></p>
 			{/if}
@@ -132,12 +143,14 @@
 
 		<jl-form-actions>
 			{#if error}<p role="alert">{error}</p>{/if}
+			<SaveHint />
 			<menu>
-				<button type="submit" disabled={busy}>{busy ? t('form.saving') : list ? t('form.save') : t('form.list.submit')}</button>
+				<button type="submit" disabled={busy}>{busy ? t('form.saving') : submitLabel}</button>
 				{#if oncancel}<button type="button" onclick={oncancel}>{t('form.cancel')}</button>{/if}
 			</menu>
 		</jl-form-actions>
 	</form>
+	<SaveSignIn bind:this={signin} form="list" />
 </jl-list-form>
 
 <style>

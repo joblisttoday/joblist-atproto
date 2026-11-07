@@ -10,7 +10,6 @@
 	import AddMine from '#lib/components/AddMine.svelte';
 	import AddSaved from '#lib/components/AddSaved.svelte';
 	import CompanyForm from '#lib/components/CompanyForm.svelte';
-	import RequireSession from '#lib/components/RequireSession.svelte';
 	import { checkBoard } from '#lib/ats/board-check.js';
 	import { findCompany, hasInput, parsePaste, readParams, toPrefill } from '#lib/models/paste.js';
 	import { data } from '#lib/network/network.svelte.js';
@@ -75,17 +74,15 @@
 			<p aria-live="polite"><small>{t('add.checking')}</small></p>
 		{:then found}
 			{#if !key}<AddFound {board} count={found?.count} existing={company} />{/if}
-			<RequireSession>
-				{#key `${company?.key}:${page.url.search}`}
-					<CompanyForm
-						{company}
-						prefill={toPrefill(pasted, found?.name)}
-						focus={params.get('field') || ''}
-						{onsaved}
-						oncancel={() => history.back()}
-					/>
-				{/key}
-			</RequireSession>
+			{#key `${company?.key}:${page.url.search}`}
+				<CompanyForm
+					{company}
+					prefill={toPrefill(pasted, found?.name)}
+					focus={params.get('field') || ''}
+					{onsaved}
+					oncancel={() => history.back()}
+				/>
+			{/key}
 		{/await}
 	{:else}
 		<p><small><a href="/add?name=">{t('add.manual')}</a></small></p>
