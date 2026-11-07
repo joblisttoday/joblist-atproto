@@ -167,6 +167,14 @@ npm run deploy   # build:site && wrangler deploy → https://joblist.today
 [`static/client-metadata.json`](static/client-metadata.json) must match the
 deployed origin.
 
+Only the site's own scripts may run (`kit.csp` in `vite.config.js`). The page
+view counter (Umami) is a pinned copy served from the site,
+[`static/vendor/umami.js`](static/vendor/umami.js), sending to Umami Cloud's
+collector (`analytics.hostUrl`): a third party cannot change code that runs
+next to people's sessions. Cloudflare's Web Analytics would inject its own
+beacon (`static.cloudflareinsights.com`), which the policy refuses: keep
+Web Analytics turned off for joblist.today in the Cloudflare dashboard.
+
 ## Import joblist's companies
 
 The historical joblist data (CC0, [joblisttoday/data](https://github.com/joblisttoday/data))
