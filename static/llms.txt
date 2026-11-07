@@ -1,0 +1,46 @@
+# joblist
+
+> joblist (https://joblist.today) lists open jobs at companies that hire, read straight from each company's own job board (Ashby, Greenhouse, Lever, Personio, Recruitee, Rippling, SmartRecruiters, Workable…). The companies and lists of companies are curated by people on atproto (the Bluesky protocol): every record lives in its author's own account. Open source (GPL-3.0), no ads, no tracking, no accounts of its own.
+
+All the data is public and free to read. Prefer the snapshot files below over crawling the pages: they hold everything the pages show, in a few requests. Job board jobs link to the company's own posting: apply there. Jobs posted on joblist have their own page.
+
+## Pages
+
+- [Home and job search](https://joblist.today/): every open job, searchable by job, city and on a map (`/?q=design&where=Berlin`)
+- [Jobs by city](https://joblist.today/in): one page per city with enough jobs, e.g. `/in/berlin`, `/in/berlin/design`, older jobs at `?page=2`
+- [Jobs by field](https://joblist.today/field): e.g. `/field/engineering`, `/field/design`
+- [Companies](https://joblist.today/companies): one page per company at `/company/{domain}`, e.g. `/company/ableton.com`
+- [Lists](https://joblist.today/lists): lists of companies made by people, at `/{handle}/{rkey}`
+- Jobs posted on joblist: `/job/{did}/{rkey}`, with schema.org JobPosting data
+- [Sitemap of the pages](https://joblist.today/sitemap.xml) and [of the pages per city and field](https://joblist.today/sitemap-places.xml)
+
+## Feeds (Atom)
+
+- [New jobs everywhere](https://joblist.today/feed/new.xml)
+- Per city, field or both: `/feed/in/berlin.xml`, `/feed/field/design.xml`, `/feed/in/berlin/design.xml`
+- Per company: `/feed/company/{domain}.xml`
+
+## Snapshot (JSON, rebuilt every 6 hours)
+
+Base: https://raw.githubusercontent.com/joblisttoday/joblist-snapshot/gh-pages
+
+- [jobs.json](https://raw.githubusercontent.com/joblisttoday/joblist-snapshot/gh-pages/jobs.json): every open job (large, about 8 MB). Compact keys: `t` title, `u` link, `c` company key (its domain), `l` location, `d` department, `p` first seen (ISO date), `r` onsite/hybrid/remote, `g` [longitude, latitude], `m` pay [min, max, currency, period], `s` atproto record of a job posted on joblist, `v` posted by the company itself
+- [records.json](https://raw.githubusercontent.com/joblisttoday/joblist-snapshot/gh-pages/records.json): every company, list, suggestion and job record, with their authors' handles
+- [first.json](https://raw.githubusercontent.com/joblisttoday/joblist-snapshot/gh-pages/first.json): the newest jobs, small
+- [landing/index.json](https://raw.githubusercontent.com/joblisttoday/joblist-snapshot/gh-pages/landing/index.json): the cities and fields with a page, and their job counts; `landing/in/{city}.json`, `landing/field/{field}.json`: their newest jobs
+- `companies/{domain}.json`: one company's open jobs, small (as its embed and feed show them)
+- [meta.json](https://raw.githubusercontent.com/joblisttoday/joblist-snapshot/gh-pages/meta.json): when the snapshot was made, and counts
+
+## Records (atproto lexicons)
+
+The source of truth is the network, not joblist: anyone can read the records from their authors' accounts, and rebuild the snapshot with the indexer.
+
+- [today.joblist.company](https://github.com/joblisttoday/joblist-atproto/blob/main/lexicons/today/joblist/company.json): a company, keyed by its domain; anyone can describe one, like a wiki page
+- [today.joblist.list](https://github.com/joblisttoday/joblist-atproto/blob/main/lexicons/today/joblist/list.json): a list of companies
+- [today.joblist.suggestion](https://github.com/joblisttoday/joblist-atproto/blob/main/lexicons/today/joblist/suggestion.json): a company suggested for someone's list
+- [today.joblist.job](https://github.com/joblisttoday/joblist-atproto/blob/main/lexicons/today/joblist/job.json): a job offer posted on joblist; applications never go through joblist
+
+## Optional
+
+- [Source code](https://github.com/joblisttoday/joblist-atproto)
+- [Embed a company's jobs on a website](https://joblist.today/embed)
