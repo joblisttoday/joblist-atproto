@@ -50,7 +50,7 @@ export function searchFeed(search, data) {
 		title: `${t('feed.search.title', { search: searchLabel(filters) })} · ${config.name}`,
 		subtitle: t('feed.search.intro', { hours: config.searchFeed.hours }),
 		path: feedPath({ search }),
-		page: `/${search}`,
+		page: `/#${search.slice(1)}`,
 		jobs: matching(rows, names, filters),
 		names,
 		generatedAt: data?.generatedAt

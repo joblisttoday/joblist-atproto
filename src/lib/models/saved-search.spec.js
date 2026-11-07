@@ -52,4 +52,13 @@ describe('searches near someone', () => {
 		expect(nearby([13.40512, 52.52049])).toEqual([13.405, 52.52]);
 		expect(nearby(null)).toBe(null);
 	});
+
+	it('keeps a search after the #, with its map area, never where someone is', async () => {
+		const { searchState, areaOf } = await import('./saved-search.js');
+		const state = searchState({ query: 'design', where: '', remote: 'remote', pay: true, near: [1, 2], area: [[13.0881, 52.3383], [13.7611, 52.6758]] });
+		expect(state).toEqual({ q: 'design', where: '', remote: 'remote', pay: true, area: '13.088,52.338,13.761,52.676' });
+		expect(areaOf(String(state.area))).toEqual([[13.088, 52.338], [13.761, 52.676]]);
+		expect(areaOf('1,2,3')).toBe(null);
+		expect(areaOf('0,50,1,40')).toBe(null);
+	});
 });

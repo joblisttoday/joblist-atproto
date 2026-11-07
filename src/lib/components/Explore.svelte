@@ -12,7 +12,8 @@
 	import { tick, untrack } from 'svelte';
 	import { afterNavigate, pushState, replaceState } from '$app/navigation';
 	import { page } from '$app/state';
-	import { fromParams, isEmpty, sameSearch, toParams } from '#lib/models/saved-search.js';
+	import { areaOf, fromParams, isEmpty, sameSearch, searchKeys, searchState, toParams } from '#lib/models/saved-search.js';
+	import { addressOf, currentAddress, readAddress } from '#lib/navigation/address.js';
 	import { markSeen, searches } from '#lib/network/saved-searches.svelte.js';
 	import { data } from '#lib/network/network.svelte.js';
 	import { session } from '#lib/auth/session.svelte.js';
@@ -34,9 +35,18 @@
 	let first = $state.raw(null);
 	getSnapshotFirst().then((loaded) => (first = loaded));
 	const names = $derived(new Map(companies.map((c) => [c.key, c.name])));
-	// The search lives in the page address, so any search is a link to keep or share.
-	// Read from the location: page.url misses the searches replaced in it (shallow routing).
-	let filters = $state(fromParams(new URLSearchParams(location.search)));
+	// The search, the view and the job open live in the page address (after the "#", see
+	// address.js), so any of them is a link to keep or share.
+	const KEYS = [...searchKeys, 'view', config.jobs.jobParam];
+	/** The filters an address says. @param {URLSearchParams} params */
+	const filtersOf = (params) => ({ ...fromParams(params), area: areaOf(params.get('area')) });
+	/** The view an address says, else the one this person last chose. @param {URLSearchParams} params */
+	const viewOf = (params) => {
+		const asked = params.get('view');
+		return asked === 'list' || asked === 'grid' || asked === 'map' ? asked : readView();
+	};
+	const arrivedAt = readAddress(KEYS);
+	let filters = $state(filtersOf(arrivedAt));
 	let since = $state('');
 	/** @type {import('#lib/ats/job.js').Job[]} */
 	let jobs = $state.raw([]);
@@ -45,7 +55,7 @@
 	/** @type {string[]} */
 	let places = $state.raw([]);
 	/** On the map, or as a list: as this person last chose. */
-	let view = $state(readView());
+	let view = $state(viewOf(arrivedAt));
 	const SHEET = /** @type {const} */ (['peek', 'half', 'full']);
 	/** @type {(typeof SHEET)[number]} */
 	let sheet = $state('half');
@@ -61,7 +71,7 @@
 	/** @param {import('#lib/models/saved-search.js').SavedSearch} search */
 	function open(search) {
 		since = search.seen;
-		filters = { query: search.query, where: search.where, remote: search.remote, pay: search.pay, near: search.near ?? null, within: search.within || 0 };
+		filters = { query: search.query, where: search.where, remote: search.remote, pay: search.pay, near: search.near ?? null, within: search.within || 0, area: null };
 		markSeen(search);
 	}
 
@@ -70,38 +80,47 @@
 	searches.opening = null;
 	if (arrived) open(arrived);
 
+	// The page's state as its address keeps it: the view only when not the page's own (the map).
+	/** @param {import('#lib/models/job.js').JobFilters} f @param {string} v @param {string} [job] */
+	const addressFor = (f, v, job) => addressOf({ ...searchState(f), view: v === 'map' ? '' : v, [config.jobs.jobParam]: job }, path);
+
 	// A shallow replace changes the address, not page.url: compare with the location.
-	// Not before the session is ready: a sign-in comes back to this page with its own parameters.
+	// Not before the session is ready: a sign-in comes back to this page with its own answer.
 	// A new search also closes what was open; the same search (the session getting ready) does not.
 	/** @param {import('#lib/models/job.js').JobFilters} f */
 	const searchKey = (f) => JSON.stringify([toParams(f), f.near, f.within, f.area]);
 	let shownSearch = searchKey(untrack(() => filters));
 	$effect(() => {
 		if (!session.ready) return;
-		const search = toParams(filters);
 		const key = searchKey(filters);
 		const changed = key !== shownSearch;
 		shownSearch = key;
-		if (search !== addressSearch() || (changed && untrack(() => selected || picked))) replaceState(`${path}${search}`, {});
+		const open = untrack(() => selected || picked);
+		if (changed && open) {
+			replaceState(addressFor(filters, view), {});
+			return;
+		}
+		const wanted = addressFor(filters, view, untrack(() => selected?.url));
+		if (wanted !== currentAddress()) replaceState(wanted, untrack(() => page.state));
 	});
 
-	/** The search in the address, without the job open in it. */
-	function addressSearch() {
-		const params = new URLSearchParams(location.search);
-		params.delete(config.jobs.jobParam);
-		const text = params.toString();
-		return text ? `?${text}` : '';
-	}
-
-	// Back, forward, or coming back from signing in: the search is the address's again.
-	// Where someone is stays, it is never in the address.
-	function readAddress() {
-		const next = { ...fromParams(new URLSearchParams(location.search)), near: filters.near, within: filters.within, area: filters.area };
-		if (toParams(next) === toParams(filters)) return;
+	// Back, forward, a link to another search, coming back from signing in: the search is the
+	// address's again. Where someone is stays: it is never in the address.
+	function followAddress() {
+		const params = readAddress(KEYS);
+		const next = { ...filtersOf(params), near: filters.near, within: filters.within };
+		const asked = params.get('view');
+		if (asked && asked !== view) view = viewOf(params);
+		if (searchKey(next) === searchKey(filters)) return;
 		shownSearch = searchKey(next);
 		filters = next;
 	}
-	afterNavigate(readAddress);
+	afterNavigate(followAddress);
+	// A link to another search on this same page only changes what follows the "#".
+	$effect(() => {
+		addEventListener('hashchange', followAddress);
+		return () => removeEventListener('hashchange', followAddress);
+	});
 
 	// What covers the map: the panel at the left on wide screens, the sheet at the bottom on phones.
 	/** @type {HTMLElement} */
@@ -134,7 +153,7 @@
 	/** @type {import('#lib/map/jobs-map.js').Insets} */
 	const uncovered = { top: 0, right: 0, bottom: 0, left: 0 };
 	// Opened from a link to a job: open it once the jobs are read.
-	let linked = new URLSearchParams(location.search).get(config.jobs.jobParam);
+	let linked = arrivedAt.get(config.jobs.jobParam);
 	$effect(() => {
 		if (!linked || !session.ready) return;
 		const job = jobs.find((j) => j.url === linked);
@@ -163,9 +182,7 @@
 	/** @param {import('#lib/ats/job.js').Job} job */
 	function select(job) {
 		leaveResults();
-		const params = new URLSearchParams(toParams(filters));
-		params.set(config.jobs.jobParam, job.url);
-		pushState(`${path}?${params}`, { job: $state.snapshot(job), picked: picked ?? undefined });
+		pushState(addressFor(filters, view, job.url), { job: $state.snapshot(job), picked: picked ?? undefined });
 	}
 
 	/** @param {string[]} urls */
@@ -173,7 +190,7 @@
 		const found = results.filter((job) => urls.includes(job.url));
 		if (found.length === 1) return select(found[0]);
 		leaveResults();
-		pushState(`${path}${toParams(filters)}`, { picked: urls });
+		pushState(addressFor(filters, view), { picked: urls });
 		if (sheet === 'peek') sheet = 'half';
 		panel.scrollTop = 0;
 	}
@@ -243,7 +260,7 @@
 </script>
 
 <svelte:window
-	onpopstate={() => tick().then(readAddress)}
+	onpopstate={() => tick().then(followAddress)}
 	onkeydown={(e) => e.key === 'Escape' && !(e.target instanceof HTMLInputElement) && !selected && picked && back()}
 />
 

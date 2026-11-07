@@ -6,5 +6,5 @@
 
 <svelte:head><title>{t('jobs.title')} · {config.name}</title></svelte:head>
 
-<!-- Kept for links to saved searches (/jobs?q=…): the same explorer as the home page. -->
+<!-- Kept for older links to saved searches (/jobs?q=…): the same explorer as the home page. -->
 <Explore path="/jobs" />

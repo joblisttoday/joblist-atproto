@@ -123,7 +123,7 @@ export function pageNumber(value) {
 export const indexFile = () => `${config.landing.dir}/index.json`;
 
 /**
- * The same search in the explorer: /?where=Berlin&q=design.
+ * The same search in the explorer: /#where=Berlin&q=design (after the "#": see navigation/address.js).
  * @param {{cityName?: string, field?: string}} page
  */
 export function explorerPath({ cityName, field }) {
@@ -132,7 +132,7 @@ export function explorerPath({ cityName, field }) {
 	if (query) params.set('q', query);
 	if (cityName) params.set('where', cityName);
 	const text = params.toString();
-	return text ? `/?${text}` : '/';
+	return text ? `/#${text}` : '/';
 }
 
 /**

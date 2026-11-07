@@ -51,6 +51,41 @@ export function toParams(filters) {
 	return text ? `?${text}` : '';
 }
 
+/** The address keys of a search, after the "#" (see navigation/address.js). */
+export const searchKeys = [...Object.values(params), payParam, 'area'];
+
+/**
+ * A search as kept after the "#": its filters, and the part of the map searched
+ * (west,south,east,north, to about 100 m). Where someone is (near) never is.
+ * @param {JobFilters} filters
+ * @returns {Record<string, string | boolean>}
+ */
+export function searchState(filters) {
+	return {
+		[params.query]: filters.query,
+		[params.where]: filters.where,
+		[params.remote]: filters.remote,
+		[payParam]: Boolean(filters.pay),
+		area: filters.area ? filters.area.flat().map((n) => n.toFixed(3)).join(',') : ''
+	};
+}
+
+/**
+ * The part of the map an address searches, checked: null when it is not one.
+ * @param {string | null} text "13.088,52.338,13.761,52.675"
+ * @returns {import('./job.js').Area | null}
+ */
+export function areaOf(text) {
+	const n = (text || '').split(',').map(Number);
+	if (n.length !== 4 || !n.every(Number.isFinite)) return null;
+	const [west, south, east, north] = n;
+	if (Math.abs(south) > 90 || Math.abs(north) > 90 || south >= north || Math.abs(west) > 180 || Math.abs(east) > 180) return null;
+	return [
+		[west, south],
+		[east, north]
+	];
+}
+
 /** @param {JobFilters} filters */
 export function isEmpty(filters) {
 	return !toParams(filters);

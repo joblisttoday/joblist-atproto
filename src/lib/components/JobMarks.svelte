@@ -22,7 +22,7 @@
 		<ul>
 			{#each list as [key, job] (key)}
 				<li>
-					<a href="/?{config.jobs.jobParam}={encodeURIComponent(job.url)}">
+					<a href="/#{config.jobs.jobParam}={encodeURIComponent(job.url)}">
 						<strong>{job.title}</strong>
 						<small>{job.company} · {ago(Date.parse(job.at), i18n.locale)}</small>
 					</a>

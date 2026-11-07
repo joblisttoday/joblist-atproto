@@ -4,7 +4,8 @@
 	import { goto } from '$app/navigation';
 	import { filterJobs, offerCount } from '#lib/models/job.js';
 	import { feedPath } from '#lib/models/landing.js';
-	import { newCount, searchId, toParams } from '#lib/models/saved-search.js';
+	import { newCount, searchId, searchState, toParams } from '#lib/models/saved-search.js';
+	import { addressOf } from '#lib/navigation/address.js';
 	import { forgetSearch, searches } from '#lib/network/saved-searches.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
@@ -25,7 +26,7 @@
 	/** In the explorer, with its place near someone (not in the address). @param {import('#lib/models/saved-search.js').SavedSearch} search */
 	function open(search) {
 		searches.opening = search;
-		goto(`/${toParams(search)}`);
+		goto(addressOf(searchState(search), '/'));
 	}
 </script>
 
@@ -36,7 +37,7 @@
 			{@const all = jobs.length ? offerCount(filterJobs(jobs, search, names)) : null}
 			<li>
 				<a
-					href="/{toParams(search)}"
+					href={addressOf(searchState(search), '/')}
 					onclick={(e) => {
 						e.preventDefault();
 						open(search);

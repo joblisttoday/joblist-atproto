@@ -3,7 +3,8 @@
 	import config from '#lib/data/config.json';
 	import { afterNavigate, goto } from '$app/navigation';
 	import { quickResults } from '#lib/models/quick-search.js';
-	import { toParams } from '#lib/models/saved-search.js';
+	import { searchState } from '#lib/models/saved-search.js';
+	import { addressOf } from '#lib/navigation/address.js';
 	import { handleOf } from '#lib/network/network.svelte.js';
 	import { readSources, sources } from '#lib/network/quick-search.svelte.js';
 	import { accountOf, thumbnail } from '#lib/network/accounts.svelte.js';
@@ -24,7 +25,7 @@
 	const found = $derived(quickResults(text, sources, config.quickSearch.shown));
 	const typed = $derived(text.trim().length >= 2);
 	/** @param {Partial<import('#lib/models/job.js').JobFilters>} filters */
-	const jobsPath = (filters) => `/${toParams({ query: '', where: '', remote: '', ...filters })}`;
+	const jobsPath = (filters) => addressOf(searchState({ query: '', where: '', remote: '', ...filters }), '/');
 
 	afterNavigate(() => {
 		text = '';
