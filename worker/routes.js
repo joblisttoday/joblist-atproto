@@ -53,7 +53,11 @@ export function withPage(found, query) {
 		const { query: words, where, remote, pay } = fromParams(query);
 		const most = config.searchFeed.maxLength;
 		const search = toParams({ query: words.slice(0, most), where: where.slice(0, most), remote, pay });
-		return search ? { kind: 'feed', search } : { kind: 'redirect', location: feedPath({}) };
+		// One company's jobs only (an embed's feed, embed/joblist-jobs.js).
+		const company = query.get('company') || '';
+		if (company && !isCompanyKey(company)) return { kind: 'redirect', location: feedPath({}) };
+		if (!search) return { kind: 'redirect', location: feedPath(company ? { company } : {}) };
+		return { kind: 'feed', search: company ? `${search}&company=${company}` : search };
 	}
 	if (found.kind !== 'page') return found;
 	const page = pageNumber(query.get('page'));

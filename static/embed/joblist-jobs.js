@@ -1,9 +1,11 @@
 /**
- * <joblist-jobs company="example.com" lang="en" limit="20">
+ * <joblist-jobs company="example.com" query="legal" where="Berlin" remote="remote" search lang="en" limit="20">
  *
  * A company's open jobs, from joblist.today, to show on any website:
  *   <script type="module" src="https://joblist.today/embed/joblist-jobs.js"></script>
  *   <joblist-jobs company="example.com"></joblist-jobs>
+ * Only some of them: query (words of the title), where (the place), remote="remote".
+ * search: with a box to search them. Each list can be followed as a feed.
  *
  * It reads the company's jobs as of the last snapshot (one small file), and
  * links each job to where it is applied for. Its look follows the page: set
@@ -29,7 +31,21 @@ sheet.replaceSync(`
 	small { display: block; color: var(--joblist-muted, rgb(128 128 128)); font-size: 0.85em; }
 	p { margin: 0.75em 0 0; color: var(--joblist-muted, rgb(128 128 128)); font-size: 0.85em; }
 	p a { color: var(--joblist-accent, inherit); }
+	input { box-sizing: border-box; width: 100%; margin: 0 0 0.5em; padding: 0.5em 0.75em; font: inherit; color: inherit; background: transparent; border: 1px solid var(--joblist-line, rgb(128 128 128 / 0.6)); border-radius: 0.5em; }
 `);
+
+/**
+ * Whether a job is one of those asked for: every word in its title, the place in its location.
+ * @param {any} job
+ * @param {{words: string[], where: string, remote: boolean}} filter
+ */
+function matches(job, { words, where, remote }) {
+	const title = String(job.t || '').toLowerCase();
+	return words.every((w) => title.includes(w)) && (!where || String(job.l || '').toLowerCase().includes(where)) && (!remote || job.r === 'remote');
+}
+
+/** @param {string} text */
+const wordsOf = (text) => text.toLowerCase().split(/\s+/).filter(Boolean);
 
 /** @param {unknown} value */
 function safeLink(value) {
@@ -57,7 +73,11 @@ function el(tag, attributes = {}, children = []) {
 const fill = (text, values) => text.replace(/\{(\w+)\}/g, (_, name) => String(values[name] ?? ''));
 
 class JoblistJobs extends HTMLElement {
-	static observedAttributes = ['company', 'lang', 'limit'];
+	static observedAttributes = ['company', 'lang', 'limit', 'query', 'where', 'remote', 'search'];
+	/** What is typed in its search box. */
+	typed = '';
+	/** @type {{key: string, data: Promise<any>} | null} the company's file, read once */
+	file = null;
 
 	connectedCallback() {
 		if (!this.shadowRoot) this.attachShadow({ mode: 'open' }).adoptedStyleSheets = [sheet];
@@ -77,22 +97,32 @@ class JoblistJobs extends HTMLElement {
 		const lang = /^[a-z]{2}$/.test(asked) && Intl.DateTimeFormat.supportedLocalesOf(asked).length ? asked : 'en';
 		const text = s.strings[lang] || s.strings.en;
 		const limit = Math.max(1, Number(this.getAttribute('limit')) || s.shown);
-		/** @type {any} */
-		let data = null;
-		if (/^[a-z0-9][a-z0-9.-]*$/.test(key)) {
-			try {
-				const res = await fetch(`${s.snapshot}/${s.dir}/${key}.json`);
-				data = res.ok ? await res.json() : null;
-			} catch {
-				// shown as not read
-			}
+		if (this.file?.key !== key) {
+			const data = /^[a-z0-9][a-z0-9.-]*$/.test(key)
+				? fetch(`${s.snapshot}/${s.dir}/${key}.json`)
+						.then((res) => (res.ok ? res.json() : null))
+						.catch(() => null)
+				: Promise.resolve(null);
+			this.file = { key, data };
 		}
+		const data = await this.file.data;
 		if (!data) {
 			root.replaceChildren(el('p', {}, [text.error]));
 			return;
 		}
-		const page = `${s.site}/company/${key}`;
-		const jobs = Array.isArray(data.jobs) ? data.jobs : [];
+		// Those asked for (and typed), followed as a feed and seen whole on the company's page.
+		const query = (this.getAttribute('query') || '').trim();
+		const where = (this.getAttribute('where') || '').trim();
+		const remote = this.getAttribute('remote') === 'remote';
+		const only = new URLSearchParams();
+		const words = `${query} ${this.typed}`.trim();
+		if (words) only.set('q', words);
+		if (where) only.set('where', where);
+		if (remote) only.set('remote', 'remote');
+		const page = `${s.site}/company/${key}${only.size ? `#${only}` : ''}`;
+		const feed = only.size ? `${s.site}/feed/search.xml?${only}&company=${key}` : `${s.site}/feed/company/${key}.xml`;
+		const filter = { words: wordsOf(`${query} ${this.typed}`), where: where.toLowerCase(), remote };
+		const jobs = (Array.isArray(data.jobs) ? data.jobs : []).filter((/** @type {any} */ job) => matches(job, filter));
 		const date = new Intl.DateTimeFormat(lang, { month: 'short', day: 'numeric' });
 		const items = jobs.slice(0, limit).flatMap((/** @type {any} */ job) => {
 			const href = safeLink(job.u);
@@ -102,15 +132,28 @@ class JoblistJobs extends HTMLElement {
 			return [el('li', {}, [el('a', { href, target: '_blank', rel: 'noopener' }, [el('strong', {}, [String(job.t)]), about ? el('small', {}, [about]) : ''])])];
 		});
 		const count = jobs.length === 1 ? text.countOne : fill(text.count, { count: jobs.length.toLocaleString(lang) });
-		root.replaceChildren(
-			el('h2', {}, [el('a', { href: page, target: '_blank', rel: 'noopener' }, [fill(text.title, { name: String(data.name || key) })])]),
-			items.length ? el('ul', {}, items) : el('p', {}, [text.none]),
-			el('p', {}, [
-				jobs.length > items.length ? el('a', { href: page, target: '_blank', rel: 'noopener' }, [fill(text.more, { count })]) : count,
-				' · ',
-				el('a', { href: s.site, target: '_blank', rel: 'noopener' }, [text.by])
-			])
-		);
+		const list = items.length ? el('ul', {}, items) : el('p', {}, [text.none]);
+		const footer = el('p', {}, [
+			jobs.length > items.length ? el('a', { href: page, target: '_blank', rel: 'noopener' }, [fill(text.more, { count })]) : count,
+			' · ',
+			el('a', { href: feed, type: 'application/atom+xml', title: text.followHelp }, [text.follow]),
+			' · ',
+			el('a', { href: s.site, target: '_blank', rel: 'noopener' }, [text.by])
+		]);
+		// Typing changes the list only: the box keeps its focus and what is typed.
+		const box = /** @type {HTMLInputElement | null} */ (root.querySelector('input'));
+		if (box && this.hasAttribute('search')) {
+			root.querySelector('ul, p:not(:last-child)')?.replaceWith(list);
+			root.lastElementChild?.replaceWith(footer);
+			return;
+		}
+		const search = this.hasAttribute('search') ? el('input', { type: 'search', 'aria-label': text.search, placeholder: text.search }) : '';
+		if (search instanceof HTMLInputElement)
+			search.addEventListener('input', () => {
+				this.typed = search.value;
+				this.render();
+			});
+		root.replaceChildren(el('h2', {}, [el('a', { href: page, target: '_blank', rel: 'noopener' }, [fill(text.title, { name: String(data.name || key) })])]), search, list, footer);
 	}
 }
 

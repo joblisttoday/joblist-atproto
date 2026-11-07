@@ -32,3 +32,10 @@ test('its feed says the search and links back to it', () => {
 test('a broken file gives an empty feed', () => {
 	assert.equal((searchFeed('?q=x', { jobs: 'nope', names: null }).match(/<entry>/g) || []).length, 0);
 });
+
+test('one company\'s feed, as an embed follows it', () => {
+	const feed = searchFeed('?q=design&company=paint.example', data);
+	assert.match(feed, /<title>New jobs: Paint · design · joblist<\/title>/);
+	assert.match(feed, /href="https:\/\/joblist\.today\/company\/paint\.example#q=design"/);
+	assert.equal((feed.match(/<entry>/g) || []).length, 1);
+});

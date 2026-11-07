@@ -27,6 +27,9 @@ test('the feed of any search, kept as the explorer writes it', () => {
 	assert.equal(pathOf(found), '/feed/search.xml?q=design&where=Lisbon');
 	assert.equal(fileOf(found), 'landing/recent.json');
 	assert.deepEqual(withPage(search, new URLSearchParams('')), { kind: 'redirect', location: '/feed/new.xml' });
+	assert.deepEqual(withPage(search, new URLSearchParams('q=legal&company=acme.org')), { kind: 'feed', search: '?q=legal&company=acme.org' });
+	assert.deepEqual(withPage(search, new URLSearchParams('company=acme.org')), { kind: 'redirect', location: '/feed/company/acme.org.xml' });
+	assert.deepEqual(withPage(search, new URLSearchParams('q=x&company=../etc')), { kind: 'redirect', location: '/feed/new.xml' });
 	const long = withPage(search, new URLSearchParams(`q=${'a'.repeat(5000)}`));
 	assert.ok(long.kind === 'feed' && (long.search || '').length < 200, 'a long search is cut');
 });

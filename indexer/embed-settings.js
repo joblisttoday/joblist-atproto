@@ -16,6 +16,9 @@ const words = (locale) => ({
 	more: locale['embed.more'],
 	by: locale['embed.by'],
 	error: locale['embed.error'],
+	search: locale['embed.search'],
+	follow: locale['landing.follow'],
+	followHelp: locale['landing.follow.help'],
 	remote: Object.fromEntries(config.jobPost.remote.map((value) => [value, locale[`job.remote.${value}`]]))
 });
 

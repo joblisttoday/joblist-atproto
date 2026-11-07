@@ -43,15 +43,17 @@ export function searchLabel({ query, where, remote, pay }) {
  * @param {any} data landing/recent.json
  */
 export function searchFeed(search, data) {
-	const filters = fromParams(new URLSearchParams(search));
+	const params = new URLSearchParams(search);
+	const filters = fromParams(params);
+	const company = params.get('company');
 	const names = data?.names && typeof data.names === 'object' ? data.names : {};
 	const rows = Array.isArray(data?.jobs) ? data.jobs : [];
 	return atom({
-		title: `${t('feed.search.title', { search: searchLabel(filters) })} · ${config.name}`,
+		title: `${t('feed.search.title', { search: [company && (names[company] || company), searchLabel(filters)].filter(Boolean).join(' · ') })} · ${config.name}`,
 		subtitle: t('feed.search.intro', { hours: config.searchFeed.hours }),
 		path: feedPath({ search }),
-		page: `/#${search.slice(1)}`,
-		jobs: matching(rows, names, filters),
+		page: company ? `/company/${company}#${search.slice(1).replace(/&company=[^&]*/, '')}` : `/#${search.slice(1)}`,
+		jobs: matching(company ? rows.filter((row) => row?.c === company) : rows, names, filters),
 		names,
 		generatedAt: data?.generatedAt
 	});
