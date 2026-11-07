@@ -72,16 +72,16 @@
 		{/if}
 	{:else if onselect}
 		<button type="button" onclick={onselect} aria-current={selected ? 'true' : undefined}>
-			<strong>{#if fresh}<mark>{t('job.new')}</mark> {/if}{job.title}</strong>
+			<strong>{job.title}</strong>
 			<small>{company ? `${company}${line ? ' · ' : ''}` : ''}{line}</small>
-			<jl-chips>{#if applied}<mark><Icon name="applied" /> {t('marks.applied')}</mark>{/if}{#each chips as chip (chip)}<span>{#if chip === distance}<Icon name={travelIcon} />{' '}{/if}{chip}</span>{/each}{#if older}<em title={t('job.older.hint', { days: config.jobs.olderDays })}>{t('job.older')}</em>{/if}</jl-chips>
+			<jl-chips>{#if fresh}<mark data-new>{t('job.new')}</mark>{/if}{#if applied}<mark><Icon name="applied" /> {t('marks.applied')}</mark>{/if}{#each chips as chip (chip)}<span>{#if chip === distance}<Icon name={travelIcon} />{' '}{/if}{chip}</span>{/each}{#if older}<em title={t('job.older.hint', { days: config.jobs.olderDays })}>{t('job.older')}</em>{/if}</jl-chips>
 		</button>
 	{:else}
 		<details bind:open>
 			<summary>
-				<strong>{#if fresh}<mark>{t('job.new')}</mark> {/if}{job.title}</strong>
+				<strong>{job.title}</strong>
 				<small>{company ? `${company}${line ? ' · ' : ''}` : ''}{line}</small>
-				<jl-chips>{#if applied}<mark><Icon name="applied" /> {t('marks.applied')}</mark>{/if}{#each chips as chip (chip)}<span>{#if chip === distance}<Icon name={travelIcon} />{' '}{/if}{chip}</span>{/each}{#if older}<em title={t('job.older.hint', { days: config.jobs.olderDays })}>{t('job.older')}</em>{/if}</jl-chips>
+				<jl-chips>{#if fresh}<mark data-new>{t('job.new')}</mark>{/if}{#if applied}<mark><Icon name="applied" /> {t('marks.applied')}</mark>{/if}{#each chips as chip (chip)}<span>{#if chip === distance}<Icon name={travelIcon} />{' '}{/if}{chip}</span>{/each}{#if older}<em title={t('job.older.hint', { days: config.jobs.olderDays })}>{t('job.older')}</em>{/if}</jl-chips>
 			</summary>
 			{#if open}{@render actions?.()}<JobDescription {job} {company} />{/if}
 		</details>
@@ -189,6 +189,12 @@
 	mark {
 		background: none;
 		color: var(--color-ok);
+	}
+	/* New since the search was last seen: the first chip, filled. */
+	jl-chips > mark[data-new] {
+		background: var(--color-ok);
+		color: var(--color-bg);
+		font-weight: var(--font-weight-strong);
 	}
 	/* An offer listed for long: told, not hidden. */
 	jl-chips > em {
