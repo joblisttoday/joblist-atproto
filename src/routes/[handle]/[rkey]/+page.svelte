@@ -18,7 +18,7 @@
 	import { jobCounts, listJobStats, listJobStatsEverywhere, listJobStatsHere } from '#lib/network/job-counts.svelte.js';
 	import { listPlace } from '#lib/models/list-place.js';
 	import { readView } from '#lib/navigation/explore-view.js';
-	import { t } from '#lib/i18n/index.svelte.js';
+	import { formatNumber, t } from '#lib/i18n/index.svelte.js';
 
 	/**
 	 * A list, like the jobs page: a small header and a search bar at the top, the list's jobs
@@ -112,7 +112,7 @@
 				{#snippet chips()}
 					<li>
 						<button type="button" aria-pressed={show === 'jobs'} onclick={() => ((show = 'jobs'), (chosen = true))}>
-							<Icon name="jobs" /> {t('list.tab.jobs')} <small>{offers.toLocaleString()}</small>
+							<Icon name="jobs" /> {t('list.tab.jobs')} <small>{formatNumber(offers)}</small>
 						</button>
 					</li>
 					<!-- Next to its count, so that it shows on a phone too; off: its companies' jobs everywhere. -->
@@ -125,7 +125,7 @@
 					{/if}
 					<li>
 						<button type="button" aria-pressed={show === 'companies'} onclick={() => ((show = 'companies'), (chosen = true))}>
-							<Icon name="companies" /> {t('list.tab.companies')} <small>{companies.length.toLocaleString()}</small>
+							<Icon name="companies" /> {t('list.tab.companies')} <small>{formatNumber(companies.length)}</small>
 						</button>
 					</li>
 					{#if show === 'jobs'}

@@ -15,7 +15,7 @@
 	import { data, handleOf, membersOf, network } from '#lib/network/network.svelte.js';
 	import { listJobStats } from '#lib/network/job-counts.svelte.js';
 	import { readView } from '#lib/navigation/explore-view.js';
-	import { t } from '#lib/i18n/index.svelte.js';
+	import { formatNumber, t } from '#lib/i18n/index.svelte.js';
 
 	/**
 	 * Every list, like the companies page: a search bar at the top (words, lists hiring,
@@ -61,20 +61,20 @@
 			{#snippet chips()}
 				<li>
 					<button type="button" aria-pressed={hiring} onclick={() => (hiring = !hiring)}>
-						<Icon name="jobs" /> {t('lists.hiring')} <small>{hiringCount}</small>
+						<Icon name="jobs" /> {t('lists.hiring')} <small>{formatNumber(hiringCount)}</small>
 					</button>
 				</li>
 				{#if openCount}
 					<li>
 						<button type="button" aria-pressed={open} onclick={() => (open = !open)}>
-							{t('lists.open')} <small>{openCount}</small>
+							{t('lists.open')} <small>{formatNumber(openCount)}</small>
 						</button>
 					</li>
 				{/if}
 				{#if mineCount}
 					<li>
 						<button type="button" aria-pressed={mine} onclick={() => (mine = !mine)}>
-							<Icon name="me" /> {t('lists.mine')} <small>{mineCount}</small>
+							<Icon name="me" /> {t('lists.mine')} <small>{formatNumber(mineCount)}</small>
 						</button>
 					</li>
 				{/if}

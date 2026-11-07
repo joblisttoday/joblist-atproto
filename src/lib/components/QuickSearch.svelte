@@ -96,7 +96,7 @@
 					<a onkeydown={keys} href="/company/{company.key}">
 						{#if avatar}<img src={thumbnail(avatar)} alt="" />{:else}<Icon name="companies" />{/if}
 						{company.name}
-						{#if jobs}<small>{jobs === 1 ? t('jobs.count.one') : t('jobs.count', { count: jobs.toLocaleString() })}</small>{/if}
+						{#if jobs}<small>{t('jobs.count', { count: jobs })}</small>{/if}
 					</a>
 				</li>
 			{/each}
@@ -105,7 +105,7 @@
 					<a onkeydown={keys} href="/{handleOf(list.did)}/{list.rkey}">
 						<Icon name="lists" />
 						{list.name}
-						<small>{list.companies.length === 1 ? t('list.companies.one') : t('list.companies', { count: list.companies.length })}</small>
+						<small>{t('list.companies', { count: list.companies.length })}</small>
 					</a>
 				</li>
 			{/each}

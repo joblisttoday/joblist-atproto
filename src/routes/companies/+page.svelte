@@ -15,7 +15,7 @@
 	import { allAccounts } from '#lib/network/accounts.svelte.js';
 	import { jobCounts } from '#lib/network/job-counts.svelte.js';
 	import { readView } from '#lib/navigation/explore-view.js';
-	import { t } from '#lib/i18n/index.svelte.js';
+	import { formatNumber, t } from '#lib/i18n/index.svelte.js';
 
 	/**
 	 * Every company, like the jobs page: a search bar at the top (words, hiring,
@@ -58,13 +58,13 @@
 			{#snippet chips()}
 				<li>
 					<button type="button" aria-pressed={hiring} onclick={() => (hiring = !hiring)}>
-						<Icon name="jobs" /> {t('companies.hiring')} <small>{hiringCount}</small>
+						<Icon name="jobs" /> {t('companies.hiring')} <small>{formatNumber(hiringCount)}</small>
 					</button>
 				</li>
 				{#if blueskyCount}
 					<li>
 						<button type="button" aria-pressed={bluesky} onclick={() => (bluesky = !bluesky)}>
-							{t('companies.onBluesky')} <small>{blueskyCount}</small>
+							{t('companies.onBluesky')} <small>{formatNumber(blueskyCount)}</small>
 						</button>
 					</li>
 				{/if}
