@@ -8,6 +8,7 @@
  * config.landing.cacheSeconds: most requests only read the cache.
  *
  * Bindings: ASSETS (the built site, for the app's shell and the 404 page);
+ * CF_VERSION_METADATA (this deploy, so the cache never outlives it);
  * SNAPSHOT (optional, local development: where the snapshot is instead of config.snapshot.path).
  */
 import config from '../src/lib/data/config.json' with { type: 'json' };
@@ -18,7 +19,7 @@ import { render } from './render.js';
 import { fileOf, pathOf, route } from './routes.js';
 
 /**
- * @typedef {{ASSETS: {fetch: typeof fetch}, SNAPSHOT?: string}} Env
+ * @typedef {{ASSETS: {fetch: typeof fetch}, CF_VERSION_METADATA?: {id: string}, SNAPSHOT?: string}} Env
  * @typedef {{waitUntil: (promise: Promise<unknown>) => void}} Context
  */
 
@@ -67,8 +68,10 @@ async function answer(request, env, ctx) {
 	if (request.method !== 'GET' && request.method !== 'HEAD') return new Response(null, { status: 405, headers: { Allow: 'GET, HEAD' } });
 	if (found.kind === 'redirect') return new Response(null, { status: 301, headers: { Location: found.location } });
 
-	// One cached answer per page, whatever the query string.
-	const key = new Request(url.origin + pathOf(found));
+	// One cached answer per page and deploy, whatever the query string: a page cached before
+	// a deploy would start the app from files that deploy removed.
+	const version = env.CF_VERSION_METADATA?.id || 'dev';
+	const key = new Request(`${url.origin}${pathOf(found)}?v=${encodeURIComponent(version)}`);
 	const cache = /** @type {any} */ (caches).default;
 	const cached = await cache.match(key);
 	if (cached) return cached;

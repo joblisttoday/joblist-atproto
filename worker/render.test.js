@@ -83,9 +83,10 @@ test('headers: the page keeps the app policy and refuses framing; feeds run noth
 	assert.equal(pagePolicy('<html>'), "default-src 'none'; frame-ancestors 'none'");
 	const page = headers('html', { policy: pagePolicy(template) });
 	assert.equal(page['Content-Type'], 'text/html; charset=utf-8');
-	assert.match(page['Cache-Control'], /^public, max-age=\d+$/);
+	assert.match(page['Cache-Control'], /^public, max-age=0, must-revalidate, s-maxage=\d+$/);
 	const feed = headers('atom');
 	assert.equal(feed['Content-Type'], 'application/atom+xml; charset=utf-8');
 	assert.match(feed['Content-Security-Policy'], /default-src 'none'.*sandbox/);
+	assert.match(feed['Cache-Control'], /^public, max-age=\d+$/);
 	assert.equal(headers('html', { status: 503 })['Cache-Control'], 'no-store');
 });

@@ -41,8 +41,10 @@ export function headers(type, { policy = '', status = 200 } = {}) {
 	const out = { ...common, 'Content-Type': types[type] };
 	out['Content-Security-Policy'] = type === 'html' ? policy : dataPolicy;
 	if (type !== 'html') out['Access-Control-Allow-Origin'] = '*';
-	// Fresh as the snapshot: kept a while here and in browsers and readers, never when it failed.
-	out['Cache-Control'] = status === 200 ? `public, max-age=${config.landing.cacheSeconds}` : 'no-store';
+	// Fresh as the snapshot: kept a while, never when it failed. Pages only in this Worker's cache
+	// (kept per deploy): a browser's copy would outlive a deploy and start the app from removed files.
+	const kept = type === 'html' ? `max-age=0, must-revalidate, s-maxage=${config.landing.cacheSeconds}` : `max-age=${config.landing.cacheSeconds}`;
+	out['Cache-Control'] = status === 200 ? `public, ${kept}` : 'no-store';
 	if (status === 503) out['Retry-After'] = String(config.landing.missingCacheSeconds);
 	return out;
 }
