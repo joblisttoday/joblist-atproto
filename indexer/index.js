@@ -41,7 +41,7 @@ const companies = groupCompanies(records.company, profiles);
 console.log(`records: ${records.company.length} company, ${records.list.length} list, ${records.suggestion.length} suggestion, ${records.job.length} job, from ${profiles.size} accounts`);
 
 const board = await fetchBoardJobs(companies);
-const jobs = [...recordJobs(records.job, profiles), ...board.jobs];
+const jobs = [...recordJobs(records.job, profiles, companies), ...board.jobs];
 // Companies whose domain is their Bluesky handle.
 const bluesky = await blueskyAccounts(companies.map((c) => c.key), /** @type {any} */ (await loadCache(config.bluesky.file)));
 console.log(`bluesky: ${Object.keys(bluesky).length} companies have their domain as handle`);

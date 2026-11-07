@@ -2,7 +2,7 @@ import config from '../src/lib/data/config.json' with { type: 'json' };
 import { getJobs } from '../src/lib/ats/index.js';
 import { mapLimit } from '../src/lib/atproto/xrpc.js';
 import { locationPoints } from '../src/lib/models/company.js';
-import { isLive, placeNames, toPost } from '../src/lib/models/job-post.js';
+import { claimedCompanies, isLive, notFromCompany, placeNames, toPost } from '../src/lib/models/job-post.js';
 import { workplace } from '../src/lib/models/job.js';
 import { packSalary } from '../src/lib/ats/salary.js';
 import { limitBoards } from './caps.js';
@@ -90,16 +90,19 @@ export function tidyJobs(jobs) {
 }
 
 /**
- * Jobs posted as today.joblist.job records, without the expired ones.
+ * Jobs posted as today.joblist.job records, without the expired ones, nor those
+ * others posted for a company that speaks for itself (see notFromCompany).
  * @param {RepoRecord[]} records
  * @param {Map<string, {handle: string}>} profiles
+ * @param {Iterable<{key: string, verified: boolean}>} [companies]
  * @param {number} [now]
  */
-export function recordJobs(records, profiles, now = Date.now()) {
-	return records
-		.filter((r) => isLive(r.value, now))
-		.map((r) => {
-			const post = toPost(r, profiles);
+export function recordJobs(records, profiles, companies = [], now = Date.now()) {
+	const posts = records.filter((r) => isLive(r.value, now)).map((r) => toPost(r, profiles));
+	const claimed = claimedCompanies(companies, posts);
+	return posts
+		.filter((post) => !notFromCompany(post, claimed))
+		.map((post) => {
 			/** @type {IndexedJob} */
 			const job = {
 				t: post.title,

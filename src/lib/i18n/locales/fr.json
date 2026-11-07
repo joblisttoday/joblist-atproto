@@ -520,6 +520,7 @@
 
 	"job.verified": "publiée par l'entreprise",
 	"job.sharedBy": "partagée par",
+	"job.notFromCompany": "Pas de {company} : {company} publie ses propres offres ici, et celle-ci a été partagée par quelqu'un d'autre. Pour postuler, passez par le site de {company}.",
 	"job.remote.onsite": "Sur place",
 	"job.remote.hybrid": "Hybride",
 	"job.remote.remote": "Télétravail",

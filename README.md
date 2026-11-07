@@ -58,6 +58,13 @@ show up in every job list with that company, merged with its job board's
 jobs (one per link), and get their own page at `/job/{did}/{rkey}`,
 prerendered with schema.org `JobPosting` data for search engines.
 
+Once a company speaks for itself (its own account's version is shown, or it
+posted a job itself), offers others post for it are no longer shown as its
+jobs: not in job lists, feeds, embeds or the snapshot, and their page is not
+prerendered. Opened by its link, such an offer says in red that it is not from
+the company, with no link to apply or to the offer: anyone can post, and a fake
+offer in a real company's name is how phishing collects applications.
+
 Offers are shown for 30 days by default (120 at most, see `jobPost` in
 config); expired ones are hidden everywhere, in the app and the snapshot.
 Their poster can edit, renew or delete them from the offer, the company

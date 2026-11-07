@@ -519,6 +519,7 @@
 
 	"job.verified": "posted by the company",
 	"job.sharedBy": "shared by",
+	"job.notFromCompany": "Not from {company}: {company} posts its own offers here, and this one was shared by someone else. To apply, go to {company}'s own website.",
 	"job.remote.onsite": "On site",
 	"job.remote.hybrid": "Hybrid",
 	"job.remote.remote": "Remote",

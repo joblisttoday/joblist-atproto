@@ -266,16 +266,41 @@ export function placeNames(locations) {
 }
 
 /**
+ * Companies that speak for themselves on joblist: their own account's version is
+ * the one shown (verified), or they posted a job themselves.
+ * @param {Iterable<{key: string, verified: boolean}>} companies
+ * @param {Iterable<{company: string, verified: boolean}>} posts
+ */
+export function claimedCompanies(companies, posts) {
+	const claimed = new Set();
+	for (const c of companies) if (c.verified) claimed.add(c.key);
+	for (const p of posts) if (p.verified) claimed.add(p.company);
+	return claimed;
+}
+
+/**
+ * Whether a post is someone else's, for a company that speaks for itself: it is
+ * never shown as that company's job (anyone could post a fake offer to collect
+ * applications in its name), and its page says it is not from the company.
+ * @param {{company: string, verified: boolean}} post
+ * @param {Set<string>} claimed from claimedCompanies
+ */
+export function notFromCompany(post, claimed) {
+	return !post.verified && claimed.has(post.company);
+}
+
+/**
  * Posted jobs and job board jobs, one per link: the company's own posts, then its
  * job board, then posts shared by others. A shared post with a board job's link
  * never replaces it: anyone can post, only the company and its board say what the job is.
+ * Once the company posts its own, others' posts for it are left out.
  * @param {Job[]} posted
  * @param {Job[]} board
  */
 export function mergeJobs(posted, board) {
 	const seen = new Set();
 	const own = posted.filter((job) => job.posted?.verified);
-	const shared = posted.filter((job) => !job.posted?.verified);
+	const shared = own.length ? [] : posted.filter((job) => !job.posted?.verified);
 	return [...own, ...board, ...shared].filter((job) => !seen.has(job.url) && seen.add(job.url));
 }
 
