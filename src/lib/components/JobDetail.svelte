@@ -54,7 +54,7 @@
 </script>
 
 <jl-job-detail>
-	<button type="button" onclick={onback} {@attach (node) => node.focus({ preventScroll: true })}><Icon name="back" /> {t('explore.back')}</button>
+	<button type="button" onclick={onback} {@attach (node) => node.focus({ preventScroll: true })}><Icon name="close" /> {t('explore.close')}</button>
 	<jl-job-read>
 		<article>
 			{#key job.url}

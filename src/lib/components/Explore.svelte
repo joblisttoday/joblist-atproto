@@ -3,7 +3,7 @@
 	import config from '#lib/data/config.json';
 	import ExploreSearch from './ExploreSearch.svelte';
 	import Jobs from './Jobs.svelte';
-	import JobDetail from './JobDetail.svelte';
+	import JobDialog from './JobDialog.svelte';
 	import JobItem from './JobItem.svelte';
 	import JobsMap from './JobsMap.svelte';
 	import SaveSearch from './SaveSearch.svelte';
@@ -129,8 +129,8 @@
 	// entries (shallow routing), so the phone's back gesture closes them like pages.
 	// An open job is in the address too, so it can be shared.
 	const selected = $derived(page.state.job ?? null);
-	// The big map shows only to look at where jobs are, not while one is read.
-	const mapShown = $derived(view === 'map' && !selected);
+	// A job is read in a dialog over the jobs: the map stays as it was behind it.
+	const mapShown = $derived(view === 'map');
 	/** @type {import('#lib/map/jobs-map.js').Insets} */
 	const uncovered = { top: 0, right: 0, bottom: 0, left: 0 };
 	// Opened from a link to a job: open it once the jobs are read.
@@ -138,10 +138,10 @@
 	$effect(() => {
 		if (!linked || !session.ready) return;
 		const job = jobs.find((j) => j.url === linked);
-		if (!job && busy) return;
+		// Not found yet: the jobs are still being read (or not started).
+		if (!job && (busy || !jobs.length)) return;
 		linked = null;
 		if (job) replaceState(location.href, { job: $state.snapshot(job) });
-		if (job) sheet = 'full';
 	});
 	const picked = $derived(page.state.picked ?? null);
 	const pickedJobs = $derived(picked ? results.filter((job) => picked?.includes(job.url)) : null);
@@ -166,9 +166,6 @@
 		const params = new URLSearchParams(toParams(filters));
 		params.set(config.jobs.jobParam, job.url);
 		pushState(`${path}?${params}`, { job: $state.snapshot(job), picked: picked ?? undefined });
-		// A job is read on the whole screen.
-		sheet = 'full';
-		panel.scrollTop = 0;
 	}
 
 	/** @param {string[]} urls */
@@ -237,18 +234,16 @@
 
 <svelte:window
 	onpopstate={() => tick().then(readAddress)}
-	onkeydown={(e) => e.key === 'Escape' && !(e.target instanceof HTMLInputElement) && (selected || picked) && back()}
+	onkeydown={(e) => e.key === 'Escape' && !(e.target instanceof HTMLInputElement) && !selected && picked && back()}
 />
 
-<jl-explore view={selected ? 'job' : view}>
+<jl-explore {view}>
 	<!-- The search, and how the jobs are shown, at the same place in every view. -->
-	{#if !selected}
-		<jl-explore-bar>
-			<ExploreSearch bind:filters {places}>
-				{#snippet tools()}<ViewSwitch bind:view />{/snippet}
-			</ExploreSearch>
-		</jl-explore-bar>
-	{/if}
+	<jl-explore-bar>
+		<ExploreSearch bind:filters {places}>
+			{#snippet tools()}<ViewSwitch bind:view />{/snippet}
+		</ExploreSearch>
+	</jl-explore-bar>
 	<jl-explore-stage>
 	<jl-explore-map inert={!mapShown}>
 		<JobsMap
@@ -279,9 +274,7 @@
 		>
 			<span></span>
 		</button>
-		{#if selected}
-			<JobDetail job={selected} jobs={results} all={jobs} {names} onback={back} onselect={select} />
-		{:else if pickedJobs}
+		{#if pickedJobs}
 			<jl-explore-place>
 				<button type="button" onclick={back}><Icon name="back" /> {t('explore.back')}</button>
 				<h2>{t('explore.here', { count: pickedJobs.length })}</h2>
@@ -293,7 +286,7 @@
 			</jl-explore-place>
 		{/if}
 		<!-- Kept while a job is open, so its search and its place in the list are still there after. -->
-		<jl-explore-results hidden={selected || pickedJobs ? true : undefined}>
+		<jl-explore-results hidden={pickedJobs ? true : undefined}>
 			{#if !searching}
 				<p>
 					{t('explore.welcome', { companies: companies.length.toLocaleString() })}
@@ -349,6 +342,9 @@
 		</jl-explore-results>
 	</jl-explore-panel>
 	</jl-explore-stage>
+	{#if selected}
+		<JobDialog job={selected} jobs={results} all={jobs} {names} onback={back} onselect={select} />
+	{/if}
 </jl-explore>
 
 <style>

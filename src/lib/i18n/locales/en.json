@@ -192,6 +192,7 @@
 	"explore.clear": "Without “{text}”",
 	"explore.apply": "Apply",
 	"explore.back": "All results",
+	"explore.close": "Close",
 	"explore.nearby": "Other jobs nearby",
 	"explore.view": "Show jobs",
 	"explore.view.list": "List",

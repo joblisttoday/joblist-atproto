@@ -68,6 +68,8 @@
 	--search-width: 28rem;
 	--search-width-wide: 48rem;
 	--card-min: 20rem;
+	--dialog-width: 72rem;
+	--backdrop: rgb(0 0 0 / 0.45);
 	--account-width: 12rem;
 	--textarea-min: 8rem;
 	--textarea-max: 60vh;
