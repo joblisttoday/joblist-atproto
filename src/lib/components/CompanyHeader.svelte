@@ -1,18 +1,15 @@
 <script>
 	import Icon from './Icon.svelte';
-	import { goto } from '$app/navigation';
 	import config from '#lib/data/config.json';
+	import CompanyDelete from './CompanyDelete.svelte';
 	import CompanyEdited from './CompanyEdited.svelte';
-	import { deleteRecord } from '#lib/atproto/write.js';
-	import { session } from '#lib/auth/session.svelte.js';
-	import { data, removeLocal } from '#lib/network/network.svelte.js';
+	import { data } from '#lib/network/network.svelte.js';
 	import { boardUrl } from '#lib/models/company.js';
 	import { accountOf } from '#lib/network/accounts.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/** @type {{company: import('#lib/models/company.js').Company}} */
 	let { company } = $props();
-	const own = $derived(company.versions.find((v) => v.did === session.did));
 	const board = $derived(boardUrl(company.jobBoard));
 	// The company's own account (it wrote the version shown, or its domain is its handle): its Bluesky picture and profile.
 	const author = $derived(company.verified ? data.profiles.get(company.record.did) : undefined);
@@ -20,19 +17,6 @@
 	const account = $derived(
 		author || bluesky ? { handle: author?.handle || company.key, avatar: author?.avatar || bluesky?.avatar, followers: bluesky?.followers } : undefined
 	);
-	/** @type {string | null} */
-	let error = $state(null);
-
-	async function remove() {
-		if (!own || !confirm(t('company.confirmDelete'))) return;
-		try {
-			await deleteRecord(config.collections.company, company.key);
-			removeLocal('company', own.uri);
-			if (!data.companies.has(company.key)) await goto('/companies');
-		} catch (err) {
-			error = err instanceof Error ? err.message : String(err);
-		}
-	}
 </script>
 
 <jl-company-header verified={company.verified || undefined}>
@@ -58,9 +42,8 @@
 		<menu>
 			{#if board}<a href={board} target="_blank" rel="noopener">{t('company.jobBoard')} <Icon name="external" /></a>{/if}
 			<a href="/add?key={encodeURIComponent(company.key)}">{t('company.edit')}</a>
-			{#if own}<button type="button" onclick={remove}>{t('company.delete')}</button>{/if}
+			<CompanyDelete {company} />
 		</menu>
-		{#if error}<p role="alert">{error}</p>{/if}
 	</header>
 </jl-company-header>
 
