@@ -739,5 +739,13 @@
 	"post.lists.none": "Aún no está en ninguna lista",
 	"post.lists.done": "Ver la oferta",
 	"company.post": "Publicar una oferta",
-	"company.post.own": "¿Buscas personal? Publica una oferta — gratis"
+	"company.post.own": "¿Buscas personal? Publica una oferta — gratis",
+
+	"settings.title": "Ajustes",
+	"settings.intro": "Cómo funciona joblist en este navegador: tu cuenta, el idioma, los perfiles y pasar lo que guardaste a otro dispositivo.",
+	"settings.account": "Cuenta",
+	"settings.signedIn": "Sesión iniciada como @{handle}.",
+	"settings.signedOut": "Sin iniciar sesión. Tus empleos y búsquedas guardados se quedan en este navegador de todos modos.",
+	"settings.profile": "Tu página",
+	"settings.browser": "Este navegador"
 }

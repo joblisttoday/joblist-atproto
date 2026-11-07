@@ -19,6 +19,7 @@ import { t } from '../worker/text.js';
 const appPages = [
 	['/saved', en['saved.title']],
 	['/signin', en['signin.title']],
+	['/settings', en['settings.title']],
 	['/me', en['nav.me']],
 	['/add', en['form.company.title']],
 	['/jobs/new', en['post.title']],

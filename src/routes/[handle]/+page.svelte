@@ -1,19 +1,16 @@
 <script>
 	import Icon from '#lib/components/Icon.svelte';
 	import { page } from '$app/state';
-	import { goto } from '$app/navigation';
 	import config from '#lib/data/config.json';
 	import Companies from '#lib/components/Companies.svelte';
 	import JobItem from '#lib/components/JobItem.svelte';
 	import Empty from '#lib/components/Empty.svelte';
 	import ListItem from '#lib/components/ListItem.svelte';
-	import LocaleSwitch from '#lib/components/LocaleSwitch.svelte';
 	import MyJobPosts from '#lib/components/MyJobPosts.svelte';
 	import NotFound from '#lib/components/NotFound.svelte';
 	import ProfileHeader from '#lib/components/ProfileHeader.svelte';
-	import ProfileSwitch from '#lib/components/ProfileSwitch.svelte';
 	import { resolveDid } from '#lib/atproto/identity.js';
-	import { session, signOut } from '#lib/auth/session.svelte.js';
+	import { session } from '#lib/auth/session.svelte.js';
 	import { data, handleOf } from '#lib/network/network.svelte.js';
 	import { listJobStats } from '#lib/network/job-counts.svelte.js';
 	import { findLists } from '#lib/models/list-filters.js';
@@ -27,11 +24,6 @@
 	function usefulFirst(lists) {
 		const stats = new Map(lists.map((l) => [l.uri, listJobStats(l)]));
 		return findLists(lists, { query: '', hiring: false, open: false, mine: false }, stats, { handleOf });
-	}
-
-	async function out() {
-		await signOut();
-		await goto('/');
 	}
 </script>
 
@@ -49,9 +41,8 @@
 	<jl-profile self={self || undefined}>
 		<ProfileHeader {did} {handle}>
 			{#if self}
-				<menu><button type="button" onclick={out}>{t('me.signout')}</button></menu>
-				<LocaleSwitch />
-				<ProfileSwitch />
+				<!-- Signing out, the language, profiles: /settings. -->
+				<menu><a href="/settings"><Icon name="settings" /> {t('settings.title')}</a></menu>
 			{/if}
 		</ProfileHeader>
 

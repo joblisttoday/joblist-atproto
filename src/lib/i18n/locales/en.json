@@ -739,5 +739,13 @@
 	"post.lists.none": "Not in any list yet",
 	"post.lists.done": "See the job",
 	"company.post": "Post a job",
-	"company.post.own": "Hiring? Post a job — free"
+	"company.post.own": "Hiring? Post a job — free",
+
+	"settings.title": "Settings",
+	"settings.intro": "How joblist works in this browser: your account, the language, profiles, and moving what you saved to another device.",
+	"settings.account": "Account",
+	"settings.signedIn": "Signed in as @{handle}.",
+	"settings.signedOut": "Not signed in. Your saved jobs and searches stay in this browser either way.",
+	"settings.profile": "Your page",
+	"settings.browser": "This browser"
 }

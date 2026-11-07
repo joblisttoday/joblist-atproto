@@ -30,6 +30,7 @@ import LogIn from '@lucide/svelte/icons/log-in';
 import Plus from '@lucide/svelte/icons/plus';
 import ScanSearch from '@lucide/svelte/icons/scan-search';
 import Search from '@lucide/svelte/icons/search';
+import Settings from '@lucide/svelte/icons/settings';
 import Pencil from '@lucide/svelte/icons/pencil';
 import Share2 from '@lucide/svelte/icons/share-2';
 import Trash2 from '@lucide/svelte/icons/trash-2';
@@ -80,7 +81,8 @@ export const icons = {
 	delete: Trash2,
 	suggestions: Inbox,
 	feed: Rss,
-	language: Languages
+	language: Languages,
+	settings: Settings
 };
 
 /** @typedef {keyof typeof icons} IconName */

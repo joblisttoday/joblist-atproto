@@ -739,5 +739,13 @@
 	"post.lists.none": "Dans aucune liste pour l'instant",
 	"post.lists.done": "Voir l'offre",
 	"company.post": "Publier une offre",
-	"company.post.own": "Vous recrutez ? Publiez une offre — gratuit"
+	"company.post.own": "Vous recrutez ? Publiez une offre — gratuit",
+
+	"settings.title": "Réglages",
+	"settings.intro": "Comment joblist fonctionne dans ce navigateur : votre compte, la langue, les profils, et déplacer ce que vous avez gardé vers un autre appareil.",
+	"settings.account": "Compte",
+	"settings.signedIn": "Connecté en tant que @{handle}.",
+	"settings.signedOut": "Non connecté. Vos offres et recherches gardées restent dans ce navigateur de toute façon.",
+	"settings.profile": "Votre page",
+	"settings.browser": "Ce navigateur"
 }

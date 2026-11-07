@@ -739,5 +739,13 @@
 	"post.lists.none": "Noch in keiner Liste",
 	"post.lists.done": "Job ansehen",
 	"company.post": "Job veröffentlichen",
-	"company.post.own": "Du stellst ein? Veröffentliche einen Job — kostenlos"
+	"company.post.own": "Du stellst ein? Veröffentliche einen Job — kostenlos",
+
+	"settings.title": "Einstellungen",
+	"settings.intro": "Wie joblist in diesem Browser funktioniert: dein Konto, die Sprache, Profile und das Übertragen deiner gemerkten Jobs auf ein anderes Gerät.",
+	"settings.account": "Konto",
+	"settings.signedIn": "Angemeldet als @{handle}.",
+	"settings.signedOut": "Nicht angemeldet. Deine gemerkten Jobs und Suchen bleiben so oder so in diesem Browser.",
+	"settings.profile": "Deine Seite",
+	"settings.browser": "Dieser Browser"
 }
