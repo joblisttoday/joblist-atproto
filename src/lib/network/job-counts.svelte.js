@@ -45,5 +45,28 @@ export function listJobStats(list) {
 	const keys = membersOf(list).members.map((m) => m.key);
 	const place = listPlace(list);
 	if (!place) return listStats(keys, counts);
+	const here = listStats(keys, new Map(keys.map((key) => [key, offersIn(jobs.get(key) || none, place.places)])));
+	// Nothing there: its jobs everywhere, as its page then shows them.
+	return here.jobs ? here : listStats(keys, counts);
+}
+
+/**
+ * A list's open jobs in its place only (null for a list about no place).
+ * @param {import('#lib/models/list.js').List} list
+ */
+export function listJobStatsHere(list) {
+	ask();
+	const place = listPlace(list);
+	if (!place) return null;
+	const keys = membersOf(list).members.map((m) => m.key);
 	return listStats(keys, new Map(keys.map((key) => [key, offersIn(jobs.get(key) || none, place.places)])));
+}
+
+/**
+ * A list's open jobs wherever they are, even for a list about a place.
+ * @param {import('#lib/models/list.js').List} list
+ */
+export function listJobStatsEverywhere(list) {
+	ask();
+	return listStats(membersOf(list).members.map((m) => m.key), counts);
 }

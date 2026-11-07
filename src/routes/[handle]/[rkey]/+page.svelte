@@ -15,7 +15,7 @@
 	import { session } from '#lib/auth/session.svelte.js';
 	import { data, handleOf, membersOf, network } from '#lib/network/network.svelte.js';
 	import { loadList } from '#lib/network/load-list.js';
-	import { jobCounts, listJobStats } from '#lib/network/job-counts.svelte.js';
+	import { jobCounts, listJobStats, listJobStatsEverywhere, listJobStatsHere } from '#lib/network/job-counts.svelte.js';
 	import { listPlace } from '#lib/models/list-place.js';
 	import { readView } from '#lib/navigation/explore-view.js';
 	import { t } from '#lib/i18n/index.svelte.js';
@@ -56,6 +56,15 @@
 	const place = $derived(list ? listPlace(list) : null);
 	let everywhere = $state(params.has('everywhere'));
 	const places = $derived(place && !everywhere ? place.places : undefined);
+	// None of its companies' jobs is in its place: their jobs everywhere, rather than none (once the counts are read).
+	let placeChecked = false;
+	$effect(() => {
+		if (placeChecked || !list || !place || everywhere) return;
+		const all = listJobStatsEverywhere(list).jobs;
+		if (!all) return;
+		placeChecked = true;
+		if (!listJobStatsHere(list)?.jobs) everywhere = true;
+	});
 
 	const membership = $derived(list ? membersOf(list) : { members: [], pending: [] });
 	const described = $derived(membership.members.map((m) => data.companies.get(m.key)).filter((c) => c !== undefined));
