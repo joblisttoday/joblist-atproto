@@ -50,12 +50,12 @@ export function searchCompanies(companies, { query = '' }, origin) {
 /**
  * @param {Job[]} jobs
  * @param {Map<string, Company>} companies
- * @param {{query?: string, place?: string, remote?: boolean, anywhere?: boolean}} args
+ * @param {{query?: string, place?: string, remote?: boolean, anywhere?: boolean, pay?: boolean}} args
  */
-export function searchJobs(jobs, companies, { query = '', place = '', remote = false, anywhere = false }) {
+export function searchJobs(jobs, companies, { query = '', place = '', remote = false, anywhere = false, pay = false }) {
 	const names = new Map([...companies.values()].map((c) => [c.key, c.name]));
 	// A copy, newest first (filtering keeps the order it is given, and may give the same array).
-	const found = [...filterJobs(jobs, { query, where: place, remote: anywhere ? 'anywhere' : remote ? 'remote' : '' }, names)];
+	const found = [...filterJobs(jobs, { query, where: place, remote: anywhere ? 'anywhere' : remote ? 'remote' : '', pay }, names)];
 	newestFirst(found);
 	return {
 		total: found.length,
@@ -64,6 +64,7 @@ export function searchJobs(jobs, companies, { query = '', place = '', remote = f
 			company: names.get(j.company) || j.company,
 			location: j.location,
 			workplace: workplace(j),
+			salary: j.salary,
 			department: j.department,
 			published: j.published,
 			url: j.url

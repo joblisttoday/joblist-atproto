@@ -4,6 +4,7 @@
 	import JobDescription from './JobDescription.svelte';
 	import { isOlder, offerPlaces, time, workplace } from '#lib/models/job.js';
 	import { travelMinutes } from '#lib/models/distance.js';
+	import { payAmount } from '#lib/models/salary.js';
 	import { postPath } from '#lib/models/job-post.js';
 	import { handleOf } from '#lib/network/network.svelte.js';
 	import { markOf } from '#lib/network/job-marks.svelte.js';
@@ -39,9 +40,11 @@
 					minutes: travelMinutes(job.km)
 				})
 	);
-	// Where and for whom on one line; how far, how and when as chips.
+	// What it pays, when its board says.
+	const pay = $derived(job.salary ? t(`job.salary.${job.salary.period}`, { amount: payAmount(job.salary, i18n.locale) }) : '');
+	// Where and for whom on one line; how far, how, how much and when as chips.
 	const line = $derived([location, job.department].filter(Boolean).join(' · '));
-	const chips = $derived([distance, place, ago(time(job.published), i18n.locale)].filter(Boolean));
+	const chips = $derived([distance, place, pay, ago(time(job.published), i18n.locale)].filter(Boolean));
 	const applied = $derived(markOf(job) === 'applied');
 	// First seen long ago: still listed, said so beside its date.
 	const older = $derived(isOlder(job));

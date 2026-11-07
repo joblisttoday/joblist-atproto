@@ -8,7 +8,8 @@ import { placeParts } from './place-names.js';
  * @typedef {'' | 'remote' | 'anywhere'} RemoteFilter
  *   remote: jobs done remotely; anywhere: remote jobs that name no country or region they are limited to.
  * @typedef {[[number, number], [number, number]]} Area [[west, south], [east, north]]
- * @typedef {{query: string, where: string, remote: RemoteFilter, near?: [number, number] | null, within?: number, area?: Area | null}} JobFilters
+ * @typedef {{query: string, where: string, remote: RemoteFilter, pay?: boolean, near?: [number, number] | null, within?: number, area?: Area | null}} JobFilters
+ *   pay: only the jobs whose board says what they pay.
  *   near: where the person is ([longitude, latitude]), to find jobs close by; never kept in the page address.
  *   area: only the jobs in it (the part of the map someone looks at).
  *   within: at most that many minutes away (by the usual travel mode), 0 for any distance.
@@ -62,13 +63,14 @@ export function remoteLimit(job) {
  * @param {JobFilters} filters
  * @param {Map<string, string>} names company names by key
  */
-export function filterJobs(jobs, { query, where, remote, near, within = 0, area }, names) {
+export function filterJobs(jobs, { query, where, remote, pay, near, within = 0, area }, names) {
 	const what = words(query);
 	const place = where.trim() ? placeMatcher(where) : null;
 	const matching =
-		!what.length && !place && !remote && !area
+		!what.length && !place && !remote && !pay && !area
 			? jobs
 			: jobs.filter((job) => {
+					if (pay && !job.salary) return false;
 					if (area && !(job.point && inArea(job.point, area))) return false;
 					if (remote && !isRemote(job)) return false;
 					if (remote === 'anywhere' && remoteLimit(job)) return false;

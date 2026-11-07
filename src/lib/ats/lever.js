@@ -1,5 +1,6 @@
 import { getJson, toWorkplace } from './job.js';
 import { htmlToText } from './text.js';
+import { toPeriod, toSalary } from './salary.js';
 
 /** @type {import('./index.js').Fetcher} */
 export default async function lever(id) {
@@ -11,7 +12,8 @@ export default async function lever(id) {
 		location: (j.categories?.allLocations || [j.categories?.location]).filter(Boolean).join(', '),
 		department: j.categories?.team || j.categories?.department,
 		published: j.createdAt ? new Date(j.createdAt).toISOString() : undefined,
-		remote: toWorkplace(j.workplaceType)
+		remote: toWorkplace(j.workplaceType),
+		salary: j.salaryRange ? toSalary({ ...j.salaryRange, period: toPeriod(j.salaryRange.interval) }) : undefined
 	}));
 }
 

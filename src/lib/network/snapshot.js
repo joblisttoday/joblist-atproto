@@ -1,4 +1,5 @@
 import { safeUrl } from '#lib/models/url.js';
+import { unpackSalary } from '#lib/ats/salary.js';
 import config from '#lib/data/config.json';
 
 /**
@@ -89,7 +90,7 @@ function toJob(j) {
 	if (!url) return null;
 	// The id at its board is left out when the link ends with it.
 	const id = j.i ?? url.slice(url.lastIndexOf('/') + 1);
-	return { title: j.t, url, company: j.c, location: j.l, department: j.d, published: j.p, id, remote: j.r, point: j.g };
+	return { title: j.t, url, company: j.c, location: j.l, department: j.d, published: j.p, id, remote: j.r, point: j.g, salary: unpackSalary(j.m) };
 }
 
 /**

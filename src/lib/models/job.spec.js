@@ -51,6 +51,10 @@ describe('tidyPlace', () => {
 });
 
 describe('filterJobs', () => {
+	it('keeps only the jobs that show their pay', () => {
+		const paid = job({ url: 'https://x/1', salary: { min: 1, currency: 'EUR', period: 'hour' } });
+		expect(filterJobs([paid, job({ url: 'https://x/2' })], { ...none, pay: true }, names)).toEqual([paid]);
+	});
 	const jobs = [
 		job({ title: 'Designer', location: 'Berlin, Germany', published: '2024-01-01' }),
 		job({ title: 'Engineer', location: 'Paris', published: '2024-02-01', url: 'b' }),
