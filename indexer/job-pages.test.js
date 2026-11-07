@@ -79,3 +79,14 @@ test("page() keeps $ patterns in text as text", async () => {
 	assert.ok(html.includes('<p>$1</p>'));
 	assert.equal((html.match(/<\/head>/g) || []).length, 1);
 });
+
+test('page() shows the site picture in link previews, or the page\'s own', async () => {
+	const { page } = await import('./html.js');
+	const shell = '<html><head><title>x</title></head><body></body></html>';
+	const site = page(shell, { title: 'T', description: 'D', url: 'https://joblist.today/x', body: '' });
+	assert.match(site, /<meta property="og:image" content="https:\/\/joblist\.today\/og\.png">/);
+	assert.match(site, /<meta name="twitter:card" content="summary_large_image">/);
+	const own = page(shell, { title: 'T', description: 'D', url: 'https://joblist.today/x', body: '', image: 'https://cdn.example/a.jpg' });
+	assert.match(own, /<meta property="og:image" content="https:\/\/cdn\.example\/a\.jpg">/);
+	assert.doesNotMatch(own, /og\.png/);
+});

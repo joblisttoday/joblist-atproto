@@ -128,9 +128,10 @@ for (const company of companies.values()) {
 			title: `${company.name} · ${config.name}`,
 			description,
 			url: config.url + path,
+			image: bluesky[company.key]?.avatar,
 			// Its feed, for readers to find (made by the Worker from the latest snapshot).
 			head: [
-				jsonLd(organization(company, config.url + path)),
+				jsonLd(organization(company, config.url + path, bluesky[company.key]?.avatar)),
 				isCompanyKey(company.key) &&
 					`<link rel="alternate" type="application/atom+xml" title="${escape(en['landing.company'].replace('{company}', () => company.name))}" href="${escape(config.url + feedPath({ company: company.key }))}">`
 			]

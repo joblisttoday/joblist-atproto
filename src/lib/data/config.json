@@ -2,6 +2,7 @@
 	"name": "joblist",
 	"url": "https://joblist.today",
 	"source": "https://github.com/joblisttoday/joblist-atproto",
+	"shareImage": { "path": "/og.png", "width": 1200, "height": 630 },
 	"collections": {
 		"company": "today.joblist.company",
 		"list": "today.joblist.list",

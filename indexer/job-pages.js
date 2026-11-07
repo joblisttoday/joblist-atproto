@@ -125,6 +125,7 @@ export function jobPages(records, companies, profiles, bluesky = {}) {
 					description: [placeNames(post.locations), post.description].filter(Boolean).join(' · ') || title,
 					url: postPageUrl(post),
 					type: 'article',
+					image: logo,
 					head: jsonLd(jobPosting(post, company, logo)),
 					body: body(post, name, handle)
 				}
