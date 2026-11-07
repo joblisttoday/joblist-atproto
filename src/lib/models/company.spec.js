@@ -95,10 +95,22 @@ describe('copyRecord', () => {
 
 describe('toRecord', () => {
 	it('round-trips through the form', () => {
-		const form = { ...toForm(null), name: ' Acme ', url: 'acme.org', tags: 'Food, coop', provider: 'lever', boardId: 'acme' };
+		const form = { ...toForm(null), name: ' Acme ', url: 'acme.org', tags: ['Food', 'coop', 'food'], provider: 'lever', boardId: 'acme' };
 		const record = toRecord(form, '2026-01-01T00:00:00.000Z', '2026-02-01T00:00:00.000Z');
 		expect(record).toMatchObject({ createdAt: '2026-01-01T00:00:00.000Z', updatedAt: '2026-02-01T00:00:00.000Z' });
 		expect(record).toMatchObject({ name: 'Acme', url: 'https://acme.org', tags: ['food', 'coop'], jobBoard: { provider: 'lever', id: 'acme' } });
 		expect(boardUrl(record.jobBoard)).toBe('https://jobs.lever.co/acme');
+	});
+	it('keeps tags and links as arrays, links with a scheme and once each', () => {
+		const form = { ...toForm(null), name: 'Acme', links: [' bsky.app/profile/acme.org ', '', 'https://bsky.app/profile/acme.org'] };
+		const record = toRecord(form, 'now', 'now');
+		expect(record.links).toEqual(['https://bsky.app/profile/acme.org']);
+		expect(record).not.toHaveProperty('tags');
+	});
+	it('fills the form from a company and back without loss', () => {
+		const company = toCompany([{ ...version('did:a', '2026-01-01'), value: { name: 'Acme', createdAt: '2026-01-01', tags: ['coop'], links: ['https://a.org'], jobBoard: { url: 'https://acme.org/jobs' } } }], new Map());
+		const form = toForm(company);
+		expect(form).toMatchObject({ tags: ['coop'], links: ['https://a.org'], careersUrl: 'https://acme.org/jobs' });
+		expect(toRecord(form, 'c', 'u')).toMatchObject({ tags: ['coop'], links: ['https://a.org'], jobBoard: { url: 'https://acme.org/jobs' } });
 	});
 });

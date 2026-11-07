@@ -3,10 +3,12 @@
 	import config from '#lib/data/config.json';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
+	import { tick } from 'svelte';
 	import AddAnywhere from '#lib/components/AddAnywhere.svelte';
 	import AddFound from '#lib/components/AddFound.svelte';
 	import AddLink from '#lib/components/AddLink.svelte';
 	import AddMine from '#lib/components/AddMine.svelte';
+	import AddSaved from '#lib/components/AddSaved.svelte';
 	import CompanyForm from '#lib/components/CompanyForm.svelte';
 	import RequireSession from '#lib/components/RequireSession.svelte';
 	import { checkBoard } from '#lib/ats/board-check.js';
@@ -14,8 +16,8 @@
 	import { data } from '#lib/network/network.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
-	// /add?key=… edits a company; /add?url=…&name=…&board=… (links, bookmarklet)
-	// and /add?title=…&text=…&url=… (share target) start from a pasted link.
+	// /add?key=… edits a company (&field=… starts on one part); /add?url=…&name=…&board=…
+	// (links, bookmarklet) and /add?title=…&text=…&url=… (share target) start from a pasted link.
 	const params = $derived(page.url.searchParams);
 	const key = $derived(params.get('key'));
 	const input = $derived(readParams(params));
@@ -31,47 +33,69 @@
 	const list = $derived(params.get('list') || '');
 	// Described from "post a job" (?next=/jobs/new): go back there with it.
 	const back = $derived(params.get('next') || '');
-	/** @param {string} key */
-	const next = (key) => {
-		if (/^\/[\w.:-]+\/[\w.:~-]+$/.test(list)) return `${list}?suggest=${encodeURIComponent(key)}`;
-		if (back === '/jobs/new') return `${back}?company=${encodeURIComponent(key)}`;
-		return `/company/${key}`;
-	};
+	/**
+	 * Saved here (not sent back to a list or a job): what next.
+	 * @typedef {{key: string, name: string, outcome: 'own' | 'shown' | 'behindOwn', added: boolean}} Saved
+	 * @type {Saved | null}
+	 */
+	let saved = $state(null);
+
+	/** @param {Saved} done */
+	async function onsaved(done) {
+		const { key } = done;
+		if (/^\/[\w.:-]+\/[\w.:~-]+$/.test(list)) return goto(`${list}?suggest=${encodeURIComponent(key)}`);
+		if (back === '/jobs/new') return goto(`${back}?company=${encodeURIComponent(key)}`);
+		saved = done;
+		await tick();
+		scrollTo({ top: 0 });
+		const heading = document.querySelector('jl-add-saved h1');
+		if (heading instanceof HTMLElement) heading.focus();
+	}
+	// Another paste or link: the form again.
+	$effect(() => {
+		void page.url.search;
+		saved = null;
+	});
 </script>
 
-<svelte:head><title>{title} · {config.name}</title></svelte:head>
+<svelte:head><title>{saved ? t('added.title') : title} · {config.name}</title></svelte:head>
 
-<h1>{title}</h1>
-
-{#if !started}<AddMine />{/if}
-{#if !key}
-	<AddLink value={input.link || input.name} {list} next={back} />
-{/if}
-
-{#if started}
-	{#await check}
-		<p aria-live="polite"><small>{t('add.checking')}</small></p>
-	{:then found}
-		{#if !key}<AddFound {board} count={found?.count} existing={company} />{/if}
-		<RequireSession>
-			{#key `${company?.key}:${page.url.search}`}
-				<CompanyForm
-					{company}
-					prefill={toPrefill(pasted, found?.name)}
-					onsaved={(saved) => goto(next(saved))}
-					oncancel={() => history.back()}
-				/>
-			{/key}
-		</RequireSession>
-	{/await}
+{#if saved}
+	<AddSaved {...saved} />
 {:else}
-	<p><small><a href="/add?name=">{t('add.manual')}</a></small></p>
-	<section aria-labelledby="add-more">
-		<h2 id="add-more">{t('add.more')}</h2>
-		<menu>
-			<a href="/lists/new"><Icon name="add" /> {t('list.new')}</a>
-			<a href="/jobs/new"><Icon name="add" /> {t('post.title')}</a>
-		</menu>
-	</section>
-	<AddAnywhere />
+	<h1>{title}</h1>
+
+	{#if !started}<AddMine />{/if}
+	{#if !key}
+		<AddLink value={input.link || input.name} {list} next={back} />
+	{/if}
+
+	{#if started}
+		{#await check}
+			<p aria-live="polite"><small>{t('add.checking')}</small></p>
+		{:then found}
+			{#if !key}<AddFound {board} count={found?.count} existing={company} />{/if}
+			<RequireSession>
+				{#key `${company?.key}:${page.url.search}`}
+					<CompanyForm
+						{company}
+						prefill={toPrefill(pasted, found?.name)}
+						focus={params.get('field') || ''}
+						{onsaved}
+						oncancel={() => history.back()}
+					/>
+				{/key}
+			</RequireSession>
+		{/await}
+	{:else}
+		<p><small><a href="/add?name=">{t('add.manual')}</a></small></p>
+		<section aria-labelledby="add-more">
+			<h2 id="add-more">{t('add.more')}</h2>
+			<menu>
+				<a href="/lists/new"><Icon name="add" /> {t('list.new')}</a>
+				<a href="/jobs/new"><Icon name="add" /> {t('post.title')}</a>
+			</menu>
+		</section>
+		<AddAnywhere />
+	{/if}
 {/if}

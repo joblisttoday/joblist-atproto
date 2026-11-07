@@ -218,8 +218,22 @@ export function searchCompanies(companies, query, limit) {
 }
 
 /**
+ * @typedef {{
+ *   name: string,
+ *   url: string,
+ *   description: string,
+ *   tags: string[],
+ *   provider: string,
+ *   boardId: string,
+ *   careersUrl: string,
+ *   locations: Location[],
+ *   links: string[]
+ * }} CompanyForm
+ */
+
+/**
  * A company record from form values.
- * @param {{name: string, url: string, description: string, tags: string, provider: string, boardId: string, careersUrl: string, locations: Location[], links: string}} form
+ * @param {CompanyForm} form
  * @param {string} [createdAt] when this person first described the company
  * @param {string} [now]
  */
@@ -233,7 +247,7 @@ export function toRecord(form, createdAt, now = new Date().toISOString()) {
 	};
 	if (form.url.trim()) record.url = withScheme(form.url);
 	if (form.description.trim()) record.description = form.description.trim();
-	const tags = splitList(form.tags).map((t) => t.toLowerCase());
+	const tags = [...new Set(form.tags.map((t) => t.trim().toLowerCase()).filter(Boolean))];
 	if (tags.length) record.tags = tags;
 	const locations = form.locations.filter((l) => Object.values(l).some((x) => String(x || '').trim()));
 	if (locations.length) record.locations = locations;
@@ -242,7 +256,7 @@ export function toRecord(form, createdAt, now = new Date().toISOString()) {
 	} else if (form.careersUrl.trim()) {
 		record.jobBoard = { url: withScheme(form.careersUrl) };
 	}
-	const links = splitList(form.links).map(withScheme);
+	const links = [...new Set(form.links.map((l) => l.trim()).filter(Boolean).map(withScheme))];
 	if (links.length) record.links = links;
 	return record;
 }
@@ -250,31 +264,27 @@ export function toRecord(form, createdAt, now = new Date().toISOString()) {
 /**
  * Form values from a company (or empty).
  * @param {Company | null} company
+ * @returns {CompanyForm}
  */
 export function toForm(company) {
 	return {
 		name: company?.name || '',
 		url: company?.url || '',
 		description: company?.description || '',
-		tags: (company?.tags || []).join(', '),
+		tags: [...(company?.tags || [])],
 		provider: company?.jobBoard?.provider || '',
 		boardId: company?.jobBoard?.id || '',
 		careersUrl: company?.jobBoard?.url || '',
 		locations: (company?.locations || []).map((l) => ({ ...l })),
-		links: (company?.links || []).join('\n')
+		links: [...(company?.links || [])]
 	};
 }
 
-/** @param {string} text */
-function splitList(text) {
-	return text
-		.split(/[,\n]/)
-		.map((s) => s.trim())
-		.filter(Boolean);
-}
-
-/** @param {string} url */
-function withScheme(url) {
+/**
+ * A link as written, with https:// when it has no scheme.
+ * @param {string} url
+ */
+export function withScheme(url) {
 	const value = url.trim();
 	return value.includes('://') ? value : `https://${value}`;
 }

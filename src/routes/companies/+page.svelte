@@ -37,6 +37,8 @@
 	const blueskyCount = $derived(companies.filter((c) => accounts.has(c.key)).length);
 	// None found says where it is: no map to show.
 	const mapless = $derived(companies.length > 0 && !found.some((c) => mapPoints(c).length));
+	// Adding a company starts from what was searched.
+	const addHref = $derived(query.trim() ? `/add?${new URLSearchParams({ url: query.trim() })}` : '/add');
 
 	// The search stays in the address, to share or come back to.
 	$effect(() => {
@@ -76,10 +78,18 @@
 	{:else}
 		<jl-companies-results>
 			<ResultsHead count={t('companies.count', { count: found.length, total: companies.length })}>
-				<a href="/add"><Icon name="add" /> {t('companies.add')}</a>
+				<a href={addHref}><Icon name="add" /> {t('companies.add')}</a>
 			</ResultsHead>
 			<Companies companies={found} {counts} searchable={false} layout={view === 'list' ? 'list' : 'grid'} />
-			{#if !found.length}<p>{t('search.none')}</p>{/if}
+			{#if !found.length}
+				<jl-companies-empty>
+					<p>{t('search.none')}</p>
+					{#if query.trim()}
+						<p>{t('companies.missing')}</p>
+						<menu><a href={addHref}><Icon name="add" /> {t('companies.add.named', { name: query.trim() })}</a></menu>
+					{/if}
+				</jl-companies-empty>
+			{/if}
 		</jl-companies-results>
 	{/if}
 </FullScreen>
@@ -88,5 +98,17 @@
 	jl-companies-results {
 		display: block;
 		padding: 0 var(--gutter) var(--space-l);
+	}
+	jl-companies-empty {
+		display: block;
+		margin-top: var(--space-m);
+	}
+	jl-companies-empty p {
+		margin: 0 0 var(--space-xs);
+	}
+	jl-companies-empty menu a {
+		background: var(--color-accent);
+		color: var(--color-accent-fg);
+		border-color: var(--color-accent);
 	}
 </style>
