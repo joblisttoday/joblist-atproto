@@ -210,7 +210,7 @@ export function toJob(post) {
 		company: post.company,
 		location: placeNames(post.locations) || undefined,
 		published: post.createdAt,
-		remote: post.remote,
+		remote: post.remote || undefined,
 		posted: { did: post.did, rkey: post.rkey, verified: post.verified },
 		point: at && [at.lon, at.lat]
 	};

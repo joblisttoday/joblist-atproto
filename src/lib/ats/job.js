@@ -15,7 +15,8 @@
  *   km?: number
  * }} Job
  *   id: the job's id at its job board, to read its description.
- *   remote: where the work happens (onsite, hybrid or remote), when the board or the poster says.
+ *   remote: where the work happens (onsite, hybrid or remote), when the board or the poster says;
+ *     '' when its location and title were read already and say none either (the snapshot's jobs).
  *   salary: the pay range, when the board gives one (Ashby, Greenhouse, Lever, Recruitee).
  *   posted: only for offers posted on joblist (today.joblist.job records).
  *   also: the same offer (same company and title) at its other places, see sameOffers().

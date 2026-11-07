@@ -30,11 +30,13 @@ const words = (text) => text.toLowerCase().split(/\s+/).filter(Boolean);
 /**
  * Where the work happens: what the job board or the poster says, else what the location
  * or title says ("Remote - USA", "Berlin (Hybrid)"; on site only from the location).
+ * '' is "read already, not said" (the snapshot's jobs, see snapshot-job.js).
  * @param {Job} job
  * @returns {'onsite' | 'hybrid' | 'remote' | undefined}
  */
 export function workplace(job) {
 	if (job.remote === 'onsite' || job.remote === 'hybrid' || job.remote === 'remote') return job.remote;
+	if (job.remote === '') return undefined;
 	if (remoteText.test(job.location || '') || remoteTitle.test(job.title)) return 'remote';
 	if (hybridText.test(job.location || '') || hybridTitle.test(job.title)) return 'hybrid';
 	if (onsiteText.test(job.location || '')) return 'onsite';
@@ -252,8 +254,12 @@ function searchText(job, names) {
  * @param {Job[]} jobs
  */
 export function newestFirst(jobs) {
-	const times = new Map(jobs.map((job) => [job, time(job.published)]));
-	jobs.sort((a, b) => /** @type {number} */ (times.get(b)) - /** @type {number} */ (times.get(a)));
+	// Positions are sorted, by dates read into a plain array: much faster than comparing jobs
+	// (tens of thousands on a phone), and runs already in order (each company's) are kept.
+	const times = jobs.map((job) => time(job.published));
+	const order = Array.from(jobs.keys()).sort((a, b) => times[b] - times[a] || a - b);
+	const sorted = order.map((i) => jobs[i]);
+	for (let i = 0; i < sorted.length; i++) jobs[i] = sorted[i];
 }
 
 /** What makes two jobs the same offer, made once per job. @type {WeakMap<Job, string>} */
