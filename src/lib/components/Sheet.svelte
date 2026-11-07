@@ -1,6 +1,5 @@
 <script>
-	import Icon from './Icon.svelte';
-	import { t } from '#lib/i18n/index.svelte.js';
+	import DialogHeader from './DialogHeader.svelte';
 
 	/**
 	 * Something to do over the page, without leaving it: a sheet from the bottom on phones,
@@ -8,6 +7,7 @@
 	 * @type {{open?: boolean, label: string, children: import('svelte').Snippet}}
 	 */
 	let { open = $bindable(false), label, children } = $props();
+	const id = $props.id();
 	/** @type {HTMLDialogElement} */
 	let dialog;
 
@@ -18,11 +18,8 @@
 </script>
 
 <jl-sheet>
-	<dialog bind:this={dialog} aria-label={label} onclose={() => (open = false)}>
-		<header>
-			<h2>{label}</h2>
-			<button type="button" onclick={() => (open = false)} aria-label={t('sheet.close')}><Icon name="close" /></button>
-		</header>
+	<dialog bind:this={dialog} aria-labelledby="{id}-title" onclose={() => (open = false)}>
+		<DialogHeader id="{id}-title" title={label} />
 		{#if open}{@render children()}{/if}
 	</dialog>
 </jl-sheet>
@@ -33,7 +30,8 @@
 		max-width: none;
 		max-height: var(--sheet-max);
 		margin: auto 0 0;
-		padding: 0 var(--gutter) calc(var(--space-m) + env(safe-area-inset-bottom));
+		--dialog-padding: var(--gutter);
+		padding: 0 var(--dialog-padding) calc(var(--space-m) + env(safe-area-inset-bottom));
 		border: 0;
 		border-radius: var(--radius-large) var(--radius-large) 0 0;
 		background: var(--color-bg);
@@ -44,26 +42,6 @@
 	}
 	dialog::backdrop {
 		background: var(--color-backdrop);
-	}
-	header {
-		position: sticky;
-		top: 0;
-		z-index: 1;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: var(--space-s);
-		padding: var(--space-s) 0;
-		background: var(--color-bg);
-	}
-	h2 {
-		margin: 0;
-	}
-	header > button {
-		min-width: var(--tap-size);
-		padding: 0;
-		border: 0;
-		border-radius: var(--radius-round);
 	}
 	@media (min-width: 48rem) {
 		dialog {

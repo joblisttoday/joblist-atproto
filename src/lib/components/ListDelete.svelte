@@ -1,4 +1,5 @@
 <script>
+	import DialogHeader from './DialogHeader.svelte';
 	import { goto } from '$app/navigation';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { deleteList } from '#lib/network/save-list.js';
@@ -40,8 +41,8 @@
 
 <jl-list-delete busy={busy || undefined}>
 	<dialog bind:this={dialog} {onclose} aria-labelledby="{id}-title" aria-describedby="{id}-text">
+		<DialogHeader id="{id}-title" title={t('list.delete.title', { name: list.name })} />
 		<form method="dialog">
-			<h2 id="{id}-title">{t('list.delete.title', { name: list.name })}</h2>
 			<p id="{id}-text">{t('list.delete.text', { count: list.companies.length })}</p>
 			<menu>
 				<button value="keep">{t('list.delete.keep')}</button>
@@ -59,7 +60,8 @@
 	}
 	dialog {
 		width: min(100% - 2 * var(--gutter), var(--measure));
-		padding: var(--space-m) var(--space-l);
+		--dialog-padding: var(--space-l);
+		padding: 0 var(--dialog-padding) var(--space-m);
 		border: var(--border);
 		border-radius: var(--radius-large);
 		background: var(--color-bg);
@@ -67,10 +69,6 @@
 	}
 	dialog::backdrop {
 		background: var(--backdrop);
-	}
-	h2 {
-		margin-top: var(--space-s);
-		font-size: var(--font-size-large);
 	}
 	menu {
 		justify-content: flex-end;

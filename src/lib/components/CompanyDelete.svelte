@@ -1,4 +1,5 @@
 <script>
+	import DialogHeader from './DialogHeader.svelte';
 	import { goto } from '$app/navigation';
 	import config from '#lib/data/config.json';
 	import { deleteRecord } from '#lib/atproto/write.js';
@@ -53,8 +54,8 @@
 			{busy ? t('company.deleting') : t('company.delete')}
 		</button>
 		<dialog bind:this={dialog} {onclose} aria-labelledby="{id}-title" aria-describedby="{id}-text">
+			<DialogHeader id="{id}-title" title={t(`company.delete.${after.outcome}`, { name: company.name, handle })} />
 			<form method="dialog">
-				<h2 id="{id}-title">{t(`company.delete.${after.outcome}`, { name: company.name, handle })}</h2>
 				<p id="{id}-text">{t(`company.delete.${after.outcome}.text`, { name: company.name })}</p>
 				<menu>
 					<button value="keep">{t('company.delete.keep')}</button>
@@ -76,7 +77,8 @@
 	}
 	dialog {
 		width: min(100% - 2 * var(--gutter), var(--measure));
-		padding: var(--space-m) var(--space-l);
+		--dialog-padding: var(--space-l);
+		padding: 0 var(--dialog-padding) var(--space-m);
 		border: var(--border);
 		border-radius: var(--radius-large);
 		background: var(--color-bg);
@@ -84,10 +86,6 @@
 	}
 	dialog::backdrop {
 		background: var(--backdrop);
-	}
-	h2 {
-		margin-top: var(--space-s);
-		font-size: var(--font-size-large);
 	}
 	menu {
 		justify-content: flex-end;

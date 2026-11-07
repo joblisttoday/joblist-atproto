@@ -15,11 +15,12 @@
 	/**
 	 * fresh: published since the person last looked at this search.
 	 * onselect: the card opens the job in the page (the explorer) instead of unfolding it.
-	 * selected: the job open in the page. expanded: unfolded from the start.
+	 * selected: the job open in the page.
+	 * read: read in full (a job open in a dialog, whose header shows its title).
 	 * actions: shown when unfolded, between the summary and the description.
-	 * @type {{job: import('#lib/ats/job.js').Job, company?: string, fresh?: boolean, onselect?: () => void, selected?: boolean, expanded?: boolean, actions?: import('svelte').Snippet}}
+	 * @type {{job: import('#lib/ats/job.js').Job, company?: string, fresh?: boolean, onselect?: () => void, selected?: boolean, read?: boolean, actions?: import('svelte').Snippet}}
 	 */
-	let { job, company, fresh = false, onselect, selected = false, expanded = false, actions } = $props();
+	let { job, company, fresh = false, onselect, selected = false, read = false, actions } = $props();
 	const MAX_PLACES = config.jobs.placesShown;
 	const posted = $derived(job.posted);
 	const where = $derived(workplace(job));
@@ -52,15 +53,17 @@
 	// Its Bluesky picture, when the company is there; else its initial.
 	const avatar = $derived(company ? accountOf(job.company)?.avatar : undefined);
 	const hue = $derived([...job.company].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 360, 7));
-	// Only where it starts: the reader can still fold it.
-	// svelte-ignore state_referenced_locally
-	let open = $state(expanded);
+	let open = $state(false);
 </script>
 
-<jl-job posted={posted ? (posted.verified ? 'company' : 'shared') : undefined} older={older || undefined} {open} fresh={fresh || undefined} selected={selected || undefined} applied={applied || undefined}>
+{#snippet chipsRow()}
+	<jl-chips>{#if applied}<mark><Icon name="applied" /> {t('marks.applied')}</mark>{/if}{#each chips as chip (chip)}<span>{#if chip === distance}<Icon name={travelIcon} />{' '}{/if}{chip}</span>{/each}{#if older}<em title={t('job.older.hint', { days: config.jobs.olderDays })}>{t('job.older')}</em>{/if}</jl-chips>
+{/snippet}
+
+<jl-job posted={posted ? (posted.verified ? 'company' : 'shared') : undefined} older={older || undefined} read={read || undefined} {open} fresh={fresh || undefined} selected={selected || undefined} applied={applied || undefined}>
 	{#if company}<jl-avatar style="--hue: {hue}" aria-hidden="true">{#if avatar}<img src={thumbnail(avatar)} alt="" loading="lazy" />{:else}{company.trim().charAt(0).toUpperCase()}{/if}</jl-avatar>{/if}
 	{#if posted}
-		<a href={postPath(posted.did, posted.rkey)}>{job.title}</a>
+		{#if !read}<a href={postPath(posted.did, posted.rkey)}>{job.title}</a>{/if}
 		<small>{#if company}<a href="/company/{job.company}">{company}</a>{line ? ' · ' : ''}{/if}{line}</small>
 		<jl-chips>
 			{#if applied}<mark><Icon name="applied" /> {t('marks.applied')}</mark>{/if}
@@ -70,18 +73,24 @@
 		{#if !posted.verified}
 			<small>{t('job.sharedBy')} <a href="/{handleOf(posted.did)}">@{handleOf(posted.did)}</a></small>
 		{/if}
+		{#if read}<jl-job-body>{@render actions?.()}</jl-job-body>{/if}
+	{:else if read}
+		{#if line}<small>{line}</small>{/if}
+		{@render chipsRow()}
+		<!-- The offer itself takes the whole width, under the company's picture too. -->
+		<jl-job-body>{@render actions?.()}<JobDescription {job} {company} /></jl-job-body>
 	{:else if onselect}
 		<button type="button" onclick={onselect} aria-current={selected ? 'true' : undefined}>
 			<strong>{#if fresh}<mark>{t('job.new')}</mark> {/if}{job.title}</strong>
 			<small>{company ? `${company}${line ? ' · ' : ''}` : ''}{line}</small>
-			<jl-chips>{#if applied}<mark><Icon name="applied" /> {t('marks.applied')}</mark>{/if}{#each chips as chip (chip)}<span>{#if chip === distance}<Icon name={travelIcon} />{' '}{/if}{chip}</span>{/each}{#if older}<em title={t('job.older.hint', { days: config.jobs.olderDays })}>{t('job.older')}</em>{/if}</jl-chips>
+			{@render chipsRow()}
 		</button>
 	{:else}
 		<details bind:open>
 			<summary>
 				<strong>{#if fresh}<mark>{t('job.new')}</mark> {/if}{job.title}</strong>
 				<small>{company ? `${company}${line ? ' · ' : ''}` : ''}{line}</small>
-				<jl-chips>{#if applied}<mark><Icon name="applied" /> {t('marks.applied')}</mark>{/if}{#each chips as chip (chip)}<span>{#if chip === distance}<Icon name={travelIcon} />{' '}{/if}{chip}</span>{/each}{#if older}<em title={t('job.older.hint', { days: config.jobs.olderDays })}>{t('job.older')}</em>{/if}</jl-chips>
+				{@render chipsRow()}
 			</summary>
 			{#if open}{@render actions?.()}<JobDescription {job} {company} />{/if}
 		</details>
@@ -100,8 +109,16 @@
 	jl-job > :not(jl-avatar) {
 		grid-column: 2;
 	}
-	jl-job:not(:has(jl-avatar)) > * {
+	jl-job:not(:has(jl-avatar)) > *,
+	jl-job > jl-job-body {
 		grid-column: 1 / -1;
+	}
+	/* Read in full: the title is in the dialog's header. */
+	jl-job[read] {
+		border-bottom: 0;
+	}
+	jl-job-body {
+		display: block;
 	}
 	/* The company's initial, in its own color. */
 	jl-avatar {

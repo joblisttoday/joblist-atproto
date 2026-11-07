@@ -77,9 +77,13 @@
 	--search-width-wide: 48rem;
 	--card-min: 20rem;
 	--dialog-width: 72rem;
+	--dialog-bar-height: calc(var(--chip-height) + 2 * var(--space-xs));
+	/* Set by a dialog to its header's real height. */
+	--dialog-header-height: var(--dialog-bar-height);
 	--backdrop: rgb(0 0 0 / 0.45);
 	--account-width: 12rem;
 	--tooltip-width: 14rem;
+	--hidden-size: 1px;
 	--textarea-min: 8rem;
 	--textarea-max: 60vh;
 	--reading-width: 42rem;
@@ -348,6 +352,37 @@ menu {
 
 [hidden] {
 	display: none !important;
+}
+
+/* A search field keeps its name in sight, small on its top edge (the placeholder is only an example). */
+jl-search-field {
+	position: relative;
+	display: block;
+	min-width: 0;
+}
+jl-search-field label {
+	position: absolute;
+	inset-block-start: 0;
+	inset-inline-start: var(--space-s);
+	translate: 0 -50%;
+	margin: 0;
+	padding: 0 var(--space-xs);
+	background: var(--color-bg);
+	color: var(--color-muted);
+	font-size: var(--font-size-label);
+	font-weight: normal;
+	line-height: var(--line-height-tight);
+	pointer-events: none;
+}
+
+/* Heard by screen readers, not shown: a page's title where its search bar says what it is. */
+jl-visually-hidden {
+	position: absolute;
+	width: var(--hidden-size);
+	height: var(--hidden-size);
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
 }
 
 @media (prefers-reduced-motion: reduce) {
