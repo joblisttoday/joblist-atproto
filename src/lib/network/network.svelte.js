@@ -1,6 +1,7 @@
 import config from '#lib/data/config.json';
 import { getProfiles } from '#lib/atproto/identity.js';
 import { listRecords, listRepos } from '#lib/atproto/records.js';
+import { LOCAL, localLists } from './local-lists.svelte.js';
 import { mapLimit } from '#lib/atproto/xrpc.js';
 import { session } from '#lib/auth/session.svelte.js';
 import { toCompany } from '#lib/models/company.js';
@@ -65,8 +66,8 @@ const companies = $derived.by(() => {
 });
 
 const lists = $derived(
-	network.listRecords
-		.filter((r) => r.value?.name && allowed(r))
+	[...network.listRecords.filter((r) => allowed(r)), ...localLists.records]
+		.filter((r) => r.value?.name)
 		.map(toList)
 		.sort((a, b) => b.createdAt.localeCompare(a.createdAt))
 );
@@ -126,6 +127,14 @@ export const data = {
 /** @param {string} did */
 export function handleOf(did) {
 	return network.profiles[did]?.handle || did;
+}
+
+/**
+ * Whether a list is the person's to change: kept on this device, or in their account.
+ * @param {{did: string}} list
+ */
+export function ownsList(list) {
+	return list.did === LOCAL || list.did === session.did;
 }
 
 /**

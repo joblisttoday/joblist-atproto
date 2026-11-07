@@ -1,13 +1,13 @@
 <script>
 	import Icon from './Icon.svelte';
 	import { session } from '#lib/auth/session.svelte.js';
-	import { data } from '#lib/network/network.svelte.js';
+	import { data, ownsList } from '#lib/network/network.svelte.js';
 	import { updateList } from '#lib/network/save-list.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/** @type {{key: string}} */
 	let { key } = $props();
-	const mine = $derived(session.did ? data.lists.filter((l) => l.did === session.did) : []);
+	const mine = $derived(data.lists.filter(ownsList));
 	/** @type {string | null} */
 	let busy = $state(null);
 	/** @type {string | null} */

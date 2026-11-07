@@ -12,7 +12,7 @@
 	import { findLists } from '#lib/models/list-filters.js';
 	import { mixedAuthors } from '#lib/models/list.js';
 	import { session } from '#lib/auth/session.svelte.js';
-	import { data, handleOf, membersOf, network } from '#lib/network/network.svelte.js';
+	import { data, handleOf, membersOf, network, ownsList } from '#lib/network/network.svelte.js';
 	import { listJobStats } from '#lib/network/job-counts.svelte.js';
 	import { readView, viewParam } from '#lib/navigation/explore-view.js';
 	import { keepAddress, readAddress } from '#lib/navigation/address.js';
@@ -38,7 +38,7 @@
 	const found = $derived(findLists(data.lists, { query, hiring, open, mine }, stats, { me: session.did, handleOf }));
 	const hiringCount = $derived([...stats.values()].filter((s) => s.hiring).length);
 	const openCount = $derived(data.lists.filter((l) => l.open).length);
-	const mineCount = $derived(session.did ? data.lists.filter((l) => l.did === session.did).length : 0);
+	const mineCount = $derived(data.lists.filter(ownsList).length);
 	const author = $derived(mixedAuthors(data.lists));
 	// On the map: every company of the lists found, once.
 	const companies = $derived.by(() => {

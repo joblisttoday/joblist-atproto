@@ -2,6 +2,8 @@
 	import Author from './Author.svelte';
 	import { handleOf } from '#lib/network/network.svelte.js';
 	import { listJobStats } from '#lib/network/job-counts.svelte.js';
+	import { session } from '#lib/auth/session.svelte.js';
+	import { LOCAL } from '#lib/models/list.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
@@ -14,16 +16,25 @@
 	const stats = $derived(counted || listJobStats(list));
 </script>
 
-<jl-list open={list.open || undefined} hiring={stats.hiring > 0 || undefined}>
+<!-- Where it is kept, always said: on this device (private), or published (yours, or someone's). -->
+<jl-list open={list.open || undefined} hiring={stats.hiring > 0 || undefined} local={list.did === LOCAL || undefined}>
 	<a href="/{handleOf(list.did)}/{list.rkey}">{list.name}</a>
 	{#if stats.jobs}<data value={stats.jobs}>{t('jobs.count', { count: stats.jobs })}</data>{/if}
 	{#if list.description}<p>{list.description}</p>{/if}
 	<small>
-		{t('list.companies', { count: stats.companies })}{#if stats.hiring}{' · '}{t('list.hiring', { count: stats.hiring })}{/if}{#if author}{' · '}{t('list.by')} <Author did={list.did} />{/if}
+		{#if list.did === LOCAL}<mark>{t('list.local')}</mark>{:else if list.did === session.did}<mark>{t('list.yours')}</mark>{/if}
+		{t('list.companies', { count: stats.companies })}{#if stats.hiring}{' · '}{t('list.hiring', { count: stats.hiring })}{/if}{#if list.open}{' · '}{t('list.open')}{/if}{#if author && list.did !== LOCAL && list.did !== session.did}{' · '}{t('list.by')} <Author did={list.did} />{/if}
 	</small>
 </jl-list>
 
 <style>
+	mark {
+		margin-inline-end: var(--space-xs);
+		padding: 0 var(--space-xs);
+		border-radius: var(--radius);
+		background: var(--color-soft);
+		color: var(--color-fg);
+	}
 	jl-list {
 		display: block;
 		position: relative;

@@ -1,4 +1,5 @@
 <script>
+	import { LOCAL } from '#lib/models/list.js';
 	import Author from './Author.svelte';
 	import ListActions from './ListActions.svelte';
 	import { handleOf } from '#lib/network/network.svelte.js';
@@ -19,7 +20,7 @@
 	<ListActions {list} {pending} bind:suggesting bind:reviewing />
 	<p>
 		<small>
-			{t('list.by')} <Author did={list.did} /> · {list.open ? t('list.open') : t('list.closed')}
+			{#if list.did === LOCAL}{t('list.local')}{:else}{t('list.by')} <Author did={list.did} /> · {list.open ? t('list.open') : t('list.closed')}{/if}
 			{#if source}
 				· {t('list.copiedFrom')} <a href="/{handleOf(source.did)}/{source.rkey}">@{handleOf(source.did)}</a>
 			{/if}

@@ -13,7 +13,7 @@
 	import Sheet from '#lib/components/Sheet.svelte';
 	import ViewSwitch from '#lib/components/ViewSwitch.svelte';
 	import { session } from '#lib/auth/session.svelte.js';
-	import { data, handleOf, membersOf, network } from '#lib/network/network.svelte.js';
+	import { data, handleOf, membersOf, network, ownsList } from '#lib/network/network.svelte.js';
 	import { loadList } from '#lib/network/load-list.js';
 	import { jobCounts, listJobStats, listJobStatsEverywhere, listJobStatsHere } from '#lib/network/job-counts.svelte.js';
 	import { listPlace } from '#lib/models/list-place.js';
@@ -76,7 +76,7 @@
 	const missing = $derived(membership.members.length - described.length);
 	/** Who suggested each company added to an open list. */
 	const credits = $derived(new Map(membership.members.flatMap((m) => (m.suggestion ? [[m.key, m.suggestion]] : []))));
-	const mine = $derived(Boolean(list && session.did === list.did));
+	const mine = $derived(Boolean(list && ownsList(list)));
 	/** Companies that cannot be suggested again: in the list, waiting, or hidden by its author. */
 	const taken = $derived(
 		new Set([...membership.members.map((m) => m.key), ...membership.pending.map((s) => s.company), ...(list?.hidden || [])])

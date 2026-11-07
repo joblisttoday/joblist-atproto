@@ -19,6 +19,9 @@ import { capRecord } from './limits.js';
  * @typedef {{key: string, suggestion?: Suggestion}} Member
  */
 
+/** The author of the lists kept on this device only (network/local-lists.svelte.js): no handle is so, it has no dot. */
+export const LOCAL = 'local';
+
 /**
  * @param {RepoRecord} record
  * @returns {List}

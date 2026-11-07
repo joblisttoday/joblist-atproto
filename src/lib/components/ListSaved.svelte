@@ -5,9 +5,10 @@
 
 	/**
 	 * Once a list is made: that it is there, and what to do next with it.
-	 * @type {{path: string, name: string, count: number}} path: the list's page; count: its companies
+	 * @type {{path: string, name: string, count: number, local?: boolean}} path: the list's page; count: its companies;
+	 *   local: kept on this device (nothing to share)
 	 */
-	let { path, name, count } = $props();
+	let { path, name, count, local = false } = $props();
 	let copied = $state(false);
 
 	async function share() {
@@ -24,10 +25,10 @@
 
 <jl-list-saved>
 	<h1 tabindex="-1"><Icon name="applied" /> {t('form.list.saved', { name })}</h1>
-	<p>{t('form.list.saved.text', { count })}</p>
+	<p>{t(local ? 'form.list.saved.local' : 'form.list.saved.text', { count })}</p>
 	<menu>
 		<a href={path}><Icon name="jobs" /> {t('form.list.saved.jobs')}</a>
-		<button type="button" onclick={share}><Icon name={copied ? 'added' : 'share'} /> {copied ? t('list.linkCopied') : t('form.list.saved.share')}</button>
+		{#if !local}<button type="button" onclick={share}><Icon name={copied ? 'added' : 'share'} /> {copied ? t('list.linkCopied') : t('form.list.saved.share')}</button>{/if}
 		<a href="{path}/edit" data-add><Icon name="add" /> {t('form.list.saved.more')}</a>
 	</menu>
 	<p><small><a href="/lists/new">{t('form.list.saved.another')}</a></small></p>

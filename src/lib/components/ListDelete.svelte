@@ -3,6 +3,8 @@
 	import { goto } from '$app/navigation';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { deleteList } from '#lib/network/save-list.js';
+	import { ownsList } from '#lib/network/network.svelte.js';
+	import { LOCAL } from '#lib/models/list.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
@@ -25,12 +27,12 @@
 	}
 
 	async function onclose() {
-		if (dialog?.returnValue !== 'delete' || list.did !== session.did) return;
+		if (dialog?.returnValue !== 'delete' || !ownsList(list)) return;
 		busy = true;
 		error = null;
 		try {
 			await deleteList(list);
-			await goto(`/${session.handle}`);
+			await goto(list.did === LOCAL ? '/lists' : `/${session.handle}`);
 		} catch (err) {
 			error = err instanceof Error ? err.message : String(err);
 		} finally {
@@ -41,9 +43,9 @@
 
 <jl-list-delete busy={busy || undefined}>
 	<dialog bind:this={dialog} {onclose} aria-labelledby="{id}-title" aria-describedby="{id}-text">
-		<DialogHeader id="{id}-title" title={t('list.delete.title', { name: list.name })} />
+		<DialogHeader id="{id}-title" title={t(list.did === LOCAL ? 'list.delete.local.title' : 'list.delete.title', { name: list.name })} />
 		<form method="dialog">
-			<p id="{id}-text">{t('list.delete.text', { count: list.companies.length })}</p>
+			<p id="{id}-text">{t(list.did === LOCAL ? 'list.delete.local.text' : 'list.delete.text', { count: list.companies.length })}</p>
 			<menu>
 				<button value="keep">{t('list.delete.keep')}</button>
 				<button value="delete">{t('list.delete.confirm')}</button>

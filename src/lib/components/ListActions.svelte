@@ -2,8 +2,9 @@
 	import config from '#lib/data/config.json';
 	import Icon from './Icon.svelte';
 	import ListDelete from './ListDelete.svelte';
+	import { LOCAL } from '#lib/models/list.js';
 	import { session } from '#lib/auth/session.svelte.js';
-	import { handleOf } from '#lib/network/network.svelte.js';
+	import { handleOf, ownsList } from '#lib/network/network.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
@@ -19,7 +20,7 @@
 	let copied = $state(false);
 	/** @type {ListDelete | undefined} */
 	let deleting = $state();
-	const mine = $derived(list.did === session.did);
+	const mine = $derived(ownsList(list));
 	const path = $derived(`/${handleOf(list.did)}/${list.rkey}`);
 	// Signed out, "Suggest" signs in first and comes back here with it open.
 	const signin = $derived(`/signin?${new URLSearchParams({ next: `${path}?suggest` })}`);
@@ -53,7 +54,7 @@
 				</li>
 			{/if}
 			<li><a href="{path}/edit"><Icon name="edit" /> {t('list.edit')}</a></li>
-		{:else if session.did}
+		{:else if session.did && list.did !== LOCAL}
 			<li>
 				<button type="button" aria-pressed={suggesting} onclick={() => (suggesting = !suggesting)}>
 					<Icon name="add" /> {t('list.suggest')}
@@ -62,11 +63,14 @@
 		{:else if session.ready}
 			<li><a href={signin}><Icon name="add" /> {t('list.suggest')}</a></li>
 		{/if}
-		<li>
-			<button type="button" onclick={share} title={copied ? t('list.linkCopied') : t('list.share')}>
-				<Icon name={copied ? 'added' : 'share'} label={copied ? t('list.linkCopied') : t('list.share')} />
-			</button>
-		</li>
+		<!-- On this device only: no one else can open its link. -->
+		{#if list.did !== LOCAL}
+			<li>
+				<button type="button" onclick={share} title={copied ? t('list.linkCopied') : t('list.share')}>
+					<Icon name={copied ? 'added' : 'share'} label={copied ? t('list.linkCopied') : t('list.share')} />
+				</button>
+			</li>
+		{/if}
 		<li>
 			<button type="button" popovertarget="{id}-more" title={t('list.more')}><Icon name="more" label={t('list.more')} /></button>
 			<menu popover id="{id}-more" aria-label={t('list.more')}>

@@ -10,6 +10,7 @@
 	import SaveSignIn from './SaveSignIn.svelte';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { saveList } from '#lib/network/save-list.js';
+	import { LOCAL } from '#lib/models/list.js';
 	import { clearListDraft, readListDraft, writeListDraft } from '#lib/network/list-draft.js';
 	import { leftToSave } from '#lib/network/drafts.js';
 	import { listDraftApplies, previewList, resumeDraft, toListForm } from '#lib/models/list-form.js';
@@ -21,7 +22,7 @@
 	 * @type {{
 	 *   list?: import('#lib/models/list.js').List | null,
 	 *   initial?: import('#lib/models/list-form.js').ListStart,
-	 *   onsaved: (saved: {rkey: string, name: string, added: boolean}) => void,
+	 *   onsaved: (saved: {rkey: string, name: string, added: boolean, local: boolean}) => void,
 	 *   oncancel?: () => void
 	 * }}
 	 */
@@ -42,7 +43,14 @@
 	}
 
 	const { nameMax, descriptionMax } = config.listForm;
-	const preview = $derived(previewList(form, session.did || ''));
+	// Local first: a new list is kept on this device, private, unless published to the account;
+	// a published list stays published (its page is shared).
+	let local = $state(untrack(() => (list ? list.did === LOCAL : true)));
+	const keepOptions = $derived([
+		{ value: 'device', label: t('form.list.keep.device') },
+		{ value: 'account', label: t('form.list.keep.account') }
+	]);
+	const preview = $derived(previewList({ ...form, open: !local && form.open }, local ? LOCAL : session.did || ''));
 	const openOptions = $derived([
 		{ value: 'open', label: t('form.list.open.yes') },
 		{ value: 'closed', label: t('form.list.open.no') }
@@ -59,15 +67,15 @@
 	/** @param {SubmitEvent} event */
 	async function submit(event) {
 		event.preventDefault();
-		// Signed out: the list stays in this browser while signing in, then is saved from here.
-		if (!session.did) return signin?.ask();
+		// Published while signed out: the list stays in this browser while signing in, then is saved from here.
+		if (!local && !session.did) return signin?.ask();
 		busy = true;
 		error = null;
 		try {
-			const rkey = await saveList($state.snapshot(form), list);
+			const rkey = await saveList($state.snapshot(form), list, local);
 			if (!list) clearListDraft();
 			leftToSave(null);
-			onsaved({ rkey, name: form.name.trim(), added: !list });
+			onsaved({ rkey, name: form.name.trim(), added: !list, local });
 		} catch (err) {
 			error = err instanceof Error ? err.message : String(err);
 		} finally {
@@ -116,14 +124,26 @@
 				<data value={form.description.length}>{form.description.length.toLocaleString(i18n.locale)} / {descriptionMax.toLocaleString(i18n.locale)}</data>
 			</small>
 
-			<ChoiceChips
-				name="open"
-				legend={t('form.list.open')}
-				options={openOptions}
-				bind:value={() => (form.open ? 'open' : 'closed'), (value) => (form.open = value === 'open')}
-				required
-				help={t(form.open ? 'form.list.open.yes.help' : 'form.list.open.no.help')}
-			/>
+			{#if !list || list.did === LOCAL}
+				<ChoiceChips
+					name="keep"
+					legend={t('form.list.keep')}
+					options={keepOptions}
+					bind:value={() => (local ? 'device' : 'account'), (value) => (local = value === 'device')}
+					required
+					help={t(local ? 'form.list.keep.device.help' : 'form.list.keep.account.help')}
+				/>
+			{/if}
+			{#if !local}
+				<ChoiceChips
+					name="open"
+					legend={t('form.list.open')}
+					options={openOptions}
+					bind:value={() => (form.open ? 'open' : 'closed'), (value) => (form.open = value === 'open')}
+					required
+					help={t(form.open ? 'form.list.open.yes.help' : 'form.list.open.no.help')}
+				/>
+			{/if}
 
 			<fieldset>
 				<legend>{t('form.list.companies')} <data value={form.companies.length}>{form.companies.length.toLocaleString(i18n.locale)}</data></legend>
@@ -135,7 +155,7 @@
 		<aside aria-labelledby="list-preview">
 			<h2 id="list-preview">{t('form.list.preview')}</h2>
 			{#if preview}
-				<jl-preview inert><ListItem list={preview} author={Boolean(session.did)} /></jl-preview>
+				<jl-preview inert><ListItem list={preview} author={!local && Boolean(session.did)} /></jl-preview>
 			{:else}
 				<p><small>{t('form.list.preview.empty')}</small></p>
 			{/if}
