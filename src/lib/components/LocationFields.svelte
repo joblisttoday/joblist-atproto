@@ -1,8 +1,10 @@
 <script>
+	import { tick } from 'svelte';
 	import Icon from './Icon.svelte';
 	import config from '#lib/data/config.json';
 	import { locationLabel, samePlace } from '#lib/models/place-search.js';
 	import { searchPlaces } from '#lib/network/place-search.js';
+	import { focusNear } from '#lib/navigation/focus.js';
 	import { i18n, t } from '#lib/i18n/index.svelte.js';
 
 	/**
@@ -20,12 +22,18 @@
 	/** @type {import('#lib/models/place-search.js').FoundPlace[]} */
 	let found = $state.raw([]);
 	let searching = $state(false);
+	/** Whether a search ended, to say how many places it found. */
+	let searched = $state(false);
+	/** A place just added, said to screen readers. */
+	let added = $state('');
 	/** The place written by hand, open to edit. */
 	let editing = $state(-1);
 
 	// Search once typing pauses; a newer search cancels the one before.
 	$effect(() => {
 		const words = query.trim();
+		searched = false;
+		if (words.length) added = '';
 		if (words.length < config.placeSearch.minLength) {
 			found = [];
 			return;
@@ -34,7 +42,10 @@
 		const timer = setTimeout(() => {
 			searching = true;
 			searchPlaces(words, i18n.locale, controller.signal)
-				.then((places) => (found = places))
+				.then((places) => {
+					found = places;
+					searched = true;
+				})
 				.catch(() => {})
 				.finally(() => (searching = false));
 		}, config.placeSearch.delayMs);
@@ -44,16 +55,42 @@
 		};
 	});
 
-	/** @param {import('#lib/models/company.js').Location} location */
+	// One status, always there: searching, how many found, or the place added.
+	const said = $derived(
+		searching
+			? t('form.location.searching')
+			: searched
+				? t('form.location.foundCount', { count: found.length })
+				: added
+					? t('form.location.added', { name: added })
+					: ''
+	);
+
+	/** @type {HTMLUListElement | undefined} */
+	let chosen = $state();
+	/** @type {HTMLInputElement | undefined} */
+	let search = $state();
+
+	/** Added, the keyboard goes back to the search, for another place. @param {import('#lib/models/company.js').Location} location */
 	function add(location) {
 		if (!locations.some((l) => samePlace(l, location))) locations.push({ ...location });
+		added = locationLabel(location);
 		query = '';
 		found = [];
+		tick().then(() => search?.focus());
+	}
+
+	/** Removed, the keyboard goes to the place now at its place, or the search. @param {number} i */
+	function remove(i) {
+		locations.splice(i, 1);
+		if (editing >= locations.length) editing = -1;
+		focusNear(() => chosen, i, ':scope > button', () => search);
 	}
 
 	function addByHand() {
 		locations.push({});
 		editing = locations.length - 1;
+		focusNear(() => chosen, editing, 'input');
 	}
 </script>
 
@@ -61,7 +98,7 @@
 	<fieldset>
 		<legend>{t('form.locations')}</legend>
 		{#if locations.length}
-			<ul>
+			<ul bind:this={chosen}>
 				{#each locations as location, i (i)}
 					<li>
 						<details open={editing === i || undefined}>
@@ -83,7 +120,7 @@
 								{/each}
 							</jl-coordinates>
 						</details>
-						<button type="button" onclick={() => locations.splice(i, 1)}>
+						<button type="button" onclick={() => remove(i)}>
 							<Icon name="close" label={t('form.location.removeOne', { name: locationLabel(location) || t('form.location', { number: i + 1 }) })} />
 						</button>
 					</li>
@@ -103,6 +140,7 @@
 		<label for="{id}-search">{t('form.location.search')}</label>
 		<input
 			id="{id}-search"
+			bind:this={search}
 			type="search"
 			bind:value={query}
 			placeholder={t('form.location.search.placeholder')}
@@ -116,9 +154,8 @@
 					<li><button type="button" onclick={() => add(place.location)}><Icon name="place" /> {place.label}</button></li>
 				{/each}
 			</ul>
-		{:else if searching}
-			<p aria-live="polite"><small>{t('form.location.searching')}</small></p>
 		{/if}
+		<p role="status"><small>{said}</small></p>
 		<p><button type="button" onclick={addByHand}>{t('form.location.byHand')}</button></p>
 	</fieldset>
 </jl-locations>
