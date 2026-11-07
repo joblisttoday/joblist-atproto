@@ -19,8 +19,15 @@ import { feedPath, fieldOf, indexFile, isCompanyKey, isSlug, landingFile, landin
 export function route(pathname) {
 	// A trailing slash leads to the same page without it: rebuilt from the route, never from the request.
 	if (pathname.length > 1 && pathname.endsWith('/')) {
+		if (pathname.endsWith('//')) return null;
 		const found = route(pathname.slice(0, -1));
-		const location = found && pathOf(found);
+		const location = found && (found.kind === 'redirect' ? found.location : pathOf(found));
+		return location ? { kind: 'redirect', location } : null;
+	}
+	// Capitals lead to the same page in small letters (/in/Berlin): only when it exists.
+	if (/[A-Z]/.test(pathname)) {
+		const found = /^\/(in|field|feed)(\/|$)/i.test(pathname) && !pathname.includes('%') ? route(pathname.toLowerCase()) : null;
+		const location = found && found.kind !== 'redirect' && pathOf(found);
 		return location ? { kind: 'redirect', location } : null;
 	}
 	if (pathname === config.landing.sitemap) return { kind: 'sitemap' };
