@@ -15,6 +15,7 @@ import { Companies } from '../src/lib/models/companies.js';
 import { membership, toList } from '../src/lib/models/list.js';
 import { toSuggestion } from '../src/lib/models/suggestion.js';
 import { postPath } from '../src/lib/models/job-post.js';
+import { feedPath, isCompanyKey } from '../src/lib/models/landing.js';
 import { escape, jsonLd, page } from './html.js';
 import { jobPages } from './job-pages.js';
 import { organization } from './organization.js';
@@ -112,7 +113,14 @@ for (const company of companies.values()) {
 			title: `${company.name} · ${config.name}`,
 			description,
 			url: config.url + path,
-			head: jsonLd(organization(company, config.url + path)),
+			// Its feed, for readers to find (made by the Worker from the latest snapshot).
+			head: [
+				jsonLd(organization(company, config.url + path)),
+				isCompanyKey(company.key) &&
+					`<link rel="alternate" type="application/atom+xml" title="${escape(en['landing.company'].replace('{company}', () => company.name))}" href="${escape(config.url + feedPath({ company: company.key }))}">`
+			]
+				.filter(Boolean)
+				.join('\n\t\t'),
 			body: `<h1>${escape(company.name)}</h1><p>${escape(description)}</p>${
 				company.url ? `<p><a href="${escape(company.url)}">${escape(company.url)}</a></p>` : ''
 			}<ul>${jobs

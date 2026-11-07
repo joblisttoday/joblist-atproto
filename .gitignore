@@ -24,3 +24,6 @@ vite.config.ts.timestamp-*
 
 # AppView snapshot (built by indexer/)
 /static/snapshot
+
+# Local Worker settings (wrangler dev)
+.dev.vars

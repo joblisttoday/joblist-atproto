@@ -9,12 +9,14 @@
 	import CompanyHiring from '#lib/components/CompanyHiring.svelte';
 	import CompanyMap from '#lib/components/CompanyMap.svelte';
 	import CompanyVersions from '#lib/components/CompanyVersions.svelte';
+	import FollowFeed from '#lib/components/FollowFeed.svelte';
 	import Jobs from '#lib/components/Jobs.svelte';
 	import ListItem from '#lib/components/ListItem.svelte';
 	import Pending from '#lib/components/Pending.svelte';
 	import { data, listsWith, network } from '#lib/network/network.svelte.js';
 	import { boardUrl, mapPoints } from '#lib/models/company.js';
 	import { mixedAuthors } from '#lib/models/list.js';
+	import { isCompanyKey } from '#lib/models/landing.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	const key = $derived(page.params.key || '');
@@ -41,7 +43,10 @@
 		<section aria-labelledby="company-jobs">
 			<h2 id="company-jobs">{t('list.tab.jobs')}</h2>
 			<CompanyHiring {company} />
-			{#if hasJobs}<Jobs companies={[company]} />{/if}
+			{#if hasJobs}
+				{#if isCompanyKey(company.key)}<FollowFeed feed={{ company: company.key }} />{/if}
+				<Jobs companies={[company]} />
+			{/if}
 			<CompanyEmbed {company} />
 		</section>
 

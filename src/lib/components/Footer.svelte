@@ -8,6 +8,9 @@
 		<p>
 			<small>{t('about.data')} <a href={config.source}>{t('about.source')}</a></small>
 		</p>
+		<p>
+			<small><a href="/in">{t('landing.cities')}</a> · <a href="/field">{t('landing.fields')}</a></small>
+		</p>
 		<label>
 			<small>{t('about.language')}</small>
 			<select value={i18n.locale} onchange={(e) => setLocale(e.currentTarget.value)}>

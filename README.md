@@ -86,6 +86,20 @@ is one request per contributing account: fine for hundreds of contributors.
 Past that, a static snapshot file can be added as a cache, with the records
 staying the source of truth.
 
+Pages per city and per field (`/in/berlin`, `/field/design`,
+`/in/berlin/design`, indexes at `/in` and `/field`), their Atom feeds
+(`/feed/new.xml`, `/feed/in/<city>.xml`, `/feed/field/<field>.xml`,
+`/feed/company/<key>.xml`) and their sitemap (`/sitemap-places.xml`) are the
+only addresses served by code: a small Worker ([`worker/`](worker)) renders
+them from the latest snapshot, so they are as fresh as the data, not as the
+last deploy. The indexer writes one small file per page into the snapshot
+(`landing/`, see [`indexer/landing.js`](indexer/landing.js)); the Worker reads
+only that file and keeps its answer in the cache for half an hour. Only these
+addresses run it (`assets.run_worker_first` in `wrangler.jsonc`): every other
+file is served without it. Fields and their words are in
+[`src/lib/data/fields.json`](src/lib/data/fields.json), cities' other
+spellings in `landing.cityAliases` (config).
+
 Cost: €0/month.
 
 ## Develop
@@ -105,6 +119,15 @@ Configuration lives in data files, not code:
 - [`src/lib/data/providers.json`](src/lib/data/providers.json): job board providers
 - [`src/lib/i18n/locales/`](src/lib/i18n/locales): interface text (English, French)
 - [`scripts/starter-lists.json`](scripts/starter-lists.json): lists created by the import
+
+The Worker locally, on a built site (`npm run build:site`), reading a
+snapshot from `static/snapshot` served by any static server (set
+`SNAPSHOT=http://127.0.0.1:<port>` in `.dev.vars`; without it, the published
+snapshot):
+
+```sh
+npx wrangler dev --port 8802 --ip 127.0.0.1   # then /in/berlin, /feed/new.xml
+```
 
 ## Deploy
 

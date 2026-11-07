@@ -3,12 +3,19 @@
 	"name": "joblist-atproto",
 	"account_id": "561bb824be3c6da587401329eff1d81b",
 	"compatibility_date": "2026-10-01",
-	// A static site: no Worker code. Unknown addresses get 404.html (status 404), on which the app still starts.
+	// The pages per city and field and their feeds, fresh from the snapshot (worker/index.js).
+	"main": "worker/index.js",
+	// Which deploy is running: its cached pages are its own (worker/index.js).
+	"version_metadata": { "binding": "CF_VERSION_METADATA" },
+	// Everything else is static. Unknown addresses get 404.html (status 404), on which the app still starts.
 	"assets": {
 		"directory": "./build",
+		"binding": "ASSETS",
 		"not_found_handling": "404-page",
 		// Prerendered pages live at /path/index.html but are served at /path.
-		"html_handling": "drop-trailing-slash"
+		"html_handling": "drop-trailing-slash",
+		// Only these addresses run the Worker (and count as its requests); every file is served without it.
+		"run_worker_first": ["/in", "/in/*", "/field", "/field/*", "/feed/*", "/sitemap-places.xml"]
 	},
 	"routes": [{ "pattern": "joblist.today", "custom_domain": true }]
 }

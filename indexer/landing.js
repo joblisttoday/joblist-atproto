@@ -63,7 +63,7 @@ function newest(jobs) {
 		const key = `${job.c}\n${job.t.trim().toLowerCase()}`;
 		if (seen.has(key)) continue;
 		seen.add(key);
-		shown.push({ t: job.t, u: jobLink(job), c: job.c, l: job.l, p: job.p, r: job.r });
+		shown.push({ t: job.t, u: jobLink(job), c: job.c, l: job.l, p: job.p, r: job.r, i: job.i });
 		if (shown.length >= landing.shown) break;
 	}
 	return shown;
@@ -132,7 +132,12 @@ export function landingFiles(jobs, names, places, generatedAt) {
 			{
 				generatedAt,
 				total: jobs.length,
-				cities: cities.map((slug) => ({ slug, name: nameOf(spellings, slug), count: count(`in/${slug}`) })),
+				cities: cities.map((slug) => ({
+					slug,
+					name: nameOf(spellings, slug),
+					count: count(`in/${slug}`),
+					fields: pairs.filter((p) => p.city === slug).map((p) => p.field)
+				})),
 				fields: fields.map((slug) => ({ slug, count: count(`field/${slug}`) }))
 			}
 		],
