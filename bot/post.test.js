@@ -23,7 +23,7 @@ const stats = {
 test('the weekly post: counts, cities and fields, a link to the trends', () => {
 	const post = weeklyPost(stats);
 	assert.ok(post);
-	assert.match(post.text, /^This week on joblist: 4,120 new jobs \(\+8% on last week\), 34,340 open at 364 companies\./);
+	assert.match(post.text, /^This week on joblist: 4,120 new jobs \(\+8% on last week\), 34,340 open at 364 organizations\./);
 	assert.match(post.text, /Most open jobs: New York 1,780, alice\.bsky\.social httpsevil\.example 900, London 800\./);
 	assert.match(post.text, /Hiring the most: Engineering, Sales, Data and AI\./);
 	assert.ok(post.text.endsWith('joblist.today/stats'));
