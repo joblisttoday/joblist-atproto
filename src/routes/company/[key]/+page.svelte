@@ -11,6 +11,7 @@
 	import CompanyMap from '#lib/components/CompanyMap.svelte';
 	import CompanyVersions from '#lib/components/CompanyVersions.svelte';
 	import CompanyJobs from '#lib/components/CompanyJobs.svelte';
+	import Empty from '#lib/components/Empty.svelte';
 	import ListItem from '#lib/components/ListItem.svelte';
 	import Pending from '#lib/components/Pending.svelte';
 	import { data, listsWith, network } from '#lib/network/network.svelte.js';
@@ -54,7 +55,7 @@
 				{#if lists.length}
 					<ul>{#each lists as list (list.uri)}<li><ListItem {list} author={mixedAuthors(lists)} /></li>{/each}</ul>
 				{:else}
-					<p><small>{t('company.noLists')}</small></p>
+					<Empty text={t('company.noLists')} />
 				{/if}
 				<AddToList {key} />
 			</section>

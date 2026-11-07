@@ -15,7 +15,7 @@
 
 {#if missing}
 	<jl-company-invite {field}>
-		<a {href}><Icon name="add" /> {t(`invite.${field}`)}</a>
+		<a {href} data-add><Icon name="add" /> {t(`invite.${field}`)}</a>
 	</jl-company-invite>
 {/if}
 
@@ -24,21 +24,5 @@
 	jl-company-invite {
 		display: inline-block;
 		margin: 0 var(--space-xs) var(--space-s) 0;
-	}
-	a {
-		display: inline-flex;
-		align-items: center;
-		gap: var(--space-xs);
-		min-height: var(--chip-height);
-		padding: 0 var(--space-m);
-		border: var(--border-width) dashed var(--color-line);
-		border-radius: var(--radius-round);
-		color: var(--color-muted);
-		font-size: var(--font-size-small);
-		text-decoration: none;
-	}
-	a:hover {
-		color: var(--color-fg);
-		border-color: var(--color-fg);
 	}
 </style>

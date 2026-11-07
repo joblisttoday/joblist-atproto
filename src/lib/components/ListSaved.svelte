@@ -28,7 +28,7 @@
 	<menu>
 		<a href={path}><Icon name="jobs" /> {t('form.list.saved.jobs')}</a>
 		<button type="button" onclick={share}><Icon name={copied ? 'added' : 'share'} /> {copied ? t('list.linkCopied') : t('form.list.saved.share')}</button>
-		<a href="{path}/edit"><Icon name="add" /> {t('form.list.saved.more')}</a>
+		<a href="{path}/edit" data-add><Icon name="add" /> {t('form.list.saved.more')}</a>
 	</menu>
 	<p><small><a href="/lists/new">{t('form.list.saved.another')}</a></small></p>
 </jl-list-saved>

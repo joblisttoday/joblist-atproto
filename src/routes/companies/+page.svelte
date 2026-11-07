@@ -1,4 +1,5 @@
 <script>
+	import Empty from '#lib/components/Empty.svelte';
 	import Icon from '#lib/components/Icon.svelte';
 	import { page } from '$app/state';
 	import { replaceState } from '$app/navigation';
@@ -78,17 +79,17 @@
 	{:else}
 		<jl-companies-results>
 			<ResultsHead count={t('companies.count', { count: found.length, total: companies.length })}>
-				<a href={addHref}><Icon name="add" /> {t('companies.add')}</a>
+				<a href={addHref} data-add><Icon name="add" /> {t('companies.add')}</a>
 			</ResultsHead>
 			<Companies companies={found} {counts} searchable={false} layout={view === 'list' ? 'list' : 'grid'} />
 			{#if !found.length}
-				<jl-companies-empty>
-					<p>{t('search.none')}</p>
-					{#if query.trim()}
-						<p>{t('companies.missing')}</p>
-						<menu><a href={addHref}><Icon name="add" /> {t('companies.add.named', { name: query.trim() })}</a></menu>
-					{/if}
-				</jl-companies-empty>
+				{#if query.trim()}
+					<Empty text="{t('search.none')} {t('companies.missing')}">
+						<a href={addHref} data-add="main"><Icon name="add" /> {t('companies.add.named', { name: query.trim() })}</a>
+					</Empty>
+				{:else}
+					<Empty text={t('search.none')} />
+				{/if}
 			{/if}
 		</jl-companies-results>
 	{/if}
@@ -98,17 +99,5 @@
 	jl-companies-results {
 		display: block;
 		padding: 0 var(--gutter) var(--space-l);
-	}
-	jl-companies-empty {
-		display: block;
-		margin-top: var(--space-m);
-	}
-	jl-companies-empty p {
-		margin: 0 0 var(--space-xs);
-	}
-	jl-companies-empty menu a {
-		background: var(--color-accent);
-		color: var(--color-accent-fg);
-		border-color: var(--color-accent);
 	}
 </style>

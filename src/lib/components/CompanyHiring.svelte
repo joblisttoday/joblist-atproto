@@ -1,5 +1,6 @@
 <script>
 	import CompanyInvite from './CompanyInvite.svelte';
+	import Icon from './Icon.svelte';
 	import MyJobPosts from './MyJobPosts.svelte';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { data } from '#lib/network/network.svelte.js';
@@ -18,7 +19,7 @@
 </script>
 
 <jl-company-hiring own={own || undefined}>
-	<menu><a {href}>{own ? t('company.post.own') : `+ ${t('company.post')}`}</a></menu>
+	<menu><a {href} data-add={own ? 'main' : ''}><Icon name="add" /> {own ? t('company.post.own') : t('company.post')}</a></menu>
 	<CompanyInvite {company} field="jobBoard" />
 	{#if mine.length}
 		<details>
@@ -31,13 +32,6 @@
 <style>
 	jl-company-hiring {
 		display: block;
-	}
-	jl-company-hiring[own] menu > a {
-		width: 100%;
-		background: var(--color-accent);
-		color: var(--color-accent-fg);
-		border-color: var(--color-accent);
-		font-weight: var(--font-weight-strong);
 	}
 	summary small {
 		font-weight: normal;

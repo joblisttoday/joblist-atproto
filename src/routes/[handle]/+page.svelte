@@ -5,6 +5,7 @@
 	import config from '#lib/data/config.json';
 	import Companies from '#lib/components/Companies.svelte';
 	import JobItem from '#lib/components/JobItem.svelte';
+	import Empty from '#lib/components/Empty.svelte';
 	import ListItem from '#lib/components/ListItem.svelte';
 	import LocaleSwitch from '#lib/components/LocaleSwitch.svelte';
 	import MyJobPosts from '#lib/components/MyJobPosts.svelte';
@@ -56,10 +57,12 @@
 			<h2 id="profile-lists">{t('profile.lists')} <small>{lists.length || ''}</small></h2>
 			{#if lists.length}
 				<ul>{#each lists as list (list.uri)}<li><ListItem {list} author={false} /></li>{/each}</ul>
+				{#if self}<menu><a href="/lists/new" data-add><Icon name="add" /> {t('list.new')}</a></menu>{/if}
+			{:else if self}
+				<Empty text={t('me.lists.empty')}><a href="/lists/new" data-add="main"><Icon name="add" /> {t('list.new')}</a></Empty>
 			{:else}
-				<p><small>{self ? t('me.lists.empty') : t('profile.empty')}</small></p>
+				<Empty text={t('profile.empty')} />
 			{/if}
-			{#if self}<menu><a href="/lists/new"><Icon name="add" /> {t('list.new')}</a></menu>{/if}
 		</section>
 
 		{#if self || posts.length}
@@ -67,7 +70,7 @@
 				<h2 id="profile-jobs">{t('profile.jobs')} <small>{posts.length || ''}</small></h2>
 				{#if self}
 					<MyJobPosts {posts} />
-					<menu><a href="/jobs/new"><Icon name="add" /> {t('post.title')}</a></menu>
+					<menu><a href="/jobs/new" data-add><Icon name="add" /> {t('post.title')}</a></menu>
 				{:else}
 					<ul>
 						{#each posts.map(toJob) as job (job.url)}
@@ -82,10 +85,12 @@
 			<h2 id="profile-companies">{t('profile.companies')} <small>{companies.length || ''}</small></h2>
 			{#if companies.length}
 				<Companies {companies} searchable={companies.length > 10} />
+				{#if self}<menu><a href="/add" data-add><Icon name="add" /> {t('form.company.title')}</a></menu>{/if}
+			{:else if self}
+				<Empty text={t('me.companies.empty')}><a href="/add" data-add="main"><Icon name="add" /> {t('form.company.title')}</a></Empty>
 			{:else}
-				<p><small>{self ? t('me.companies.empty') : t('profile.empty')}</small></p>
+				<Empty text={t('profile.empty')} />
 			{/if}
-			{#if self}<menu><a href="/add"><Icon name="add" /> {t('form.company.title')}</a></menu>{/if}
 		</section>
 	</jl-profile>
 {:catch}

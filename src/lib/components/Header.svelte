@@ -12,9 +12,10 @@
 	import { navLinks } from '#lib/navigation/nav.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
-	// The app name is always there; deeper pages also get a way back.
+	// The app name is always there; deeper pages also get a way back
+	// (and the pages only wide screens have a tab for, such as posting a job: a form, left with Back).
 	const topLevel = $derived(
-		[...navLinks(session.handle).map((l) => l.href), '/signin'].includes(page.url.pathname)
+		[...navLinks(session.handle).filter((l) => !l.wide).map((l) => l.href), '/signin'].includes(page.url.pathname)
 	);
 
 	/** @param {MouseEvent} event */
