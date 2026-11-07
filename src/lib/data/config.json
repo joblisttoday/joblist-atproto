@@ -39,6 +39,7 @@
 		"globeCenter": [10, 30],
 		"globeSpan": 90,
 		"frameDelayMs": 600,
+		"loadWaitMs": 3000,
 		"center": [
 			13.405,
 			52.52
