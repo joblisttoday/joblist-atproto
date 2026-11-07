@@ -12,6 +12,11 @@
 	--color-error: #b3261e;
 	--color-warn: #8a5a00;
 	--color-focus: #1a5fd0;
+	/* Charts (/stats): one hue for amounts, three for kinds, gray for "not said" (checked for colour blindness). */
+	--color-series-1: #2a78d6;
+	--color-series-2: #eb6834;
+	--color-series-3: #1baf7a;
+	--color-series-none: #c9c9c7;
 
 	--font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 	--font-size: 1rem;
@@ -53,6 +58,14 @@
 	--color-backdrop: rgb(0 0 0 / 0.4);
 	--handle-width: 2.5rem;
 	--radius-large: 1rem;
+	/* Charts (/stats): bars at most 24px thick, 4px rounded ends, 2px apart. */
+	--chart-height: 10rem;
+	--chart-bar: 1.5rem;
+	--chart-thin: 0.5rem;
+	--chart-gap: 2px;
+	--chart-radius: 4px;
+	--chart-label: 9rem;
+	--chart-swatch: 0.625rem;
 	--shadow: 0 2px 8px rgb(0 0 0 / 0.25);
 	--tap-size: 2.75rem;
 	/* Chips and small buttons: a finger's size on touch screens, more compact with a mouse. */
@@ -136,6 +149,10 @@ html {
 		--color-error: #ff8a80;
 		--color-warn: #f0b85a;
 		--color-focus: #8ab4ff;
+		--color-series-1: #3987e5;
+		--color-series-2: #d95926;
+		--color-series-3: #199e70;
+		--color-series-none: #4a4a48;
 		--color-backdrop: rgb(0 0 0 / 0.6);
 	}
 }

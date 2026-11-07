@@ -94,6 +94,12 @@ export function sitePages({ companies, lists, profiles, jobCounts, jobTotal, upd
 				preload: config.snapshot.preload.counts
 			}
 		},
+		{
+			path: '/stats',
+			listed: true,
+			updated,
+			meta: { title: `${en['stats.title']} · ${config.name}`, description: en['stats.intro'], url: url('/stats'), body: `<h1>${escape(en['stats.title'])}</h1><p>${escape(en['stats.intro'])}</p>` }
+		},
 		...profiles.map((p) => ({
 			path: `/${p.handle}`,
 			listed: true,
