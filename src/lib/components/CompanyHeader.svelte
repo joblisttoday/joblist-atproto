@@ -15,6 +15,7 @@
 	// The company's own account (it wrote the version shown, or its domain is its handle): its Bluesky picture and profile.
 	const author = $derived(company.verified ? data.profiles.get(company.record.did) : undefined);
 	const bluesky = $derived(accountOf(company.key));
+	let unfolded = $state(false);
 	const account = $derived(
 		author || bluesky ? { handle: author?.handle || company.key, avatar: author?.avatar || bluesky?.avatar, followers: bluesky?.followers } : undefined
 	);
@@ -34,7 +35,14 @@
 			</small>
 		</p>
 		<CompanyEdited {company} />
-		{#if company.description}<p>{company.description}</p>{/if}
+		{#if company.description}
+			<!-- Long, it folds: the jobs come right after the company, on a phone too. -->
+			{@const long = company.description.length > config.companyForm.foldAt}
+			<jl-company-about folded={(long && !unfolded) || undefined}>
+				<p>{company.description}</p>
+				{#if long}<button type="button" aria-expanded={unfolded} onclick={() => (unfolded = !unfolded)}>{t(unfolded ? 'company.less' : 'company.more')}</button>{/if}
+			</jl-company-about>
+		{/if}
 		<CompanyInvite {company} field="description" />
 		{#if company.tags.length}
 			<ul aria-label={t('form.tags')}>
@@ -53,6 +61,24 @@
 <style>
 	jl-company-header {
 		display: block;
+	}
+	jl-company-about {
+		display: block;
+	}
+	jl-company-about[folded] p {
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: var(--fold-lines);
+		line-clamp: var(--fold-lines);
+		overflow: hidden;
+	}
+	jl-company-about button {
+		min-height: var(--chip-height);
+		padding: 0;
+		border: 0;
+		background: none;
+		text-decoration: underline;
+		font-size: var(--font-size-small);
 	}
 	h1 {
 		display: flex;

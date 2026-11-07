@@ -180,6 +180,8 @@
 	"company.noLists": "Not in any list yet.",
 	"company.addToList": "Add to a list",
 	"company.edit": "Edit",
+	"company.more": "More",
+	"company.less": "Less",
 	"company.delete": "Delete my version",
 	"company.deleting": "Deleting…",
 	"company.delete.gone": "{name} will leave joblist",
