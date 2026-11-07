@@ -217,7 +217,13 @@
 		"path": "https://raw.githubusercontent.com/joblisttoday/joblist-snapshot/gh-pages",
 		"maxAgeHours": 12,
 		"prerenderFiles": ["records.json", "jobs.json", "meta.json"],
-		"preload": ["first.json", "records.json", "jobs.json"],
+		"preload": {
+			"page": ["records.json"],
+			"counts": ["records.json", "counts.json"],
+			"company": ["records.json", "jobs.json"],
+			"list": ["records.json", "counts.json", "jobs.json"],
+			"explore": ["first.json", "records.json", "jobs.json"]
+		},
 		"refreshDelayMs": 15000
 	},
 	"crawler": {

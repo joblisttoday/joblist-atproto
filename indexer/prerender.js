@@ -96,7 +96,8 @@ for (const record of listRecords) {
 			url: config.url + path,
 			body: `<h1>${escape(list.name)}</h1><p>${escape(summary)}</p><p>${escape(en['list.by'])} @${escape(handleOf(list.did))}</p><ul>${members
 				.map((c) => `<li><a href="/company/${escape(c.key)}">${escape(c.name)}</a></li>`)
-				.join('')}</ul>`
+				.join('')}</ul>`,
+			preload: config.snapshot.preload.list
 		})
 	);
 	count++;
@@ -127,7 +128,8 @@ for (const company of companies.values()) {
 				.filter((/** @type {any} */ j) => j.c === company.key)
 				.slice(0, 200)
 				.map((/** @type {any} */ j) => `<li><a href="${escape(jobLink(j))}">${escape(j.t)}</a> ${escape(j.l || '')}</li>`)
-				.join('')}</ul>`
+				.join('')}</ul>`,
+			preload: config.snapshot.preload.company
 		})
 	);
 	count++;

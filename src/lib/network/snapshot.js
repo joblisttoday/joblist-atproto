@@ -1,6 +1,8 @@
-import { safeUrl } from '#lib/models/url.js';
-import { unpackSalary } from '#lib/ats/salary.js';
 import config from '#lib/data/config.json';
+import { safeUrl } from '#lib/models/url.js';
+import { newestFirst } from '#lib/models/job.js';
+import { fromSnapshot } from '#lib/models/snapshot-job.js';
+import { readCounts } from '#lib/models/snapshot-counts.js';
 
 /**
  * The AppView snapshot: static files rebuilt on a schedule by indexer/.
@@ -33,7 +35,8 @@ export function getSnapshotRecords() {
 }
 
 /**
- * @typedef {{jobs: Map<string, import('#lib/ats/job.js').Job[]>, checked: Set<string>, gone: Set<string>, points: Map<string, [number, number]>}} SnapshotJobs
+ * @typedef {{all: import('#lib/ats/job.js').Job[], jobs: Map<string, import('#lib/ats/job.js').Job[]>, checked: Set<string>, gone: Set<string>, points: Map<string, [number, number]>}} SnapshotJobs
+ *   all: every job, newest first; jobs: the same by company key, newest first.
  *   gone: companies whose job board closed (found by the crawler).
  *   points: where the jobs posted on atproto are, by record address (the jobs themselves are read from their records).
  * @type {Promise<SnapshotJobs | null> | null}
@@ -44,19 +47,25 @@ let jobsPromise = null;
 export function getSnapshotJobs() {
 	jobsPromise ??= getFile('jobs.json').then((data) => {
 		if (!data || !fresh(data.generatedAt)) return null;
-		/** @type {Map<string, import('#lib/ats/job.js').Job[]>} */
-		const jobs = new Map();
+		/** @type {import('#lib/ats/job.js').Job[]} */
+		const all = [];
 		/** @type {Map<string, [number, number]>} */
 		const points = new Map();
 		for (const j of data.jobs) {
 			if (j.s?.startsWith('at://') && j.g) points.set(j.s, j.g);
-			const job = toJob(j);
-			if (!job) continue;
-			const list = jobs.get(j.c) || [];
-			list.push(job);
-			jobs.set(j.c, list);
+			const job = fromSnapshot(j);
+			if (job) all.push(job);
 		}
-		return { jobs, checked: new Set(data.checked || []), gone: new Set(data.gone || []), points };
+		// Newest first, once: every list of jobs keeps this order (each company's is already, see indexer/counts.js).
+		newestFirst(all);
+		/** @type {Map<string, import('#lib/ats/job.js').Job[]>} */
+		const jobs = new Map();
+		for (const job of all) {
+			const list = jobs.get(job.company);
+			if (list) list.push(job);
+			else jobs.set(job.company, [job]);
+		}
+		return { all, jobs, checked: new Set(data.checked || []), gone: new Set(data.gone || []), points };
 	});
 	return jobsPromise;
 }
@@ -71,7 +80,7 @@ export function getSnapshotFirst() {
 	firstPromise ??= getFile('first.json').then((data) => {
 		if (!data || !fresh(data.generatedAt)) return { jobs: [], names: new Map() };
 		return {
-			jobs: data.jobs.map(toJob).filter(Boolean),
+			jobs: data.jobs.map(fromSnapshot).filter(Boolean),
 			names: new Map(Object.entries(data.names || {}).map(([key, name]) => [key, String(name)]))
 		};
 	});
@@ -79,18 +88,14 @@ export function getSnapshotFirst() {
 }
 
 /**
- * A job as the snapshot keeps it (see indexer/jobs.js), as the app uses it.
- * Posted jobs come from their records, read with the others (they may be edited or deleted since).
- * @param {any} j
- * @returns {import('#lib/ats/job.js').Job | null}
+ * What the pages that only count jobs need (see snapshot-counts.js), a small file;
+ * null when missing or stale (they then count from all the jobs).
+ * @type {Promise<import('#lib/models/snapshot-counts.js').Counts | null> | null}
  */
-function toJob(j) {
-	if (j.s?.startsWith('at://')) return null;
-	const url = safeUrl(j.u);
-	if (!url) return null;
-	// The id at its board is left out when the link ends with it.
-	const id = j.i ?? url.slice(url.lastIndexOf('/') + 1);
-	return { title: j.t, url, company: j.c, location: j.l, department: j.d, published: j.p, id, remote: j.r, point: j.g, salary: unpackSalary(j.m) };
+let countsPromise = null;
+export function getSnapshotCounts() {
+	countsPromise ??= getFile('counts.json').then((data) => (data && fresh(data.generatedAt) ? readCounts(data) : null));
+	return countsPromise;
 }
 
 /**

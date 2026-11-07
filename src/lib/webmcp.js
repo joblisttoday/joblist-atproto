@@ -19,7 +19,7 @@ const handlers = {
 		if (!snapshot) return { error: 'The jobs snapshot is not available right now; open /jobs to read job boards live.' };
 		// Offers posted on joblist are read from their records, not the snapshot.
 		const posted = [...data.postedJobs.values()].flat();
-		return searchJobs(mergeJobs(posted, [...snapshot.jobs.values()].flat()), data.companies, args);
+		return searchJobs(mergeJobs(posted, snapshot.all), data.companies, args);
 	},
 	get_list: async ({ url }) => {
 		const ref = parseListUrl(url);

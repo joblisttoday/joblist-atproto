@@ -4,7 +4,7 @@
  */
 import config from '../src/lib/data/config.json' with { type: 'json' };
 import { escape, jsonLd } from '../indexer/html.js';
-import { explorerPath, feedPath, isCompanyKey, landingPath } from '../src/lib/models/landing.js';
+import { explorerPath, feedPath, indexFile, isCompanyKey, landingFile, landingPath } from '../src/lib/models/landing.js';
 import { fieldName, pageTitle, t, toItem } from './text.js';
 
 /**
@@ -81,6 +81,8 @@ export function landingMeta(page, data) {
 		description,
 		url: config.url + path,
 		head: [feedLink(title, feed), breadcrumbs(trail)].join('\n\t\t'),
+		// Its own jobs, fetched while the app loads (the same file this page is made from).
+		preload: [...config.snapshot.preload.page, landingFile(page)],
 		body: [
 			`<nav><a href="/in">${escape(t('landing.cities'))}</a> · <a href="/field">${escape(t('landing.fields'))}</a></nav>`,
 			`<h1>${escape(title)}</h1>`,
@@ -119,6 +121,7 @@ export function indexMeta(kind, index) {
 		description: intro,
 		url: config.url + path,
 		head: [feedLink(t('landing.newest'), feedPath({})), breadcrumbs([{ name: site, path: '/' }, { name: title, path }])].join('\n\t\t'),
+		preload: [...config.snapshot.preload.page, indexFile()],
 		body: `<nav><a href="/in">${escape(t('landing.cities'))}</a> · <a href="/field">${escape(t('landing.fields'))}</a></nav><h1>${escape(title)}</h1><p>${escape(intro)}</p><ul>${links
 			.map((/** @type {any} */ l) => `<li><a href="${escape(l.path)}">${escape(l.name)}</a> (${escape(t('landing.count', { count: l.count }))})</li>`)
 			.join('')}</ul>`
