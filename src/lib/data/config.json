@@ -97,6 +97,11 @@
 		"file": "bluesky.json",
 		"concurrency": 12
 	},
+	"handles": {
+		"dns": "https://cloudflare-dns.com/dns-query",
+		"timeoutMs": 8000,
+		"concurrency": 12
+	},
 	"ledger": {
 		"file": "offers.json",
 		"keepDays": 30

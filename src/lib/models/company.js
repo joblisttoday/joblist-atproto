@@ -5,6 +5,9 @@ import providers from '#lib/data/providers.json' with { type: 'json' };
 
 /**
  * @typedef {import('#lib/atproto/records.js').RepoRecord} RepoRecord
+ * @typedef {{handle: string, verified?: boolean}} Handle
+ *   verified: whether the handle was checked both ways by the indexer (indexer/handles.js);
+ *   left out when it was not, and then the AppView's handle is believed.
  * @typedef {{name?: string, address?: string, country?: string, latitude?: string, longitude?: string}} Location
  * @typedef {{provider?: string, id?: string, url?: string}} JobBoard
  * @typedef {{
@@ -40,13 +43,25 @@ export function toDomain(input) {
 }
 
 /**
+ * Whether an account speaks for a domain: its handle is the domain, and the
+ * indexer did not find otherwise when it checked the handle both ways.
+ * @param {Map<string, Handle>} profiles
+ * @param {string} did
+ * @param {string} domain
+ */
+export function speaksFor(profiles, did, domain) {
+	const profile = profiles.get(did);
+	return Boolean(domain) && profile?.handle === domain && profile.verified !== false;
+}
+
+/**
  * Whether a record is written by the organization itself
  * (the author's handle is the record's domain).
  * @param {RepoRecord} record
- * @param {Map<string, {handle: string}>} profiles
+ * @param {Map<string, Handle>} profiles
  */
 export function isOwnRecord(record, profiles) {
-	return profiles.get(record.did)?.handle === record.rkey;
+	return speaksFor(profiles, record.did, record.rkey);
 }
 
 /**
@@ -72,7 +87,7 @@ export function byRecent(versions) {
  * Pick the version shown for a company, like a wiki page:
  * the organization's own record, otherwise the most recent edit by anyone.
  * @param {RepoRecord[]} versions
- * @param {Map<string, {handle: string}>} profiles
+ * @param {Map<string, Handle>} profiles
  */
 export function pickVersion(versions, profiles) {
 	return versions.find((v) => isOwnRecord(v, profiles)) || byRecent(versions)[0];
@@ -125,7 +140,7 @@ export function copyRecord(value, createdAt, now = new Date().toISOString()) {
 
 /**
  * @param {RepoRecord[]} versions all records sharing one key
- * @param {Map<string, {handle: string}>} profiles
+ * @param {Map<string, Handle>} profiles
  * @returns {Company}
  */
 export function toCompany(versions, profiles) {

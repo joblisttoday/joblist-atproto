@@ -22,7 +22,10 @@ Four record types, defined in [`lexicons/`](lexicons/today/joblist):
   id, or a careers page). Companies work like wiki pages: anyone can edit one,
   and each person's edit is a record in their own account (with `updatedAt`).
   The app shows:
-  1. the company's own record, if the author's handle is that domain (verified),
+  1. the company's own record, if the author's handle is that domain (verified:
+     the indexer checks it both ways, the domain's DNS `_atproto` record or
+     `/.well-known/atproto-did` naming the account and the account's DID
+     document naming the domain; without the snapshot, the AppView's word),
   2. otherwise the most recently edited version, by anyone.
 
   The company page shows the history (every author's version); anyone can
@@ -80,7 +83,7 @@ Everything happens in the browser:
 | What | How |
 |---|---|
 | Find all records | the relay's `com.atproto.sync.listReposByCollection`, then `com.atproto.repo.listRecords` on each author's PDS |
-| Names and verified handles | the public Bluesky AppView (`app.bsky.actor.getProfiles`) |
+| Names and verified handles | the public Bluesky AppView (`app.bsky.actor.getProfiles`); handles that make an account a company's own are checked again both ways by the indexer ([`indexer/handles.js`](indexer/handles.js)) |
 | Open jobs | each job board's public API (Ashby, Greenhouse, Lever, Personio, Recruitee, Rippling, SmartRecruiters, Workable) |
 | Sign in and write | atproto OAuth (`@atproto/oauth-client-browser`), asking only for the app's record types |
 | Map | MapLibre with OpenFreeMap tiles |

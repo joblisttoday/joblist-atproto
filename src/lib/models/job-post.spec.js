@@ -184,3 +184,12 @@ describe('pay, status and edits', () => {
 		expect(toRecord(form({ status: 'open' }), { page: PAGE, now: NOW }).status).toBeUndefined();
 	});
 });
+
+describe('verified posts', () => {
+	it('are from an account whose handle is the company, unless the indexer found otherwise', () => {
+		const value = { title: 'E', company: 'acme.org', url: 'https://acme.org/jobs/1' };
+		expect(toPost(record(value), new Map([['did:plc:a', { handle: 'acme.org' }]])).verified).toBe(true);
+		expect(toPost(record(value), new Map([['did:plc:a', { handle: 'acme.org', verified: false }]])).verified).toBe(false);
+		expect(toPost(record(value), new Map([['did:plc:a', { handle: 'other.org' }]])).verified).toBe(false);
+	});
+});

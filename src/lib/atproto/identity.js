@@ -41,7 +41,8 @@ export async function resolveDid(actor) {
 }
 
 /**
- * @typedef {{did: string, handle: string, displayName?: string, avatar?: string}} Profile
+ * @typedef {{did: string, handle: string, displayName?: string, avatar?: string, verified?: boolean}} Profile
+ *   verified: set by the indexer in the snapshot (indexer/handles.js), never by the AppView.
  */
 
 /** @type {Map<string, Profile>} */

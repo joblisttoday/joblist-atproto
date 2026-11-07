@@ -1,5 +1,5 @@
 import { safeUrl } from './url.js';
-import { locationPoints } from './company.js';
+import { locationPoints, speaksFor } from './company.js';
 import { toSalary } from '#lib/ats/salary.js';
 import { capRecord } from './limits.js';
 import config from '#lib/data/config.json' with { type: 'json' };
@@ -197,7 +197,7 @@ export function postPageUrl({ did, rkey }) {
 
 /**
  * @param {RepoRecord} record
- * @param {Map<string, {handle: string}>} profiles
+ * @param {Map<string, import('./company.js').Handle>} profiles
  * @returns {JobPost}
  */
 export function toPost(record, profiles) {
@@ -220,7 +220,7 @@ export function toPost(record, profiles) {
 		createdAt: String(v.createdAt || ''),
 		updatedAt: typeof v.updatedAt === 'string' ? v.updatedAt : undefined,
 		expiresAt: String(v.expiresAt || ''),
-		verified: profiles.get(record.did)?.handle === v.company,
+		verified: speaksFor(profiles, record.did, String(v.company || '')),
 		record
 	};
 }

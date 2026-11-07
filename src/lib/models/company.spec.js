@@ -29,6 +29,11 @@ describe('pickVersion', () => {
 		const profiles = new Map([['did:org', { handle: 'acme.org' }]]);
 		expect(pickVersion(versions, profiles).did).toBe('did:org');
 	});
+	it('not when the indexer found its handle is not the domain both ways', () => {
+		const profiles = new Map([['did:org', { handle: 'acme.org', verified: false }]]);
+		expect(pickVersion(versions, profiles).did).toBe('did:b');
+		expect(pickVersion(versions, new Map([['did:org', { handle: 'acme.org', verified: true }]])).did).toBe('did:org');
+	});
 	it('otherwise shows the most recent edit by anyone', () => {
 		expect(pickVersion(versions, new Map()).did).toBe('did:b');
 	});

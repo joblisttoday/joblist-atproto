@@ -18,6 +18,7 @@ import { fetchBoardJobs, firstJobs, recordJobs, toMinute } from './jobs.js';
 import { dateOffers } from './ledger.js';
 import { landingFiles } from './landing.js';
 import { blueskyAccounts } from './bluesky.js';
+import { verifyCompanyHandles } from './handles.js';
 import { isCompanyKey } from '../src/lib/models/landing.js';
 import { postPath } from '../src/lib/models/job-post.js';
 import { findOffices, officeKey } from './offices.js';
@@ -33,6 +34,9 @@ const { profiles } = crawled;
 // Each record within its lexicon's limits, each account within its share: one account cannot bloat the snapshot.
 const { records, dropped } = limitAccounts(crawled.records);
 for (const { did, type, count } of dropped) console.warn(`records: ${count} ${type} records of ${did} left out (over ${config.limits.perAccount[/** @type {keyof typeof config.limits.perAccount} */ (type)]} per account)`);
+// Handles that would make an account speak for a company, checked both ways (not only by the AppView).
+const handles = await verifyCompanyHandles(profiles, records.company, records.job);
+console.log(`handles: ${handles.checked} company handles checked, ${handles.unknown} could not be, not verified: ${handles.failed.join(', ') || 'none'}`);
 const companies = groupCompanies(records.company, profiles);
 console.log(`records: ${records.company.length} company, ${records.list.length} list, ${records.suggestion.length} suggestion, ${records.job.length} job, from ${profiles.size} accounts`);
 
