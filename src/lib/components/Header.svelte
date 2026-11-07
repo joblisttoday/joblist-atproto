@@ -1,5 +1,6 @@
 <script>
 	import Icon from './Icon.svelte';
+	import LocaleSwitch from './LocaleSwitch.svelte';
 	import Logo from './Logo.svelte';
 	import QuickSearch from './QuickSearch.svelte';
 	import { page } from '$app/state';
@@ -31,6 +32,8 @@
 		<!-- The explorer has its own search. -->
 		{#if page.url.pathname !== '/'}<QuickSearch />{/if}
 		<Nav />
+		<!-- Wide screens; phones have it in the account tab (signing in, one's page) and the footer. -->
+		<LocaleSwitch compact />
 	</header>
 	<NetworkStatus />
 </jl-header>
@@ -78,5 +81,10 @@
 	}
 	header > :global(jl-nav) {
 		margin-left: auto;
+	}
+	@media not (min-width: 64rem) {
+		header > :global(jl-locale-switch) {
+			display: none;
+		}
 	}
 </style>

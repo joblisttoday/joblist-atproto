@@ -55,7 +55,8 @@
 	p {
 		margin: 0;
 	}
-	header > :global(menu) {
+	header > :global(menu),
+	header > :global(jl-locale-switch) {
 		grid-column: 1 / -1;
 	}
 </style>

@@ -6,6 +6,7 @@
 	import Companies from '#lib/components/Companies.svelte';
 	import JobItem from '#lib/components/JobItem.svelte';
 	import ListItem from '#lib/components/ListItem.svelte';
+	import LocaleSwitch from '#lib/components/LocaleSwitch.svelte';
 	import MyJobPosts from '#lib/components/MyJobPosts.svelte';
 	import ProfileHeader from '#lib/components/ProfileHeader.svelte';
 	import { resolveDid } from '#lib/atproto/identity.js';
@@ -44,7 +45,10 @@
 	{@const posts = data.posts.filter((p) => p.did === did && (self || isLive(p.record.value)))}
 	<jl-profile self={self || undefined}>
 		<ProfileHeader {did} {handle}>
-			{#if self}<menu><button type="button" onclick={out}>{t('me.signout')}</button></menu>{/if}
+			{#if self}
+				<menu><button type="button" onclick={out}>{t('me.signout')}</button></menu>
+				<LocaleSwitch />
+			{/if}
 		</ProfileHeader>
 
 		<section aria-labelledby="profile-lists">

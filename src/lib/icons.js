@@ -23,6 +23,7 @@ import Briefcase from '@lucide/svelte/icons/briefcase';
 import Footprints from '@lucide/svelte/icons/footprints';
 import House from '@lucide/svelte/icons/house';
 import Inbox from '@lucide/svelte/icons/inbox';
+import Languages from '@lucide/svelte/icons/languages';
 import List from '@lucide/svelte/icons/list';
 import LocateFixed from '@lucide/svelte/icons/locate-fixed';
 import LogIn from '@lucide/svelte/icons/log-in';
@@ -78,7 +79,8 @@ export const icons = {
 	copy: Copy,
 	delete: Trash2,
 	suggestions: Inbox,
-	feed: Rss
+	feed: Rss,
+	language: Languages
 };
 
 /** @typedef {keyof typeof icons} IconName */
