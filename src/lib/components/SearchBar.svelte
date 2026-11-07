@@ -12,11 +12,16 @@
 	 * }}
 	 */
 	let { query = $bindable(''), label, filters, chips, tools } = $props();
+	const id = $props.id();
 </script>
 
 <jl-search-bar>
 	<form role="search" onsubmit={(e) => e.preventDefault()}>
-		<input type="search" bind:value={query} placeholder={label} aria-label={label} enterkeyhint="search" />
+		<!-- Its name stays in sight, small on its edge. -->
+		<jl-search-field>
+			<label for="{id}-query">{label}</label>
+			<input id="{id}-query" type="search" bind:value={query} enterkeyhint="search" />
+		</jl-search-field>
 		<jl-search-chips>
 			<menu aria-label={filters}>{@render chips?.()}</menu>
 			{@render tools?.()}

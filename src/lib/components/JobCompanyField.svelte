@@ -77,7 +77,7 @@
 				{t('post.company.help')}
 				{t('post.company.missing')} <a href={describe}>{t('post.company.describe')}</a>
 			</small>
-			<ul id="{id}-results" aria-label={t('post.company.search')}>
+			<ul id="{id}-results" aria-label={t('post.company.results')}>
 				{#each results as found (found.key)}
 					<li>
 						<button type="button" onclick={() => pick(found)}>
