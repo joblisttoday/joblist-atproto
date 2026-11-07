@@ -25,7 +25,7 @@ test('pages for cities and fields with enough jobs, newest first', () => {
 	jobs.push({ t: 'Posted Designer', u: 'https://c.example', c: 'acme.org', l: 'Berlin', p: '2026-11-07T00:00:00.000Z', s: 'at://did:plc:abc/today.joblist.job/3k' });
 	const files = new Map(landingFiles(jobs, new Map([['acme.org', 'Acme']]), places, '2026-11-07T01:00Z'));
 	const index = files.get('landing/index.json');
-	assert.deepEqual(index.cities, [{ slug: 'berlin', name: 'Berlin', count: many + 1 }]);
+	assert.deepEqual(index.cities, [{ slug: 'berlin', name: 'Berlin', count: many + 1, fields: ['design'] }]);
 	assert.deepEqual(index.fields, [{ slug: 'design', count: many + 1 }]);
 	assert.equal(index.total, many + 2);
 	const berlin = files.get('landing/in/berlin.json');

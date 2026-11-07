@@ -1,3 +1,4 @@
+import config from '../src/lib/data/config.json' with { type: 'json' };
 import { escape } from './html.js';
 
 /**
@@ -11,9 +12,10 @@ export function sitemap(origin, paths) {
 }
 
 /**
- * robots.txt: crawl everything, and where the sitemap is.
+ * robots.txt: crawl everything, and where the sitemaps are: the built pages', and the
+ * pages per city and field (made by the Worker from the latest snapshot).
  * @param {string} origin
  */
 export function robots(origin) {
-	return `User-agent: *\nDisallow:\n\nSitemap: ${origin}/sitemap.xml\n`;
+	return `User-agent: *\nDisallow:\n\nSitemap: ${origin}/sitemap.xml\nSitemap: ${origin}${config.landing.sitemap}\n`;
 }

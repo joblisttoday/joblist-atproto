@@ -14,4 +14,5 @@ test('sitemap escapes URLs', () => {
 
 test('robots points to the sitemap', () => {
 	assert.match(robots('https://joblist.today'), /^Sitemap: https:\/\/joblist\.today\/sitemap\.xml$/m);
+	assert.match(robots('https://joblist.today'), /^Sitemap: https:\/\/joblist\.today\/sitemap-places\.xml$/m);
 });

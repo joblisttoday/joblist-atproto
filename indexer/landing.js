@@ -132,7 +132,12 @@ export function landingFiles(jobs, names, places, generatedAt) {
 			{
 				generatedAt,
 				total: jobs.length,
-				cities: cities.map((slug) => ({ slug, name: nameOf(spellings, slug), count: count(`in/${slug}`) })),
+				cities: cities.map((slug) => ({
+					slug,
+					name: nameOf(spellings, slug),
+					count: count(`in/${slug}`),
+					fields: pairs.filter((p) => p.city === slug).map((p) => p.field)
+				})),
 				fields: fields.map((slug) => ({ slug, count: count(`field/${slug}`) }))
 			}
 		],
