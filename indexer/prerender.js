@@ -109,7 +109,8 @@ for (const record of listRecords) {
 		.filter(Boolean);
 	const open = members.reduce((n, c) => n + (jobCounts.get(c.key) || 0), 0);
 	const path = `/${handleOf(list.did)}/${list.rkey}`;
-	const summary = `${members.length} companies, ${open} open jobs. ${list.description || ''}`.trim();
+	const summary = `${t('list.companies', { count: members.length })} · ${t('jobs.count', { count: open })}. ${list.description || ''}`.trim();
+	// No open job: a page for people, kept out of search results (and the sitemap) until there is one.
 	// Changed when edited, or when one of its companies has a new job.
 	const updated = latest([record.value.updatedAt, record.value.createdAt, ...members.map((c) => newestJob.get(c.key))]);
 	listed.push({ name: list.name, path, count: members.length, did: list.did, updated });
@@ -119,11 +120,12 @@ for (const record of listRecords) {
 			title: `${list.name} · ${config.name}`,
 			description: summary,
 			url: config.url + path,
+			noindex: !open,
 			body: `<h1>${escape(list.name)}</h1><p>${escape(summary)}</p><p>${escape(en['list.by'])} @${escape(handleOf(list.did))}</p><ul>${members
 				.map((c) => `<li><a href="/company/${escape(c.key)}">${escape(c.name)}</a></li>`)
 				.join('')}</ul>${linkList(t('landing.cities'), places.ofPlaces(listPlace(list)?.places || []))}`
 		}),
-		true,
+		open > 0,
 		updated
 	);
 	count++;
@@ -133,7 +135,7 @@ for (const company of companies.values()) {
 	const path = `/company/${company.key}`;
 	const open = jobCounts.get(company.key) || 0;
 	const where = [...new Set(company.locations.map((l) => l.name).filter(Boolean))].join(', ');
-	const description = [company.description, where, open ? `${open} open jobs` : ''].filter(Boolean).join(' · ');
+	const description = [company.description, where, open ? t('jobs.count', { count: open }) : ''].filter(Boolean).join(' · ');
 	// Its jobs' cities and fields, with their pages.
 	const links = places.ofJobs(jobsOf.get(company.key) || []);
 	write(
@@ -143,6 +145,8 @@ for (const company of companies.values()) {
 			description,
 			url: config.url + path,
 			image: bluesky[company.key]?.avatar,
+			// No open job: kept out of search results (and the sitemap) until there is one.
+			noindex: !open,
 			// Its feed, for readers to find (made by the Worker from the latest snapshot).
 			head: [
 				jsonLd(organization(company, config.url + path, bluesky[company.key]?.avatar)),
@@ -158,7 +162,7 @@ for (const company of companies.values()) {
 				.map((/** @type {any} */ j) => `<li><a href="${escape(jobLink(j))}">${escape(j.t)}</a> ${escape(j.l || '')}</li>`)
 				.join('')}</ul>${linkList(t('landing.byCity'), links.cities.slice(0, config.landing.linked))}${linkList(t('landing.byField'), links.fields)}`
 		}),
-		true,
+		open > 0,
 		newestJob.get(company.key) || company.editedAt
 	);
 	count++;

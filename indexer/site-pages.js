@@ -54,7 +54,7 @@ export function sitePages({ companies, lists, profiles, jobCounts, jobTotal, upd
 			listed: true,
 			updated,
 			meta: {
-				title: `${config.name} · ${jobTotal.toLocaleString('en')} open jobs`,
+				title: `${config.name} · ${t('jobs.count', { count: jobTotal })}`,
 				description: welcome,
 				url: url('/'),
 				body: `<h1>${escape(config.name)}</h1><p>${escape(welcome)}</p><p><a href="/companies">${escape(en['companies.title'])}</a> · <a href="/lists">${escape(en['nav.lists'])}</a> · <a href="/in">${escape(t('landing.cities'))}</a> · <a href="/field">${escape(t('landing.fields'))}</a></p>${linkList(t('landing.cities'), places.cities)}${linkList(t('landing.fields'), places.fields)}`
@@ -73,7 +73,7 @@ export function sitePages({ companies, lists, profiles, jobCounts, jobTotal, upd
 				body: `<h1>${escape(en['companies.title'])}</h1><p>${escape(en['companies.intro'])}</p><ul>${hiring
 					.map((c) => {
 						const open = jobCounts.get(c.key);
-						return `<li><a href="/company/${escape(c.key)}">${escape(c.name)}</a>${open ? ` (${open} open jobs)` : ''}</li>`;
+						return `<li><a href="/company/${escape(c.key)}">${escape(c.name)}</a>${open ? ` (${escape(t('jobs.count', { count: open }))})` : ''}</li>`;
 					})
 					.join('')}</ul>`
 			}
@@ -87,7 +87,7 @@ export function sitePages({ companies, lists, profiles, jobCounts, jobTotal, upd
 				description: en['home.intro'],
 				url: url('/lists'),
 				body: `<h1>${escape(en['home.title'])}</h1><p>${escape(en['home.intro'])}</p><ul>${lists
-					.map((l) => `<li><a href="${escape(l.path)}">${escape(l.name)}</a> (${l.count} companies)</li>`)
+					.map((l) => `<li><a href="${escape(l.path)}">${escape(l.name)}</a> (${escape(t('list.companies', { count: l.count }))})</li>`)
 					.join('')}</ul>`
 			}
 		},

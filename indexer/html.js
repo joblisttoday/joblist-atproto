@@ -19,6 +19,19 @@ export function jsonLd(data) {
 }
 
 /**
+ * A text as a search result shows it: without hashtags ("#hiring #rust"), on one line.
+ * @param {string} text
+ */
+export function plain(text) {
+	return text
+		.replace(/(^|\s)#[\p{N}_]*\p{L}[\p{L}\p{N}_]*/gu, '$1')
+		.replace(/\s+/g, ' ')
+		.replace(/\s+([,.;:!?])/g, '$1')
+		.replace(/^[\s·,.;:]+|[\s·,;:]+$/g, '')
+		.trim();
+}
+
+/**
  * The picture of a link preview: the page's own (a company's logo, square), else the site's (wide).
  * @param {string} [image]
  */
@@ -42,7 +55,7 @@ function preview(image) {
  *   image: the page's picture for link previews (default: the site's)
  */
 export function page(template, { title, description, url, body, type = 'website', head: extra = '', noindex = false, image }) {
-	const text = description.slice(0, 300);
+	const text = plain(description).slice(0, 300);
 	const head = [
 		`<title>${escape(title)}</title>`,
 		noindex ? `<meta name="robots" content="noindex">` : '',

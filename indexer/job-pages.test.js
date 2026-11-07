@@ -80,6 +80,14 @@ test("page() keeps $ patterns in text as text", async () => {
 	assert.equal((html.match(/<\/head>/g) || []).length, 1);
 });
 
+test('meta descriptions leave hashtags out', async () => {
+	const { page, plain } = await import('./html.js');
+	assert.equal(plain('We hire! #rust #remote'), 'We hire!');
+	assert.equal(plain('C# developer, issue #12 · Berlin'), 'C# developer, issue #12 · Berlin');
+	const html = page('<html><head></head><body></body></html>', { title: 'T', description: 'Rockets #space', url: 'https://joblist.today/x', body: '' });
+	assert.match(html, /<meta name="description" content="Rockets">/);
+});
+
 test('page() shows the site picture in link previews, or the page\'s own', async () => {
 	const { page } = await import('./html.js');
 	const shell = '<html><head><title>x</title></head><body></body></html>';

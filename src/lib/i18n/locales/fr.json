@@ -472,6 +472,8 @@
 	"landing.cityField": "Emplois à {city} : {field}",
 	"landing.intro": "{count} offres ouvertes, les plus récentes d'abord, tirées des sites carrières des entreprises.",
 	"landing.count": "{count} offres ouvertes",
+	"landing.count.one": "1 offre ouverte",
+	"landing.intro.one": "1 offre ouverte, tirée du site carrières de l'entreprise.",
 	"landing.explore": "Les chercher sur la carte",
 	"landing.follow": "Suivre ces offres",
 	"landing.follow.help": "Un flux (Atom) : ajoutez-le à un lecteur de flux pour voir les nouvelles offres dès qu'elles arrivent.",

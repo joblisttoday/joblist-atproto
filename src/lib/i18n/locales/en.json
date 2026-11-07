@@ -471,6 +471,8 @@
 	"landing.cityField": "{field} jobs in {city}",
 	"landing.intro": "{count} open jobs, the newest first, straight from the companies' own job boards.",
 	"landing.count": "{count} open jobs",
+	"landing.count.one": "1 open job",
+	"landing.intro.one": "1 open job, straight from the company's own job board.",
 	"landing.explore": "Search them on the map",
 	"landing.follow": "Follow these jobs",
 	"landing.follow.help": "A feed (Atom): add it to a feed reader to see the new jobs as they come.",

@@ -28,5 +28,6 @@ test('links to the city a list is about, and to the top ones', () => {
 	assert.equal(placeLinks(index).top(1).cities.length, 1);
 	assert.equal(placeLinks(null).top(5).cities.length, 0);
 	assert.equal(linkList('x', []), '');
+	assert.match(linkList('x', [{ name: 'Jobs in Ulm', path: '/in/ulm', count: 1 }]), /\(1 open job\)/);
 	assert.match(linkList('By city', [{ name: 'Jobs in Berlin', path: '/in/berlin', count: 481 }]), /<h2>By city<\/h2><ul><li><a href="\/in\/berlin">Jobs in Berlin<\/a> \(481 open jobs\)<\/li><\/ul>/);
 });

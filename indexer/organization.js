@@ -1,3 +1,5 @@
+import { countryCode } from './countries.js';
+
 /**
  * @typedef {import('../src/lib/models/company.js').Company} Company
  */
@@ -25,7 +27,7 @@ export function organization(company, pageUrl, logo) {
 		schema.location = places.map((l) => ({
 			'@type': 'Place',
 			name: l.name,
-			address: { '@type': 'PostalAddress', addressLocality: l.name, streetAddress: l.address, addressCountry: l.country }
+			address: { '@type': 'PostalAddress', addressLocality: l.name, streetAddress: l.address, addressCountry: countryCode(l.country) || l.country }
 		}));
 	}
 	return schema;
