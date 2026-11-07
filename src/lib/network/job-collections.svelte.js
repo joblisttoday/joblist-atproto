@@ -3,7 +3,7 @@ import { cleanCollections, fromMarks, readCollectionsFile } from '#lib/models/jo
 import { markKey } from '#lib/models/job-mark.js';
 
 /**
- * The jobs someone keeps (Applied, Hidden and the collections they name), in this
+ * The jobs someone keeps (Saved, Applied, Hidden and the collections they name), in this
  * browser only: job hunting is private, so none of it goes to their (public)
  * atproto repository. Moved between devices by exporting and importing a file.
  * @typedef {import('#lib/models/job-collection.js').Collections} Collections
@@ -41,6 +41,11 @@ function save(state) {
 /** The jobs hidden from results, by markKey. */
 export function hiddenJobs() {
 	return model.collectionOf(kept.state, 'hidden')?.jobs || {};
+}
+
+/** The collections a job is saved in: Saved and the named ones. @param {Job} job */
+export function savedIn(job) {
+	return model.savedIn(kept.state, markKey(job));
 }
 
 /** @param {Job} job */

@@ -8,6 +8,7 @@ import {
 	mergeCollections,
 	namedWith,
 	renameCollection,
+	savedIn,
 	savedJobs,
 	toggleJob
 } from './job-collection.js';
@@ -16,6 +17,25 @@ import { cleanCollections, fromMarks, readCollectionsFile } from './job-collecti
 const job = { title: 'Designer', company: 'Acme', url: 'https://jobs.example/1' };
 
 describe('job collections', () => {
+	it('saves a job in Saved with one tap, beside Applied, and in named collections too', () => {
+		let state = toggleJob(emptyCollections(), 'saved', 'k', job, '2026-01-01');
+		state = toggleJob(state, 'applied', 'k', job, '2026-01-02');
+		expect(collectionOf(state, 'saved')?.jobs.k).toBeDefined();
+		const added = addCollection(state, 'Dream jobs');
+		state = toggleJob(added.state, added.id, 'k', job);
+		expect(savedIn(state, 'k')).toEqual(['saved', added.id]);
+		expect(namedWith(state, 'k')).toEqual([added.id]);
+		expect(deleteCollection(state, 'saved')).toBe(state);
+	});
+
+	it('gives collections kept before Saved existed an empty Saved, keeping their jobs', () => {
+		const old = { collections: [{ id: 'applied', name: '', at: '', jobs: { a: { ...job, at: '2026-01-01' } } }, { id: 'hidden', name: '', at: '', jobs: {} }, { id: 'c1', name: 'Dream', at: '2026-01-01', jobs: {} }] };
+		const { value, dropped } = cleanCollections(old);
+		expect(dropped).toBe(0);
+		expect(value.collections.map((c) => c.id)).toEqual(['saved', 'applied', 'hidden', 'c1']);
+		expect(collectionOf(value, 'applied')?.jobs.a).toBeDefined();
+	});
+
 	it('starts with Applied and Hidden, which exclude each other', () => {
 		let state = toggleJob(emptyCollections(), 'applied', 'k', job, '2026-01-01');
 		expect(collectionOf(state, 'applied')?.jobs.k).toEqual({ ...job, at: '2026-01-01' });
@@ -64,7 +84,7 @@ describe('job collections', () => {
 		expect(read).toEqual(saved);
 		const here = toggleJob(emptyCollections(), 'applied', 'a', job, '2026-01-03T00:00:00Z');
 		const merged = mergeCollections(here, read);
-		expect(merged.collections.map((c) => c.id)).toEqual(['applied', 'hidden', added.id]);
+		expect(merged.collections.map((c) => c.id)).toEqual(['saved', 'applied', 'hidden', added.id]);
 		expect(collectionOf(merged, 'applied')?.jobs.a).toBeDefined();
 	});
 
@@ -74,7 +94,7 @@ describe('job collections', () => {
 		const ok = { title: 'T', company: 'C', url: 'https://a.example', at: '2026-01-01' };
 		expect(() => readCollectionsFile('{')).toThrow('json');
 		expect(() => readCollectionsFile('{"collections": []}')).toThrow('format');
-		expect(readCollectionsFile(file([named({ k: ok })])).collections).toHaveLength(3);
+		expect(readCollectionsFile(file([named({ k: ok })])).collections).toHaveLength(4);
 		expect(() => readCollectionsFile(file([named({ k: { ...ok, url: 'javascript:alert(1)' } })]))).toThrow('invalid');
 		expect(() => readCollectionsFile(file([named({ k: { ...ok, title: 7 } })]))).toThrow('invalid');
 		expect(() => readCollectionsFile(file([named({ k: { ...ok, title: 'x'.repeat(5000) } })]))).toThrow('invalid');
