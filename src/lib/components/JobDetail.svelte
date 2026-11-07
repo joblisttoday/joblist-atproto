@@ -3,6 +3,7 @@
 	import config from '#lib/data/config.json';
 	import CompanyMap from './CompanyMap.svelte';
 	import JobItem from './JobItem.svelte';
+	import JobSave from './JobSave.svelte';
 	import { distanceKm } from '#lib/models/distance.js';
 	import { offerCount } from '#lib/models/job.js';
 	import { postPath } from '#lib/models/job-post.js';
@@ -64,6 +65,7 @@
 							<a href={apply} target={job.posted ? undefined : '_blank'} rel={job.posted ? undefined : 'noopener'}>{t('explore.apply')}{#if !job.posted}<Icon name="external" />{/if}</a>
 							<button type="button" aria-pressed={mark === 'applied'} onclick={() => toggleMark(job, 'applied', name)}><Icon name="applied" /> {t(mark === 'applied' ? 'marks.applied' : 'marks.apply')}</button>
 							<button type="button" onclick={hide}><Icon name="hide" /> {t('marks.hide')}</button>
+							<JobSave {job} company={name} />
 						</menu>
 					{/snippet}
 				</JobItem>

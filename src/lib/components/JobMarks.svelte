@@ -1,21 +1,23 @@
 <script>
 	import Icon from './Icon.svelte';
 	import config from '#lib/data/config.json';
-	import { marked } from '#lib/models/job-mark.js';
-	import { marks, unmark } from '#lib/network/job-marks.svelte.js';
+	import { isBuiltin, savedJobs } from '#lib/models/job-collection.js';
+	import { removeJob } from '#lib/network/job-collections.svelte.js';
 	import { ago } from '#lib/i18n/dates.js';
 	import { i18n, t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * The jobs someone applied to, or hid: each opens in the explorer, or is unmarked.
-	 * @type {{mark: import('#lib/models/job-mark.js').Mark}}
+	 * The jobs of one collection (Applied, Hidden or a named one): each opens in the
+	 * explorer, or leaves the collection.
+	 * @type {{collection: import('#lib/models/job-collection.js').Collection}}
 	 */
-	let { mark } = $props();
-	const list = $derived(marked(marks.all, mark));
-	const undo = $derived(mark === 'hidden' ? 'marks.unhide' : 'marks.remove');
+	let { collection } = $props();
+	const list = $derived(savedJobs(collection));
+	const kind = $derived(isBuiltin(collection.id) ? collection.id : 'named');
+	const undo = $derived(kind === 'hidden' ? 'marks.unhide' : kind === 'applied' ? 'marks.remove' : 'collections.remove');
 </script>
 
-<jl-job-marks {mark}>
+<jl-job-marks mark={kind}>
 	{#if list.length}
 		<ul>
 			{#each list as [key, job] (key)}
@@ -24,14 +26,14 @@
 						<strong>{job.title}</strong>
 						<small>{job.company} · {ago(Date.parse(job.at), i18n.locale)}</small>
 					</a>
-					<button type="button" onclick={() => unmark(key)}>
-						<Icon name={mark === 'hidden' ? 'unhide' : 'close'} label={t(undo, { name: job.title })} />
+					<button type="button" onclick={() => removeJob(collection.id, key)}>
+						<Icon name={kind === 'hidden' ? 'unhide' : 'close'} label={t(undo, { name: job.title })} />
 					</button>
 				</li>
 			{/each}
 		</ul>
 	{:else}
-		<p>{t(`marks.none.${mark}`)}</p>
+		<p>{t(`marks.none.${kind}`)}</p>
 	{/if}
 </jl-job-marks>
 

@@ -8,7 +8,8 @@ them today and what is missing. New features start from one of them.
 ### Near home
 Wants a job they can reach by bike or on foot.
 - **Today:** the explorer opens on the map; "Near me" with bike or walking
-  minutes, a map area, saved searches, applied and hidden marks.
+  minutes, a map area, saved searches, applied and hidden jobs, private
+  named collections of jobs ("Dream jobs") with a file to move them.
 - **Missing:** being told when a new job appears near them without opening
   the site; real bike routes (today: straight-line distance).
 
