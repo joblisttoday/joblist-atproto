@@ -18,6 +18,9 @@ test('the first run believes past dates; later runs date new versions when first
 	assert.deepEqual(second.records.map((r) => r.seenAt), ['2025-01-01T00:00:00.000Z', later]);
 	assert.equal(second.added, 1);
 	assert.equal(second.ledger.accounts['did:plc:x'], later);
+	// The first run cannot know which accounts were new: it marks nothing.
+	const human = version('did:plc:h', 'c7', { createdAt: '2025-01-02T00:00:00Z' });
+	assert.equal(seeVersions([old, human], [], {}, NOW, 7).newAuthors, 0);
 });
 
 test('a new account replacing an older version by someone else is marked', () => {
@@ -32,6 +35,9 @@ test('a new account replacing an older version by someone else is marked', () =>
 		['did:plc:est', false]
 	]);
 	assert.equal(newAuthors, 1);
+	// Kept on later runs, even once the account is no longer new.
+	const result = seeVersions([old, fresh, established], [], seeVersions([old, fresh, established], [], ledger, NOW, 7).ledger, '2027-01-01T00:00:00.000Z', 7);
+	assert.deepEqual(result.records.map((r) => Boolean(r.newAuthor)), [false, true, false]);
 	// A new account describing a company nobody else did is not marked.
 	const alone = { ...version('did:plc:new', 'c3', {}), rkey: 'other.org', uri: 'at://did:plc:new/today.joblist.company/other.org' };
 	assert.equal(seeVersions([alone], [], ledger, NOW, 7).records[0].newAuthor, undefined);
