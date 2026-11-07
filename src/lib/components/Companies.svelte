@@ -12,10 +12,12 @@
 	 *   searchable?: boolean,
 	 *   query?: string,
 	 *   counts?: Map<string, number>,
-	 *   aside?: import('svelte').Snippet<[import('#lib/models/company.js').Company]>
+	 *   aside?: import('svelte').Snippet<[import('#lib/models/company.js').Company]>,
+	 *   layout?: 'grid' | 'list'
 	 * }}
+	 *   layout: cards in columns (grid), or one company a row across the width (list).
 	 */
-	let { companies, searchable = true, query = $bindable(''), counts, aside } = $props();
+	let { companies, searchable = true, query = $bindable(''), counts, aside, layout = 'grid' } = $props();
 	const PAGE = config.companies.pageSize;
 	let shown = $state(PAGE);
 	// Only the companies on Bluesky (their domain is their handle).
@@ -34,7 +36,7 @@
 	});
 </script>
 
-<jl-companies>
+<jl-companies {layout}>
 	{#if searchable}
 		<input
 			type="search"
@@ -75,6 +77,9 @@
 	}
 	p {
 		margin: var(--space-s) 0 0;
+	}
+	jl-companies[layout='list'] ul {
+		grid-template-columns: 1fr;
 	}
 	ul {
 		display: grid;

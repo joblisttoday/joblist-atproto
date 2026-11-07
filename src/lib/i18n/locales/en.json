@@ -315,6 +315,9 @@
 	"locale.fr": "Français",
 
 	"companies.found": "{count} found",
+	"companies.hiring": "Hiring",
+	"companies.filters": "Show only",
+	"companies.count": "{count} of {total} companies",
 	"companies.more": "Show {count} more ({left} left)",
 	"companies.title": "Companies",
 	"companies.add": "Add a company",

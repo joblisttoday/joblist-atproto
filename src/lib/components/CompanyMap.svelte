@@ -5,9 +5,10 @@
 
 	/**
 	 * Companies' places on a map, or `places` given as they are (a job's).
-	 * @type {{companies?: import('#lib/models/company.js').Company[], places?: import('#lib/map/companies-map.js').Point[], small?: boolean}}
+	 * full: the map fills what holds it (a page given to the map).
+	 * @type {{companies?: import('#lib/models/company.js').Company[], places?: import('#lib/map/companies-map.js').Point[], small?: boolean, full?: boolean}}
 	 */
-	let { companies = [], places, small = false } = $props();
+	let { companies = [], places, small = false, full = false } = $props();
 
 	const points = $derived(
 		places ?? companies.flatMap((company) => mapPoints(company).map((p) => ({ ...p, company })))
@@ -19,7 +20,7 @@
 	}
 </script>
 
-<jl-map small={small || undefined}>
+<jl-map small={small || undefined} full={full || undefined}>
 	{#if points.length}
 		{#key points}
 			<figure {@attach map} aria-label={t('map.label', { count: points.length })}></figure>
@@ -41,6 +42,13 @@
 		border: var(--border);
 		border-radius: var(--radius);
 		overflow: hidden;
+	}
+	jl-map[full],
+	jl-map[full] figure {
+		height: 100%;
+		margin: 0;
+		border: 0;
+		border-radius: 0;
 	}
 	jl-map[small] figure {
 		height: var(--map-height-small);

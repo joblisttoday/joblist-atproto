@@ -4,10 +4,10 @@
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * Jobs as a list, a grid of cards (wide screens) or on the map. The choice is kept.
-	 * @type {{view: import('#lib/navigation/explore-view.js').ExploreView}}
+	 * A list, a grid of cards (wide screens) or the map. The choice is kept, per page.
+	 * @type {{view: import('#lib/navigation/explore-view.js').ExploreView, page?: string}}
 	 */
-	let { view = $bindable() } = $props();
+	let { view = $bindable(), page = 'jobs' } = $props();
 	const views = /** @type {const} */ (['list', 'grid', 'map']);
 	/** @type {Record<string, import('#lib/icons.js').IconName>} */
 	const icons = { list: 'listView', grid: 'gridView', map: 'map' };
@@ -15,11 +15,11 @@
 	/** @param {import('#lib/navigation/explore-view.js').ExploreView} next */
 	function show(next) {
 		view = next;
-		writeView(next);
+		writeView(next, page);
 	}
 </script>
 
-<jl-view-switch role="group" aria-label={t('explore.view')}>
+<jl-view-switch role="group" aria-label={t('explore.view')} {view}>
 	{#each views as name (name)}
 		<button type="button" data-view={name} aria-pressed={view === name} onclick={() => show(name)} title={t(`explore.view.${name}`)}>
 			<Icon name={icons[name]} />
@@ -62,10 +62,14 @@
 		clip-path: inset(50%);
 		white-space: nowrap;
 	}
-	/* Phones: no grid, cards are a list there. */
+	/* Phones: no grid, cards are a list there (and the list shows as chosen). */
 	@media not (min-width: 64rem) {
 		button[data-view='grid'] {
 			display: none;
+		}
+		jl-view-switch[view='grid'] button[data-view='list'] {
+			background: var(--color-fg);
+			color: var(--color-bg);
 		}
 	}
 </style>

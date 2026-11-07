@@ -316,6 +316,9 @@
 	"locale.fr": "Français",
 
 	"companies.found": "{count} trouvées",
+	"companies.hiring": "Recrutent",
+	"companies.filters": "Seulement",
+	"companies.count": "{count} entreprises sur {total}",
 	"companies.more": "Afficher {count} de plus ({left} restantes)",
 	"companies.title": "Entreprises",
 	"companies.add": "Ajouter une entreprise",
