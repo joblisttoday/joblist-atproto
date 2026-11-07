@@ -1,0 +1,38 @@
+# Publishes joblist's lexicons (lexicons/) as com.atproto.lexicon.schema records in
+# joblist.today's account (scripts/publish-lexicons.js), by hand: Actions → lexicons → Run.
+# A dry run (what would be written) unless "write" is ticked.
+# Secrets: JOBLIST_HANDLE, JOBLIST_APP_PASSWORD (an app password of the account the
+# _lexicon.joblist.today DNS record names; the script refuses any other).
+name: lexicons
+
+on:
+  workflow_dispatch:
+    inputs:
+      write:
+        description: Write the records (else a dry run)
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Publish
+        env:
+          JOBLIST_HANDLE: ${{ secrets.JOBLIST_HANDLE }}
+          JOBLIST_APP_PASSWORD: ${{ secrets.JOBLIST_APP_PASSWORD }}
+          WRITE: ${{ inputs.write }}
+        run: |
+          if [ "$WRITE" = "true" ]; then node scripts/publish-lexicons.js --write; else node scripts/publish-lexicons.js; fi

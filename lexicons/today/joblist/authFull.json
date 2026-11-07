@@ -5,14 +5,27 @@
 		"main": {
 			"type": "permission-set",
 			"title": "joblist",
-			"title:lang": { "fr": "joblist" },
-			"detail": "Describe companies, make and curate lists of companies, suggest companies for lists and post job offers, in your own account.",
-			"detail:lang": { "fr": "Décrire des entreprises, créer et organiser des listes d'entreprises, en proposer pour des listes et publier des offres d'emploi, dans votre propre compte." },
+			"title:lang": {
+				"fr": "joblist",
+				"de": "joblist",
+				"es": "joblist"
+			},
+			"detail": "Describe organizations, make and curate lists of them, suggest organizations for lists and post job offers, in your own account.",
+			"detail:lang": {
+				"fr": "Décrire des organisations, créer et organiser des listes, en proposer pour des listes et publier des offres d'emploi, dans votre propre compte.",
+				"de": "Organisationen beschreiben, Listen erstellen und pflegen, Organisationen für Listen vorschlagen und Stellenangebote veröffentlichen, in deinem eigenen Konto.",
+				"es": "Describir organizaciones, crear y curar listas, sugerir organizaciones para listas y publicar ofertas de empleo, en tu propia cuenta."
+			},
 			"permissions": [
 				{
 					"type": "permission",
 					"resource": "repo",
-					"collection": ["today.joblist.company", "today.joblist.list", "today.joblist.job", "today.joblist.suggestion"]
+					"collection": [
+						"today.joblist.company",
+						"today.joblist.list",
+						"today.joblist.job",
+						"today.joblist.suggestion"
+					]
 				}
 			]
 		}
