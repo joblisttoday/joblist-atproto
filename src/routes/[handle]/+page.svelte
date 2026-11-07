@@ -10,12 +10,20 @@
 	import ProfileHeader from '#lib/components/ProfileHeader.svelte';
 	import { resolveDid } from '#lib/atproto/identity.js';
 	import { session, signOut } from '#lib/auth/session.svelte.js';
-	import { data } from '#lib/network/network.svelte.js';
+	import { data, handleOf, membersOf } from '#lib/network/network.svelte.js';
+	import { jobCounts } from '#lib/network/job-counts.svelte.js';
+	import { findLists, listStats } from '#lib/models/list-filters.js';
 	import { isLive, toJob } from '#lib/models/job-post.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	const handle = $derived(page.params.handle || '');
 	const did = $derived(resolveDid(handle));
+
+	/** @param {import('#lib/models/list.js').List[]} lists */
+	function usefulFirst(lists) {
+		const stats = new Map(lists.map((l) => [l.uri, listStats(membersOf(l).members.map((m) => m.key), jobCounts())]));
+		return findLists(lists, { query: '', hiring: false, open: false, mine: false }, stats, { handleOf });
+	}
 
 	async function out() {
 		await signOut();
@@ -29,7 +37,8 @@
 	<ProfileHeader {handle} />
 {:then did}
 	{@const self = session.did === did}
-	{@const lists = data.lists.filter((l) => l.did === did)}
+	<!-- The most useful first, as on the lists page. -->
+	{@const lists = usefulFirst(data.lists.filter((l) => l.did === did))}
 	{@const companies = [...data.companies.values()].filter((c) => c.versions.some((v) => v.did === did))}
 	<!-- Their own page shows expired offers too, to renew or delete them. -->
 	{@const posts = data.posts.filter((p) => p.did === did && (self || isLive(p.record.value)))}
@@ -82,5 +91,11 @@
 <style>
 	jl-profile {
 		display: block;
+	}
+	/* Lists in as many columns as fit, like the companies under them. */
+	section[aria-labelledby='profile-lists'] > ul {
+		display: grid;
+		grid-template-columns: var(--columns);
+		column-gap: var(--column-gap);
 	}
 </style>
