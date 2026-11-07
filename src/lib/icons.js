@@ -10,6 +10,8 @@ import Bike from '@lucide/svelte/icons/bike';
 import Bookmark from '@lucide/svelte/icons/bookmark';
 import BookmarkCheck from '@lucide/svelte/icons/bookmark-check';
 import Check from '@lucide/svelte/icons/check';
+import Copy from '@lucide/svelte/icons/copy';
+import Ellipsis from '@lucide/svelte/icons/ellipsis';
 import CircleCheck from '@lucide/svelte/icons/circle-check';
 import Eye from '@lucide/svelte/icons/eye';
 import EyeOff from '@lucide/svelte/icons/eye-off';
@@ -17,12 +19,16 @@ import Building2 from '@lucide/svelte/icons/building-2';
 import Briefcase from '@lucide/svelte/icons/briefcase';
 import Footprints from '@lucide/svelte/icons/footprints';
 import House from '@lucide/svelte/icons/house';
+import Inbox from '@lucide/svelte/icons/inbox';
 import List from '@lucide/svelte/icons/list';
 import LocateFixed from '@lucide/svelte/icons/locate-fixed';
 import LogIn from '@lucide/svelte/icons/log-in';
 import Plus from '@lucide/svelte/icons/plus';
 import ScanSearch from '@lucide/svelte/icons/scan-search';
 import Search from '@lucide/svelte/icons/search';
+import Pencil from '@lucide/svelte/icons/pencil';
+import Share2 from '@lucide/svelte/icons/share-2';
+import Trash2 from '@lucide/svelte/icons/trash-2';
 import MapPin from '@lucide/svelte/icons/map-pin';
 import MapIcon from '@lucide/svelte/icons/map';
 import LayoutGrid from '@lucide/svelte/icons/layout-grid';
@@ -58,7 +64,13 @@ export const icons = {
 	place: MapPin,
 	map: MapIcon,
 	listView: Rows3,
-	gridView: LayoutGrid
+	gridView: LayoutGrid,
+	more: Ellipsis,
+	share: Share2,
+	edit: Pencil,
+	copy: Copy,
+	delete: Trash2,
+	suggestions: Inbox
 };
 
 /** @typedef {keyof typeof icons} IconName */

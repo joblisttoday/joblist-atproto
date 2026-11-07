@@ -8,10 +8,10 @@
 	const RESULTS = 8;
 
 	/**
-	 * "Suggest a company" for someone else's list, for a signed-in person.
-	 * @type {{list: import('#lib/models/list.js').List, taken: Set<string>, onclose: () => void}}
+	 * "Suggest a company" for someone else's list, for a signed-in person (in a sheet, which closes it).
+	 * @type {{list: import('#lib/models/list.js').List, taken: Set<string>}}
 	 */
-	let { list, taken, onclose } = $props();
+	let { list, taken } = $props();
 
 	// Back from describing a new company: it comes preselected (?suggest=key).
 	const preselected = page.url.searchParams.get('suggest') || '';
@@ -95,7 +95,6 @@
 					{/each}
 				</ul>
 			{/if}
-			<menu><button type="button" onclick={onclose}>{t('suggestion.close')}</button></menu>
 		{/if}
 	</section>
 </jl-list-suggest>
@@ -103,16 +102,9 @@
 <style>
 	jl-list-suggest {
 		display: block;
-		margin: var(--space-m) 0;
-		padding: 0 var(--space-m);
-		border: var(--border);
-		border-radius: var(--radius);
-	}
-	section {
-		padding: var(--space-s) 0 0;
 	}
 	label:first-of-type {
-		margin-top: var(--space-s);
+		margin-top: 0;
 	}
 	ul {
 		margin: var(--space-s) 0 0;

@@ -5,7 +5,7 @@
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * Companies others suggested for a closed list, for its author to accept or dismiss.
+	 * Companies others suggested for a closed list, for its author to accept or dismiss (in a sheet, which names them).
 	 * @type {{list: import('#lib/models/list.js').List, pending: import('#lib/models/suggestion.js').Suggestion[]}}
 	 */
 	let { list, pending } = $props();
@@ -32,8 +32,7 @@
 </script>
 
 <jl-list-pending>
-	<h2 id="list-pending">{t('suggestion.pending', { count: pending.length })}</h2>
-	<ul aria-labelledby="list-pending">
+	<ul>
 		{#each pending as suggestion (suggestion.uri)}
 			{@const company = data.companies.get(suggestion.company)}
 			<li>
@@ -68,14 +67,6 @@
 <style>
 	jl-list-pending {
 		display: block;
-		margin: var(--space-m) 0;
-		padding: var(--space-s) var(--space-m);
-		border: var(--border);
-		border-radius: var(--radius);
-		background: var(--color-soft);
-	}
-	h2 {
-		margin-top: var(--space-s);
 	}
 	li {
 		padding: var(--space-s) 0;
