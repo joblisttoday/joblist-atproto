@@ -17,7 +17,9 @@
 	import { loadList } from '#lib/network/load-list.js';
 	import { jobCounts, listJobStats, listJobStatsEverywhere, listJobStatsHere } from '#lib/network/job-counts.svelte.js';
 	import { listPlace } from '#lib/models/list-place.js';
-	import { readView } from '#lib/navigation/explore-view.js';
+	import { readView, viewParam } from '#lib/navigation/explore-view.js';
+	import { keepAddress, readAddress } from '#lib/navigation/address.js';
+	import { fromParams, searchState } from '#lib/models/saved-search.js';
 	import { formatNumber, t } from '#lib/i18n/index.svelte.js';
 
 	/**
@@ -41,16 +43,17 @@
 			.catch(() => (fetched = null));
 	});
 
-	const params = page.url.searchParams;
 	// ?suggest opens "Suggest a company" (?suggest=key: back from describing it, or from signing in).
-	let suggesting = $state(params.has('suggest'));
+	let suggesting = $state(page.url.searchParams.has('suggest'));
+	// What is shown, its search and its view are in the address (after the "#").
+	const params = readAddress(['tab', 'everywhere', 'view', 'q', 'where', 'remote', 'pay']);
 	let reviewing = $state(false);
 	// Its jobs first; ?tab=companies its companies, ?tab=map its companies on the map (older links).
 	/** @type {'jobs' | 'companies'} */
 	let show = $state(params.get('tab') === 'companies' || params.get('tab') === 'map' ? 'companies' : 'jobs');
-	let view = $state(params.get('tab') === 'map' ? 'map' : readView('list', 'list'));
+	let view = $state(params.get('tab') === 'map' ? 'map' : viewParam(params.get('view')) || readView('list', 'list'));
 	/** @type {import('#lib/models/job.js').JobFilters} */
-	let filters = $state({ query: '', where: '', remote: '' });
+	let filters = $state(fromParams(params));
 	let offers = $state(0);
 	// A list about a place shows its companies' jobs there, unless asked for all of them (?everywhere).
 	const place = $derived(list ? listPlace(list) : null);
@@ -88,14 +91,12 @@
 	});
 
 	// What is shown stays in the address, to share or come back to.
-	$effect(() => {
-		const next = new URL(location.href);
-		if (show === 'companies') next.searchParams.set('tab', 'companies');
-		else next.searchParams.delete('tab');
-		if (place && everywhere) next.searchParams.set('everywhere', '');
-		else next.searchParams.delete('everywhere');
-		if (next.href !== location.href) replaceState(next, {});
-	});
+	$effect(() =>
+		keepAddress(
+			{ tab: show === 'companies' ? 'companies' : '', everywhere: Boolean(place && everywhere), view: view === 'list' ? '' : view, ...searchState(filters), area: '' },
+			(url) => replaceState(url, {})
+		)
+	);
 </script>
 
 <svelte:head><title>{list?.name || rkey} · {config.name}</title></svelte:head>

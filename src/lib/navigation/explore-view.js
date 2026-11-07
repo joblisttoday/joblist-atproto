@@ -15,6 +15,15 @@ export function readView(page = 'jobs', fallback = 'map') {
 	}
 }
 
+/**
+ * A view an address asks for: null when it is none.
+ * @param {string | null} text
+ * @returns {ExploreView | null}
+ */
+export function viewParam(text) {
+	return text === 'list' || text === 'grid' || text === 'map' ? text : null;
+}
+
 /** @param {ExploreView} view @param {string} page */
 export function writeView(view, page = 'jobs') {
 	try {

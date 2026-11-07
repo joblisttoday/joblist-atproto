@@ -1,7 +1,6 @@
 <script>
 	import Empty from '#lib/components/Empty.svelte';
 	import Icon from '#lib/components/Icon.svelte';
-	import { page } from '$app/state';
 	import { replaceState } from '$app/navigation';
 	import config from '#lib/data/config.json';
 	import CompanyMap from '#lib/components/CompanyMap.svelte';
@@ -15,7 +14,8 @@
 	import { session } from '#lib/auth/session.svelte.js';
 	import { data, handleOf, membersOf, network } from '#lib/network/network.svelte.js';
 	import { listJobStats } from '#lib/network/job-counts.svelte.js';
-	import { readView } from '#lib/navigation/explore-view.js';
+	import { readView, viewParam } from '#lib/navigation/explore-view.js';
+	import { keepAddress, readAddress } from '#lib/navigation/address.js';
 	import { formatNumber, t } from '#lib/i18n/index.svelte.js';
 
 	/**
@@ -23,11 +23,13 @@
 	 * open to all, one's own, and how to show them), the lists using the whole screen under it,
 	 * the most useful first (most open jobs). The map shows the companies of the lists found.
 	 */
-	let query = $state(page.url.searchParams.get('q') || '');
-	let hiring = $state(false);
-	let open = $state(false);
-	let mine = $state(false);
-	let view = $state(readView('lists', 'grid'));
+	// The search and the view are in the address (after the "#").
+	const params = readAddress(['q', 'hiring', 'open', 'mine', 'view']);
+	let query = $state(params.get('q') || '');
+	let hiring = $state(params.has('hiring'));
+	let open = $state(params.has('open'));
+	let mine = $state(params.has('mine'));
+	let view = $state(viewParam(params.get('view')) || readView('lists', 'grid'));
 
 	/** The keys of each list's companies, by list uri. */
 	const members = $derived(new Map(data.lists.map((l) => [l.uri, membersOf(l).members.map((m) => m.key)])));
@@ -45,13 +47,8 @@
 		return [...keys].map((key) => data.companies.get(key)).filter((c) => c !== undefined);
 	});
 
-	// The search stays in the address, to share or come back to.
-	$effect(() => {
-		const next = new URL(location.href);
-		if (query.trim()) next.searchParams.set('q', query.trim());
-		else next.searchParams.delete('q');
-		if (next.href !== location.href) replaceState(next, {});
-	});
+	// The search and the view stay in the address, to share or come back to.
+	$effect(() => keepAddress({ q: query, hiring, open, mine, view: view === 'grid' ? '' : view }, (url) => replaceState(url, {})));
 </script>
 
 <svelte:head><title>{t('nav.lists')} · {config.name}</title></svelte:head>

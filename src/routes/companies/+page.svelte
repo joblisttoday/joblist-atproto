@@ -1,7 +1,6 @@
 <script>
 	import Empty from '#lib/components/Empty.svelte';
 	import Icon from '#lib/components/Icon.svelte';
-	import { page } from '$app/state';
 	import { replaceState } from '$app/navigation';
 	import config from '#lib/data/config.json';
 	import Companies from '#lib/components/Companies.svelte';
@@ -15,19 +14,21 @@
 	import { data } from '#lib/network/network.svelte.js';
 	import { allAccounts } from '#lib/network/accounts.svelte.js';
 	import { jobCounts } from '#lib/network/job-counts.svelte.js';
-	import { readView } from '#lib/navigation/explore-view.js';
+	import { readView, viewParam } from '#lib/navigation/explore-view.js';
+	import { keepAddress, readAddress } from '#lib/navigation/address.js';
 	import { formatNumber, t } from '#lib/i18n/index.svelte.js';
 
 	/**
 	 * Every company, like the jobs page: a search bar at the top (words, hiring,
 	 * on Bluesky, and how to show them), the companies using the whole screen under it.
 	 */
-	const params = page.url.searchParams;
-	// A tag or place link can open this page already searched (?q=…); ?tab=map is the map.
+	// The search and the view are in the address (after the "#"): a tag link opens it searched
+	// (/companies#q=…); ?tab=map is the map (older links).
+	const params = readAddress(['q', 'hiring', 'bluesky', 'view', 'tab']);
 	let query = $state(params.get('q') || '');
-	let hiring = $state(false);
-	let bluesky = $state(false);
-	let view = $state(params.get('tab') === 'map' ? 'map' : readView('companies', 'grid'));
+	let hiring = $state(params.has('hiring'));
+	let bluesky = $state(params.has('bluesky'));
+	let view = $state(params.get('tab') === 'map' ? 'map' : viewParam(params.get('view')) || readView('companies', 'grid'));
 
 	const companies = $derived([...data.companies.values()]);
 	// How many jobs each company has open, as of the last snapshot.
@@ -41,14 +42,8 @@
 	// Adding a company starts from what was searched.
 	const addHref = $derived(query.trim() ? `/add?${new URLSearchParams({ url: query.trim() })}` : '/add');
 
-	// The search stays in the address, to share or come back to.
-	$effect(() => {
-		const next = new URL(location.href);
-		if (query.trim()) next.searchParams.set('q', query.trim());
-		else next.searchParams.delete('q');
-		next.searchParams.delete('tab');
-		if (next.href !== location.href) replaceState(next, {});
-	});
+	// The search and the view stay in the address, to share or come back to.
+	$effect(() => keepAddress({ q: query, hiring, bluesky, view: view === 'grid' ? '' : view, tab: '' }, (url) => replaceState(url, {})));
 </script>
 
 <svelte:head><title>{t('companies.title')} · {config.name}</title></svelte:head>

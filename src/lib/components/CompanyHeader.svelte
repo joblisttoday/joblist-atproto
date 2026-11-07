@@ -38,7 +38,7 @@
 		<CompanyInvite {company} field="description" />
 		{#if company.tags.length}
 			<ul aria-label={t('form.tags')}>
-				{#each company.tags as tag (tag)}<li><a href="/companies?q={encodeURIComponent(tag)}">{tag}</a></li>{/each}
+				{#each company.tags as tag (tag)}<li><a href="/companies#q={encodeURIComponent(tag)}">{tag}</a></li>{/each}
 			</ul>
 		{/if}
 		<CompanyInvite {company} field="tags" />

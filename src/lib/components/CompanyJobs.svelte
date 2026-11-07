@@ -5,10 +5,13 @@
 	import Jobs from './Jobs.svelte';
 	import JobsMap from './JobsMap.svelte';
 	import ViewSwitch from './ViewSwitch.svelte';
+	import { untrack } from 'svelte';
 	import config from '#lib/data/config.json';
 	import { page } from '$app/state';
 	import { pushState, replaceState } from '$app/navigation';
-	import { readView } from '#lib/navigation/explore-view.js';
+	import { readView, viewParam } from '#lib/navigation/explore-view.js';
+	import { addressOf, keepAddress, readAddress } from '#lib/navigation/address.js';
+	import { fromParams, searchState } from '#lib/models/saved-search.js';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { isCompanyKey } from '#lib/models/landing.js';
 
@@ -20,9 +23,13 @@
 	 */
 	let { company } = $props();
 
+	// Its search, its view and the job open are in the address (after the "#").
+	const params = readAddress(['q', 'where', 'remote', 'pay', 'view', config.jobs.jobParam]);
 	/** @type {import('#lib/models/job.js').JobFilters} */
-	let filters = $state({ query: '', where: '', remote: '', pay: false, near: null, within: 0 });
-	let view = $state(readView('company', 'list'));
+	let filters = $state({ ...fromParams(params), near: null, within: 0 });
+	let view = $state(viewParam(params.get('view')) || readView('company', 'list'));
+	/** @param {string} [job] */
+	const stateOf = (job) => ({ ...searchState(filters), area: '', view: view === 'list' ? '' : view, [config.jobs.jobParam]: job });
 	/** @type {import('#lib/ats/job.js').Job[]} */
 	let jobs = $state.raw([]);
 	/** @type {import('#lib/ats/job.js').Job[]} */
@@ -39,9 +46,7 @@
 
 	/** @param {import('#lib/ats/job.js').Job} job */
 	function select(job) {
-		const next = new URL(location.href);
-		next.searchParams.set(config.jobs.jobParam, job.url);
-		pushState(next, { job: $state.snapshot(job) });
+		pushState(addressOf(stateOf(job.url)), { job: $state.snapshot(job) });
 	}
 
 	function back() {
@@ -49,13 +54,21 @@
 	}
 
 	// Opened from a link to one of its jobs: open it once the jobs are read.
-	let linked = new URLSearchParams(location.search).get(config.jobs.jobParam);
+	let linked = params.get(config.jobs.jobParam);
 	$effect(() => {
 		if (!linked || !session.ready) return;
 		const job = jobs.find((j) => j.url === linked);
 		if (!job && (busy || !jobs.length)) return;
 		linked = null;
 		if (job) replaceState(location.href, { job: $state.snapshot(job) });
+	});
+
+	// The search and the view stay in the address, with the job open (once the session is ready:
+	// a sign-in comes back with its own answer).
+	$effect(() => {
+		if (!session.ready) return;
+		const open = untrack(() => selected?.url);
+		keepAddress(stateOf(open), (url) => replaceState(url, untrack(() => page.state)));
 	});
 </script>
 
