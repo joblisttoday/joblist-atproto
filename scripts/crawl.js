@@ -8,7 +8,8 @@
  *     node scripts/crawl.js --write              # also write the crawler's versions
  *
  * In order: (a) health check of every company's shown version, (b) repairs,
- * (c) new companies from lists and hiring posts, (d) the crawler's writes.
+ * and boards for companies on Bluesky that have none, (c) new companies from
+ * lists and hiring posts, (d) the crawler's writes.
  * Rules and sources: docs/crawler.md.
  */
 import { mkdirSync, writeFileSync } from 'node:fs';
@@ -18,6 +19,7 @@ import { mapLimit } from '../src/lib/atproto/xrpc.js';
 import { crawlRecords } from '../indexer/crawl.js';
 import { suggest } from '../indexer/suggest.js';
 import { applyWrites, botDid, botSession } from './lib/bot.js';
+import { companiesToConnect, connectBoard, loadBluesky, mergeConnection } from './lib/connect.js';
 import { discoverCompany } from './lib/discover.js';
 import { checkCompany, summarize } from './lib/health.js';
 import { hiringAccounts } from './lib/hiring.js';
@@ -37,6 +39,7 @@ const out = flag('--out') || settings.out;
 const limit = Number(flag('--limit') || Infinity);
 
 installPoliteFetch();
+const count = (/** @type {any[]} */ items, /** @type {(x: any) => unknown} */ test) => items.filter(test).length;
 const started = Date.now();
 const step = (/** @type {string} */ text) => console.log(`[${Math.round((Date.now() - started) / 1000)}s] ${text}`);
 
@@ -94,6 +97,20 @@ const repairs = await mapLimit(todo, settings.concurrency, async (record) => {
 const repairsByKey = new Map(repairs.map((p) => [p.key, p]));
 step(`repairs done: looked at ${todo.length}`);
 
+// (b) Boards for companies whose domain is their Bluesky handle and that have none.
+const onBluesky = await loadBluesky(`${config.snapshot.path}/${config.bluesky.file}`).catch((error) => {
+	console.warn(`bluesky.json unavailable: ${error.message}`);
+	return {};
+});
+const toConnect = companiesToConnect(shown, onBluesky, repairsByKey, settings.bluesky.maxConnect);
+const connected = await mapLimit(toConnect, settings.bluesky.concurrency, async (record) => {
+	const result = await connectBoard(record, checkByKey.get(record.rkey), onBluesky[record.rkey].did, openJobs);
+	if (result.changes) repairsByKey.set(record.rkey, mergeConnection(repairsByKey.get(record.rkey), record, /** @type {any} */ (result)));
+	return { key: record.rkey, ...result };
+});
+repairs.splice(0, repairs.length, ...repairsByKey.values());
+step(`boards for companies on Bluesky: looked at ${toConnect.length}, found ${count(connected, (c) => c.changes)}`);
+
 // (c) New companies: keys in lists, suggestions and jobs without a record, and domain accounts posting about hiring.
 const fromLists = suggest(
 	[...versionsByKey.keys()].map((key) => /** @type {any} */ ({ key })),
@@ -125,7 +142,6 @@ const { writes, skipped } = planWrites({
 	now: new Date().toISOString()
 });
 
-const count = (/** @type {any[]} */ items, /** @type {(x: any) => unknown} */ test) => items.filter(test).length;
 const summary = {
 	companies: versionsByKey.size,
 	checked: checks.length,
@@ -137,7 +153,8 @@ const summary = {
 		newWebsite: count(repairs, (p) => p.changes.url && p.confidence === 'high'),
 		low: count(repairs, (p) => Object.keys(p.changes).length && p.confidence !== 'high'),
 		likelyGone: count(repairs, (p) => p.gone),
-		needsAPerson: count(repairs, (p) => p.stale)
+		needsAPerson: count(repairs, (p) => p.stale),
+		onBluesky: { companies: Object.keys(onBluesky).length, withoutBoard: toConnect.length, newBoard: count(connected, (c) => c.changes) }
 	},
 	discovery: {
 		fromLists: { candidates: fromLists.length, found: count(discoveries, (d) => d.source.startsWith('lists')) },
@@ -153,7 +170,7 @@ mkdirSync(out, { recursive: true });
 writeFileSync(join(out, 'health.json'), JSON.stringify(healthFile(checkedAt, checks, repairsByKey)));
 writeFileSync(
 	join(out, 'proposals.json'),
-	JSON.stringify({ checkedAt, crawler: did, summary, writes, skipped, repairs: repairs.filter((p) => p.notes?.length), discovery: looked }, null, '\t')
+	JSON.stringify({ checkedAt, crawler: did, summary, writes, skipped, repairs: repairs.filter((p) => p.notes?.length), connected, discovery: looked }, null, '\t')
 );
 for (const w of writes) console.log(`${w.action} ${w.rkey} [${w.kind}] ${w.notes.join('; ')}`);
 console.log(JSON.stringify(summary, null, 2));

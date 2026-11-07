@@ -297,6 +297,10 @@
 				"come work with us"
 			],
 			"pages": 5
+		},
+		"bluesky": {
+			"maxConnect": 30,
+			"concurrency": 4
 		}
 	},
 	"jobPost": {

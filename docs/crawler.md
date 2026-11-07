@@ -34,6 +34,15 @@ node --test 'scripts/**/*.test.js'          # the rules, unit tested
      crawler runs), not a page on a subdomain, and a move to another name
      (an acquisition) is only reported: a person decides.
    - "likely gone" and "needs a person" are reported, never acted on.
+   - **companies on Bluesky without a job board**
+     ([`scripts/lib/connect.js`](../scripts/lib/connect.js)): those of the
+     snapshot's `bluesky.json` (their domain is their Bluesky handle) with
+     no board and none found above. The handle is checked both ways
+     (DNS or `/.well-known/atproto-did`, and the DID document, as in
+     [`indexer/handles.js`](../indexer/handles.js)); then a board of Open
+     Jobs carrying their name and linking back to their website, or, with
+     no website yet, the same search as for a new company (below), which
+     also gives the website. At most `bluesky.maxConnect` (30) a run.
 3. **New companies**, only ones somebody already points at:
    - keys used in lists, in suggestions for a list
      (`today.joblist.suggestion`) or in job records that have no company
@@ -79,7 +88,11 @@ Every run saves two files (default `static/snapshot/crawl/`, set by
 - `--write` refuses to run unless the signed-in account's DID is in `bots`,
   so the crawler's versions are always labelled.
 - Polite reading: a User-Agent naming joblist, 15 s timeouts, 8 requests at
-  a time.
+  a time (4 for the Bluesky steps).
+- **Read only, nobody contacted.** The crawler never posts, mentions,
+  replies, follows or sends a message or an email: it reads public
+  listings and websites, and its only writes are company records in its
+  own repository.
 
 ## Sources
 
@@ -89,6 +102,8 @@ Every run saves two files (default `static/snapshot/crawl/`, set by
 | companies' websites and boards | health, links to their boards | the web at that moment |
 | [Open Jobs](https://github.com/elliottdehn/open-jobs) `slugs.json` (CC0), pinned to commit `a6bb3ab` | board ids, as a lookup only | yes, pinned file |
 | Bluesky post search (`app.bsky.feed.searchPosts`) | domain accounts hiring now | no, recent posts |
+| the snapshot's `bluesky.json` | companies whose domain is their Bluesky handle | yes, public |
+| DNS-over-HTTPS, `/.well-known/atproto-did`, plc.directory | handles checked both ways | the network at that moment |
 
 The public AppView (`api.bsky.app`) answers post search without signing
 in, but only the first page of each query (a cursor gets a 403, and
