@@ -6,7 +6,9 @@
 	import { travelMinutes } from '#lib/models/distance.js';
 	import { payAmount } from '#lib/models/salary.js';
 	import { postPath } from '#lib/models/job-post.js';
-	import { handleOf } from '#lib/network/network.svelte.js';
+	import { data, handleOf } from '#lib/network/network.svelte.js';
+	import { getDescription } from '#lib/ats/index.js';
+	import { workplaceFromText } from '#lib/models/workplace-text.js';
 	import { markOf } from '#lib/network/job-marks.svelte.js';
 	import { accountOf, thumbnail } from '#lib/network/accounts.svelte.js';
 	import { ago } from '#lib/i18n/dates.js';
@@ -23,7 +25,19 @@
 	let { job, company, fresh = false, onselect, selected = false, read = false, actions } = $props();
 	const MAX_PLACES = config.jobs.placesShown;
 	const posted = $derived(job.posted);
-	const where = $derived(workplace(job));
+	// Opened and its board says nothing: what its description says clearly, once it is read
+	// (the same reading as the description below, not a second request).
+	/** @type {import('#lib/models/workplace-text.js').Workplace | undefined} */
+	let told = $state();
+	$effect(() => {
+		told = undefined;
+		if (!read || job.posted || workplace(job)) return;
+		const asked = job;
+		getDescription(data.companies.get(job.company), job).then((text) => {
+			if (asked === job) told = workplaceFromText(text);
+		});
+	});
+	const where = $derived(workplace(job) || told);
 	// The work place, unless the location already says it ("Remote - USA").
 	const place = $derived(where && !(job.location || '').toLowerCase().includes(t(`job.remote.${where}`).toLowerCase()) ? t(`job.remote.${where}`) : '');
 	// The same offer at several places: the first ones, then how many more.
