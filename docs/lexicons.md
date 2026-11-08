@@ -61,8 +61,10 @@ account, with the NSID as its record key.
    The DID is `lexicons.did` in [`config.json`](../src/lib/data/config.json):
    the joblist.today account.
 
-2. Publish the schemas (after each lexicon change), with an app password of
-   that account; without `--write` it only says what it would write:
+2. Publish the schemas: done on each push to `main` that changes `lexicons/`
+   (`.github/workflows/lexicons.yml`, with that account's app password in the
+   `JOBLIST_*` secrets; only changed schemas are written). By hand, without
+   `--write` it only says what it would write:
 
    ```sh
    node scripts/publish-lexicons.js

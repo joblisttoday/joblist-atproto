@@ -1,11 +1,15 @@
 # Publishes joblist's lexicons (lexicons/) as com.atproto.lexicon.schema records in
-# joblist.today's account (scripts/publish-lexicons.js), by hand: Actions → lexicons → Run.
-# A dry run (what would be written) unless "write" is ticked.
+# joblist.today's account (scripts/publish-lexicons.js): on each push to main that changes
+# lexicons/ (only the changed schemas are written), or by hand: Actions → lexicons → Run,
+# a dry run unless "write" is ticked.
 # Secrets: JOBLIST_HANDLE, JOBLIST_APP_PASSWORD (an app password of the account the
 # _lexicon.joblist.today DNS record names; the script refuses any other).
 name: lexicons
 
 on:
+  push:
+    branches: [main]
+    paths: [lexicons/**]
   workflow_dispatch:
     inputs:
       write:
@@ -33,6 +37,6 @@ jobs:
         env:
           JOBLIST_HANDLE: ${{ secrets.JOBLIST_HANDLE }}
           JOBLIST_APP_PASSWORD: ${{ secrets.JOBLIST_APP_PASSWORD }}
-          WRITE: ${{ inputs.write }}
+          WRITE: ${{ github.event_name == 'push' || inputs.write }}
         run: |
           if [ "$WRITE" = "true" ]; then node scripts/publish-lexicons.js --write; else node scripts/publish-lexicons.js; fi
