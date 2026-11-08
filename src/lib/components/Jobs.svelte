@@ -39,8 +39,10 @@
 	 *   onselect?: (job: import('#lib/ats/job.js').Job) => void,
 	 *   selected?: string,
 	 *   places?: string[],
-	 *   quick?: boolean
+	 *   quick?: boolean,
+	 *   source?: () => Promise<import('#lib/network/snapshot.js').SnapshotJobs | null>
 	 * }}
+	 * source: where its snapshot jobs come from (a list's own file), instead of the companies' files or every job.
 	 */
 	let {
 		companies,
@@ -55,7 +57,8 @@
 		onselect,
 		selected = '',
 		places: suggested = $bindable([]),
-		quick = false
+		quick = false,
+		source
 	} = $props();
 	const PAGE = config.jobs.pageSize;
 
@@ -161,7 +164,7 @@
 		const ready = untrack(() => quick) ? getSnapshotFirst().then(afterPaint) : Promise.resolve();
 		// A company's page, a small list: their own small files, not every job.
 		const few = !untrack(() => quick) && list.length <= config.snapshot.companyFiles;
-		const read = few ? () => getCompaniesJobs(list.map((c) => c.key)) : getSnapshotJobs;
+		const read = untrack(() => source) || (few ? () => getCompaniesJobs(list.map((c) => c.key)) : getSnapshotJobs);
 		ready.then(read).then((snapshot) => {
 			if (cancelled) return;
 			const unread = snapshot ? list.filter((c) => !snapshot.checked.has(c.key)) : list;

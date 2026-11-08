@@ -24,6 +24,7 @@ import { notFoundPage, sitePages } from './site-pages.js';
 import { embedSettings } from './embed-settings.js';
 import { linkList, placeLinks } from './place-links.js';
 import { llmsTxt } from './llms.js';
+import { listFilePath } from '../src/lib/models/snapshot-job.js';
 import { listPlace } from '../src/lib/models/list-place.js';
 import { indexFile } from '../src/lib/models/landing.js';
 import { t } from '../worker/text.js';
@@ -125,11 +126,8 @@ for (const record of listRecords) {
 			body: `<h1>${escape(list.name)}</h1><p>${escape(summary)}</p><p>${escape(en['list.by'])} @${escape(handleOf(list.did))}</p><ul>${members
 				.map((c) => `<li><a href="/company/${escape(c.key)}">${escape(c.name)}</a></li>`)
 				.join('')}</ul>${linkList(t('landing.cities'), places.ofPlaces(listPlace(list)?.places || []))}`,
-			// A small list reads its organizations' own files, as the app does (Jobs.svelte), not every job.
-			preload:
-				members.length <= config.snapshot.companyFiles
-					? [...config.snapshot.preload.list.filter((name) => name !== 'jobs.json'), ...members.map((c) => `${config.embed.dir}/${encodeURIComponent(c.key)}.json`)]
-					: config.snapshot.preload.list
+			// Its own jobs file, not every job (indexer/list-files.js).
+			preload: [...config.snapshot.preload.list, listFilePath(list)]
 		}),
 		open > 0,
 		updated

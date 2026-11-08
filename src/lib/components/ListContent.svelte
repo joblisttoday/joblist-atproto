@@ -8,6 +8,8 @@
 	import { findCompanies } from '#lib/models/company-filters.js';
 	import { offersIn } from '#lib/models/list-place.js';
 	import { jobCounts } from '#lib/network/job-counts.svelte.js';
+	import { membersOf } from '#lib/network/network.svelte.js';
+	import { getListJobs } from '#lib/network/snapshot.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
@@ -42,6 +44,8 @@
 	const counts = $derived(jobCounts());
 	const found = $derived(findCompanies(companies, { query: filters.query, hiring: false, bluesky: false }, counts, new Set()));
 	const map = $derived(view === 'map');
+	// Its jobs from its own small file, as the snapshot saw its organizations (indexer/list-files.js).
+	const source = () => getListJobs(list, [...new Set(membersOf(list).members.map((m) => m.key))]);
 </script>
 
 <jl-list-content {show} {view}>
@@ -51,7 +55,7 @@
 		<CompanyMap companies={found} full />
 	{/if}
 	<jl-list-jobs hidden={map || show !== 'jobs' || undefined}>
-		<Jobs {companies} search={false} filters={scoped} bind:jobs bind:results />
+		<Jobs {companies} search={false} filters={scoped} {source} bind:jobs bind:results />
 	</jl-list-jobs>
 	{#if show === 'companies' && !map}
 		<ResultsHead count={t('companies.count', { count: found.length, total: companies.length })} />

@@ -1,5 +1,6 @@
 import { safeUrl } from './url.js';
 import { unpackSalary } from '../ats/salary.js';
+import config from '#lib/data/config.json' with { type: 'json' };
 import { newestFirst } from './job.js';
 
 /**
@@ -64,4 +65,32 @@ export function readCompanyFile(key, data) {
 		gone: data.gone ? [key] : [],
 		points: Array.isArray(data.points) ? data.points : []
 	};
+}
+
+/**
+ * A list's file (lists/{did}/{rkey}.json, see indexer/list-files.js) as the jobs of the whole
+ * snapshot are used, with only that list's organizations; null when it is not one.
+ * @param {any} data
+ * @returns {{generatedAt: string, companies: string[], all: import('#lib/ats/job.js').Job[], checked: string[], gone: string[], points: [string, [number, number]][]} | null}
+ */
+export function readListFile(data) {
+	if (!data || !Array.isArray(data.jobs) || !Array.isArray(data.companies)) return null;
+	return {
+		generatedAt: String(data.generatedAt || ''),
+		companies: data.companies.map(String),
+		all: data.jobs.map(fromSnapshot).filter(Boolean),
+		checked: Array.isArray(data.checked) ? data.checked : [],
+		gone: Array.isArray(data.gone) ? data.gone : [],
+		points: Array.isArray(data.points) ? data.points : []
+	};
+}
+
+/**
+ * Where a list's file is in the snapshot: lists/{did}/{rkey}.json. A DID's colons stay as they
+ * are (allowed in a path, and not every static server decodes %3A); anything else is encoded.
+ * @param {{did: string, rkey: string}} list
+ */
+export function listFilePath({ did, rkey }) {
+	const segment = (/** @type {string} */ part) => encodeURIComponent(part).replaceAll('%3A', ':');
+	return `${config.snapshot.listsDir}/${segment(did)}/${segment(rkey)}.json`;
 }

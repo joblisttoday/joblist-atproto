@@ -37,3 +37,24 @@ describe('getCompaniesJobs', () => {
 		expect(found?.jobs.get('new.org')?.map((j) => j.title)).toEqual(['New']);
 	});
 });
+
+describe('getListJobs', () => {
+	const list = { did: 'did:plc:curator', rkey: 'food' };
+	const path = 'lists/did:plc:curator/food.json';
+	const listFile = { generatedAt: now, name: 'Food', companies: ['a.org', 'b.org'], checked: ['a.org', 'b.org'], gone: [], points: [], jobs: [{ t: 'B', u: 'https://boards.example/b', c: 'b.org', p: '2026-11-06T00:00Z' }, { t: 'A', u: 'https://boards.example/a', c: 'a.org', p: '2026-11-05T00:00Z' }] };
+
+	it("reads the list's own file when it holds the list's organizations", async () => {
+		serve({ [path]: listFile });
+		const { getListJobs } = await import('./snapshot.js');
+		const found = await getListJobs(list, ['b.org', 'a.org']);
+		expect(found?.all.map((j) => j.title)).toEqual(['B', 'A']);
+		expect(found?.jobs.get('a.org')?.map((j) => j.title)).toEqual(['A']);
+	});
+
+	it("reads its organizations' own files when the list changed since the snapshot", async () => {
+		serve({ [path]: listFile, 'companies/a.org.json': file('a.org', [['A', '2026-11-05T00:00Z']]), 'companies/c.org.json': file('c.org', [['C', '2026-11-07T00:00Z']]) });
+		const { getListJobs } = await import('./snapshot.js');
+		const found = await getListJobs(list, ['a.org', 'c.org']);
+		expect(found?.all.map((j) => j.title)).toEqual(['C', 'A']);
+	});
+});

@@ -8,7 +8,7 @@
  * can run this script and get the same snapshot from the same network.
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { dirname, join, resolve, sep } from 'node:path';
 import { mapPoints, toCompany } from '../src/lib/models/company.js';
 import { Companies } from '../src/lib/models/companies.js';
 import { crawlRecords } from './crawl.js';
@@ -16,6 +16,7 @@ import { limitAccounts } from './caps.js';
 import config from '../src/lib/data/config.json' with { type: 'json' };
 import { installPoliteFetch } from '../scripts/lib/http.js';
 import { companyFiles } from './company-files.js';
+import { listFiles } from './list-files.js';
 import { fetchBoardJobs, firstJobs, recordJobs, toMinute } from './jobs.js';
 import { dateOffers } from './ledger.js';
 import { readWorkplaces } from './workplaces.js';
@@ -162,6 +163,15 @@ const embeds = join(out, config.embed.dir);
 mkdirSync(embeds, { recursive: true });
 for (const [key, file] of companyFiles(companies, jobs, { generatedAt, checked: Object.keys(board.health), gone })) {
 	writeFileSync(join(embeds, `${key}.json`), JSON.stringify(file));
+}
+
+// One small file per list, for its page here, its embed and its feed (list-files.js).
+for (const [path, file] of listFiles(records.list, records.suggestion, jobs, { generatedAt, checked: Object.keys(board.health), gone })) {
+	const at = join(out, config.snapshot.listsDir, `${path}.json`);
+	// Paths come from records: none may lead out of the snapshot.
+	if (!resolve(at).startsWith(resolve(out, config.snapshot.listsDir) + sep)) continue;
+	mkdirSync(dirname(at), { recursive: true });
+	writeFileSync(at, JSON.stringify(file));
 }
 
 // Small files for the pages per city and field and their feeds (landing.js), read by the Worker.

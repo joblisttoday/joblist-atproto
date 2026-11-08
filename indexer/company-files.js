@@ -35,19 +35,37 @@ export function companyFiles(companies, jobs, { generatedAt, checked, gone }) {
 		.filter((c) => isCompanyKey(c.key))
 		.map((c) => {
 			const all = byCompany.get(c.key) || [];
-			const own = all.filter((j) => !j.s || j.v).sort((a, b) => String(b.p || '').localeCompare(String(a.p || '')));
-			/** @type {[string, [number, number]][]} */
-			const points = all.flatMap((j) => (j.s && j.g ? [[j.s, j.g]] : []));
 			const file = {
 				generatedAt,
 				name: c.name,
 				checked: read.has(c.key),
 				gone: closed.has(c.key),
-				jobs: own.map((j) => (j.s ? { ...j, u: postUrl(j.s) || j.u } : j)),
-				points
+				jobs: publicJobs(all),
+				points: postPoints(all)
 			};
 			return /** @type {[string, CompanyFile]} */ ([c.key, file]);
 		});
+}
+
+/**
+ * The jobs an organization's or a list's file shows, newest first: its job boards' jobs and
+ * the offers organizations posted themselves (verified), these linking to their page here.
+ * @param {IndexedJob[]} jobs
+ */
+export function publicJobs(jobs) {
+	return jobs
+		.filter((j) => !j.s || j.v)
+		.sort((a, b) => String(b.p || '').localeCompare(String(a.p || '')))
+		.map((j) => (j.s ? { ...j, u: postUrl(j.s) || j.u } : j));
+}
+
+/**
+ * Where the offers posted on joblist are, by record address, for the page's map.
+ * @param {IndexedJob[]} jobs
+ * @returns {[string, [number, number]][]}
+ */
+export function postPoints(jobs) {
+	return jobs.flatMap((j) => (j.s && j.g ? [/** @type {[string, [number, number]]} */ ([j.s, j.g])] : []));
 }
 
 /** A posted job's page here, from its record address (at://did/collection/rkey). @param {string} uri */
