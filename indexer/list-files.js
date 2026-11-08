@@ -10,18 +10,20 @@ import { postPoints, publicJobs } from './company-files.js';
  *
  * @typedef {import('./jobs.js').IndexedJob} IndexedJob
  * @typedef {import('../src/lib/atproto/records.js').RepoRecord} RepoRecord
- * @typedef {{generatedAt: string, name: string, companies: string[], checked: string[], gone: string[], jobs: IndexedJob[], points: [string, [number, number]][]}} ListFile
- *   companies: its organizations' keys; checked: those whose board was read; gone: those whose board closed.
+ * @typedef {{generatedAt: string, name: string, companies: string[], names: Record<string, string>, checked: string[], gone: string[], jobs: IndexedJob[], points: [string, [number, number]][]}} ListFile
+ *   companies: its organizations' keys; names: their names, for an embed to show;
+ *   checked: those whose board was read; gone: those whose board closed.
  */
 
 /**
  * @param {RepoRecord[]} listRecords
  * @param {RepoRecord[]} suggestionRecords
  * @param {IndexedJob[]} jobs
- * @param {{generatedAt: string, checked: Iterable<string>, gone: Iterable<string>}} snapshot
+ * @param {{generatedAt: string, checked: Iterable<string>, gone: Iterable<string>, names?: Map<string, string>}} snapshot
+ *   names: organizations' names by key
  * @returns {[string, ListFile][]} by path under lists/ ({did}/{rkey})
  */
-export function listFiles(listRecords, suggestionRecords, jobs, { generatedAt, checked, gone }) {
+export function listFiles(listRecords, suggestionRecords, jobs, { generatedAt, checked, gone, names = new Map() }) {
 	const read = new Set(checked);
 	const closed = new Set(gone);
 	const suggestions = suggestionRecords.filter((r) => r.value?.list && r.value?.company).map(toSuggestion);
@@ -43,6 +45,7 @@ export function listFiles(listRecords, suggestionRecords, jobs, { generatedAt, c
 				generatedAt,
 				name: list.name,
 				companies: keys,
+				names: Object.fromEntries(keys.flatMap((key) => (names.has(key) ? [[key, names.get(key)]] : []))),
 				checked: keys.filter((key) => read.has(key)),
 				gone: keys.filter((key) => closed.has(key)),
 				jobs: publicJobs(all),

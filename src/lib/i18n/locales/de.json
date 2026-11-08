@@ -219,6 +219,7 @@
 	"company.manage.publish": "Deine Version speichern",
 	"company.onBluesky": "@{handle} auf Bluesky",
 	"embed.title": "Offene Stellen bei {name}",
+	"embed.list.title": "{name}: offene Stellen",
 	"embed.count": "{count} offene Stellen",
 	"embed.count.one": "1 offene Stelle",
 	"embed.none": "Gerade keine offenen Stellen.",

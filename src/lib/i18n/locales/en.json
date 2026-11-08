@@ -219,6 +219,7 @@
 	"company.manage.publish": "Save your version",
 	"company.onBluesky": "@{handle} on Bluesky",
 	"embed.title": "Open jobs at {name}",
+	"embed.list.title": "{name}: open jobs",
 	"embed.count": "{count} open jobs",
 	"embed.count.one": "1 open job",
 	"embed.none": "No open jobs right now.",

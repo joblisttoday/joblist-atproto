@@ -12,11 +12,12 @@ const jobs = [
 const suggestion = { uri: 'at://did:plc:friend/today.joblist.suggestion/s1', cid: 'c', did: 'did:plc:friend', rkey: 's1', value: { list: 'at://did:plc:curator/today.joblist.list/open', company: 'b.org', createdAt: '2026-02-01T00:00:00Z' } };
 
 test("a list's file: its organizations' jobs newest first, and which boards were read", () => {
-	const files = new Map(listFiles([list('closed', { name: 'Closed', companies: ['a.org', 'quiet.org'] })], [], jobs, { generatedAt: 'now', checked: ['a.org', 'quiet.org'], gone: ['quiet.org'] }));
+	const files = new Map(listFiles([list('closed', { name: 'Closed', companies: ['a.org', 'quiet.org'] })], [], jobs, { generatedAt: 'now', checked: ['a.org', 'quiet.org'], gone: ['quiet.org'], names: new Map([['a.org', 'A'], ['x.org', 'X']]) }));
 	const file = files.get('did:plc:curator/closed');
 	assert.deepEqual(file?.jobs.map((j) => j.t), ['A new', 'A old']);
 	assert.deepEqual(file?.companies, ['a.org', 'quiet.org']);
 	assert.deepEqual(file?.gone, ['quiet.org']);
+	assert.deepEqual(file?.names, { 'a.org': 'A' });
 });
 
 test('an open list includes the organizations others suggested, as its page shows them', () => {

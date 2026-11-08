@@ -14,6 +14,7 @@ import Bookmark from '@lucide/svelte/icons/bookmark';
 import BookmarkCheck from '@lucide/svelte/icons/bookmark-check';
 import Check from '@lucide/svelte/icons/check';
 import Copy from '@lucide/svelte/icons/copy';
+import CodeXml from '@lucide/svelte/icons/code-xml';
 import Ellipsis from '@lucide/svelte/icons/ellipsis';
 import CircleCheck from '@lucide/svelte/icons/circle-check';
 import Eye from '@lucide/svelte/icons/eye';
@@ -78,6 +79,7 @@ export const icons = {
 	share: Share2,
 	edit: Pencil,
 	copy: Copy,
+	embed: CodeXml,
 	delete: Trash2,
 	suggestions: Inbox,
 	feed: Rss,

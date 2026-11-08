@@ -219,6 +219,7 @@
 	"company.manage.publish": "Guardar tu versión",
 	"company.onBluesky": "@{handle} en Bluesky",
 	"embed.title": "Ofertas abiertas en {name}",
+	"embed.list.title": "{name}: ofertas abiertas",
 	"embed.count": "{count} ofertas abiertas",
 	"embed.count.one": "1 oferta abierta",
 	"embed.none": "No hay ofertas abiertas por ahora.",

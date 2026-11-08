@@ -166,7 +166,7 @@ for (const [key, file] of companyFiles(companies, jobs, { generatedAt, checked: 
 }
 
 // One small file per list, for its page here, its embed and its feed (list-files.js).
-for (const [path, file] of listFiles(records.list, records.suggestion, jobs, { generatedAt, checked: Object.keys(board.health), gone })) {
+for (const [path, file] of listFiles(records.list, records.suggestion, jobs, { generatedAt, checked: Object.keys(board.health), gone, names: new Map(companies.map((c) => [c.key, c.name])) })) {
 	const at = join(out, config.snapshot.listsDir, `${path}.json`);
 	// Paths come from records: none may lead out of the snapshot.
 	if (!resolve(at).startsWith(resolve(out, config.snapshot.listsDir) + sep)) continue;

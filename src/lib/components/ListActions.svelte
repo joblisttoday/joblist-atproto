@@ -1,4 +1,6 @@
 <script>
+	import Embed from './Embed.svelte';
+	import Sheet from './Sheet.svelte';
 	import config from '#lib/data/config.json';
 	import Icon from './Icon.svelte';
 	import ListDelete from './ListDelete.svelte';
@@ -41,6 +43,13 @@
 		document.getElementById(`${id}-more`)?.hidePopover();
 		deleting?.ask();
 	}
+
+	// How to show this list's jobs on another website, in a sheet over the list.
+	let embedding = $state(false);
+	function embed() {
+		document.getElementById(`${id}-more`)?.hidePopover();
+		embedding = true;
+	}
 </script>
 
 <jl-list-actions>
@@ -75,11 +84,17 @@
 			<button type="button" popovertarget="{id}-more" title={t('list.more')}><Icon name="more" label={t('list.more')} /></button>
 			<menu popover id="{id}-more" aria-label={t('list.more')}>
 				<li><a href="/lists/new?copy={encodeURIComponent(list.uri)}"><Icon name="copy" /> {t('list.copy')}</a></li>
+				{#if list.did !== LOCAL}<li><button type="button" onclick={embed}><Icon name="embed" /> {t('embed.section')}</button></li>{/if}
 				{#if mine}<li><button type="button" onclick={remove}><Icon name="delete" /> {t('list.delete')}</button></li>{/if}
 			</menu>
 		</li>
 	</menu>
 	{#if mine}<ListDelete bind:this={deleting} {list} />{/if}
+	{#if list.did !== LOCAL}
+		<Sheet bind:open={embedding} label={t('embed.section')}>
+			<Embed attribute="list" value="{list.did}/{list.rkey}" title={t('embed.list.title', { name: list.name })} />
+		</Sheet>
+	{/if}
 </jl-list-actions>
 
 <style>

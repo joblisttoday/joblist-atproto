@@ -12,6 +12,7 @@ import es from '../src/lib/i18n/locales/es.json' with { type: 'json' };
 /** @param {Record<string, string>} locale */
 const words = (locale) => ({
 	title: locale['embed.title'],
+	listTitle: locale['embed.list.title'],
 	count: locale['embed.count'],
 	countOne: locale['embed.count.one'],
 	none: locale['embed.none'],
@@ -28,6 +29,8 @@ export function embedSettings() {
 	return {
 		snapshot: config.snapshot.path,
 		dir: config.embed.dir,
+		lists: config.snapshot.listsDir,
+		spread: config.jobs.spread,
 		site: config.url,
 		shown: config.embed.shown,
 		strings: { en: words(en), fr: words(fr), de: words(de), es: words(es) }
