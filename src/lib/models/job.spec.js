@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { byCompany, commonPlaces, filterJobs, isOlder, isRemote, newestFirst, offerPlaces, placeNewest, prepareJob, placeCounts, remoteLimit, sameOffers, tidyPlace, time, workplace } from './job.js';
+import { byCompany, commonPlaces, filterJobs, isOlder, isRemote, newestFirst, offerPlaces, placeNewest, prepareJob, placeCounts, remoteLimit, sameOffers, spread, tidyPlace, time, workplace } from './job.js';
 
 /** @param {Partial<import('#lib/ats/job.js').Job>} job */
 const job = (job) => ({ title: 'Engineer', url: 'https://x', company: 'acme.org', ...job });
@@ -162,6 +162,23 @@ describe('isOlder', () => {
 	it('never marks undated offers, nor offers posted on joblist (they expire)', () => {
 		expect(isOlder(job({}), now, 90)).toBe(false);
 		expect(isOlder(job({ published: '2026-01-01T00:00Z', posted: { did: 'did:x', rkey: 'r', verified: false } }), now, 90)).toBe(false);
+	});
+});
+
+describe('spread', () => {
+	/** @param {string} company @param {number} n */
+	const job = (company, n) => ({ title: `${company}${n}`, url: `${company}${n}`, company });
+	const titles = (/** @type {{title: string}[]} */ jobs) => jobs.map((j) => j.title).join(' ');
+
+	it('lets each company show its first jobs before another one shows more', () => {
+		const jobs = [job('a', 1), job('a', 2), job('a', 3), job('a', 4), job('b', 1), job('a', 5), job('c', 1), job('b', 2), job('b', 3)];
+		expect(titles(spread(jobs, 2))).toBe('a1 a2 b1 c1 b2 a3 a4 b3 a5');
+	});
+
+	it('leaves none out, and keeps the order given with 0', () => {
+		const jobs = [job('a', 1), job('a', 2), job('b', 1)];
+		expect(spread(jobs, 1)).toHaveLength(3);
+		expect(spread(jobs, 0)).toBe(jobs);
 	});
 });
 

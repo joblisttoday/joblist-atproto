@@ -9,7 +9,7 @@
 	import { afterPaint } from '#lib/navigation/after-paint.js';
 	import { prepareSearch } from '#lib/network/prepare-search.js';
 	import { boardUrl, hasJobsApi } from '#lib/models/company.js';
-	import { byCompany, commonPlaces, filterJobs, newestFirst, offerCount, placeNewest, sameOffers, time } from '#lib/models/job.js';
+	import { byCompany, commonPlaces, filterJobs, newestFirst, offerCount, placeNewest, sameOffers, spread, time } from '#lib/models/job.js';
 	import { mergeJobs, postedFirst, withPoints } from '#lib/models/job-post.js';
 	import { data } from '#lib/network/network.svelte.js';
 	import { withoutHidden } from '#lib/models/job-mark.js';
@@ -99,7 +99,8 @@
 	// On a company's page, the offers it posted come first. The ones someone hid are left out.
 	const visible = $derived(withoutHidden(filterJobs(jobs, filters, names), hiddenJobs()));
 	const matching = $derived(sameOffers(visible));
-	const filtered = $derived(single ? postedFirst(matching) : matching);
+	// Many companies: they take turns (config.jobs.spread), unless sorted by distance from someone.
+	const filtered = $derived(single ? postedFirst(matching) : filters.near ? matching : spread(matching, config.jobs.spread));
 	$effect(() => {
 		results = filtered;
 	});

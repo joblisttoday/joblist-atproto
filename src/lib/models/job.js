@@ -146,6 +146,28 @@ export function tidyPlace(place) {
 }
 
 /**
+ * Jobs taking turns between companies: each company's `per` first jobs, then their next
+ * `per`, and so on, each round in the order given (newest first). A company publishing
+ * fifty jobs on one day then shows two among the others', not fifty in a row; none is left out.
+ * @param {Job[]} jobs
+ * @param {number} per 0: the order given
+ * @returns {Job[]}
+ */
+export function spread(jobs, per) {
+	if (!per) return jobs;
+	/** @type {Map<string, number>} */
+	const counted = new Map();
+	/** @type {Job[][]} */
+	const rounds = [];
+	for (const job of jobs) {
+		const n = counted.get(job.company) || 0;
+		counted.set(job.company, n + 1);
+		(rounds[Math.floor(n / per)] ??= []).push(job);
+	}
+	return rounds.flat();
+}
+
+/**
  * Jobs grouped by company, biggest group first.
  * @param {Job[]} jobs
  * @returns {[string, Job[]][]}

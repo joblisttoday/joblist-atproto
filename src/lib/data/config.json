@@ -120,6 +120,7 @@
 	},
 	"jobs": {
 		"pageSize": 50,
+		"spread": 2,
 		"olderDays": 90,
 		"placesSuggested": 30,
 		"prepareChunk": 500,
