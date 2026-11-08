@@ -113,7 +113,9 @@ export function useProfile(id) {
 
 /**
  * An account signed in: it belongs to the profile that has it already (made current),
- * else to the current one. Returns whether the current profile changed (the page reloads).
+ * else to the current one when that has none; a profile that has another account keeps
+ * it, and this one gets a new profile (made current): one account per profile, never
+ * swapped under what it kept. Returns whether the current profile changed (the page reloads).
  * @param {string} did
  * @param {string} [handle] names a profile that has no name
  */
@@ -125,6 +127,13 @@ export function attachAccount(did, handle) {
 			p.current = owner.id;
 		});
 		return moved;
+	}
+	if (currentProfile().did) {
+		addProfile(handle ? `@${handle}` : '');
+		update((p) => {
+			/** @type {Profile} */ (p.list.find((x) => x.id === p.current)).did = did;
+		});
+		return true;
 	}
 	update((p) => {
 		const current = /** @type {Profile} */ (p.list.find((x) => x.id === p.current));

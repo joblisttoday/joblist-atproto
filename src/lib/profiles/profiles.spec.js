@@ -48,6 +48,12 @@ describe('profiles', () => {
 		detachAccount('did:plc:work');
 		expect(currentProfile().did).toBe(undefined);
 	});
+	it('never swaps the account of a profile that has one: a new profile gets the new account', () => {
+		attachAccount('did:plc:me', 'me.example');
+		expect(attachAccount('did:plc:other', 'other.example')).toBe(true);
+		expect(currentProfile()).toMatchObject({ name: '@other.example', did: 'did:plc:other' });
+		expect(profiles().list.find((p) => p.id === 'default')?.did).toBe('did:plc:me');
+	});
 	it('removing one removes what it kept, never the first one', () => {
 		const id = addProfile('Temp');
 		localStorage.setItem(scoped('joblist.searches.v1'), '[1]');
