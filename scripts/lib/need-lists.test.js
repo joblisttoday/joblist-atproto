@@ -34,3 +34,32 @@ test('one list per need: members by website, each once, their ways to contribute
 	assert.equal(lists.find((l) => l.need === 'housing')?.members[0].known, true);
 	assert.match(needListsReport(lists, { source: 'test', readAt: 'now' }), /## Energy commons \(1\)/);
 });
+
+test('networks are told apart from single organizations by their type', async () => {
+	const { isNetwork } = await import('./need-lists.js');
+	assert.equal(isNetwork({ id: 'a', name: 'A', need: 'energy', type: 'federation (conservancies + support organisation association)' }), true);
+	assert.equal(isNetwork({ id: 'b', name: 'B', need: 'energy', type: 'networked co-op' }), false);
+	assert.equal(isNetwork({ id: 'c', name: 'C', need: 'energy', type: 'single org' }), false);
+});
+
+test('writes: new organizations credited and capped, lists created once then extended', async () => {
+	const { planWrites } = await import('./need-lists.js');
+	const member = (/** @type {string} */ key, known = false) => ({ key, name: key.toUpperCase(), link: `https://${key}`, kind: '', network: key === 'n.org', countries: ['AR', 'xx'], summary: 'What it is.', contribute: [{ kind: 'join', text: 'Join it.' }], source: '', checked: '2026-11-05', known });
+	const lists = [{ need: 'energy', name: 'Energy commons', description: 'Energy.', members: [member('a.org'), member('n.org'), member('k.org', true)], skipped: [] }];
+	const now = '2026-11-08T00:00:00.000Z';
+
+	const first = planWrites(lists, { own: new Set(), ownLists: [], perRun: 1, now });
+	assert.deepEqual(first.map((w) => [w.action, w.rkey ?? w.value.name]), [['create', 'a.org'], ['create', 'Energy commons']]);
+	assert.deepEqual(first[0].value.locations, [{ country: 'Argentina', countryCode: 'AR' }]);
+	assert.deepEqual(first[0].value.contribute, [{ kind: 'join', text: 'Join it.' }]);
+	assert.match(first[0].value.description, /^What it is\.\n\nFrom the commons map \(https:\/\/komm1234\.gitlab\.io\/commons\/explore\), checked 2026-11-05\.$/);
+	assert.deepEqual(first[1].value.companies, ['a.org', 'k.org']);
+
+	const ownLists = [{ rkey: 'L', value: first[1].value }];
+	const second = planWrites(lists, { own: new Set(['a.org']), ownLists, perRun: 10, now });
+	assert.deepEqual(second.map((w) => [w.action, w.rkey]), [['create', 'n.org'], ['update', 'L']]);
+	assert.deepEqual(second[0].value.tags, ['network']);
+	assert.deepEqual(second[1].value.companies, ['a.org', 'k.org', 'n.org']);
+
+	assert.deepEqual(planWrites(lists, { own: new Set(['a.org', 'n.org']), ownLists: [{ rkey: 'L', value: second[1].value }], perRun: 10, now }), []);
+});

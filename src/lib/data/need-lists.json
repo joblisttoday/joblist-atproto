@@ -1,5 +1,5 @@
 {
-	"about": "Lists of joblist by need, made from the commons map of the commons research (komm1234/commons, /graph.json): one list per need, its organizations the commons a person can join, use or fund. scripts/curate-lists.js proposes them (a report, nothing written) from this file. kinds: the first rule whose words (or their plural) appear in what an entry is (its type before \"with\", \"plus\" or \";\", or also its summary's first six words when the rule says so) gives its kind; what follows \"not\" never counts; none: left unknown (wrong is worse than unknown). contribute: the map's actions as ways to take part.",
+	"about": "Lists of joblist by need, made from the commons map of the commons research (komm1234/commons, /graph.json): one list per need, its organizations the commons a person can join, use or fund. scripts/curate-lists.js proposes them (a report, nothing written) from this file. kinds: the first rule whose words (or their plural) appear in what an entry is (its type before \"with\", \"plus\" or \";\", or also its summary's first six words when the rule says so) gives its kind; what follows \"not\" never counts; none: left unknown (wrong is worse than unknown). contribute: the map's actions as ways to take part. networks: an entry whose type starts with one of these words is a network of many organizations, shown as one entry point (its umbrella's website) and tagged so. write: what scripts/curate-lists.js --write writes (from an account in config.bots, so each record shows as not checked by a person yet): at most companiesPerRun new organizations a run, in batches with pauses; each description ends with the credit.",
 	"source": "https://komm1234.gitlab.io/commons/graph.json",
 	"lists": [
 		{
@@ -107,5 +107,21 @@
 		"volunteer": "volunteer",
 		"fund": "fund",
 		"lend": "fund"
+	},
+	"networks": {
+		"tag": "network",
+		"starts": [
+			"network",
+			"federation",
+			"movement",
+			"membership network"
+		]
+	},
+	"write": {
+		"companiesPerRun": 120,
+		"batchSize": 10,
+		"pauseSeconds": 3,
+		"credit": "From the commons map ({page}), checked {checked}.",
+		"page": "https://komm1234.gitlab.io/commons/explore"
 	}
 }
