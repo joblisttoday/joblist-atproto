@@ -17,7 +17,9 @@
 		"import": "node scripts/import-joblist.js",
 		"index": "node indexer/index.js static/snapshot",
 		"prerender": "node indexer/prerender.js build static/snapshot",
-		"test:e2e": "playwright test"
+		"test:e2e": "playwright test",
+		"gate:update": "curl -fsSL https://hwww.gitlab.io/savoir/kit/quality.js -o e2e/quality.js",
+		"gate:check": "curl -fsSL https://hwww.gitlab.io/savoir/kit/quality.js | diff -q - e2e/quality.js"
 	},
 	"devDependencies": {
 		"@axe-core/playwright": "^4.14.0",
