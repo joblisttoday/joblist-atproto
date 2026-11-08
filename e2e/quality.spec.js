@@ -6,16 +6,13 @@ import { qualityTests } from './quality.js';
  * (the gate applies it to the phone; the desktop keeps WCAG's 24px).
  */
 const touch = 44;
-// Screens with a map: MapLibre puts its own classes on the elements it makes (maplibregl-*),
-// as icon libraries do on <svg>; joblist's own markup has none. Until the gate ignores them.
-const map = { touch, skip: ['classless'] };
 
 qualityTests([
-	{ name: 'jobs', path: '/', ...map },
+	{ name: 'jobs', path: '/', touch },
 	{ name: 'organizations', path: '/companies', touch },
 	{ name: 'lists', path: '/lists', touch },
-	{ name: 'list', path: '/joblist.today/3my7zpwloir2s', ...map },
-	{ name: 'organization', path: '/company/ableton.com', ...map },
+	{ name: 'list', path: '/joblist.today/3my7zpwloir2s', touch },
+	{ name: 'organization', path: '/company/ableton.com', touch },
 	{ name: 'profile', path: '/joblist.today', touch },
 	{ name: 'saved', path: '/saved', touch },
 	{ name: 'settings', path: '/settings', touch },
@@ -24,7 +21,7 @@ qualityTests([
 	{ name: 'post a job', path: '/jobs/new', touch },
 	{
 		name: 'job dialog',
-		...map,
+		touch,
 		open: async (page) => {
 			await page.goto('/#view=list');
 			await page.locator('jl-job button').first().click();

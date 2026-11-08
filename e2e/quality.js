@@ -22,7 +22,9 @@
  *   - overlays are native <dialog> elements, not role="dialog" on something else
  *   - no class attributes (framework hash classes such as svelte-xyz, and classes inside <svg> from icon libraries, are ignored)
  *   - no text forced to uppercase with CSS
- * Turn a check off for one screen with `skip: ['classless']`, and say why next to it.
+ * Turn a check off for one screen with `skip: ['classless']`, and say why next to it. Elements a library
+ * creates (icons, MapLibre, Leaflet, editors: LIBRARY_ROOTS) are exempt from `classless`; add more with
+ * `libraries: ['.widget-root']`.
  *
  * Don't edit a copy: improve it in savoir-faire and copy it again.
  *
@@ -41,14 +43,28 @@ export const VIEWPORTS = {
 const FRAMEWORK_CLASS = /^(svelte-|s-|astro-|data-v-)/;
 
 /**
+ * Elements libraries create and class themselves (icons, maps, media players): not our markup.
+ * Add others for one screen with `libraries: ['.my-widget']`.
+ */
+export const LIBRARY_ROOTS = [
+	'svg',
+	'.maplibregl-map',
+	'.mapboxgl-map',
+	'.leaflet-container',
+	'.ol-viewport',
+	'.cm-editor',
+	'.ProseMirror'
+];
+
+/**
  * Every rule broken on the current page, as readable lines.
  * @param {import('@playwright/test').Page} page
- * @param {{ touch?: number, skip?: string[] }} [options]
+ * @param {{ touch?: number, skip?: string[], libraries?: string[] }} [options]
  * @returns {Promise<string[]>}
  */
-export async function qualityProblems(page, { touch = 24, skip = [] } = {}) {
+export async function qualityProblems(page, { touch = 24, skip = [], libraries = [] } = {}) {
 	const problems = await page.evaluate(
-		({ touch, skip, frameworkClass }) => {
+		({ touch, skip, frameworkClass, libraryRoots }) => {
 			const found = [];
 			const on = (check) => !skip.includes(check);
 			const framework = new RegExp(frameworkClass);
@@ -85,8 +101,8 @@ export async function qualityProblems(page, { touch = 24, skip = [] } = {}) {
 				}
 			};
 			walk(document, (el) => {
-				// Icon libraries put their own classes on <svg>: not our markup.
-				if (on('classless') && el.closest('body') && !el.closest('svg')) {
+				// Libraries (icons, maps…) class the elements they create: not our markup.
+				if (on('classless') && el.closest('body') && !el.closest(libraryRoots)) {
 					const own = [...el.classList].filter((c) => !framework.test(c));
 					if (own.length) found.push(`classless: ${name(el)} has class "${own.join(' ')}"`);
 				}
@@ -122,7 +138,7 @@ export async function qualityProblems(page, { touch = 24, skip = [] } = {}) {
 			});
 			return [...new Set(found)];
 		},
-		{ touch, skip, frameworkClass: FRAMEWORK_CLASS.source }
+		{ touch, skip, frameworkClass: FRAMEWORK_CLASS.source, libraryRoots: [...LIBRARY_ROOTS, ...libraries].join(', ') }
 	);
 
 	if (!skip.includes('axe')) {
