@@ -1,4 +1,5 @@
 <script>
+	import OutboxList from '#lib/components/OutboxList.svelte';
 	import { goto } from '$app/navigation';
 	import config from '#lib/data/config.json';
 	import CollectionsTransfer from '#lib/components/CollectionsTransfer.svelte';
@@ -38,6 +39,14 @@
 			<menu><li><a href="/signin"><Icon name="signin" /> {t('nav.signin')}</a></li></menu>
 		{/if}
 	</section>
+
+	{#if session.did}
+		<section aria-labelledby="settings-outbox">
+			<h2 id="settings-outbox">{t('outbox.title')}</h2>
+			<p><small>{t('outbox.intro')}</small></p>
+			<OutboxList />
+		</section>
+	{/if}
 
 	<!-- Each names itself: no heading of their own. -->
 	<section aria-labelledby="settings-browser">

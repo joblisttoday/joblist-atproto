@@ -5,6 +5,8 @@
 	import config from '#lib/data/config.json';
 	import Header from '#lib/components/Header.svelte';
 	import Footer from '#lib/components/Footer.svelte';
+	import OutboxStatus from '#lib/components/OutboxStatus.svelte';
+	import { startOutbox } from '#lib/network/outbox.svelte.js';
 	import { initSession } from '#lib/auth/session.svelte.js';
 	import { startNetwork } from '#lib/network/network.svelte.js';
 	import { history } from '#lib/navigation/history.svelte.js';
@@ -15,6 +17,7 @@
 	let { children } = $props();
 
 	initSession();
+	startOutbox();
 	startNetwork();
 	registerTools();
 
@@ -36,6 +39,7 @@
 
 <a href="#main">{t('nav.skip')}</a>
 <Header />
+<OutboxStatus />
 <main id="main" tabindex="-1">
 	{@render children()}
 </main>

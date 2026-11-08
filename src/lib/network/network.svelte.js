@@ -12,6 +12,8 @@ import { allowed } from '#lib/models/moderation.js';
 import { isCompanyKey } from '#lib/models/landing.js';
 import { Companies } from '#lib/models/companies.js';
 import { readCache, writeCache } from './cache.js';
+import { loadOutbox, onSent, outbox } from './outbox.svelte.js';
+import { overlay } from '#lib/models/outbox.js';
 import { getSnapshotJobs, getSnapshotRecords } from './snapshot.js';
 
 /**
@@ -164,9 +166,12 @@ export async function startNetwork() {
 	if (started) return;
 	started = true;
 	// Only the pages showing jobs read them (they are large): the others count them from a small file.
-	const cached = readCache();
-	if (cached) Object.assign(network, cached);
-	const snapshot = await getSnapshotRecords();
+	// Both at once: the copy kept here shows first, the snapshot (from the network, or the
+	// service worker's last copy offline) replaces it when newer.
+	const reading = getSnapshotRecords();
+	const [cached] = await Promise.all([readCache(), loadOutbox()]);
+	if (cached && !network.loadedAt) Object.assign(network, cached);
+	const snapshot = await reading;
 	if (snapshot && (!network.loadedAt || snapshot.loadedAt > network.loadedAt)) {
 		network.companyRecords = snapshot.companyRecords;
 		network.listRecords = snapshot.listRecords;
@@ -174,6 +179,7 @@ export async function startNetwork() {
 		network.jobRecords = snapshot.jobRecords || [];
 		network.profiles = snapshot.profiles;
 		network.loadedAt = snapshot.loadedAt;
+		if (session.did) showWaiting(session.did);
 	}
 	// An old snapshot is still the network (it says when it is from): every visitor reading
 	// every account would be thousands of requests to other people's servers. Only without
@@ -185,6 +191,8 @@ export async function startNetwork() {
 				if (session.did) refreshOwn(session.did);
 			});
 		});
+		// Sent or given up: their records as their server has them now.
+		onSent(() => session.did && refreshOwn(session.did));
 		return;
 	}
 	// Reading the whole network is slow on a phone: once the jobs are shown, not while.
@@ -209,7 +217,28 @@ async function refreshOwn(did) {
 		network[key] = [...network[key].filter((r) => r.did !== did), ...own];
 	});
 	if (session.handle && !network.profiles[did]) network.profiles[did] = { did, handle: session.handle };
-	writeCache(network);
+	showWaiting(did);
+	keepNetwork();
+}
+
+/**
+ * An account's writes waiting in the outbox, shown over what was read (the server or the
+ * snapshot doesn't have them yet).
+ * @param {string} did
+ */
+function showWaiting(did) {
+	const waiting = outbox.entries.filter((e) => e.did === did);
+	if (!waiting.length) return;
+	for (const type of /** @type {RecordType[]} */ (Object.keys(TYPES))) {
+		const key = TYPES[type];
+		const own = network[key].filter((r) => r.did === did);
+		network[key] = [...network[key].filter((r) => r.did !== did), ...overlay(own, waiting, config.collections[type])];
+	}
+}
+
+/** Keep the network in this browser (IndexedDB, cache.js), as plain data. */
+function keepNetwork() {
+	writeCache($state.snapshot(network));
 }
 
 /** Read every record the app uses from every repository that has some. */
@@ -237,7 +266,7 @@ export async function refresh() {
 		network.profiles = Object.fromEntries(profiles);
 		network.loadedAt = new Date().toISOString();
 		network.error = null;
-		writeCache(network);
+		keepNetwork();
 	} catch (err) {
 		// keep what was loaded before; the network can be retried
 		network.error = err instanceof Error ? err.message : String(err);
@@ -257,7 +286,7 @@ export function upsertLocal(type, record) {
 	if (session.did && session.handle && !network.profiles[session.did]) {
 		network.profiles[session.did] = { did: session.did, handle: session.handle };
 	}
-	writeCache(network);
+	keepNetwork();
 }
 
 /**
@@ -267,5 +296,5 @@ export function upsertLocal(type, record) {
 export function removeLocal(type, uri) {
 	const key = TYPES[type];
 	network[key] = network[key].filter((r) => r.uri !== uri);
-	writeCache(network);
+	keepNetwork();
 }

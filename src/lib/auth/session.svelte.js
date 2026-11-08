@@ -2,6 +2,7 @@ import { goto } from '$app/navigation';
 import { getProfiles } from '#lib/atproto/identity.js';
 import { nextPath } from '#lib/navigation/next.js';
 import { carryDrafts, forgetAll } from '#lib/network/drafts.js';
+import { notReached } from '#lib/models/outbox.js';
 import { signingIn } from '#lib/navigation/address.js';
 import { attachAccount, currentProfile, detachAccount, profiles, profilesKept, removeProfile } from '#lib/profiles/profiles.js';
 
@@ -21,6 +22,8 @@ export const session = $state({
 	avatar: null,
 	/** @type {import('@atproto/api').Agent | null} */
 	agent: null,
+	/** Signed in, but its server can't be reached yet (offline): writes wait in the outbox. */
+	offline: false,
 	/** @type {string | null} */
 	error: null
 });
@@ -65,15 +68,46 @@ export async function initSession() {
 		// Each profile its own account, restored by name (signed in before profiles: the last one).
 		const did = currentProfile().did || (profilesKept() ? null : (await client.init().catch(() => null))?.session.sub);
 		if (!did) return;
-		try {
-			await use(await client.restore(did));
-		} catch {
-			detachAccount(did);
-		}
+		await restore(did);
 	} catch (err) {
-		session.error = err instanceof Error ? err.message : String(err);
+		// Offline before the sign-in code could even start: the account stays, without its server for now.
+		const did = currentProfile().did;
+		if (did && notReached(err)) keepOffline(did);
+		else session.error = err instanceof Error ? err.message : String(err);
 	} finally {
 		session.ready = true;
+	}
+}
+
+/**
+ * The account's session, restored. Offline it stays signed in, without its server for now
+ * (reconnect() later); only a session its server ended leaves the profile.
+ * @param {string} did
+ */
+async function restore(did) {
+	try {
+		await use(await /** @type {NonNullable<typeof client>} */ (client).restore(did));
+	} catch (err) {
+		if (!notReached(err)) return detachAccount(did);
+		keepOffline(did);
+	}
+}
+
+/** @param {string} did */
+function keepOffline(did) {
+	session.did = did;
+	session.handle = currentProfile().name?.replace(/^@/, '') || did;
+	session.offline = true;
+}
+
+/** Back online: the session kept while offline is restored (then what waited is sent). */
+export async function reconnect() {
+	if (!session.offline || !session.did) return;
+	try {
+		client ??= await (await auth()).loadClient(clear);
+		await restore(session.did);
+	} catch {
+		// still unreachable: tried again when the browser is back online
 	}
 }
 
@@ -145,6 +179,7 @@ function takeBack() {
 /** @param {import('@atproto/oauth-client-browser').OAuthSession} oauthSession */
 async function use(oauthSession) {
 	session.did = oauthSession.sub;
+	session.offline = false;
 	const { Agent } = await import('@atproto/api');
 	session.agent = new Agent(oauthSession);
 	const found = await getProfiles([oauthSession.sub]);
@@ -165,4 +200,5 @@ function clear(ended) {
 	session.handle = null;
 	session.avatar = null;
 	session.agent = null;
+	session.offline = false;
 }

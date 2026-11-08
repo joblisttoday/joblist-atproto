@@ -11,7 +11,8 @@ export default defineConfig({
 	testDir: 'e2e',
 	fullyParallel: true,
 	reporter: 'list',
-	use: { baseURL: `http://127.0.0.1:${port}`, ...devices['Desktop Chrome'] },
+	// The service worker (each new browser keeps the whole app) only where it is tested: e2e/offline.spec.js.
+	use: { baseURL: `http://127.0.0.1:${port}`, ...devices['Desktop Chrome'], serviceWorkers: 'block' },
 	webServer: {
 		command: `npm run build:site && node e2e/serve.js build ${port}`,
 		url: `http://127.0.0.1:${port}`,

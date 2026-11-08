@@ -16,6 +16,7 @@ Follows https://hwww.gitlab.io/savoir/agents.md (local: ~/src/hwww/savoir). Exce
 - The source of truth is the network: `today.joblist.*` records in their authors' own accounts ([lexicons/](lexicons)).
 - The indexer ([indexer/](indexer)) rebuilds a static snapshot every 6 hours (`.github/workflows/snapshot.yml`, schedule only) and publishes it to `joblisttoday/joblist-snapshot`. The app reads it; only the signed-in person's own records are read live.
 - The site is static files on Cloudflare, built on each push (and after each snapshot, with the `SITE_DEPLOY_HOOK` secret). Only `/in`, `/field`, `/feed` and the places sitemap run code ([worker/](worker)).
+- Local-first: a service worker (`src/service-worker.js`) keeps the app and the snapshot files it read, so it opens and searches offline; the network copy and the outbox live in IndexedDB (`src/lib/local/store.js`, idb-keyval). A write that can't reach the person's server waits in the outbox (`src/lib/network/outbox.svelte.js`) and is sent in order later; a refused one is shown in Settings.
 - Settings, limits, phrases and fields are data in [src/lib/data/](src/lib/data), interface text in [src/lib/i18n/locales/](src/lib/i18n/locales) (en, fr, de, es: every key in each).
 
 ## Commands
