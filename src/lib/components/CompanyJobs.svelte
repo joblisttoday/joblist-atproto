@@ -38,6 +38,8 @@
 	let places = $state.raw([]);
 	let busy = $state(false);
 	const names = $derived(new Map([[company.key, company.name]]));
+	// A few jobs are read at a glance: searching them comes with many (or a search in the address).
+	const searchable = $derived(jobs.length > config.jobs.companySearchFrom || Boolean(filters.query || filters.where || filters.remote || filters.pay));
 	const map = $derived(view === 'map');
 	// Nothing found has a place: no map to show (once the jobs are read).
 	const mapless = $derived(!busy && jobs.length > 0 && !results.some((job) => job.point));
@@ -73,11 +75,13 @@
 </script>
 
 <jl-company-jobs {view}>
-	<jl-company-jobs-bar>
-		<ExploreSearch bind:filters {places}>
-			{#snippet tools()}<ViewSwitch bind:view page="company" {mapless} />{/snippet}
-		</ExploreSearch>
-	</jl-company-jobs-bar>
+	{#if searchable}
+		<jl-company-jobs-bar>
+			<ExploreSearch bind:filters {places}>
+				{#snippet tools()}<ViewSwitch bind:view page="company" {mapless} />{/snippet}
+			</ExploreSearch>
+		</jl-company-jobs-bar>
+	{/if}
 	{#if map}
 		<jl-company-jobs-map><JobsMap jobs={results} {names} fit /></jl-company-jobs-map>
 	{/if}

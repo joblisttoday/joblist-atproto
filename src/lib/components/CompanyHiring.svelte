@@ -7,7 +7,8 @@
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * "Post a job" on a company page, prominent for the company's own account;
+	 * "Post a job" on a company page, for the company's own account (anyone else has it
+	 * in the page's menu, ⋯);
 	 * the signed-in person's posts for this company, to manage them; where it
 	 * posts jobs, when nobody has said yet.
 	 * @type {{company: import('#lib/models/company.js').Company}}
@@ -19,7 +20,7 @@
 </script>
 
 <jl-company-hiring own={own || undefined}>
-	<menu><a {href} data-add={own ? 'main' : ''}><Icon name="add" /> {own ? t('company.post.own') : t('company.post')}</a></menu>
+	{#if own}<menu><a {href} data-add="main"><Icon name="add" /> {t('company.post.own')}</a></menu>{/if}
 	<CompanyInvite {company} field="jobBoard" />
 	{#if mine.length}
 		<details>

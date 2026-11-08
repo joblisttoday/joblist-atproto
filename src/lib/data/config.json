@@ -127,6 +127,7 @@
 	},
 	"jobs": {
 		"pageSize": 50,
+		"companySearchFrom": 10,
 		"spread": 2,
 		"olderDays": 90,
 		"placesSuggested": 30,

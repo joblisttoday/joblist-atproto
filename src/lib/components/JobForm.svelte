@@ -96,6 +96,8 @@
 	/** @type {JobCompanyField | undefined} */
 	let companyField = $state();
 	const submitLabel = $derived(post ? t('form.save') : t('post.submit'));
+	// Open when the offer says something there already (an edit, a draft).
+	const moreOpen = untrack(() => Boolean(form.employment || form.offerUrl || form.days !== config.jobPost.days));
 
 	/**
 	 * Sent without a company: said before the browser checks the other fields, as it comes first.
@@ -158,6 +160,17 @@
 			placeholder={t('post.jobTitle.placeholder')}
 		/>
 
+		<ChoiceChips name="remote" legend={t('post.remote')} options={remoteOptions} bind:value={form.remote} tool={tool.params.remote} />
+		<!-- Fully remote: no place to name. -->
+		{#if form.remote !== 'remote'}<LocationFields bind:locations={form.locations} suggested={data.companies.get(form.company)?.locations} />{/if}
+
+		<JobApplyFields
+			bind:applyTo={form.applyTo}
+			bind:bluesky={form.bluesky}
+			missing={tried && !canApply}
+			params={tool.params}
+		/>
+
 		<label for="job-description">{t('post.description')}</label>
 		<textarea
 			id="job-description"
@@ -172,42 +185,36 @@
 			<data value={form.description.length}>{form.description.length.toLocaleString(i18n.locale)} / {config.jobPost.descriptionMax.toLocaleString(i18n.locale)}</data>
 		</small>
 
-		<LocationFields bind:locations={form.locations} suggested={data.companies.get(form.company)?.locations} />
+		<!-- What most offers leave as it is: folded, saying what it is set to. -->
+		<details open={moreOpen}>
+			<summary>{t('post.more')} <small>{t('post.more.summary', { days: form.days })}</small></summary>
+			<ChoiceChips name="employment" legend={t('post.employment')} options={employmentOptions} bind:value={form.employment} tool={tool.params.employment} />
 
-		<ChoiceChips name="remote" legend={t('post.remote')} options={remoteOptions} bind:value={form.remote} tool={tool.params.remote} />
-		<ChoiceChips name="employment" legend={t('post.employment')} options={employmentOptions} bind:value={form.employment} tool={tool.params.employment} />
+			<label for="job-offer">{t('post.offerUrl')}</label>
+			<input
+				id="job-offer"
+				name="offerUrl"
+				toolparamdescription={tool.params.offerUrl}
+				bind:value={form.offerUrl}
+				type="url"
+				inputmode="url"
+				autocapitalize="none"
+				spellcheck="false"
+				placeholder="https://"
+				aria-describedby="job-offer-help"
+			/>
+			<small id="job-offer-help">{t('post.offerUrl.help')}</small>
 
-		<label for="job-offer">{t('post.offerUrl')}</label>
-		<input
-			id="job-offer"
-			name="offerUrl"
-			toolparamdescription={tool.params.offerUrl}
-			bind:value={form.offerUrl}
-			type="url"
-			inputmode="url"
-			autocapitalize="none"
-			spellcheck="false"
-			placeholder="https://"
-			aria-describedby="job-offer-help"
-		/>
-		<small id="job-offer-help">{t('post.offerUrl.help')}</small>
-
-		<JobApplyFields
-			bind:applyTo={form.applyTo}
-			bind:bluesky={form.bluesky}
-			missing={tried && !canApply}
-			params={tool.params}
-		/>
-
-		<ChoiceChips
-			name="days"
-			legend={t('post.days')}
-			options={dayOptions}
-			bind:value={days}
-			required
-			help={t('post.days.help', { date: until, max: maxDays })}
-			tool={tool.params.days}
-		/>
+			<ChoiceChips
+				name="days"
+				legend={t('post.days')}
+				options={dayOptions}
+				bind:value={days}
+				required
+				help={t('post.days.help', { date: until, max: maxDays })}
+				tool={tool.params.days}
+			/>
+		</details>
 
 		{#if preview}
 			<section aria-labelledby="job-preview">
@@ -249,6 +256,12 @@
 	section h2 {
 		margin: var(--space-s) 0 0;
 		font-size: var(--font-size-small);
+		color: var(--color-muted);
+	}
+	details {
+		margin-top: var(--space-l);
+	}
+	summary small {
 		color: var(--color-muted);
 	}
 	data {

@@ -27,6 +27,7 @@
 		<menu>
 			<a href={post}>{t('post.title')}</a>
 			<a href={edit}>{t(company.verified ? 'company.edit' : 'company.manage.publish')}</a>
+			<a href="#company-embed">{t('embed.section')}</a>
 		</menu>
 	</jl-company-claim>
 {:else if !company.verified}
@@ -34,6 +35,7 @@
 		<details>
 			<summary>{t('company.claim.title')}</summary>
 			<p>{t('company.claim.text')}</p>
+			<p>{t('company.claim.embed')}</p>
 			{#if onBluesky}
 				<p>{t('company.claim.ready', { domain: company.key })}</p>
 				<menu><a href={signin}>{t('company.claim.signinAs', { domain: company.key })}</a></menu>

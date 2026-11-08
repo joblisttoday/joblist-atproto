@@ -3,14 +3,15 @@
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * An organization's jobs on another website (Embed.svelte), folded on its page.
-	 * @type {{company: import('#lib/models/company.js').Company}}
+	 * An organization's jobs on another website (Embed.svelte): folded on its page, open for
+	 * its own account (and from its link, #company-embed).
+	 * @type {{company: import('#lib/models/company.js').Company, open?: boolean}}
 	 */
-	let { company } = $props();
+	let { company, open = false } = $props();
 </script>
 
 <jl-company-embed>
-	<details>
+	<details id="company-embed" {open}>
 		<summary>{t('embed.section')}</summary>
 		<Embed attribute="company" value={company.key} title={t('embed.title', { name: company.name })} />
 	</details>

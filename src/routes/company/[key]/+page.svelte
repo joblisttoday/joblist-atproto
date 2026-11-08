@@ -54,6 +54,8 @@
 				{#if hasJobs}<CompanyJobs {company} />{/if}
 			</section>
 			{#if hasJobs}<CompanyContribute {company} />{/if}
+			<!-- Its own account: its jobs on its own site, at hand. -->
+			{#if manager}<CompanyEmbed {company} open />{/if}
 		</jl-company-main>
 
 		<aside>
@@ -77,7 +79,7 @@
 			</section>
 
 			{#if !manager}<CompanyClaim {company} />{/if}
-			<CompanyEmbed {company} />
+			{#if !manager}<CompanyEmbed {company} />{/if}
 			<CompanyVersions {company} />
 		</aside>
 	</jl-company-page>
