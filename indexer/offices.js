@@ -56,7 +56,7 @@ export async function findOffices(keys, offices, places, { budget = settings.off
 /** @param {string} query */
 async function nominatim(query) {
 	const url = `${settings.service}?${new URLSearchParams({ q: query, format: 'jsonv2', limit: '1' })}`;
-	const res = await fetch(url, { headers: { 'user-agent': settings.userAgent, 'accept-language': 'en' } });
+	const res = await fetch(url, { headers: { 'user-agent': config.userAgent, 'accept-language': 'en' } });
 	if (res.status === 429 || res.status === 403) throw new Refused(`${res.status}`);
 	if (!res.ok) throw new Error(`${res.status}`);
 	const [hit] = await res.json();

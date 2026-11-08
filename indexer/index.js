@@ -14,6 +14,7 @@ import { Companies } from '../src/lib/models/companies.js';
 import { crawlRecords } from './crawl.js';
 import { limitAccounts } from './caps.js';
 import config from '../src/lib/data/config.json' with { type: 'json' };
+import { installPoliteFetch } from '../scripts/lib/http.js';
 import { companyFiles } from './company-files.js';
 import { fetchBoardJobs, firstJobs, recordJobs, toMinute } from './jobs.js';
 import { dateOffers } from './ledger.js';
@@ -33,6 +34,8 @@ const out = process.argv[2] || 'static/snapshot';
 const started = Date.now();
 const generatedAt = new Date().toISOString();
 
+// Every request says it is joblist and where to read about it, and gives up after a while.
+installPoliteFetch();
 const crawled = await crawlRecords();
 const { profiles } = crawled;
 // Each record within its lexicon's limits, each account within its share: one account cannot bloat the snapshot.

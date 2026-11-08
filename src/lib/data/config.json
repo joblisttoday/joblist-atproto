@@ -1,4 +1,5 @@
 {
+	"userAgent": "joblist.today (+https://joblist.today/llms.txt)",
 	"name": "joblist",
 	"url": "https://joblist.today",
 	"source": "https://github.com/joblisttoday/joblist-atproto",
@@ -249,7 +250,6 @@
 	},
 	"geocode": {
 		"service": "https://nominatim.openstreetmap.org/search",
-		"userAgent": "joblist.today indexer (+https://joblist.today)",
 		"delayMs": 1100,
 		"officeBudget": 300,
 		"officeCategories": ["office"],

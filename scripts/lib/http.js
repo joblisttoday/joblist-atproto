@@ -1,12 +1,13 @@
 /**
- * Polite HTTP for the maintenance scripts: a User-Agent naming joblist,
+ * Polite HTTP for the indexer and the maintenance scripts: a User-Agent naming joblist,
  * a timeout on every request, and a log of the responses each task got
  * (so a job fetcher that hides errors can still be told apart from an empty board).
  */
 import { AsyncLocalStorage } from 'node:async_hooks';
 import config from '../../src/lib/data/config.json' with { type: 'json' };
 
-export const USER_AGENT = `joblist-health-check/1.0 (+${config.source})`;
+/** One name for everything joblist asks of others (config.userAgent), with where to read about it. */
+export const USER_AGENT = config.userAgent;
 export const TIMEOUT_MS = 15000;
 const MAX_BYTES = 2_000_000;
 

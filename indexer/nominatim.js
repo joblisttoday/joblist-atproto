@@ -66,7 +66,7 @@ export class Refused extends Error {}
 export async function search(name, featureType = 'settlement') {
 	const query = { q: name, format: 'jsonv2', limit: '1', addressdetails: '1', featureType };
 	const res = await fetch(`${settings.service}?${new URLSearchParams(query)}`, {
-		headers: { 'user-agent': settings.userAgent, 'accept-language': 'en' }
+		headers: { 'user-agent': config.userAgent, 'accept-language': 'en' }
 	});
 	if (res.status === 429 || res.status === 403) throw new Refused(`${res.status}`);
 	if (!res.ok) throw new Error(`${res.status}`);
