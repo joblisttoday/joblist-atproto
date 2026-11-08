@@ -10,6 +10,8 @@ import providers from '#lib/data/providers.json' with { type: 'json' };
  *   left out when it was not, and then the AppView's handle is believed.
  * @typedef {{name?: string, address?: string, country?: string, latitude?: string, longitude?: string}} Location
  * @typedef {{provider?: string, id?: string, url?: string}} JobBoard
+ * @typedef {{kind: string, text?: string, url?: string}} Contribution
+ *   A way to take part besides a job (lexicons/today/joblist/company.json #contribution).
  * @typedef {{
  *   key: string,
  *   name: string,
@@ -20,6 +22,7 @@ import providers from '#lib/data/providers.json' with { type: 'json' };
  *   locations: Location[],
  *   jobBoard?: JobBoard,
  *   links: string[],
+ *   contribute: Contribution[],
  *   verified: boolean,
  *   unchecked: boolean,
  *   editedAt: string,
@@ -138,7 +141,8 @@ export const FIELDS = /** @type {const} */ ([
 	['tags', 'form.tags'],
 	['locations', 'form.locations'],
 	['jobBoard', 'form.section.jobs'],
-	['links', 'form.links']
+	['links', 'form.links'],
+	['contribute', 'form.contribute']
 ]);
 
 /**
@@ -182,6 +186,7 @@ export function toCompany(versions, profiles) {
 		locations: v.locations || [],
 		jobBoard: v.jobBoard,
 		links: (v.links || []).map((/** @type {unknown} */ link) => safeUrl(link)).filter(Boolean),
+		contribute: readContribute(v.contribute),
 		verified: isOwnRecord(record, profiles),
 		// A company's own record is never "the crawler's", even from a bot account.
 		unchecked: !isOwnRecord(record, profiles) && isUnchecked(record, versions),
@@ -189,6 +194,18 @@ export function toCompany(versions, profiles) {
 		record,
 		versions: byRecent(versions)
 	};
+}
+
+/**
+ * The ways to take part an app knows, each with a safe link or a text.
+ * @param {unknown} value a record's contribute (already within the lexicon's limits)
+ * @returns {Contribution[]}
+ */
+export function readContribute(value) {
+	if (!Array.isArray(value)) return [];
+	return value
+		.map((c) => ({ kind: config.companyForm.contributeKinds.includes(c?.kind) ? c.kind : '', text: c?.text?.trim() || undefined, url: safeUrl(c?.url) || undefined }))
+		.filter((c) => c.kind && (c.text || c.url));
 }
 
 /**
@@ -272,7 +289,8 @@ export function searchCompanies(companies, query, limit) {
  *   boardId: string,
  *   careersUrl: string,
  *   locations: Location[],
- *   links: string[]
+ *   links: string[],
+ *   contribute: {kind: string, text: string, url: string}[]
  * }} CompanyForm
  */
 
@@ -304,6 +322,10 @@ export function toRecord(form, createdAt, now = new Date().toISOString()) {
 	}
 	const links = [...new Set(form.links.map((l) => l.trim()).filter(Boolean).map(withScheme))];
 	if (links.length) record.links = links;
+	const contribute = (form.contribute || [])
+		.filter((c) => config.companyForm.contributeKinds.includes(c.kind) && (c.text.trim() || c.url.trim()))
+		.map(({ kind, text, url }) => ({ kind, ...(text.trim() && { text: text.trim() }), ...(url.trim() && { url: withScheme(url) }) }));
+	if (contribute.length) record.contribute = contribute;
 	return record;
 }
 
@@ -323,7 +345,8 @@ export function toForm(company) {
 		boardId: company?.jobBoard?.id || '',
 		careersUrl: company?.jobBoard?.url || '',
 		locations: (company?.locations || []).map((l) => ({ ...l })),
-		links: [...(company?.links || [])]
+		links: [...(company?.links || [])],
+		contribute: (company?.contribute || []).map((c) => ({ kind: c.kind, text: c.text || '', url: c.url || '' }))
 	};
 }
 

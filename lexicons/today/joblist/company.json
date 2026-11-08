@@ -36,6 +36,12 @@
 						"description": "Other public pages of the organization (social profiles, wikipedia, etc.).",
 						"items": { "type": "string", "format": "uri" }
 					},
+					"contribute": {
+						"type": "array",
+						"maxLength": 10,
+						"description": "Ways to take part besides its open jobs (which come from its job board), each with what it is and where.",
+						"items": { "type": "ref", "ref": "#contribution" }
+					},
 					"createdAt": { "type": "string", "format": "datetime", "description": "When this author first described the organization." },
 					"updatedAt": { "type": "string", "format": "datetime", "description": "When this author last saved this version. The most recently edited version is the one shown, unless the organization publishes its own." }
 				}
@@ -50,6 +56,20 @@
 				"countryCode": { "type": "string", "minLength": 2, "maxLength": 2, "description": "ISO 3166-1 alpha-2 code of the country (e.g. 'DE'), alongside its name." },
 				"latitude": { "type": "string", "maxLength": 32, "description": "Decimal degrees, as a string." },
 				"longitude": { "type": "string", "maxLength": 32, "description": "Decimal degrees, as a string." }
+			}
+		},
+		"contribution": {
+			"type": "object",
+			"required": ["kind"],
+			"properties": {
+				"kind": {
+					"type": "string",
+					"maxLength": 64,
+					"knownValues": ["work", "volunteer", "join", "fund"],
+					"description": "work: take part in the work itself, outside a job board (paid work, or as an open contributor); volunteer: give time; join: become a member; fund: give, lend or invest. Apps may leave out other kinds."
+				},
+				"text": { "type": "string", "maxLength": 2000, "maxGraphemes": 200, "description": "What it is, in a few words (e.g. 'Become a member-owner from €50')." },
+				"url": { "type": "string", "format": "uri", "description": "Where to do it." }
 			}
 		},
 		"jobBoard": {

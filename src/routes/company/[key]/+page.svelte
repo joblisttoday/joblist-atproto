@@ -6,6 +6,7 @@
 	import CompanyClaim from '#lib/components/CompanyClaim.svelte';
 	import CompanyEmbed from '#lib/components/CompanyEmbed.svelte';
 	import CompanyHeader from '#lib/components/CompanyHeader.svelte';
+	import CompanyContribute from '#lib/components/CompanyContribute.svelte';
 	import CompanyHiring from '#lib/components/CompanyHiring.svelte';
 	import CompanyInvite from '#lib/components/CompanyInvite.svelte';
 	import CompanyMap from '#lib/components/CompanyMap.svelte';
@@ -45,11 +46,14 @@
 			<!-- The company itself first sees what it can do; anyone else finds "Is this your organization?" after the jobs. -->
 			{#if manager}<CompanyClaim {company} />{/if}
 
+			<!-- An organization without open jobs shows first how else to take part. -->
+			{#if !hasJobs}<CompanyContribute {company} />{/if}
 			<section aria-labelledby="company-jobs">
 				<h2 id="company-jobs">{t('list.tab.jobs')}</h2>
 				<CompanyHiring {company} />
 				{#if hasJobs}<CompanyJobs {company} />{/if}
 			</section>
+			{#if hasJobs}<CompanyContribute {company} />{/if}
 		</jl-company-main>
 
 		<aside>

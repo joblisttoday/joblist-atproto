@@ -22,6 +22,10 @@ import EyeOff from '@lucide/svelte/icons/eye-off';
 import Building2 from '@lucide/svelte/icons/building-2';
 import Briefcase from '@lucide/svelte/icons/briefcase';
 import Footprints from '@lucide/svelte/icons/footprints';
+import Hammer from '@lucide/svelte/icons/hammer';
+import HandCoins from '@lucide/svelte/icons/hand-coins';
+import HandHeart from '@lucide/svelte/icons/hand-heart';
+import UserPlus from '@lucide/svelte/icons/user-plus';
 import House from '@lucide/svelte/icons/house';
 import Inbox from '@lucide/svelte/icons/inbox';
 import Languages from '@lucide/svelte/icons/languages';
@@ -84,7 +88,12 @@ export const icons = {
 	suggestions: Inbox,
 	feed: Rss,
 	language: Languages,
-	settings: Settings
+	settings: Settings,
+	// Ways to take part (company.contribute)
+	work: Hammer,
+	volunteer: HandHeart,
+	join: UserPlus,
+	fund: HandCoins
 };
 
 /** @typedef {keyof typeof icons} IconName */

@@ -6,6 +6,7 @@
 	import CompanyEditNote from './CompanyEditNote.svelte';
 	import CompanyItem from './CompanyItem.svelte';
 	import CompanyWebsiteField from './CompanyWebsiteField.svelte';
+	import ContributeFields from './ContributeFields.svelte';
 	import LinkFields from './LinkFields.svelte';
 	import LocationFields from './LocationFields.svelte';
 	import SaveHint from './SaveHint.svelte';
@@ -32,7 +33,7 @@
 	 *   onsaved: (saved: {key: string, name: string, outcome: ReturnType<typeof saveOutcome>, added: boolean}) => void,
 	 *   oncancel?: () => void
 	 * }}
-	 *   focus: the part to start on (description, jobBoard, locations, tags, links), from an invitation on the company page.
+	 *   focus: the part to start on (description, jobBoard, locations, tags, links, contribute), from an invitation on the company page.
 	 */
 	let { company = null, prefill = {}, focus = '', onsaved, oncancel } = $props();
 
@@ -176,6 +177,10 @@
 
 			<jl-form-part part-name="links">
 				<LinkFields bind:links={form.links} tool={tool.params.links} />
+			</jl-form-part>
+
+			<jl-form-part part-name="contribute">
+				<ContributeFields bind:contribute={form.contribute} />
 			</jl-form-part>
 		</jl-form-fields>
 

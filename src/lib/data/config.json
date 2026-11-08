@@ -163,6 +163,9 @@
 		"tagsMax": 20,
 		"tagMax": 64,
 		"linksMax": 20,
+		"contributeKinds": ["work", "volunteer", "join", "fund"],
+		"contributeMax": 10,
+		"contributeTextMax": 200,
 		"tagSuggestions": 8,
 		"boardCheckDelayMs": 600
 	},
