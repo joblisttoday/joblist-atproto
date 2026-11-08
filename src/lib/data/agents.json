@@ -15,11 +15,13 @@
 		{ "title": "New jobs everywhere", "path": "/feed/new.xml" },
 		{ "title": "Per city, field or both", "about": "`/feed/in/berlin.xml`, `/feed/field/design.xml`, `/feed/in/berlin/design.xml`" },
 		{ "title": "Per organization", "about": "`/feed/company/{domain}.xml`" },
+		{ "title": "Per list", "about": "`/feed/list/{did}/{rkey}.xml` (its author's DID, its record key)" },
 		{ "title": "Any search", "about": "`/feed/search.xml?q=design&where=Berlin` (the explorer's search, words after the `#`, as a query)" }
 	],
 	"snapshot": [
 		{ "file": "jobs.json", "about": "every open job (large: prefer the smaller files). Compact keys: `t` title, `u` link, `c` organization key (its domain), `l` location, `d` department, `p` first seen (ISO date), `i` id at its board, `r` onsite/hybrid/remote (said by its board, or clearly by its text), `g` [longitude, latitude], `m` pay [min, max, currency, period], `s` atproto record of a job posted on joblist, `v` posted by the organization itself" },
 		{ "file": "companies/{domain}.json", "about": "one organization's open jobs, small, with the same keys; `checked`: its board was read, `gone`: its board closed" },
+		{ "file": "lists/{did}/{rkey}.json", "about": "one list's organizations (`companies`, `names`) and their open jobs, small, with the same keys; shown on any site with `<joblist-jobs list=\"{did}/{rkey}\">` (/embed)" },
 		{ "file": "records.json", "about": "every organization, list, suggestion and job record, with their authors' handles" },
 		{ "file": "first.json", "about": "the newest jobs, small" },
 		{ "file": "counts.json", "about": "open jobs per organization, and per list in its place" },

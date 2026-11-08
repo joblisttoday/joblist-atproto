@@ -107,6 +107,15 @@ test('a company feed names the company on each entry', () => {
 	assert.match(body, /href="https:\/\/joblist.today\/feed\/company\/acme.org.xml"/);
 });
 
+test("a list feed names each job's organization and follows the list's page", () => {
+	const list = { did: 'did:plc:abc123', rkey: '3my7' };
+	const { body } = render({ kind: 'feed', list }, { generatedAt: '2026-11-07T01:00Z', name: 'Food', names: { 'acme.org': 'Acme' }, jobs: [{ t: 'Cook', u: 'https://a.example/1', c: 'acme.org', p: '2026-11-03T08:00Z' }] }, '');
+	assert.match(body, /<title>Food: open jobs · joblist<\/title>/);
+	assert.match(body, /<author><name>Acme<\/name>/);
+	assert.match(body, /href="https:\/\/joblist.today\/did:plc:abc123\/3my7"/);
+	assert.match(body, /href="https:\/\/joblist.today\/feed\/list\/did:plc:abc123\/3my7.xml"/);
+});
+
 test('headers: the page keeps the app policy and refuses framing; feeds run nothing', () => {
 	assert.equal(pagePolicy(template), "script-src 'self'; frame-ancestors 'none'");
 	assert.equal(pagePolicy('<html>'), "default-src 'none'; frame-ancestors 'none'");

@@ -80,13 +80,14 @@ export function landingPath({ city, field }) {
 
 /**
  * The page's feed: /feed/in/berlin.xml…; /feed/new.xml for every new job;
- * /feed/search.xml?q=design&where=Lisbon for any explorer search.
- * @param {{city?: string, field?: string, company?: string, search?: string}} page
+ * /feed/search.xml?q=design&where=Lisbon for any explorer search; /feed/list/{did}/{rkey}.xml for a list.
+ * @param {{city?: string, field?: string, company?: string, search?: string, list?: {did: string, rkey: string}}} page
  *   search: an explorer search's address query ("?q=design", see saved-search.js toParams)
  */
-export function feedPath({ city, field, company, search }) {
+export function feedPath({ city, field, company, search, list }) {
 	if (search !== undefined) return `${config.searchFeed.path}${search}`;
 	if (company) return `/feed/company/${company}.xml`;
+	if (list) return `/feed/list/${list.did}/${list.rkey}.xml`;
 	if (!city && !field) return '/feed/new.xml';
 	return `/feed${landingPath({ city, field })}.xml`;
 }
@@ -141,6 +142,15 @@ export function explorerPath({ cityName, field }) {
  */
 export function isCompanyKey(key) {
 	return typeof key === 'string' && key.length <= 253 && /^[a-z0-9][a-z0-9.-]*$/.test(key);
+}
+
+/**
+ * A list's address in a feed's path: its author's DID (colons as they are) and its record key.
+ * @param {string} did
+ * @param {string} rkey
+ */
+export function isListPath(did, rkey) {
+	return /^did:[a-z0-9]+:[A-Za-z0-9._:-]{1,2048}$/.test(did) && /^[A-Za-z0-9._:~-]{1,512}$/.test(rkey) && rkey !== '.' && rkey !== '..';
 }
 
 /**

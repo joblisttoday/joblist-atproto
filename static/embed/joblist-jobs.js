@@ -161,7 +161,11 @@ class JoblistJobs extends HTMLElement {
 		if (where) only.set('where', where);
 		if (remote) only.set('remote', 'remote');
 		const page = `${s.site}/${list ? `${segment(list.did)}/${segment(list.rkey)}` : `company/${key}`}${only.size ? `#${only}` : ''}`;
-		const feed = list ? '' : only.size ? `${s.site}/feed/search.xml?${only}&company=${key}` : `${s.site}/feed/company/${key}.xml`;
+		const feed = list
+			? `${s.site}/feed/list/${segment(list.did)}/${segment(list.rkey)}.xml`
+			: only.size
+				? `${s.site}/feed/search.xml?${only}&company=${key}`
+				: `${s.site}/feed/company/${key}.xml`;
 		const filter = { words: wordsOf(`${query} ${this.typed}`), where: where.toLowerCase(), remote };
 		const found = (Array.isArray(data.jobs) ? data.jobs : []).filter((/** @type {any} */ job) => matches(job, filter));
 		const jobs = list ? spread(found, Number(s.spread) || 0) : found;
@@ -179,7 +183,8 @@ class JoblistJobs extends HTMLElement {
 		const shown = items.length ? el('ul', {}, items) : el('p', {}, [text.none]);
 		const footer = el('p', {}, [
 			jobs.length > items.length ? el('a', { href: page, target: '_blank', rel: 'noopener' }, [fill(text.more, { count })]) : count,
-			...(feed ? [' · ', el('a', { href: feed, type: 'application/atom+xml', title: text.followHelp }, [text.follow])] : []),
+			' · ',
+			el('a', { href: feed, type: 'application/atom+xml', title: text.followHelp }, [text.follow]),
 			' · ',
 			el('a', { href: s.site, target: '_blank', rel: 'noopener' }, [text.by])
 		]);
