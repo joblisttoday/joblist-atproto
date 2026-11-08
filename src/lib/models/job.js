@@ -149,19 +149,22 @@ export function tidyPlace(place) {
  * Jobs taking turns between companies: each company's `per` first jobs, then their next
  * `per`, and so on, each round in the order given (newest first). A company publishing
  * fifty jobs on one day then shows two among the others', not fifty in a row; none is left out.
- * @param {Job[]} jobs
+ * @template {object} T
+ * @param {T[]} jobs
  * @param {number} per 0: the order given
- * @returns {Job[]}
+ * @param {(job: T) => string} [companyOf] its company's key (the snapshot's jobs: `c`)
+ * @returns {T[]}
  */
-export function spread(jobs, per) {
+export function spread(jobs, per, companyOf = (job) => /** @type {any} */ (job).company) {
 	if (!per) return jobs;
 	/** @type {Map<string, number>} */
 	const counted = new Map();
-	/** @type {Job[][]} */
+	/** @type {T[][]} */
 	const rounds = [];
 	for (const job of jobs) {
-		const n = counted.get(job.company) || 0;
-		counted.set(job.company, n + 1);
+		const company = companyOf(job);
+		const n = counted.get(company) || 0;
+		counted.set(company, n + 1);
 		(rounds[Math.floor(n / per)] ??= []).push(job);
 	}
 	return rounds.flat();

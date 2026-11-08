@@ -10,6 +10,7 @@
  * Fields: src/lib/data/fields.json, from each job's title and department.
  */
 import config from '../src/lib/data/config.json' with { type: 'json' };
+import { spread } from '../src/lib/models/job.js';
 import { postPageUrl } from '../src/lib/models/job-post.js';
 import { FIELDS, fieldsOf, indexFile, landingFile, slugify } from '../src/lib/models/landing.js';
 import { placeKey, placeNames } from './places.js';
@@ -52,22 +53,21 @@ function jobLink(job) {
 }
 
 /**
- * The newest jobs of a page, one per company and title, as the page shows them.
+ * The newest jobs of a page, one per company and title, companies taking turns
+ * (config.jobs.spread), as the page shows them.
  * @param {IndexedJob[]} jobs newest first
  * @param {number} [most] how many
+ * @returns {LandingJob[]}
  */
 function newest(jobs, most = landing.shown) {
 	const seen = new Set();
-	/** @type {LandingJob[]} */
-	const shown = [];
-	for (const job of jobs) {
+	const unique = jobs.filter((job) => {
 		const key = `${job.c}\n${job.t.trim().toLowerCase()}`;
-		if (seen.has(key)) continue;
-		seen.add(key);
-		shown.push({ t: job.t, u: jobLink(job), c: job.c, l: job.l, p: job.p, r: job.r, i: job.i });
-		if (shown.length >= most) break;
-	}
-	return shown;
+		return !seen.has(key) && seen.add(key);
+	});
+	return spread(unique, config.jobs.spread, (job) => job.c)
+		.slice(0, most)
+		.map((job) => ({ t: job.t, u: jobLink(job), c: job.c, l: job.l, p: job.p, r: job.r, i: job.i }));
 }
 
 /**
