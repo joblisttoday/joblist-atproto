@@ -137,11 +137,13 @@ export function explorerPath({ cityName, field }) {
 }
 
 /**
- * A company key safe in an address and a file name (as the indexer writes them).
+ * A company key safe in an address and a file name (as the indexer writes them): a domain
+ * (or an older slug), never a TID (since 2023: 13 characters from a digit), the key a generic atproto app gives a new record of
+ * any type (enform does): such a record names no organization's website.
  * @param {unknown} key
  */
 export function isCompanyKey(key) {
-	return typeof key === 'string' && key.length <= 253 && /^[a-z0-9][a-z0-9.-]*$/.test(key);
+	return typeof key === 'string' && key.length <= 253 && /^[a-z0-9][a-z0-9.-]*$/.test(key) && !/^[2-7][2-7a-z]{12}$/.test(key);
 }
 
 /**
