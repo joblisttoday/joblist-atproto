@@ -23,6 +23,7 @@ import { robots, sitemap } from './sitemap.js';
 import { notFoundPage, sitePages } from './site-pages.js';
 import { embedSettings } from './embed-settings.js';
 import { linkList, placeLinks } from './place-links.js';
+import { llmsTxt } from './llms.js';
 import { listPlace } from '../src/lib/models/list-place.js';
 import { indexFile } from '../src/lib/models/landing.js';
 import { t } from '../worker/text.js';
@@ -151,6 +152,9 @@ for (const company of companies.values()) {
 			// Its feed, for readers to find (made by the Worker from the latest snapshot).
 			head: [
 				jsonLd(organization(company, config.url + path, bluesky[company.key]?.avatar)),
+				// Its open jobs as JSON, for programs (indexer/company-files.js).
+				isCompanyKey(company.key) &&
+					`<link rel="alternate" type="application/json" href="${escape(`${config.snapshot.path}/${config.embed.dir}/${encodeURIComponent(company.key)}.json`)}">`,
 				isCompanyKey(company.key) &&
 					`<link rel="alternate" type="application/atom+xml" title="${escape(en['landing.company'].replace('{company}', () => company.name))}" href="${escape(config.url + feedPath({ company: company.key }))}">`
 			]
@@ -197,6 +201,9 @@ for (const { path, meta, listed: inSitemap, updated } of site) {
 writeFileSync(join(build, '404.html'), page(template, notFoundPage()));
 writeFileSync(join(build, 'sitemap.xml'), sitemap(config.url, paths));
 writeFileSync(join(build, 'robots.txt'), robots(config.url));
+// For agents and other programs, from the project's own data (llms.js).
+const meta = existsSync(join(snapshot, 'meta.json')) ? JSON.parse(readFileSync(join(snapshot, 'meta.json'), 'utf8')) : {};
+writeFileSync(join(build, 'llms.txt'), llmsTxt({ counts: meta.counts, generatedAt: meta.generatedAt }));
 mkdirSync(join(build, 'embed'), { recursive: true });
 writeFileSync(join(build, 'embed', 'settings.json'), JSON.stringify(embedSettings()));
 console.log(`prerendered ${count} pages, sitemap of ${paths.length}`);

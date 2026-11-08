@@ -61,10 +61,13 @@ Posts jobs for a company, or several.
 
 ### Another app, an AI assistant
 Reads or writes the same records.
-- **Today:** the `today.joblist.*` lexicons, the snapshot files, WebMCP
-  tools on the site.
-- **Missing:** the lexicons published (`_lexicon` DNS), a short
-  documentation of the snapshot files, `llms.txt`.
+- **Today:** the `today.joblist.*` lexicons, published; the snapshot
+  files, with one small JSON file per organization linked from its page;
+  Atom feeds for any search; `/llms.txt`, written at each build from
+  `src/lib/data/agents.json`, the lexicons and docs/, with etiquette;
+  WebMCP tools on the site.
+- **Missing:** a JSON file per list (an agent reads `records.json` and the
+  organizations' files).
 
 ### Maintainer
 Keeps the data healthy.

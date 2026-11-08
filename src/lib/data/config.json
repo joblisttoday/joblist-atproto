@@ -273,6 +273,7 @@
 	},
 	"snapshot": {
 		"path": "https://raw.githubusercontent.com/joblisttoday/joblist-snapshot/gh-pages",
+		"everyHours": 6,
 		"maxAgeHours": 12,
 		"prerenderFiles": ["records.json", "jobs.json", "meta.json", "bluesky.json", "landing/index.json"],
 		"preload": {
