@@ -2,6 +2,7 @@ import config from '#lib/data/config.json';
 import { safeUrl } from '#lib/models/url.js';
 import { fromSnapshot, readCompanyFile, readJobsFile } from '#lib/models/snapshot-job.js';
 import { readCounts } from '#lib/models/snapshot-counts.js';
+import { newestFirst } from '#lib/models/job.js';
 
 /**
  * The AppView snapshot: static files rebuilt on a schedule by indexer/.
@@ -61,24 +62,44 @@ export function getSnapshotJobs() {
 }
 
 /**
- * One company's jobs, from its own small file (indexer/company-files.js), in the shape of
- * getSnapshotJobs: its page needs only them. Every job when it has none (a company added
- * since the snapshot, an older snapshot), so it is never shown with fewer.
- * @type {Map<string, Promise<SnapshotJobs | null>>}
+ * One company's small file (indexer/company-files.js); null when it has none or it is stale.
+ * @type {Map<string, Promise<ReturnType<typeof readCompanyFile>>>}
  */
-const companyPromises = new Map();
+const companyFiles = new Map();
 /** @param {string} key */
-export function getCompanyJobs(key) {
-	let promise = companyPromises.get(key);
+function getCompanyFile(key) {
+	let promise = companyFiles.get(key);
 	if (!promise) {
 		promise = getFile(`${config.embed.dir}/${encodeURIComponent(key)}.json`).then((data) => {
 			const file = readCompanyFile(key, data);
-			if (!file || !fresh(file.generatedAt)) return getSnapshotJobs();
-			return { all: file.all, jobs: new Map([[key, file.all]]), checked: new Set(file.checked), gone: new Set(file.gone), points: new Map(file.points) };
+			return file && fresh(file.generatedAt) ? file : null;
 		});
-		companyPromises.set(key, promise);
+		companyFiles.set(key, promise);
 	}
 	return promise;
+}
+
+/**
+ * A few companies' jobs (a company's page, a small list), from their own small files, in the
+ * shape of getSnapshotJobs: the page needs only them. Every job when one of them has no file
+ * (a company added since the snapshot, an older snapshot), so none is ever shown with fewer.
+ * @param {string[]} keys at most config.snapshot.companyFiles of them
+ * @returns {Promise<SnapshotJobs | null>}
+ */
+export async function getCompaniesJobs(keys) {
+	const files = await Promise.all(keys.map(getCompanyFile));
+	if (files.some((file) => !file)) return getSnapshotJobs();
+	const read = /** @type {NonNullable<(typeof files)[number]>[]} */ (files);
+	const all = read.flatMap((file) => file.all);
+	// Each file is newest first; together they are sorted again (a few hundred jobs at most).
+	if (read.length > 1) newestFirst(all);
+	return {
+		all,
+		jobs: new Map(keys.map((key, i) => [key, read[i].all])),
+		checked: new Set(read.flatMap((file) => file.checked)),
+		gone: new Set(read.flatMap((file) => file.gone)),
+		points: new Map(read.flatMap((file) => file.points))
+	};
 }
 
 /** @param {string} name */
