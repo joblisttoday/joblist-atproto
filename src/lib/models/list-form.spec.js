@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { findCompanies, listDraftApplies, moveItem, previewList, resumeDraft, toListForm } from './list-form.js';
+import { findCompanies, listDraftApplies, moveItem, previewList, readPasted, resumeDraft, toListForm } from './list-form.js';
 
 /** @param {string} key @param {string} name @param {Record<string, any>} [more] */
 const company = (key, name, more = {}) =>
@@ -87,5 +87,26 @@ describe('moveItem', () => {
 	it('moves an item, and stays in bounds', () => {
 		expect(moveItem(['a', 'b', 'c'], 0, 1)).toEqual(['b', 'a', 'c']);
 		expect(moveItem(['a', 'b', 'c'], 2, 3)).toEqual(['a', 'b', 'c']);
+	});
+});
+
+describe('readPasted', () => {
+	const company = (/** @type {string} */ key, /** @type {object} */ more = {}) => /** @type {any} */ ({ key, name: key, ...more });
+	const companies = new Map([
+		['acme.org', company('acme.org')],
+		['coop.example', company('coop.example', { jobBoard: { provider: 'greenhouse', id: 'coopjobs' } })],
+		['in.example', company('in.example')]
+	]);
+
+	it('finds the organizations pasted, by website, link or job board, each once', () => {
+		const text = 'https://www.acme.org/about\nacme.org, https://boards.greenhouse.io/coopjobs\nnew.example  in.example';
+		const pasted = readPasted(text, companies, ['in.example']);
+		expect(pasted.found.map((c) => c.key)).toEqual(['acme.org', 'coop.example']);
+		expect(pasted.missing).toEqual([{ key: 'new.example', link: 'https://new.example' }]);
+		expect(pasted.already).toBe(1);
+	});
+
+	it('reads words without a dot as nothing', () => {
+		expect(readPasted('Berlin startups', companies, [])).toEqual({ found: [], missing: [], already: 0 });
 	});
 });

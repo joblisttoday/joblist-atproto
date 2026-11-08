@@ -1,4 +1,5 @@
 import { searchText } from './company.js';
+import { findCompany, parsePaste } from './paste.js';
 
 /**
  * What the list form starts from, says back while it is filled in, and saves.
@@ -95,6 +96,34 @@ export function findCompanies(companies, chosen, query, jobs, limit) {
 		.filter((c) => !chosen.includes(c.key) && words.every((w) => searchText(c).includes(w)))
 		.sort((a, b) => rank(a) - rank(b) || (jobs.get(b.key) || 0) - (jobs.get(a.key) || 0) || a.name.localeCompare(b.name))
 		.slice(0, limit);
+}
+
+/**
+ * Websites, links to them or to their job boards, pasted at once (one a line, or separated by
+ * spaces or commas): those on joblist and not in the list yet, and those to describe first.
+ * Each once, in the order pasted.
+ * @param {string} text
+ * @param {Map<string, Company>} companies by key
+ * @param {string[]} chosen the list's organizations
+ * @returns {{found: Company[], missing: {key: string, link: string}[], already: number}}
+ */
+export function readPasted(text, companies, chosen) {
+	/** @type {Map<string, Company>} */
+	const found = new Map();
+	/** @type {Map<string, {key: string, link: string}>} */
+	const missing = new Map();
+	let already = 0;
+	for (const word of text.split(/[\s,;]+/)) {
+		// A website, a link, a domain: something with a dot, never a name's words.
+		if (!word.includes('.')) continue;
+		const link = /^https?:\/\//i.test(word) ? word : `https://${word}`;
+		const pasted = parsePaste({ link, name: '', board: '' });
+		const company = findCompany(companies, pasted);
+		if (company && chosen.includes(company.key)) already++;
+		else if (company) found.set(company.key, company);
+		else if (pasted.key || pasted.board) missing.set(pasted.key || link, { key: pasted.key, link });
+	}
+	return { found: [...found.values()], missing: [...missing.values()], already };
 }
 
 /**

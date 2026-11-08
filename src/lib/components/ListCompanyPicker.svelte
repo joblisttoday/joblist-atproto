@@ -4,7 +4,7 @@
 	import Icon from './Icon.svelte';
 	import { data } from '#lib/network/network.svelte.js';
 	import { jobCounts } from '#lib/network/job-counts.svelte.js';
-	import { findCompanies } from '#lib/models/list-form.js';
+	import { findCompanies, readPasted } from '#lib/models/list-form.js';
 	import { focusNear } from '#lib/navigation/focus.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
@@ -37,6 +37,16 @@
 		added = company.name;
 		focusNear(() => list, index, 'button:not(:disabled)', () => search);
 	}
+	// Several at once: websites or links pasted, one a line.
+	let paste = $state('');
+	const pasted = $derived(readPasted(paste, data.companies, companies));
+	function addAll() {
+		const room = config.listForm.companiesMax - companies.length;
+		const adding = pasted.found.slice(0, Math.max(0, room));
+		companies.push(...adding.map((c) => c.key));
+		added = adding.map((c) => c.name).join(', ');
+	}
+
 	/** @param {import('#lib/models/company.js').Company} company */
 	const where = (company) => [...new Set(company.locations.map((l) => l.name).filter(Boolean))].slice(0, 2).join(', ');
 </script>
@@ -77,6 +87,29 @@
 			</li>
 		{/each}
 	</ul>
+	<details>
+		<summary>{t('form.list.paste')}</summary>
+		<label for="{id}-paste">{t('form.list.paste.help')}</label>
+		<textarea id="{id}-paste" bind:value={paste} rows="4" placeholder={t('form.list.paste.example')}></textarea>
+		{#if paste.trim()}
+			<p>
+				<small>
+					{t('form.list.paste.found', { count: pasted.found.length })}{#if pasted.already} · {t('form.list.paste.already', { count: pasted.already })}{/if}
+				</small>
+			</p>
+			{#if pasted.found.length}
+				<menu><li><button type="button" onclick={addAll} disabled={full}><Icon name="add" /> {t('form.list.paste.addAll', { count: pasted.found.length })}</button></li></menu>
+			{/if}
+			{#if pasted.missing.length}
+				<p><small>{t('form.list.paste.missing')}</small></p>
+				<ul aria-label={t('form.list.paste.missing')}>
+					{#each pasted.missing as other (other.link)}
+						<li><a href="/add?url={encodeURIComponent(other.link)}" target="_blank" rel="noopener">{other.key || other.link}</a></li>
+					{/each}
+				</ul>
+			{/if}
+		{/if}
+	</details>
 	<p aria-live="polite"><small>{added ? t('form.list.added', { name: added }) : ''}</small></p>
 </jl-list-company-picker>
 
@@ -92,7 +125,8 @@
 	ul:not(:empty) {
 		border: var(--border);
 	}
-	button {
+	/* The suggestions: rows to tap, not buttons. */
+	ul > li > button {
 		display: flex;
 		align-items: center;
 		gap: var(--space-s);
@@ -102,7 +136,7 @@
 		border-bottom: var(--border);
 		border-radius: 0;
 	}
-	li:last-child button {
+	ul > li:last-child > button {
 		border-bottom: none;
 	}
 	span {
