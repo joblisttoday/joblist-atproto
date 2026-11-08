@@ -253,6 +253,13 @@ textarea {
 	color: inherit;
 }
 
+/* Never under 16px, wherever they sit: phones zoom into smaller fields. */
+input,
+select,
+textarea {
+	font-size: max(var(--font-size), 1em);
+}
+
 input,
 select,
 textarea {
@@ -388,8 +395,42 @@ input[type='checkbox'] {
 	accent-color: var(--color-accent);
 }
 
+/* A choice (radio or checkbox) shown as a chip: <label><input><span>…</span></label>.
+   The input stays for keyboards, screen readers and forms; the chip shows it. */
+label > input:is([type='radio'], [type='checkbox']):has(+ span) {
+	position: absolute;
+	opacity: 0;
+	width: var(--hidden-size);
+	height: var(--hidden-size);
+}
+label > input:is([type='radio'], [type='checkbox']) + span {
+	display: inline-flex;
+	align-items: center;
+	min-height: var(--chip-height);
+	padding: 0 var(--space-m);
+	border: var(--control-border);
+	border-radius: var(--radius-round);
+	cursor: pointer;
+	font-size: var(--font-size-small);
+	font-weight: normal;
+}
+label:hover > input:is([type='radio'], [type='checkbox']) + span {
+	background: var(--color-soft);
+}
+label > input:is([type='radio'], [type='checkbox']):checked + span {
+	background: var(--color-fg);
+	color: var(--color-bg);
+	border-color: var(--color-fg);
+}
+label > input:is([type='radio'], [type='checkbox']):focus-visible + span {
+	outline: var(--focus-ring);
+	outline-offset: var(--focus-offset);
+}
+
 summary {
-	padding: var(--space-s) 0;
+	min-height: var(--chip-height);
+	align-content: center;
+	padding: var(--space-xs) 0;
 	cursor: pointer;
 	font-weight: var(--font-weight-strong);
 }

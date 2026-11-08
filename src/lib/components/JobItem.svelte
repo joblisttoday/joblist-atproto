@@ -180,6 +180,10 @@
 		display: block;
 		font-weight: var(--font-weight-strong);
 	}
+	jl-job > a {
+		min-height: var(--chip-height);
+		align-content: center;
+	}
 	jl-job > a,
 	summary strong {
 		display: block;

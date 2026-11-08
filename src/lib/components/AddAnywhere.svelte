@@ -64,6 +64,5 @@
 	}
 	textarea {
 		font-family: monospace;
-		font-size: var(--font-size-small);
 	}
 </style>

@@ -39,6 +39,8 @@
 		padding: var(--space-xs) 0;
 	}
 	a {
+		min-height: var(--chip-height);
+		align-content: center;
 		overflow: hidden;
 		color: var(--color-fg);
 		text-overflow: ellipsis;

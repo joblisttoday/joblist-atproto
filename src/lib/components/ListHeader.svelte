@@ -64,7 +64,13 @@
 		grid-column: 1 / -1;
 	}
 	summary {
+		min-height: 0;
 		padding: 0;
+		/* A finger's height, the text clamped to its one line: a border is outside what the clamp shows. */
+		--fold-line: calc(var(--font-size-small) * var(--line-height));
+		line-height: var(--fold-line);
+		/* Rounded up: browsers draw borders in whole pixels, rounding down. */
+		border-block: round(up, calc((var(--chip-height) - var(--fold-line)) / 2), 1px) solid transparent;
 		font-weight: normal;
 		list-style: none;
 	}

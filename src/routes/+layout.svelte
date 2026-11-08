@@ -47,7 +47,10 @@
 		left: var(--space-s);
 		top: calc(-1 * var(--tap-size) * 2);
 		z-index: 20;
-		padding: var(--space-s) var(--space-m);
+		display: flex;
+		align-items: center;
+		min-height: var(--tap-size);
+		padding: 0 var(--space-m);
 		background: var(--color-accent);
 		color: var(--color-accent-fg);
 	}

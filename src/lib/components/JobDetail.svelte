@@ -105,6 +105,13 @@
 </jl-job-detail>
 
 <style>
+	/* The organization's name: a finger's size. */
+	h2[id='job-company'] > a {
+		display: inline-flex;
+		align-items: center;
+		min-width: var(--chip-height);
+		min-height: var(--chip-height);
+	}
 	jl-job-detail {
 		display: block;
 	}

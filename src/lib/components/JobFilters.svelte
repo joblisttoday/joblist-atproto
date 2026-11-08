@@ -74,7 +74,7 @@
 					{/each}
 				</select>
 			{/if}
-			<label><input type="checkbox" bind:checked={grouped} /> {t('jobs.filter.grouped')}</label>
+			<button type="button" aria-pressed={grouped ? 'true' : 'false'} onclick={() => (grouped = !grouped)}>{t('jobs.filter.grouped')}</button>
 		</fieldset>
 		{#if locating === 'locating'}<small aria-live="polite">{t('near.locating')}</small>{/if}
 		{#if locating === 'denied'}<small role="alert">{t('near.denied')}</small>{/if}

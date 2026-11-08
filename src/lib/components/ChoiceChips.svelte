@@ -52,35 +52,6 @@
 		margin: 0;
 		font-weight: normal;
 	}
-	/* The radio stays for keyboards and screen readers; the chip shows it. */
-	input {
-		position: absolute;
-		opacity: 0;
-		width: 1px;
-		height: 1px;
-	}
-	span {
-		display: inline-flex;
-		align-items: center;
-		min-height: var(--chip-height);
-		padding: 0 var(--space-m);
-		border: var(--control-border);
-		border-radius: var(--radius-round);
-		cursor: pointer;
-		font-size: var(--font-size-small);
-	}
-	label:hover span {
-		background: var(--color-soft);
-	}
-	input:checked + span {
-		background: var(--color-fg);
-		color: var(--color-bg);
-		border-color: var(--color-fg);
-	}
-	input:focus-visible + span {
-		outline: var(--focus-ring);
-		outline-offset: var(--focus-offset);
-	}
 	small {
 		display: block;
 		margin-top: var(--space-xs);
