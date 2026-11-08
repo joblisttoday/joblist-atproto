@@ -1,5 +1,5 @@
 <script>
-	import DialogHeader from './DialogHeader.svelte';
+	import ConfirmDialog from './ConfirmDialog.svelte';
 	import { goto } from '$app/navigation';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { deleteList } from '#lib/network/save-list.js';
@@ -13,21 +13,18 @@
 	 * @type {{list: import('#lib/models/list.js').List}}
 	 */
 	let { list } = $props();
-	const id = $props.id();
-	/** @type {HTMLDialogElement | undefined} */
-	let dialog = $state();
+	/** @type {ConfirmDialog | undefined} */
+	let confirmer = $state();
 	let busy = $state(false);
 	/** @type {string | null} */
 	let error = $state(null);
 
 	export function ask() {
-		if (!dialog) return;
-		dialog.returnValue = '';
-		dialog.showModal();
+		confirmer?.ask();
 	}
 
-	async function onclose() {
-		if (dialog?.returnValue !== 'delete' || !ownsList(list)) return;
+	async function remove() {
+		if (!ownsList(list)) return;
 		busy = true;
 		error = null;
 		try {
@@ -42,16 +39,14 @@
 </script>
 
 <jl-list-delete busy={busy || undefined}>
-	<dialog bind:this={dialog} {onclose} aria-labelledby="{id}-title" aria-describedby="{id}-text">
-		<DialogHeader id="{id}-title" title={t(list.did === LOCAL ? 'list.delete.local.title' : 'list.delete.title', { name: list.name })} />
-		<form method="dialog">
-			<p id="{id}-text">{t(list.did === LOCAL ? 'list.delete.local.text' : 'list.delete.text', { count: list.companies.length })}</p>
-			<menu>
-				<button value="keep">{t('list.delete.keep')}</button>
-				<button value="delete">{t('list.delete.confirm')}</button>
-			</menu>
-		</form>
-	</dialog>
+	<ConfirmDialog
+		bind:this={confirmer}
+		title={t(list.did === LOCAL ? 'list.delete.local.title' : 'list.delete.title', { name: list.name })}
+		text={t(list.did === LOCAL ? 'list.delete.local.text' : 'list.delete.text', { count: list.companies.length })}
+		keep={t('list.delete.keep')}
+		confirm={t('list.delete.confirm')}
+		onconfirm={remove}
+	/>
 	{#if busy}<p aria-live="polite"><small>{t('list.deleting')}</small></p>{/if}
 	{#if error}<p role="alert">{error}</p>{/if}
 </jl-list-delete>
@@ -59,26 +54,6 @@
 <style>
 	jl-list-delete {
 		display: contents;
-	}
-	dialog {
-		width: min(100% - 2 * var(--gutter), var(--measure));
-		--dialog-padding: var(--space-l);
-		padding: 0 var(--dialog-padding) var(--space-m);
-		border: var(--border);
-		border-radius: var(--radius-large);
-		background: var(--color-bg);
-		color: var(--color-fg);
-	}
-	dialog::backdrop {
-		background: var(--backdrop);
-	}
-	menu {
-		justify-content: flex-end;
-		margin-bottom: 0;
-	}
-	button[value='delete'] {
-		color: var(--color-error);
-		border-color: var(--color-error);
 	}
 	p {
 		margin: var(--space-xs) 0 0;

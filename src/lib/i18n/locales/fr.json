@@ -157,6 +157,7 @@
 	"list.delete.text.one": "Sa page et son lien ne fonctionnent plus, et les suggestions qui lui ont été faites sont perdues. Son organisation reste sur joblist, et les copies que d'autres en ont faites sont gardées.",
 	"list.delete.local.title": "Supprimer « {name} » de cet appareil ?",
 	"list.delete.local.text": "Elle n'existait qu'ici : elle disparaît pour de bon. Ses organisations restent sur joblist.",
+	"confirm.keep": "Garder",
 	"list.delete.keep": "La garder",
 	"list.delete.confirm": "Supprimer la liste",
 	"list.deleting": "Suppression…",

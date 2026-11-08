@@ -157,6 +157,7 @@
 	"list.delete.text.one": "Ihre Seite und ihr Link funktionieren nicht mehr, und Vorschläge dazu gehen verloren. Ihre Organisation bleibt auf joblist, und Kopien, die andere davon gemacht haben, bleiben erhalten.",
 	"list.delete.local.title": "„{name}“ von diesem Gerät löschen?",
 	"list.delete.local.text": "Sie war nur hier: Sie ist endgültig weg. Ihre Organisationen bleiben auf joblist.",
+	"confirm.keep": "Behalten",
 	"list.delete.keep": "Behalten",
 	"list.delete.confirm": "Liste löschen",
 	"list.deleting": "Wird gelöscht…",

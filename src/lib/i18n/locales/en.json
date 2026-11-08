@@ -157,6 +157,7 @@
 	"list.delete.text.one": "Its page and link stop working, and suggestions made to it are lost. Its organization stays on joblist, and copies others made of it are kept.",
 	"list.delete.local.title": "Delete “{name}” from this device?",
 	"list.delete.local.text": "It was only here: it is gone for good. Its organizations stay on joblist.",
+	"confirm.keep": "Keep it",
 	"list.delete.keep": "Keep it",
 	"list.delete.confirm": "Delete the list",
 	"list.deleting": "Deleting…",

@@ -1,4 +1,5 @@
 <script>
+	import ConfirmDialog from './ConfirmDialog.svelte';
 	import config from '#lib/data/config.json';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { daysLeft, postPath } from '#lib/models/job-post.js';
@@ -36,8 +37,9 @@
 			renewed = true;
 		});
 
+	/** @type {ConfirmDialog | undefined} */
+	let confirmer = $state();
 	const remove = () =>
-		confirm(t('post.confirmDelete')) &&
 		run(async () => {
 			await deleteJob(post);
 			ondeleted?.();
@@ -50,8 +52,9 @@
 		<menu>
 			<a href="{postPath(post.did, post.rkey)}/edit">{t('post.change')}</a>
 			<button type="button" disabled={busy} onclick={renew}>{t('post.renew', { count: config.jobPost.days })}</button>
-			<button type="button" disabled={busy} onclick={remove}>{t('post.delete')}</button>
+			<button type="button" disabled={busy} onclick={() => confirmer?.ask()}>{t('post.delete')}</button>
 		</menu>
+		<ConfirmDialog bind:this={confirmer} title={t('post.confirmDelete')} confirm={t('post.delete')} onconfirm={remove} />
 		{#if renewed}<p role="status"><small>{t('post.renewed')}</small></p>{/if}
 		{#if error}<p role="alert">{error}</p>{/if}
 	</jl-job-post-menu>

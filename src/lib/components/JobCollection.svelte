@@ -1,5 +1,6 @@
 <script>
 	import CollectionName from './CollectionName.svelte';
+	import ConfirmDialog from './ConfirmDialog.svelte';
 	import JobMarks from './JobMarks.svelte';
 	import { isBuiltin } from '#lib/models/job-collection.js';
 	import { deleteCollection, renameCollection } from '#lib/network/job-collections.svelte.js';
@@ -22,9 +23,8 @@
 		renaming = false;
 	}
 
-	function remove() {
-		if (confirm(t('collections.confirmDelete', { name }))) deleteCollection(collection.id);
-	}
+	/** @type {ConfirmDialog | undefined} */
+	let confirmer = $state();
 </script>
 
 <jl-job-collection builtin={builtin || undefined} renaming={renaming || undefined}>
@@ -35,8 +35,14 @@
 		{:else if !builtin}
 			<menu>
 				<button type="button" onclick={() => (renaming = true)}>{t('collections.rename')}</button>
-				<button type="button" onclick={remove}>{t('collections.delete')}</button>
+				<button type="button" onclick={() => confirmer?.ask()}>{t('collections.delete')}</button>
 			</menu>
+			<ConfirmDialog
+				bind:this={confirmer}
+				title={t('collections.confirmDelete', { name })}
+				confirm={t('collections.delete')}
+				onconfirm={() => deleteCollection(collection.id)}
+			/>
 		{/if}
 		<JobMarks {collection} />
 	</section>
