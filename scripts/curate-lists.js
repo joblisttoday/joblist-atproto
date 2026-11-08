@@ -6,6 +6,7 @@
  *   node scripts/curate-lists.js --out lists.md        # save it
  *   node scripts/curate-lists.js --json > lists.json   # the proposal, for other tools
  *   node scripts/curate-lists.js --plan                # what --write would write now
+ *   (or Actions → curate-lists → Run, with the account's secrets)
  *   JOBLIST_HANDLE=joblist.today JOBLIST_APP_PASSWORD=xxxx-xxxx-xxxx-xxxx \
  *     node scripts/curate-lists.js --write             # write it, from that account
  *

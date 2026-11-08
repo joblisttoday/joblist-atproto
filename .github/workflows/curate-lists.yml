@@ -1,0 +1,38 @@
+# Writes joblist's lists by need from the commons map (scripts/curate-lists.js) from
+# joblist.today's account, by hand: Actions → curate-lists → Run.
+# The plan (what would be written) unless "write" is ticked; run again, it adds only what is left.
+# Secrets: JOBLIST_HANDLE, JOBLIST_APP_PASSWORD (an app password of joblist.today; the
+# script refuses an account not in config.bots, whose records show as not checked by a person).
+name: curate-lists
+
+on:
+  workflow_dispatch:
+    inputs:
+      write:
+        description: Write the records (else the plan)
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  curate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Curate
+        env:
+          JOBLIST_HANDLE: ${{ secrets.JOBLIST_HANDLE }}
+          JOBLIST_APP_PASSWORD: ${{ secrets.JOBLIST_APP_PASSWORD }}
+          WRITE: ${{ inputs.write }}
+        run: |
+          if [ "$WRITE" = "true" ]; then node scripts/curate-lists.js --write; else node scripts/curate-lists.js --plan; fi
