@@ -110,6 +110,11 @@
 		"timeoutMs": 8000,
 		"concurrency": 12
 	},
+	"workplaces": {
+		"file": "workplaces.json",
+		"perRun": 1500,
+		"concurrency": 2
+	},
 	"ledger": {
 		"file": "offers.json",
 		"keepDays": 30

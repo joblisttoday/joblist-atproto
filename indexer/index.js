@@ -17,6 +17,7 @@ import config from '../src/lib/data/config.json' with { type: 'json' };
 import { companyFiles } from './company-files.js';
 import { fetchBoardJobs, firstJobs, recordJobs, toMinute } from './jobs.js';
 import { dateOffers } from './ledger.js';
+import { readWorkplaces } from './workplaces.js';
 import { seeVersions } from './seen.js';
 import { landingFiles } from './landing.js';
 import { blueskyAccounts } from './bluesky.js';
@@ -48,6 +49,9 @@ const companies = groupCompanies(records.company, profiles);
 console.log(`records: ${records.company.length} company, ${records.list.length} list, ${records.suggestion.length} suggestion, ${records.job.length} job, from ${profiles.size} accounts`);
 
 const board = await fetchBoardJobs(companies);
+// Where the work happens, from the descriptions of jobs whose board does not say (workplaces.js).
+const workplaces = await readWorkplaces(board.jobs, new Map(companies.map((c) => [c.key, c])), /** @type {any} */ (await loadCache(config.workplaces.file)));
+console.log(`workplaces: ${workplaces.read} descriptions read, ${workplaces.said} jobs say where they are done (${Object.keys(workplaces.cache).length} known)`);
 const jobs = [...recordJobs(records.job, profiles, companies), ...board.jobs];
 // Companies whose domain is their Bluesky handle.
 const bluesky = await blueskyAccounts(companies.map((c) => c.key), /** @type {any} */ (await loadCache(config.bluesky.file)));
@@ -111,6 +115,7 @@ const files = {
 	// duplicates: [kept, other] companies that share a job board, to merge.
 	'health.json': { generatedAt, companies: board.health, duplicates: board.duplicates },
 	[config.ledger.file]: dates.ledger,
+	[config.workplaces.file]: workplaces.cache,
 	[config.versions.file]: versions.ledger,
 	[config.bluesky.file]: bluesky,
 	[config.geocode.placesFile]: places,
