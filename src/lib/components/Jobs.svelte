@@ -5,7 +5,7 @@
 	import JobItem from './JobItem.svelte';
 	import { getJobs } from '#lib/ats/index.js';
 	import { mapLimit } from '#lib/atproto/xrpc.js';
-	import { getSnapshotCounts, getSnapshotFirst, getSnapshotJobs } from '#lib/network/snapshot.js';
+	import { getCompanyJobs, getSnapshotCounts, getSnapshotFirst, getSnapshotJobs } from '#lib/network/snapshot.js';
 	import { afterPaint } from '#lib/navigation/after-paint.js';
 	import { prepareSearch } from '#lib/network/prepare-search.js';
 	import { boardUrl, hasJobsApi } from '#lib/models/company.js';
@@ -159,7 +159,9 @@
 		// Boards in the snapshot answer at once; only newer ones are asked live.
 		// The explorer first shows the newest jobs: reading all of them takes a phone seconds.
 		const ready = untrack(() => quick) ? getSnapshotFirst().then(afterPaint) : Promise.resolve();
-		ready.then(getSnapshotJobs).then((snapshot) => {
+		// One company (its page): its own small file, not every job.
+		const read = list.length === 1 ? () => getCompanyJobs(list[0].key) : getSnapshotJobs;
+		ready.then(read).then((snapshot) => {
 			if (cancelled) return;
 			const unread = snapshot ? list.filter((c) => !snapshot.checked.has(c.key)) : list;
 			if (snapshot) {

@@ -14,6 +14,7 @@ import { Companies } from '../src/lib/models/companies.js';
 import { crawlRecords } from './crawl.js';
 import { limitAccounts } from './caps.js';
 import config from '../src/lib/data/config.json' with { type: 'json' };
+import { companyFiles } from './company-files.js';
 import { fetchBoardJobs, firstJobs, recordJobs, toMinute } from './jobs.js';
 import { dateOffers } from './ledger.js';
 import { seeVersions } from './seen.js';
@@ -21,7 +22,6 @@ import { landingFiles } from './landing.js';
 import { blueskyAccounts } from './bluesky.js';
 import { verifyCompanyHandles } from './handles.js';
 import { indexFile, isCompanyKey } from '../src/lib/models/landing.js';
-import { postPath } from '../src/lib/models/job-post.js';
 import { findOffices, officeKey } from './offices.js';
 import { geocode, locate, placeNames } from './places.js';
 import { suggest } from './suggest.js';
@@ -149,10 +149,12 @@ async function loadCache(name) {
 mkdirSync(out, { recursive: true });
 for (const [name, data] of Object.entries(files)) writeFileSync(join(out, name), JSON.stringify(data));
 
-// One small file per company, for the embeds on other sites: its open jobs, newest first.
+// One small file per company, for its page here and the embeds on other sites (company-files.js).
 const embeds = join(out, config.embed.dir);
 mkdirSync(embeds, { recursive: true });
-for (const [key, file] of companyFiles(companies, jobs, generatedAt)) writeFileSync(join(embeds, `${key}.json`), JSON.stringify(file));
+for (const [key, file] of companyFiles(companies, jobs, { generatedAt, checked: Object.keys(board.health), gone })) {
+	writeFileSync(join(embeds, `${key}.json`), JSON.stringify(file));
+}
 
 // Small files for the pages per city and field and their feeds (landing.js), read by the Worker.
 const landing = landingFiles(jobs, new Map(companies.map((c) => [c.key, c.name])), places, generatedAt);
@@ -170,29 +172,6 @@ console.log(`stats: ${stats.weeks.length} weeks since ${stats.since}`);
 console.log(`snapshot written to ${out} in ${files['meta.json'].seconds}s`);
 
 /**
- * Each company's open jobs, as embeds and feeds read them (the fields they show), under a
- * key safe as a file name. They speak in the company's name on other sites: only its job
- * board's jobs and those it posted itself (verified), the posted ones linking to their page here.
- * @param {{key: string, name: string}[]} companies
- * @param {import('./jobs.js').IndexedJob[]} jobs
- * @param {string} generatedAt
- * @returns {[string, {generatedAt: string, name: string, jobs: object[]}][]}
- */
-function companyFiles(companies, jobs, generatedAt) {
-	/** @type {Map<string, import('./jobs.js').IndexedJob[]>} */
-	const byCompany = new Map();
-	for (const job of jobs) byCompany.set(job.c, [...(byCompany.get(job.c) || []), job]);
-	return companies
-		.filter((c) => isCompanyKey(c.key))
-		.map((c) => {
-			const own = (byCompany.get(c.key) || [])
-				.filter((j) => !j.s || j.v)
-				.sort((a, b) => String(b.p || '').localeCompare(String(a.p || '')));
-			return [c.key, { generatedAt, name: c.name, jobs: own.map(({ t, u, l, p, r, s }) => ({ t, u: s ? postUrl(s) || u : u, l, p, r })) }];
-		});
-}
-
-/**
  * @param {import('../src/lib/atproto/records.js').RepoRecord[]} companyRecords
  * @param {Map<string, {handle: string}>} profiles
  */
@@ -206,10 +185,4 @@ function groupCompanies(companyRecords, profiles) {
 	}
 	// The same company added twice is read once (companies.js).
 	return [...new Companies([...byKey.values()].map((versions) => toCompany(versions, profiles))).values()];
-}
-
-/** A posted job's page here, from its record address (at://did/collection/rkey). @param {string} uri */
-function postUrl(uri) {
-	const [did, , rkey] = uri.replace('at://', '').split('/');
-	return did && rkey ? config.url + postPath(did, rkey) : '';
 }

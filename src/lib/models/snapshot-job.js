@@ -44,3 +44,24 @@ export function readJobsFile(data) {
 	newestFirst(all);
 	return { generatedAt: String(data.generatedAt || ''), all, checked: data.checked || [], gone: data.gone || [], points };
 }
+
+/**
+ * One company's file (companies/{key}.json, see indexer/company-files.js) as the jobs of the
+ * whole snapshot are used, with only that company: its page reads it instead of every job.
+ * null for a file from before it said whether its board was read (then every job is read).
+ * @param {string} key
+ * @param {any} data
+ * @returns {{generatedAt: string, all: import('#lib/ats/job.js').Job[], checked: string[], gone: string[], points: [string, [number, number]][]} | null}
+ */
+export function readCompanyFile(key, data) {
+	if (!data || !Array.isArray(data.jobs) || typeof data.checked !== 'boolean') return null;
+	/** @type {import('#lib/ats/job.js').Job[]} */
+	const all = data.jobs.map(fromSnapshot).filter(Boolean);
+	return {
+		generatedAt: String(data.generatedAt || ''),
+		all,
+		checked: data.checked ? [key] : [],
+		gone: data.gone ? [key] : [],
+		points: Array.isArray(data.points) ? data.points : []
+	};
+}

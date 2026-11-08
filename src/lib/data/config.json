@@ -272,7 +272,7 @@
 		"preload": {
 			"page": ["records.json"],
 			"counts": ["records.json", "counts.json"],
-			"company": ["records.json", "jobs.json"],
+			"company": ["records.json"],
 			"list": ["records.json", "counts.json", "jobs.json"],
 			"explore": ["first.json", "records.json", "jobs.json"]
 		},

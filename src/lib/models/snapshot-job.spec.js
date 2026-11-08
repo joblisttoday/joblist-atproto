@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { fromSnapshot, readJobsFile } from './snapshot-job.js';
+import { fromSnapshot, readCompanyFile, readJobsFile } from './snapshot-job.js';
 import { workplace } from './job.js';
 
 describe('fromSnapshot', () => {
@@ -49,5 +49,28 @@ describe('readJobsFile', () => {
 	it('reads nothing from anything else', () => {
 		expect(readJobsFile(null)).toBe(null);
 		expect(readJobsFile({ jobs: 'x' })).toBe(null);
+	});
+});
+
+describe('readCompanyFile', () => {
+	it("reads a company's file as the snapshot's jobs, posted ones left to their records", () => {
+		const file = readCompanyFile('acme.org', {
+			generatedAt: '2026-11-08T00:00:00Z',
+			checked: true,
+			gone: false,
+			jobs: [
+				{ t: 'Posted', u: 'https://joblist.today/job/x/y', c: 'acme.org', s: 'at://x/today.joblist.job/y' },
+				{ t: 'Designer', u: 'https://boards.example/acme/42', c: 'acme.org', d: 'Design', r: 'remote' }
+			],
+			points: [['at://x/today.joblist.job/y', [1, 2]]]
+		});
+		expect(file?.all.map((j) => [j.title, j.department, j.remote, j.id])).toEqual([['Designer', 'Design', 'remote', '42']]);
+		expect(file?.checked).toEqual(['acme.org']);
+		expect(file?.gone).toEqual([]);
+		expect(file?.points).toEqual([['at://x/today.joblist.job/y', [1, 2]]]);
+	});
+
+	it('is null for a file from before it said whether the board was read', () => {
+		expect(readCompanyFile('acme.org', { generatedAt: 'x', name: 'Acme', jobs: [] })).toBe(null);
 	});
 });

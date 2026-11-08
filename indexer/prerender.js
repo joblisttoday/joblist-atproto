@@ -162,7 +162,8 @@ for (const company of companies.values()) {
 				.slice(0, 200)
 				.map((/** @type {any} */ j) => `<li><a href="${escape(jobLink(j))}">${escape(j.t)}</a> ${escape(j.l || '')}</li>`)
 				.join('')}</ul>${linkList(t('landing.byCity'), links.cities.slice(0, config.landing.linked))}${linkList(t('landing.byField'), links.fields)}`,
-			preload: config.snapshot.preload.company
+			// Its own jobs file, not every job (indexer/company-files.js).
+			preload: [...config.snapshot.preload.company, `${config.embed.dir}/${encodeURIComponent(company.key)}.json`]
 		}),
 		open > 0,
 		newestJob.get(company.key) || company.editedAt

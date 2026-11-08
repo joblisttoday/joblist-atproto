@@ -1,6 +1,6 @@
 import config from '#lib/data/config.json';
 import { safeUrl } from '#lib/models/url.js';
-import { fromSnapshot, readJobsFile } from '#lib/models/snapshot-job.js';
+import { fromSnapshot, readCompanyFile, readJobsFile } from '#lib/models/snapshot-job.js';
 import { readCounts } from '#lib/models/snapshot-counts.js';
 
 /**
@@ -58,6 +58,27 @@ export function getSnapshotJobs() {
 			return { all: file.all, jobs, checked: new Set(file.checked), gone: new Set(file.gone), points: new Map(file.points) };
 		});
 	return jobsPromise;
+}
+
+/**
+ * One company's jobs, from its own small file (indexer/company-files.js), in the shape of
+ * getSnapshotJobs: its page needs only them. Every job when it has none (a company added
+ * since the snapshot, an older snapshot), so it is never shown with fewer.
+ * @type {Map<string, Promise<SnapshotJobs | null>>}
+ */
+const companyPromises = new Map();
+/** @param {string} key */
+export function getCompanyJobs(key) {
+	let promise = companyPromises.get(key);
+	if (!promise) {
+		promise = getFile(`${config.embed.dir}/${encodeURIComponent(key)}.json`).then((data) => {
+			const file = readCompanyFile(key, data);
+			if (!file || !fresh(file.generatedAt)) return getSnapshotJobs();
+			return { all: file.all, jobs: new Map([[key, file.all]]), checked: new Set(file.checked), gone: new Set(file.gone), points: new Map(file.points) };
+		});
+		companyPromises.set(key, promise);
+	}
+	return promise;
 }
 
 /** @param {string} name */
