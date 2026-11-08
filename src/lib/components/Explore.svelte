@@ -278,7 +278,8 @@
 		</ExploreSearch>
 	</jl-explore-bar>
 	<jl-explore-stage>
-	<jl-explore-map inert={!mapShown}>
+	<!-- undefined, not false: on a custom element, false would write inert="false", which is still inert. -->
+	<jl-explore-map inert={!mapShown || undefined}>
 		<JobsMap
 			jobs={results}
 			{names}
