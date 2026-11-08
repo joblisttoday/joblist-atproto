@@ -3,7 +3,7 @@ import { toSuggestion } from '../src/lib/models/suggestion.js';
 import { postPoints, publicJobs } from './company-files.js';
 
 /**
- * One small file per list (lists/{did}/{rkey}.json): its organizations' open jobs, newest
+ * One small file per list (lists/plc/{id}/{rkey}.json, snapshot-job.js listFileName): its organizations' open jobs, newest
  * first, for its page here, its embed on other sites and its feed, instead of every job.
  * Its organizations as the list shows them (an open list's suggested ones too), so the app
  * can tell whether the list changed since. One more file per list, never a bigger one.
@@ -21,7 +21,7 @@ import { postPoints, publicJobs } from './company-files.js';
  * @param {IndexedJob[]} jobs
  * @param {{generatedAt: string, checked: Iterable<string>, gone: Iterable<string>, names?: Map<string, string>}} snapshot
  *   names: organizations' names by key
- * @returns {[string, ListFile][]} by path under lists/ ({did}/{rkey})
+ * @returns {[string, ListFile][]} by list ({did}/{rkey})
  */
 export function listFiles(listRecords, suggestionRecords, jobs, { generatedAt, checked, gone, names = new Map() }) {
 	const read = new Set(checked);

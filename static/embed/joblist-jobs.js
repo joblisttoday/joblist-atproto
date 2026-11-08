@@ -79,8 +79,18 @@ function listOf(text) {
 	return did && rkey ? { did, rkey } : null;
 }
 
-/** A path segment, its colons kept (a DID's: allowed in a path). @param {string} part */
+/** A path segment, its colons kept (a DID's: allowed in an address). @param {string} part */
 const segment = (part) => encodeURIComponent(part).replaceAll('%3A', ':');
+
+/**
+ * A list's file in the snapshot: lists/plc/{id}/{rkey}.json (as joblist's
+ * src/lib/models/snapshot-job.js listFilePath writes it).
+ * @param {string} dir @param {{did: string, rkey: string}} list
+ */
+function listFile(dir, { did, rkey }) {
+	const name = (/** @type {string} */ part) => encodeURIComponent(part).replace(/^\.{1,2}$/, (dots) => dots.replaceAll('.', '%2E'));
+	return [dir, ...did.split(':').slice(1).map(name), `${name(rkey)}.json`].map(encodeURIComponent).join('/');
+}
 
 /** @param {unknown} value */
 function safeLink(value) {
@@ -135,7 +145,7 @@ class JoblistJobs extends HTMLElement {
 		const limit = Math.max(1, Number(this.getAttribute('limit')) || s.shown);
 		if (this.file?.key !== key) {
 			const url = list
-				? `${s.snapshot}/${s.lists}/${segment(list.did)}/${segment(list.rkey)}.json`
+				? `${s.snapshot}/${listFile(s.lists, list)}`
 				: /^[a-z0-9][a-z0-9.-]*$/.test(key)
 					? `${s.snapshot}/${s.dir}/${key}.json`
 					: '';

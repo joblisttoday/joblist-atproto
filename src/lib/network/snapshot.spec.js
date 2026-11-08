@@ -40,7 +40,7 @@ describe('getCompaniesJobs', () => {
 
 describe('getListJobs', () => {
 	const list = { did: 'did:plc:curator', rkey: 'food' };
-	const path = 'lists/did:plc:curator/food.json';
+	const path = 'lists/plc/curator/food.json';
 	const listFile = { generatedAt: now, name: 'Food', companies: ['a.org', 'b.org'], checked: ['a.org', 'b.org'], gone: [], points: [], jobs: [{ t: 'B', u: 'https://boards.example/b', c: 'b.org', p: '2026-11-06T00:00Z' }, { t: 'A', u: 'https://boards.example/a', c: 'a.org', p: '2026-11-05T00:00Z' }] };
 
 	it("reads the list's own file when it holds the list's organizations", async () => {

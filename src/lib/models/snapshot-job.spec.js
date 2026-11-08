@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { fromSnapshot, readCompanyFile, readJobsFile } from './snapshot-job.js';
+import { fromSnapshot, listFileName, listFilePath, readCompanyFile, readJobsFile } from './snapshot-job.js';
 import { workplace } from './job.js';
 
 describe('fromSnapshot', () => {
@@ -72,5 +72,19 @@ describe('readCompanyFile', () => {
 
 	it('is null for a file from before it said whether the board was read', () => {
 		expect(readCompanyFile('acme.org', { generatedAt: 'x', name: 'Acme', jobs: [] })).toBe(null);
+	});
+});
+
+describe('listFileName', () => {
+	it('puts a DID in folders: no colon in any file name', () => {
+		const list = { did: 'did:plc:abc', rkey: '3my7zpwloir2s' };
+		expect(listFileName(list)).toBe('lists/plc/abc/3my7zpwloir2s.json');
+		expect(listFilePath(list)).toBe('lists/plc/abc/3my7zpwloir2s.json');
+	});
+	it('escapes the unusual, and reads it back under the same name', () => {
+		const list = { did: 'did:web:example.com%3A8080', rkey: 'a:b' };
+		expect(listFileName(list)).toBe('lists/web/example.com%253A8080/a%3Ab.json');
+		expect(listFilePath(list)).toBe('lists/web/example.com%25253A8080/a%253Ab.json');
+		expect(listFileName({ did: 'did:web:..', rkey: 'x' })).toBe('lists/web/%2E%2E/x.json');
 	});
 });

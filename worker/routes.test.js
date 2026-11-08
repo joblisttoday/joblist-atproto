@@ -19,7 +19,7 @@ test('feeds', () => {
 	assert.deepEqual(route('/feed/company/acme.org.xml'), { kind: 'feed', company: 'acme.org' });
 	const list = { kind: 'feed', list: { did: 'did:plc:abc123', rkey: '3my7yphuxc72y' } };
 	assert.deepEqual(route('/feed/list/did:plc:abc123/3my7yphuxc72y.xml'), list);
-	assert.equal(fileOf(list), 'lists/did:plc:abc123/3my7yphuxc72y.json');
+	assert.equal(fileOf(list), 'lists/plc/abc123/3my7yphuxc72y.json');
 	assert.equal(pathOf(list), '/feed/list/did:plc:abc123/3my7yphuxc72y.xml');
 });
 
