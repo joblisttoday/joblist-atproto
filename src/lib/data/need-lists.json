@@ -1,0 +1,111 @@
+{
+	"about": "Lists of joblist by need, made from the commons map of the commons research (komm1234/commons, /graph.json): one list per need, its organizations the commons a person can join, use or fund. scripts/curate-lists.js proposes them (a report, nothing written) from this file. kinds: the first rule whose words (or their plural) appear in what an entry is (its type before \"with\", \"plus\" or \";\", or also its summary's first six words when the rule says so) gives its kind; what follows \"not\" never counts; none: left unknown (wrong is worse than unknown). contribute: the map's actions as ways to take part.",
+	"source": "https://komm1234.gitlab.io/commons/graph.json",
+	"lists": [
+		{
+			"need": "housing",
+			"name": "Housing commons",
+			"description": "Homes kept out of the market: housing co-ops, community land trusts, tenants' movements. Join, live in, fund or work with them."
+		},
+		{
+			"need": "food",
+			"name": "Food commons",
+			"description": "Food grown, shared and sold together: farmers' and consumers' co-ops, community-supported agriculture, peasant movements."
+		},
+		{
+			"need": "energy",
+			"name": "Energy commons",
+			"description": "Energy owned by the people who use it: community energy co-ops, citizen power plants, their federations."
+		},
+		{
+			"need": "care",
+			"name": "Care commons",
+			"description": "Health and care run by the people who give and receive it: care co-ops, community clinics, mutual aid."
+		},
+		{
+			"need": "digital",
+			"name": "Digital commons",
+			"description": "Software, networks and services owned by their communities: free software, community networks, co-op hosting, open protocols."
+		},
+		{
+			"need": "land-nature",
+			"name": "Land and nature commons",
+			"description": "Land and nature cared for by the people who live with them: community forests, land trusts, indigenous territories."
+		},
+		{
+			"need": "money",
+			"name": "Money commons",
+			"description": "Money that serves its members: credit unions, co-op banks, ethical lenders, mutual funds."
+		},
+		{
+			"need": "knowledge",
+			"name": "Knowledge commons",
+			"description": "Knowledge free for all: open encyclopedias, maps, libraries and archives, and the people who make them."
+		},
+		{
+			"need": "peace",
+			"name": "Peace commons",
+			"description": "Peace made by communities: peacebuilding, mediation and nonviolence networks."
+		}
+	],
+	"kinds": [
+		{
+			"kind": "public",
+			"in": [
+				"type"
+			],
+			"words": [
+				"public agency",
+				"public programme",
+				"public program",
+				"municipal"
+			]
+		},
+		{
+			"kind": "cooperative",
+			"in": [
+				"type",
+				"summary"
+			],
+			"words": [
+				"co-op",
+				"coop",
+				"cooperative",
+				"co-operative",
+				"genossenschaft",
+				"worker-owned",
+				"member-owned"
+			]
+		},
+		{
+			"kind": "nonprofit",
+			"in": [
+				"type"
+			],
+			"words": [
+				"non-profit",
+				"nonprofit",
+				"foundation",
+				"stichting",
+				"association",
+				"ngo",
+				"charity"
+			]
+		},
+		{
+			"kind": "collective",
+			"in": [
+				"type"
+			],
+			"words": [
+				"collective"
+			]
+		}
+	],
+	"contribute": {
+		"join": "join",
+		"volunteer": "volunteer",
+		"fund": "fund",
+		"lend": "fund"
+	}
+}
