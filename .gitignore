@@ -27,3 +27,7 @@ vite.config.ts.timestamp-*
 
 # Local Worker settings (wrangler dev)
 .dev.vars
+
+# Playwright
+/test-results/
+/playwright-report/
