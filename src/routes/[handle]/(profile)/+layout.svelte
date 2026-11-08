@@ -49,7 +49,7 @@
 		<ProfileHeader did={did || undefined} {handle}>
 			{#if self}
 				<!-- Signing out, the language, profiles: /settings. -->
-				<menu><a href="/settings"><Icon name="settings" /> {t('settings.title')}</a></menu>
+				<menu><a href="/menu"><Icon name="menu" /> {t('nav.menu')}</a></menu>
 			{/if}
 		</ProfileHeader>
 		{#if did}

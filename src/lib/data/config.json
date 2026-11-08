@@ -34,7 +34,8 @@
 		"sheetFullAbove": 0.72,
 		"copiedMs": 3000,
 		"bare": ["/", "/companies", "/lists"],
-		"ownMenu": ["/", "/companies", "/lists", "/[handle]/[rkey]"]
+		"ownMenu": ["/", "/companies", "/lists", "/[handle]/[rkey]"],
+		"personal": ["/saved", "/signin", "/menu", "/menu/language", "/menu/profiles", "/menu/collections", "/menu/outbox"]
 	},
 	"map": {
 		"style": "https://tiles.openfreemap.org/styles/positron",

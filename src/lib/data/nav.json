@@ -4,5 +4,5 @@
 	{ "href": "/companies", "icon": "companies", "label": "nav.companies" },
 	{ "href": "/lists", "icon": "lists", "label": "nav.lists" },
 	{ "href": "/jobs/new", "icon": "post", "label": "nav.post", "wide": true },
-	{ "href": "/{handle}", "icon": "me", "label": "nav.me", "account": true, "signedOut": { "href": "/signin", "icon": "signin", "label": "nav.signin" } }
+	{ "href": "/menu", "icon": "menu", "label": "nav.menu", "account": true }
 ]

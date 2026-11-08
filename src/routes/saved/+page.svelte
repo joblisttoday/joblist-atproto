@@ -16,7 +16,7 @@
 
 <!-- Profiles and moving collections to another device: /settings. -->
 <PageHeader title={t('saved.title')} intro={t('saved.intro')}>
-	{#snippet actions()}<a href="/settings"><Icon name="settings" label={t('settings.title')} /></a>{/snippet}
+	{#snippet actions()}<a href="/menu/collections"><Icon name="settings" label={t('collections.transfer')} /></a>{/snippet}
 </PageHeader>
 <!-- Wide screens: its parts side by side, in as many columns as fit. -->
 <jl-saved>

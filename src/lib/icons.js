@@ -23,6 +23,10 @@ import Building2 from '@lucide/svelte/icons/building-2';
 import Briefcase from '@lucide/svelte/icons/briefcase';
 import Footprints from '@lucide/svelte/icons/footprints';
 import Hammer from '@lucide/svelte/icons/hammer';
+import MenuIcon from '@lucide/svelte/icons/menu';
+import ChevronRight from '@lucide/svelte/icons/chevron-right';
+import LogOut from '@lucide/svelte/icons/log-out';
+import Info from '@lucide/svelte/icons/info';
 import HandCoins from '@lucide/svelte/icons/hand-coins';
 import HandHeart from '@lucide/svelte/icons/hand-heart';
 import UserPlus from '@lucide/svelte/icons/user-plus';
@@ -89,6 +93,10 @@ export const icons = {
 	feed: Rss,
 	language: Languages,
 	settings: Settings,
+	menu: MenuIcon,
+	next: ChevronRight,
+	signout: LogOut,
+	about: Info,
 	// Ways to take part (company.contribute)
 	work: Hammer,
 	volunteer: HandHeart,

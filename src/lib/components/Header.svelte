@@ -1,6 +1,5 @@
 <script>
 	import Icon from './Icon.svelte';
-	import LocaleSwitch from './LocaleSwitch.svelte';
 	import Logo from './Logo.svelte';
 	import QuickSearch from './QuickSearch.svelte';
 	import { page } from '$app/state';
@@ -16,7 +15,7 @@
 	// The app name is always there; deeper pages also get a way back
 	// (and the pages only wide screens have a tab for, such as posting a job: a form, left with Back).
 	const topLevel = $derived(
-		[...navLinks(session.handle).filter((l) => !l.wide).map((l) => l.href), '/signin'].includes(page.url.pathname)
+		[...navLinks().filter((l) => !l.wide).map((l) => l.href), '/signin'].includes(page.url.pathname)
 	);
 
 	// Phones: these pages take the whole screen, their own bar at the top (config.layout.bare).
@@ -41,8 +40,6 @@
 		<Nav />
 		<!-- Pages with their own menu have it next to their views. -->
 		{#if !ownMenu}<PageMenu />{/if}
-		<!-- Wide screens; phones have it in the account tab (signing in, one's page) and the footer. -->
-		<LocaleSwitch compact />
 	</header>
 	<NetworkStatus />
 </jl-header>

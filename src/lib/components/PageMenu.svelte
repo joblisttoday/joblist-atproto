@@ -2,12 +2,14 @@
 	import Icon from './Icon.svelte';
 	import actions from '#lib/data/page-actions.json';
 	import { page } from '$app/state';
+	import config from '#lib/data/config.json';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * What can be done on this page, in one menu on every screen: share it (the
-	 * installed app has no address bar), and make what fits here (src/lib/data/page-actions.json,
-	 * by route; "*" elsewhere). A native popover: it closes by itself on Escape or a tap outside.
+	 * What can be done on this page: share it (the installed app has no address bar), and
+	 * make what fits here (src/lib/data/page-actions.json, by route; nothing else: making a
+	 * list from one's saved jobs makes no sense). Not on one's own pages (config.layout.personal),
+	 * which no one else would open. A native popover: it closes by itself on Escape or a tap outside.
 	 */
 	const id = $props.id();
 	/** @type {HTMLElement | undefined} */
@@ -15,7 +17,7 @@
 	let copied = $state(false);
 
 	const items = $derived(
-		(/** @type {Record<string, {href: string, label: string, icon: string}[]>} */ (actions)[page.route.id || ''] ?? actions['*']).map((a) => ({
+		(/** @type {Record<string, {href: string, label: string, icon: string}[]>} */ (actions)[page.route.id || ''] ?? []).map((a) => ({
 			...a,
 			href: a.href.replace(/\{(\w+)\}/g, (_, name) => encodeURIComponent((/** @type {Record<string, string | undefined>} */ (page.params))[name] || '')),
 			icon: /** @type {import('#lib/icons.js').IconName} */ (a.icon)
@@ -39,6 +41,7 @@
 	}
 </script>
 
+{#if !config.layout.personal.includes(page.route.id || '')}
 <jl-page-menu>
 	<button type="button" popovertarget="{id}-menu" title={t('menu.label')}><Icon name="more" label={t('menu.label')} /></button>
 	<menu id="{id}-menu" popover bind:this={menu}>
@@ -48,6 +51,7 @@
 		{/each}
 	</menu>
 </jl-page-menu>
+{/if}
 
 <style>
 	jl-page-menu {

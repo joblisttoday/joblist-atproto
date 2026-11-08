@@ -7,14 +7,14 @@
 	import { data } from '#lib/network/network.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
-	const items = $derived(navLinks(session.handle));
+	const items = navLinks();
 	/** The count a tab shows, 0 for none. @param {string | undefined} badge */
 	const count = (badge) => (badge === 'saved' ? savedJobs.fresh : 0);
 	// Signed in with a company's domain: the account is that company's.
 	const company = $derived(session.handle ? data.companies.get(session.handle) : undefined);
-	/** What the account tab says to screen readers. */
+	/** What the menu tab says to screen readers, signed in. */
 	const accountLabel = $derived(
-		company ? t('nav.account.company', { handle: session.handle || '', name: company.name }) : t('nav.account', { handle: session.handle || '' })
+		company ? t('nav.menu.company', { handle: session.handle || '', name: company.name }) : t('nav.menu.account', { handle: session.handle || '' })
 	);
 
 	/** @param {string} href */
@@ -32,13 +32,14 @@
 			<a
 				href={item.href}
 				aria-current={current(item.href) ? 'page' : undefined}
-				aria-label={item.account ? accountLabel : n ? `${t(item.label)}, ${t('searches.new', { count: n })}` : undefined}
+				aria-label={item.account && session.handle ? accountLabel : n ? `${t(item.label)}, ${t('searches.new', { count: n })}` : undefined}
 				data-wide={item.wide || undefined}
-				data-account={item.account ? (company ? 'company' : 'person') : undefined}
+				data-account={item.account && session.handle ? (company ? 'company' : 'person') : undefined}
 			>
-				{#if item.account}
+				<!-- The menu: signed in, the account's picture in place of its icon. -->
+				{#if item.account && session.handle}
 					{#if session.avatar}<img src={session.avatar} alt="" />{:else}<Icon name={item.icon} />{/if}
-					<span>@{session.handle}</span>
+					<span>{t(item.label)}</span>
 					{#if company}<Icon name="companies" />{/if}
 				{:else}
 					<Icon name={item.icon} />{t(item.label)}{#if n}<mark>{n > 99 ? '99+' : n}</mark>{/if}
@@ -102,7 +103,7 @@
 	a[data-wide] {
 		display: none;
 	}
-	/* The account: its picture and handle, cut to fit; a company account says so. */
+	/* Signed in, the menu shows the account's picture; a company account says so. */
 	a[data-account] img {
 		width: var(--nav-icon-size);
 		height: var(--nav-icon-size);

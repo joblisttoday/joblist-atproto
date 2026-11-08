@@ -17,7 +17,7 @@
 	<jl-outbox-status {state} role="status">
 		{#if !outbox.online}<span>{t('outbox.offline')}</span>{/if}
 		{#if waiting}<span>{t(outbox.sending ? 'outbox.sending' : 'outbox.waiting', { count: waiting })}</span>{/if}
-		{#if refused}<a href="/settings#settings-outbox">{t('outbox.refused', { count: refused })}</a>{/if}
+		{#if refused}<a href="/menu/outbox">{t('outbox.refused', { count: refused })}</a>{/if}
 	</jl-outbox-status>
 {/if}
 
