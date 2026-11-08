@@ -12,25 +12,29 @@
  *   ]);
  *
  * Needs @playwright/test and @axe-core/playwright, and a baseURL in playwright.config.
- * Each screen is checked on a 320px phone and a 1440px desktop for:
+ * Each screen is checked on a 320px touch phone and a 1440px desktop with a mouse, once its h1 is there, for:
  *   - no serious or critical axe violations (WCAG 2.2 AA)
  *   - no horizontal overflow
- *   - touch targets of at least 24px (44px with `touch: 44`), inline links in text exempt
+ *   - targets of at least 24px; on the phone 44px with `touch: 44` (apps); inline links in text exempt
  *   - form fields with at least 16px text (iOS zooms otherwise)
- *   - exactly one h1, a lang, a title, a description and a canonical link
+ *   - exactly one shown h1 (one hidden with display: none belongs to another view), a lang, a title,
+ *     a description and a canonical link
  *   - overlays are native <dialog> elements, not role="dialog" on something else
- *   - no class attributes (framework hash classes such as svelte-xyz are ignored)
+ *   - no class attributes (framework hash classes such as svelte-xyz, and classes inside <svg> from icon libraries, are ignored)
  *   - no text forced to uppercase with CSS
  * Turn a check off for one screen with `skip: ['classless']`, and say why next to it.
  *
  * Don't edit a copy: improve it in savoir-faire and copy it again.
+ *
+ * SPDX-License-Identifier: GPL-3.0-only (https://gitlab.com/hwww/savoir)
  */
 import { AxeBuilder } from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
+/** The phone is a touch screen (fingers: `touch` applies); the desktop has a mouse (WCAG's 24px). */
 export const VIEWPORTS = {
-	phone: { width: 320, height: 640 },
-	desktop: { width: 1440, height: 900 }
+	phone: { viewport: { width: 320, height: 640 }, hasTouch: true, isMobile: true },
+	desktop: { viewport: { width: 1440, height: 900 }, hasTouch: false, isMobile: false }
 };
 
 /** Class names added by frameworks for scoped styles, not written by us. */
@@ -65,7 +69,8 @@ export async function qualityProblems(page, { touch = 24, skip = [] } = {}) {
 			}
 
 			if (on('h1')) {
-				const count = document.querySelectorAll('h1').length;
+				// headings hidden with display: none (another view of the page) aren't on the page for anyone
+				const count = [...document.querySelectorAll('h1')].filter((h) => h.checkVisibility()).length;
 				if (count !== 1) found.push(`h1: ${count} on the page, expected 1`);
 			}
 
@@ -80,21 +85,35 @@ export async function qualityProblems(page, { touch = 24, skip = [] } = {}) {
 				}
 			};
 			walk(document, (el) => {
-				if (on('classless') && el.closest('body')) {
+				// Icon libraries put their own classes on <svg>: not our markup.
+				if (on('classless') && el.closest('body') && !el.closest('svg')) {
 					const own = [...el.classList].filter((c) => !framework.test(c));
 					if (own.length) found.push(`classless: ${name(el)} has class "${own.join(' ')}"`);
 				}
-				const box = el.getBoundingClientRect();
 				const style = getComputedStyle(el);
+				// A stretched link (an absolutely placed ::after over its card) is as big as the card it covers.
+				const after = el.matches('a[href]') ? getComputedStyle(el, '::after') : null;
+				const stretched = after && after.content !== 'none' && after.position === 'absolute';
+				let card = el.parentElement;
+				while (stretched && card && getComputedStyle(card).position === 'static') card = card.parentElement;
+				const box = ((stretched && card) || el).getBoundingClientRect();
 				// Not shown, or visually hidden until focused (a skip link): nothing to tap.
 				if (box.width <= 1 || box.height <= 1 || style.visibility === 'hidden') return;
 
-				if (on('targets') && el.matches('button, a[href], input:not([type=hidden]), select, textarea, summary, [role=button]')) {
+				if (
+					on('targets') &&
+					el.matches('button, a[href], input:not([type=hidden]), select, textarea, summary, [role=button]')
+				) {
 					const inline = el.matches('a[href]') && style.display === 'inline';
 					if (!inline && (box.width < touch - 0.5 || box.height < touch - 0.5))
 						found.push(`targets: ${name(el)} is ${Math.round(box.width)}×${Math.round(box.height)}, under ${touch}px`);
 				}
-				if (on('inputs') && el.matches('input:not([type=checkbox], [type=radio], [type=hidden], [type=file], [type=range]), textarea, select')) {
+				if (
+					on('inputs') &&
+					el.matches(
+						'input:not([type=checkbox], [type=radio], [type=hidden], [type=file], [type=range]), textarea, select'
+					)
+				) {
 					const size = parseFloat(style.fontSize);
 					if (size < 16) found.push(`inputs: ${name(el)} has ${size}px text, under 16px`);
 				}
@@ -109,7 +128,9 @@ export async function qualityProblems(page, { touch = 24, skip = [] } = {}) {
 	if (!skip.includes('axe')) {
 		const axe = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
 		for (const violation of axe.violations.filter((v) => v.impact === 'serious' || v.impact === 'critical'))
-			problems.push(`axe: ${violation.id}: ${violation.help} (${violation.nodes.map((node) => node.target.join(' ')).join(', ')})`);
+			problems.push(
+				`axe: ${violation.id}: ${violation.help} (${violation.nodes.map((node) => node.target.join(' ')).join(', ')})`
+			);
 	}
 	return problems;
 }
@@ -119,15 +140,21 @@ export async function qualityProblems(page, { touch = 24, skip = [] } = {}) {
  * @param {{ name: string, path?: string, open?: (page: import('@playwright/test').Page) => Promise<void>, touch?: number, skip?: string[] }[]} screens
  */
 export function qualityTests(screens) {
-	test.describe('UI quality gate', () => {
-		for (const screen of screens)
-			for (const [viewport, size] of Object.entries(VIEWPORTS))
-				test(`${screen.name} (${viewport})`, async ({ page }) => {
-					await page.setViewportSize(size);
+	for (const [name, device] of Object.entries(VIEWPORTS))
+		test.describe(`UI quality gate (${name})`, () => {
+			test.use(device);
+			// axe and a walk over every element take a while on long pages.
+			test.describe.configure({ timeout: 90_000 });
+			for (const screen of screens)
+				test(`${screen.name} (${name})`, async ({ page }) => {
 					if (screen.open) await screen.open(page);
 					else await page.goto(screen.path ?? '/');
 					await page.waitForLoadState('load');
-					expect(await qualityProblems(page, screen)).toEqual([]);
+					// Apps that draw their pages in the browser: wait until the page has its heading.
+					await page.locator('h1').first().waitFor({ state: 'attached' });
+					// `touch` is for fingers; with a mouse WCAG's 24px applies.
+					const touch = device.hasTouch ? (screen.touch ?? 24) : 24;
+					expect(await qualityProblems(page, { ...screen, touch })).toEqual([]);
 				});
-	});
+		});
 }
