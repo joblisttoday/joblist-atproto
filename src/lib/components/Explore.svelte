@@ -1,6 +1,7 @@
 <script>
 	import Icon from './Icon.svelte';
 	import config from '#lib/data/config.json';
+	import ExploreLists from './ExploreLists.svelte';
 	import ExploreSearch from './ExploreSearch.svelte';
 	import Jobs from './Jobs.svelte';
 	import JobDialog from './JobDialog.svelte';
@@ -326,6 +327,7 @@
 					{t('explore.welcome', { companies: companies.length })}
 					<a href="/jobs/new">{t('explore.publish')}</a>
 				</p>
+				<ExploreLists />
 			{/if}
 			<!-- The newest jobs at once, until the list has jobs of its own to show (it needs the companies first). -->
 			{#if !jobs.length && first?.jobs.length && !searching}

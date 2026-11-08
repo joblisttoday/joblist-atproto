@@ -63,6 +63,8 @@
 	"nav.post": "Publier une offre",
 	"explore.welcome": "Les offres de {companies} organisations, directement depuis leurs pages carrières. Cherchez par métier et ville, ou trouvez ce qui est à quelques minutes à vélo de chez vous.",
 	"explore.publish": "Vous recrutez ? Publiez une offre avec votre compte Bluesky.",
+	"explore.lists": "Listes faites par des personnes",
+	"explore.allLists": "Toutes les listes",
 	"explore.area": "Offres dans cette zone",
 	"explore.areaOn": "Cette zone",
 	"explore.remoteFrom": "Depuis : {country}",

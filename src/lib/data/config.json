@@ -170,7 +170,8 @@
 		"returnMinutes": 30
 	},
 	"lists": {
-		"related": { "shown": 6, "nameWeight": 3, "minTermLength": 3 }
+		"related": { "shown": 6, "nameWeight": 3, "minTermLength": 3 },
+		"explore": 8
 	},
 	"jobCollections": {
 		"file": "joblist-collections.json",

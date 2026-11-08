@@ -457,7 +457,8 @@ menu {
 	}
 }
 jl-search-chips > menu,
-jl-explore-chips > menu {
+jl-explore-chips > menu,
+jl-explore-lists > menu {
 	mask-image: linear-gradient(
 		to right,
 		transparent,
