@@ -14,23 +14,12 @@
 # the deploy key and only pushes those files (no npm, no code from the repo).
 name: snapshot
 
+# On its schedule only, never on a push: each run reads every job board again, and code
+# changes do not change the jobs. To see an indexer change sooner: `gh workflow run snapshot`.
 on:
   schedule:
     - cron: '17 */6 * * *'
   workflow_dispatch:
-  # Only changes to what builds the snapshot: an app change needs no new snapshot.
-  push:
-    branches: [main]
-    paths:
-      - 'indexer/**'
-      - 'bot/**'
-      - 'src/lib/ats/**'
-      - 'src/lib/models/**'
-      - 'src/lib/data/config.json'
-      - 'src/lib/data/fields.json'
-      - 'lexicons/**'
-      - 'package-lock.json'
-      - '.github/workflows/snapshot.yml'
 
 concurrency:
   group: snapshot
