@@ -58,9 +58,8 @@ Wants its page right and its jobs shown.
 ### Project looking for contributors
 A cooperative, a nonprofit, an open source project: wants people to work
 with, paid or not.
-- **Today:** its organization page says how to take part (`contribute`:
-  work, volunteer, join, fund), before its jobs when it has none; lists by
-  need gather such organizations.
+- **Today:** its organization page, its jobs, its links; lists by need
+  gather such organizations.
 - **Missing:** its open tasks: for listed organizations whose code lives
   on Tangled (atproto), their issues, shown as ways to take part, not as
   jobs.

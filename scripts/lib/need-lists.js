@@ -7,8 +7,8 @@ import { toDomain } from '../../src/lib/models/company.js';
  * for each need, its commons as organizations, those already on joblist and those to
  * describe, with what joblist would write for them. Pure: reads nothing, writes nothing.
  *
- * @typedef {{id: string, name: string, need: string, type?: string, summary?: string, link?: string | null, countries?: string[], actions?: {kind: string, text: string}[], file?: string, checked?: string}} Commons
- * @typedef {{key: string, name: string, link: string, kind: string, network: boolean, countries: string[], summary: string, contribute: {kind: string, text: string}[], source: string, checked: string, known: boolean}} Member
+ * @typedef {{id: string, name: string, need: string, type?: string, summary?: string, link?: string | null, countries?: string[], file?: string, checked?: string}} Commons
+ * @typedef {{key: string, name: string, link: string, kind: string, network: boolean, countries: string[], summary: string, source: string, checked: string, known: boolean}} Member
  *   network: many organizations, shown as one entry point (its umbrella's website).
  * @typedef {{need: string, name: string, description: string, members: Member[], skipped: {name: string, reason: string}[]}} NeedList
  */
@@ -73,10 +73,6 @@ export function proposeNeedLists(commons, known) {
 				network: isNetwork(entry),
 				countries: entry.countries || [],
 				summary: entry.summary || '',
-				contribute: (entry.actions || []).flatMap((a) => {
-					const kind = /** @type {Record<string, string>} */ (settings.contribute)[a.kind];
-					return kind ? [{ kind, text: a.text }] : [];
-				}),
 				source: entry.file || '',
 				checked: entry.checked || '',
 				known: known.has(key)
@@ -97,7 +93,7 @@ export function needListsReport(lists, { source, readAt }) {
 		'# Lists by need: proposal (dry run, nothing written)',
 		'',
 		`From ${source}, read ${readAt}. ${lists.length} lists, ${all.length} organizations (${all.filter((m) => m.known).length} already on joblist), ${lists.reduce((n, l) => n + l.skipped.length, 0)} left out.`,
-		`Kinds read: ${countBy(all.map((m) => m.kind || 'unknown'))}. With ways to contribute: ${all.filter((m) => m.contribute.length).length}.`,
+		`Kinds read: ${countBy(all.map((m) => m.kind || 'unknown'))}.`,
 		''
 	];
 	for (const list of lists) {
@@ -105,7 +101,6 @@ export function needListsReport(lists, { source, readAt }) {
 		for (const m of list.members) {
 			const about = [m.kind || 'kind unknown', ...(m.network ? ['network'] : []), m.countries.join(' ') || 'no country', m.known ? 'on joblist' : 'to describe'].join(' · ');
 			lines.push(`- **${m.name}** (${m.key}): ${about}. ${m.summary}`);
-			for (const c of m.contribute) lines.push(`  - ${c.kind}: ${c.text}`);
 		}
 		for (const s of list.skipped) lines.push(`- ~~${s.name}~~: left out, ${s.reason}`);
 		lines.push('');
@@ -146,8 +141,6 @@ export function companyRecord(member, now) {
 	if (member.network) value.tags = [settings.networks.tag];
 	const locations = member.countries.filter((c) => /^[A-Z]{2}$/.test(c)).slice(0, 50).map((code) => ({ country: names.of(code) || code, countryCode: code }));
 	if (locations.length) value.locations = locations;
-	const contribute = member.contribute.slice(0, config.companyForm.contributeMax).map((c) => ({ kind: c.kind, text: c.text.slice(0, config.companyForm.contributeTextMax) }));
-	if (contribute.length) value.contribute = contribute;
 	return value;
 }
 

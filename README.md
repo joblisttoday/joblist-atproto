@@ -35,10 +35,6 @@ Four record types, defined in [`lexicons/`](lexicons/today/joblist):
      writes, which anyone can set; without a snapshot, `updatedAt` (never in
      the future).
 
-  An organization can also say how else to take part (`contribute`: work,
-  volunteer, join, fund, each with a short text or a link), shown on its
-  page next to its jobs.
-
   The company page shows the history (every author's version); anyone can
   restore an older one, which saves its content as their own new version.
   Accounts listed in `bots` (config) are crawlers: their versions are marked

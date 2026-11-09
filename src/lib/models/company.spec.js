@@ -148,29 +148,3 @@ describe('kind of organization', () => {
 		expect(toRecord({ ...form, kind: 'bank' }, '2026-11-07T00:00:00.000Z').kind).toBe(undefined);
 	});
 });
-
-describe('ways to take part', () => {
-	it('keeps the kinds the app knows, each with a safe link or a text', async () => {
-		const { readContribute } = await import('./company.js');
-		expect(
-			readContribute([
-				{ kind: 'join', url: 'https://coop.org/join', text: ' Become a member ' },
-				{ kind: 'fund', url: 'javascript:alert(1)' },
-				{ kind: 'bank', url: 'https://coop.org' },
-				{ kind: 'volunteer' },
-				null
-			])
-		).toEqual([{ kind: 'join', url: 'https://coop.org/join', text: 'Become a member' }]);
-		expect(readContribute('join')).toEqual([]);
-	});
-	it('goes from the form to a record and back', () => {
-		const form = { ...toForm(null), name: 'Coop', contribute: [
-			{ kind: 'volunteer', text: '', url: 'coop.org/help' },
-			{ kind: 'fund', text: '', url: '' },
-			{ kind: 'join', text: 'From €50', url: '' }
-		] };
-		const record = toRecord(form, 'c', 'u');
-		expect(record.contribute).toEqual([{ kind: 'volunteer', url: 'https://coop.org/help' }, { kind: 'join', text: 'From €50' }]);
-		expect(toRecord(toForm(null), 'c', 'u').contribute).toBe(undefined);
-	});
-});

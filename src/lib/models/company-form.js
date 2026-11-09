@@ -1,7 +1,7 @@
 import config from '#lib/data/config.json' with { type: 'json' };
 import { detectBoard } from '#lib/ats/detect.js';
 import { safeUrl } from './url.js';
-import { pickVersion, readContribute, toDomain, toRecord, withScheme } from './company.js';
+import { pickVersion, toDomain, toRecord, withScheme } from './company.js';
 import { boardFromCareers } from './paste.js';
 
 /**
@@ -157,7 +157,6 @@ export function previewCompany(form, key) {
 		locations: record.locations || [],
 		jobBoard: record.jobBoard,
 		links: record.links || [],
-		contribute: readContribute(record.contribute),
 		verified: false,
 		unchecked: false,
 		editedAt: record.updatedAt,
