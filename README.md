@@ -147,7 +147,6 @@ npm run dev -- --host 127.0.0.1   # sign-in works on 127.0.0.1, not localhost
 npm test
 npm run check
 npm run test:e2e                  # quality gate on the built site (Playwright)
-npm run gate:check                # is e2e/quality.js the shared kit's latest?
 ```
 
 Configuration lives in data files, not code:

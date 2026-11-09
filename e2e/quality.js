@@ -1,7 +1,5 @@
 /**
- * The UI quality gate of savoir-faire (https://hwww.gitlab.io/savoir/practices/quality-gate/).
- *
- * Copy this file into a project's end-to-end tests, then list its screens:
+ * The UI quality gate. List the screens to check:
  *
  *   // e2e/quality.spec.js
  *   import { qualityTests } from './quality.js';
@@ -26,9 +24,7 @@
  * creates (icons, MapLibre, Leaflet, editors: LIBRARY_ROOTS) are exempt from `classless`; add more with
  * `libraries: ['.widget-root']`.
  *
- * Don't edit a copy: improve it in savoir-faire and copy it again.
- *
- * SPDX-License-Identifier: GPL-3.0-only (https://gitlab.com/hwww/savoir)
+ * SPDX-License-Identifier: GPL-3.0-only
  */
 import { AxeBuilder } from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';

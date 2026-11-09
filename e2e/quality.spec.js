@@ -1,8 +1,7 @@
 import { qualityTests } from './quality.js';
 
 /**
- * The quality gate (quality.js, a copy from savoir-faire: improve it there, then copy it
- * again) on each kind of page and two dialogs. touch: 44, an app used with fingers
+ * The quality gate (quality.js) on each kind of page and two dialogs. touch: 44, an app used with fingers
  * (the gate applies it to the phone; the desktop keeps WCAG's 24px).
  */
 const touch = 44;

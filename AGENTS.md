@@ -6,10 +6,10 @@ Objectives: people find work that feels right for them and for society; projects
 Never: a tracker, an ad network, a middleman for applications, a central database, a paid service, or a tool that contacts anyone on its own.
 People: [docs/personas.md](docs/personas.md). Stage: alpha, not announced to anyone yet; usage is public on Umami (`analytics` in config).
 
-Follows https://hwww.gitlab.io/savoir/agents.md (local: ~/src/hwww/savoir). Exceptions, on purpose:
-- spa-for-apps over sveltekit-static: the app runs in the browser (`ssr = false`); `indexer/prerender.js` writes each company, list and job page's HTML after the build, from the snapshot.
-- no-soft-404: unknown addresses get `404.html` with status 404, on which the app still starts, because records written since the last build have no page yet.
-- bun-by-default: npm, because Cloudflare Workers Builds and the GitHub workflows use it.
+Choices, on purpose:
+- The app runs in the browser (`ssr = false`); `indexer/prerender.js` writes each company, list and job page's HTML after the build, from the snapshot.
+- Unknown addresses get `404.html` with status 404, on which the app still starts, because records written since the last build have no page yet.
+- npm, not bun, because Cloudflare Workers Builds and the GitHub workflows use it.
 
 ## How it works
 
