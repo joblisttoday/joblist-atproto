@@ -7,9 +7,6 @@ import { filterJobs, sameOffers, time } from './job.js';
  * @typedef {JobFilters & {seen: string}} SavedSearch
  */
 
-/** @type {JobFilters} */
-export const noFilters = { query: '', where: '', remote: '' };
-
 /**
  * The filters kept in the page address. Where someone is (near) never is: a shared link must not tell it.
  * @typedef {'query' | 'where' | 'remote'} AddressFilter

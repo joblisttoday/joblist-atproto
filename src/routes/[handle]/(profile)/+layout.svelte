@@ -48,7 +48,7 @@
 	<jl-profile self={self || undefined}>
 		<ProfileHeader did={did || undefined} {handle}>
 			{#if self}
-				<!-- Signing out, the language, profiles: /settings. -->
+				<!-- Signing out, the language, profiles: /menu. -->
 				<menu><a href="/menu"><Icon name="menu" /> {t('nav.menu')}</a></menu>
 			{/if}
 		</ProfileHeader>

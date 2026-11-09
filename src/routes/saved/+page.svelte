@@ -14,7 +14,7 @@
 
 <svelte:head><title>{t('saved.title')} · {config.name}</title></svelte:head>
 
-<!-- Profiles and moving collections to another device: /settings. -->
+<!-- Profiles and moving collections to another device: /menu. -->
 <PageHeader title={t('saved.title')} intro={t('saved.intro')}>
 	{#snippet actions()}<a href="/menu/collections"><Icon name="settings" label={t('collections.transfer')} /></a>{/snippet}
 </PageHeader>
