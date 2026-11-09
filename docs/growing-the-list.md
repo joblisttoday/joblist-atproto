@@ -154,11 +154,13 @@ The records stay the source of truth; health is a hint next to them.
 ## In order
 
 1. Run the repair with `--write` (260 high-confidence changes), then the
-   check again.
-2. Add the weekly health check and `health.json`; show it in the app.
-3. Add claiming for domain-handle accounts and board URL recognition in
-   the add-company form.
-4. Re-key the slug records that now have a website.
-5. Suggested companies from hiring posts and the Open Jobs board list
-   (the crawler adds those with a live board linked from their own
-   website, see [crawler.md](crawler.md)).
+   check again: the crawler does it weekly once its account's secrets are
+   set.
+2. Done: the weekly health check (the crawler) and a closed board shown on
+   the organization's page (`gone` in its snapshot file).
+3. Done: claiming for domain-handle accounts, and board URL recognition in
+   the add-company form (`src/lib/ats/detect.js`).
+4. To do: re-key the slug records that now have a website.
+5. Done: companies from hiring posts and the Open Jobs board list (the
+   crawler adds those with a live board linked from their own website, see
+   [crawler.md](crawler.md)).

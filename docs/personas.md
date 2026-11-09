@@ -32,9 +32,10 @@ and nothing else.
 Knows where they want to work, or wants to find out who hires in a city or
 field.
 - **Today:** company pages with their jobs, lists of companies by city or
-  field, the companies index.
-- **Missing:** a page per city and per field ("jobs in Berlin", "design
-  jobs"), which is also how search engines bring them here.
+  field, the companies index, a page per city and per field (`/in/berlin`,
+  `/field/design`), which is how search engines bring them here.
+- **Missing:** knowing when an organization they follow opens a job,
+  without a feed reader.
 
 ## Making joblist
 
@@ -52,6 +53,16 @@ Wants its page right and its jobs shown.
   once signed in with the domain.
 - **Missing:** recruiters posting for it.
 
+### Project looking for contributors
+A cooperative, a nonprofit, an open source project: wants people to work
+with, paid or not.
+- **Today:** its organization page says how to take part (`contribute`:
+  work, volunteer, join, fund), before its jobs when it has none; lists by
+  need gather such organizations.
+- **Missing:** its open tasks: for listed organizations whose code lives
+  on Tangled (atproto), their issues, shown as ways to take part, not as
+  jobs.
+
 ### Recruiter
 Posts jobs for a company, or several.
 - **Today:** posts show as "shared by @them", after the company's board.
@@ -62,12 +73,11 @@ Posts jobs for a company, or several.
 ### Another app, an AI assistant
 Reads or writes the same records.
 - **Today:** the `today.joblist.*` lexicons, published; the snapshot
-  files, with one small JSON file per organization linked from its page;
-  Atom feeds for any search; `/llms.txt`, written at each build from
+  files, with one small JSON file per organization (linked from its page)
+  and per list (`lists/plc/{id}/{rkey}.json`); Atom feeds for any search; `/llms.txt`, written at each build from
   `src/lib/data/agents.json`, the lexicons and docs/, with etiquette;
   WebMCP tools on the site.
-- **Missing:** a JSON file per list (an agent reads `records.json` and the
-  organizations' files).
+- **Missing:** nothing asked for yet.
 
 ### Maintainer
 Keeps the data healthy.

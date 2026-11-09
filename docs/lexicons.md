@@ -26,6 +26,16 @@ Optional fields a poster (or another app) can add:
 | `applicantLocations` | countries applicants can work from, as ISO 3166-1 alpha-2 codes (`DE`, `FR`) |
 | `langs` | languages the offer is written in (BCP-47 tags) |
 
+## Ways to take part
+
+A company record can say how else to take part, beyond its jobs:
+`contribute`, at most 10 of `{kind, text, url}`, where `kind` is `work`
+(contributors welcome), `volunteer`, `join` (become a member) or `fund`, with
+a short `text` (200 graphemes) or a `url`, or both. Other kinds are allowed
+by the lexicon and left out by joblist.
+
+## Places
+
 Company (and job) locations can say `countryCode` (ISO 3166-1 alpha-2)
 alongside the country's name.
 

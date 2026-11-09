@@ -1,16 +1,19 @@
 # joblist
 
-Companies that hire, curated by people, on [atproto](https://atproto.com).
+Open jobs at organizations that hire, read straight from their own job boards,
+and lists of organizations curated by people on [atproto](https://atproto.com).
+For people looking for work, and for projects looking for people to work with.
 
-Anyone with a Bluesky (or any atproto) account can describe a company or make a
-list of companies. Every record lives in its author's own account: nobody can
-take it down, rank it or sell it, and any other app can read it. For companies
-with a supported job board, open jobs are read live from that board.
+Anyone with a Bluesky (or any atproto) account can describe an organization,
+make a list of them, or post a job. Every record lives in its author's own
+account: nobody can take it down, rank it or sell it, and any other app can
+read it. For organizations with a supported job board, open jobs are read
+from that board.
 
 It started as a hand-made spreadsheet of Berlin companies (joblistberlin), and
 grew into joblist.today. This version keeps the part that worked, the
-crowd-curated list of companies, and drops everything else: no database, no
-crawler, no server.
+crowd-curated list of companies, with no database and no server of its own:
+a static snapshot rebuilt every 6 hours, and a static site.
 
 ## Records
 
@@ -31,6 +34,10 @@ Four record types, defined in [`lexicons/`](lexicons/today/joblist):
      [`indexer/seen.js`](indexer/seen.js)), not the `updatedAt` its author
      writes, which anyone can set; without a snapshot, `updatedAt` (never in
      the future).
+
+  An organization can also say how else to take part (`contribute`: work,
+  volunteer, join, fund, each with a short text or a link), shown on its
+  page next to its jobs.
 
   The company page shows the history (every author's version); anyone can
   restore an older one, which saves its content as their own new version.
@@ -91,21 +98,27 @@ poster. Until that exists, nothing private is written.
 
 ## How it runs
 
-A static SvelteKit app, served by a Cloudflare Worker (assets only, no code).
-Everything happens in the browser:
+A static SvelteKit app (it runs in the browser), served by Cloudflare, and a
+snapshot of the network rebuilt every 6 hours by the indexer ([`indexer/`](indexer),
+`.github/workflows/snapshot.yml`) and published to
+[joblisttoday/joblist-snapshot](https://github.com/joblisttoday/joblist-snapshot):
+every record, every open job, one small file per organization and per list.
+The app reads the snapshot; only the signed-in person's own records are read
+live, from their own server.
 
 | What | How |
 |---|---|
-| Find all records | the relay's `com.atproto.sync.listReposByCollection`, then `com.atproto.repo.listRecords` on each author's PDS |
+| Find all records (indexer) | the relay's `com.atproto.sync.listReposByCollection`, then `com.atproto.repo.listRecords` on each author's PDS |
 | Names and verified handles | the public Bluesky AppView (`app.bsky.actor.getProfiles`); handles that make an account a company's own are checked again both ways by the indexer ([`indexer/handles.js`](indexer/handles.js)) |
 | Open jobs | each job board's public API (Ashby, Greenhouse, Lever, Personio, Recruitee, Rippling, SmartRecruiters, Workable) |
 | Sign in and write | atproto OAuth (`@atproto/oauth-client-browser`), asking only for the app's record types |
 | Map | MapLibre with OpenFreeMap tiles |
 
-The last network load is kept in `localStorage` so pages show at once. Loading
-is one request per contributing account: fine for hundreds of contributors.
-Past that, a static snapshot file can be added as a cache, with the records
-staying the source of truth.
+It works offline on what it read last: a service worker
+([`src/service-worker.js`](src/service-worker.js)) keeps the app and the
+snapshot files it read, and IndexedDB keeps the network copy and the outbox,
+where a write that cannot reach its author's server waits to be sent, in
+order ([`src/lib/network/outbox.svelte.js`](src/lib/network/outbox.svelte.js)).
 
 Pages per city and per field (`/in/berlin`, `/field/design`,
 `/in/berlin/design`, indexes at `/in` and `/field`), their Atom feeds
@@ -132,13 +145,16 @@ npm install
 npm run dev -- --host 127.0.0.1   # sign-in works on 127.0.0.1, not localhost
 npm test
 npm run check
+npm run test:e2e                  # quality gate on the built site (Playwright)
+npm run gate:check                # is e2e/quality.js the shared kit's latest?
 ```
 
 Configuration lives in data files, not code:
 
 - [`src/lib/data/config.json`](src/lib/data/config.json): services, map, limits, locales
 - [`src/lib/data/providers.json`](src/lib/data/providers.json): job board providers
-- [`src/lib/i18n/locales/`](src/lib/i18n/locales): interface text (English, French)
+- [`src/lib/i18n/locales/`](src/lib/i18n/locales): interface text (English, French, German, Spanish: every key in each)
+- [`src/lib/data/need-lists.json`](src/lib/data/need-lists.json): lists by need, from the commons map (`scripts/curate-lists.js`)
 - [`scripts/starter-lists.json`](scripts/starter-lists.json): lists created by the import
 
 The Worker locally, on a built site (`npm run build:site`), reading a
@@ -166,6 +182,16 @@ npm run deploy   # build:site && wrangler deploy → https://joblist.today
 
 [`static/client-metadata.json`](static/client-metadata.json) must match the
 deployed origin.
+
+Workflows ([`.github/workflows/`](.github/workflows)):
+
+| Workflow | When | What |
+|---|---|---|
+| `snapshot` | every 6 hours | the snapshot, published; then the site rebuilt (`SITE_DEPLOY_HOOK`) and the weekly post (`bot/`) |
+| `crawl` | Mondays | the crawler ([docs/crawler.md](docs/crawler.md)) |
+| `lexicons` | a push changing `lexicons/` | publishes the changed schemas ([docs/lexicons.md](docs/lexicons.md)) |
+| `gate` | each push, Mondays | the quality gate on the built site |
+| `curate-lists` | by hand | lists by need: a plan, or with `write` the records |
 
 Only the site's own scripts may run (`kit.csp` in `vite.config.js`). The page
 view counter (Umami) is a pinned copy served from the site,
