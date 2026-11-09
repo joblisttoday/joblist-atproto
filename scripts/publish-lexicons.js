@@ -48,7 +48,7 @@ await agent.login({
 // Schemas are only found in the account the DNS names: refuse to write them anywhere else.
 if (agent.assertDid !== config.lexicons.did) throw new Error(`signed in as ${agent.assertDid}, not ${config.lexicons.did}`);
 for (const { nsid, record } of records) {
-	// Each push that touches lexicons/ runs this: a schema already published as it is stays untouched.
+	// A schema already published as it is stays untouched.
 	const published = await agent.com.atproto.repo.getRecord({ repo: agent.assertDid, collection: COLLECTION, rkey: nsid }).catch(() => null);
 	if (published && isDeepStrictEqual(published.data.value, record)) {
 		console.log(`  unchanged ${nsid}`);

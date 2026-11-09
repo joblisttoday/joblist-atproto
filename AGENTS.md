@@ -38,4 +38,5 @@ gh workflow run snapshot          # a snapshot now, instead of waiting for the s
 - Wrong is worse than unknown: a job's workplace, pay or place is shown only when its board or its text says it clearly.
 - What a page shows (search, filters, view, open job) lives after the `#` ([src/lib/navigation/address.js](src/lib/navigation/address.js)); a different thing gets its own path.
 - `config.json` is shared by the app, the indexer and the Worker.
+- Lexicons stay small and are the owner's call: propose a change to `lexicons/` and wait for a yes; publishing is by hand only (docs/lexicons.md). A published field can never be taken back.
 - Look at UI changes at 390px and 1440px before committing; do not stop or reuse a dev server you did not start.

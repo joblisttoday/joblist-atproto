@@ -189,7 +189,7 @@ Workflows ([`.github/workflows/`](.github/workflows)):
 |---|---|---|
 | `snapshot` | every 6 hours | the snapshot, published; then the site rebuilt (`SITE_DEPLOY_HOOK`) and the weekly post (`bot/`) |
 | `crawl` | Mondays | the crawler ([docs/crawler.md](docs/crawler.md)) |
-| `lexicons` | a push changing `lexicons/` | publishes the changed schemas ([docs/lexicons.md](docs/lexicons.md)) |
+| `lexicons` | by hand, by the owner | publishes the changed schemas ([docs/lexicons.md](docs/lexicons.md)) |
 | `gate` | each push, Mondays | the quality gate on the built site |
 | `curate-lists` | by hand | lists by need: a plan, or with `write` the records |
 
