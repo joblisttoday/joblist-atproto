@@ -9,7 +9,8 @@ them today and what is missing. New features start from one of them.
 Wants a job they can reach by bike or on foot.
 - **Today:** the explorer opens on the map; "Near me" with bike or walking
   minutes, a map area, saved searches, applied and hidden jobs, private
-  named collections of jobs ("Dream jobs") with a file to move them.
+  named lists of jobs ("Dream jobs") with a file to move them, and
+  private lists of organizations, all on Saved.
 - **Missing:** being told when a new job appears near them without opening
   the site; real bike routes (today: straight-line distance).
 
@@ -41,7 +42,8 @@ field.
 
 ### Curator
 Makes lists of companies (a city, a field, their network), adds companies.
-- **Today:** lists, Add with a pasted link, versions anyone can edit.
+- **Today:** lists, private on this device until published, Add with a
+  pasted link, versions anyone can edit.
 - **Missing:** knowing which of their list's companies have new jobs, or a
   closed board to fix.
 
