@@ -227,7 +227,7 @@
 	jl-preview {
 		display: block;
 	}
-	/* The company as it will show: under the fields on phones, beside them on wide screens. */
+	/* The company as it will show, under its fields (FormPage). */
 	aside {
 		margin-top: var(--space-l);
 		padding: 0 var(--space-m);
@@ -255,24 +255,6 @@
 	}
 	jl-form-actions p {
 		margin: var(--space-m) 0 0;
-	}
-	@media (min-width: 64rem) {
-		form {
-			display: grid;
-			grid-template-columns: minmax(0, var(--reading-width)) minmax(0, var(--aside-width));
-			column-gap: var(--gutter);
-			align-items: start;
-		}
-		form > :not(aside) {
-			grid-column: 1;
-		}
-		aside {
-			grid-column: 2;
-			grid-row: 1 / 4;
-			position: sticky;
-			top: calc(var(--header-height) + var(--space-m));
-			margin-top: 0;
-		}
 	}
 	p small button {
 		min-height: 0;

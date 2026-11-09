@@ -1,4 +1,5 @@
 <script>
+	import FormPage from '#lib/components/FormPage.svelte';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import config from '#lib/data/config.json';
@@ -17,20 +18,22 @@
 
 <svelte:head><title>{t('post.edit')} · {config.name}</title></svelte:head>
 
-<h1>{t('post.edit')}</h1>
+<FormPage>
+	<h1>{t('post.edit')}</h1>
 
-<RequireSession>
-	{#if post && session.did === post.did}
-		{#key post.uri}
-			<JobForm
-				{post}
-				onsaved={(rkey) => goto(postPath(did, rkey))}
-				oncancel={() => history.back()}
-			/>
-		{/key}
-	{:else if post === undefined}
-		<Pending />
-	{:else}
-		<p>{t('job.notFound')}</p>
-	{/if}
-</RequireSession>
+	<RequireSession>
+		{#if post && session.did === post.did}
+			{#key post.uri}
+				<JobForm
+					{post}
+					onsaved={(rkey) => goto(postPath(did, rkey))}
+					oncancel={() => history.back()}
+				/>
+			{/key}
+		{:else if post === undefined}
+			<Pending />
+		{:else}
+			<p>{t('job.notFound')}</p>
+		{/if}
+	</RequireSession>
+</FormPage>

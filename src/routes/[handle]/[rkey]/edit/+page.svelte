@@ -1,4 +1,5 @@
 <script>
+	import FormPage from '#lib/components/FormPage.svelte';
 	import config from '#lib/data/config.json';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
@@ -18,7 +19,6 @@
 
 <svelte:head><title>{t('form.list.edit')} · {config.name}</title></svelte:head>
 
-<h1>{t('form.list.edit')}</h1>
 {#snippet editing()}
 	{#if list}
 		{#key list.uri}
@@ -29,4 +29,8 @@
 		<p>{t('list.notFound')}</p>
 	{/if}
 {/snippet}
-{#if local}{@render editing()}{:else}<RequireSession>{@render editing()}</RequireSession>{/if}
+
+<FormPage>
+	<h1>{t('form.list.edit')}</h1>
+	{#if local}{@render editing()}{:else}<RequireSession>{@render editing()}</RequireSession>{/if}
+</FormPage>

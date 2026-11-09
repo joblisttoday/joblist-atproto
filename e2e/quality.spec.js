@@ -20,6 +20,7 @@ qualityTests([
 	{ name: 'trends', path: '/stats', touch },
 	{ name: 'add an organization', path: '/add', touch },
 	{ name: 'post a job', path: '/jobs/new', touch },
+	{ name: 'new list', path: '/lists/new', touch },
 	{
 		name: 'job dialog',
 		touch,

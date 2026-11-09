@@ -63,6 +63,11 @@
 	/** @type {SaveSignIn | undefined} */
 	let signin = $state();
 	const submitLabel = $derived(list ? t('form.save') : t('form.list.submit'));
+	// A new list starts from its name; its description, organizations and where it is kept are a tap away.
+	let more = $state(false);
+	const moreSummary = $derived(
+		[t('list.companies', { count: form.companies.length }), local ? t('form.list.keep.device') : t('form.list.keep.account')].join(' · ')
+	);
 
 	/** @param {SubmitEvent} event */
 	async function submit(event) {
@@ -84,12 +89,57 @@
 	}
 </script>
 
+{#snippet rest()}
+	<label for="list-description">{t('form.list.description')}</label>
+	<textarea
+		id="list-description"
+		name="description"
+		toolparamdescription={tool.params.description}
+		bind:value={form.description}
+		maxlength={descriptionMax}
+		placeholder={t('form.list.description.placeholder')}
+		aria-describedby="list-description-help"
+	></textarea>
+	<small id="list-description-help">
+		{t('form.list.description.help')}
+		<data value={form.description.length}>{form.description.length.toLocaleString(i18n.locale)} / {descriptionMax.toLocaleString(i18n.locale)}</data>
+	</small>
+
+	{#if !list || list.did === LOCAL}
+		<ChoiceChips
+			name="keep"
+			legend={t('form.list.keep')}
+			options={keepOptions}
+			bind:value={() => (local ? 'device' : 'account'), (value) => (local = value === 'device')}
+			required
+			help={t(local ? 'form.list.keep.device.help' : 'form.list.keep.account.help')}
+		/>
+	{/if}
+	{#if !local}
+		<ChoiceChips
+			name="open"
+			legend={t('form.list.open')}
+			options={openOptions}
+			bind:value={() => (form.open ? 'open' : 'closed'), (value) => (form.open = value === 'open')}
+			required
+			help={t(form.open ? 'form.list.open.yes.help' : 'form.list.open.no.help')}
+		/>
+	{/if}
+
+	<fieldset>
+		<legend>{t('form.list.companies')} <data value={form.companies.length}>{form.companies.length.toLocaleString(i18n.locale)}</data></legend>
+		<ListCompanyPicker bind:companies={form.companies} />
+		<ListCompanyOrder bind:companies={form.companies} />
+	</fieldset>
+{/snippet}
+
 <jl-list-form editing={list ? true : undefined}>
 	{#if list}
 		<p><small>{t('form.list.editing', { name: list.name })}</small></p>
 	{/if}
 	<form onsubmit={submit} toolname={tool.toolname} tooldescription={tool.tooldescription}>
-		<p><small data-required>{t('form.required')}</small></p>
+		<!-- A name alone needs no word about the required fields. -->
+		{#if list || more}<p><small data-required>{t('form.required')}</small></p>{/if}
 		<jl-form-fields>
 			<SaveResumed form="list" label={submitLabel} />
 			{#if restored}
@@ -109,61 +159,32 @@
 			/>
 			<small id="list-name-help">{t('form.list.name.help')}</small>
 
-			<label for="list-description">{t('form.list.description')}</label>
-			<textarea
-				id="list-description"
-				name="description"
-				toolparamdescription={tool.params.description}
-				bind:value={form.description}
-				maxlength={descriptionMax}
-				placeholder={t('form.list.description.placeholder')}
-				aria-describedby="list-description-help"
-			></textarea>
-			<small id="list-description-help">
-				{t('form.list.description.help')}
-				<data value={form.description.length}>{form.description.length.toLocaleString(i18n.locale)} / {descriptionMax.toLocaleString(i18n.locale)}</data>
-			</small>
-
-			{#if !list || list.did === LOCAL}
-				<ChoiceChips
-					name="keep"
-					legend={t('form.list.keep')}
-					options={keepOptions}
-					bind:value={() => (local ? 'device' : 'account'), (value) => (local = value === 'device')}
-					required
-					help={t(local ? 'form.list.keep.device.help' : 'form.list.keep.account.help')}
-				/>
+			<!-- A new list: a name is enough; the rest when wanted (organizations also come as one browses). -->
+			{#if list}
+				{@render rest()}
+			{:else}
+				<details bind:open={more}>
+					<summary>{t('form.list.more')} <small>{moreSummary}</small></summary>
+					{@render rest()}
+				</details>
 			{/if}
-			{#if !local}
-				<ChoiceChips
-					name="open"
-					legend={t('form.list.open')}
-					options={openOptions}
-					bind:value={() => (form.open ? 'open' : 'closed'), (value) => (form.open = value === 'open')}
-					required
-					help={t(form.open ? 'form.list.open.yes.help' : 'form.list.open.no.help')}
-				/>
-			{/if}
-
-			<fieldset>
-				<legend>{t('form.list.companies')} <data value={form.companies.length}>{form.companies.length.toLocaleString(i18n.locale)}</data></legend>
-				<ListCompanyPicker bind:companies={form.companies} />
-				<ListCompanyOrder bind:companies={form.companies} />
-			</fieldset>
 		</jl-form-fields>
 
-		<aside aria-labelledby="list-preview">
-			<h2 id="list-preview">{t('form.list.preview')}</h2>
-			{#if preview}
-				<jl-preview inert><ListItem list={preview} author={!local && Boolean(session.did)} /></jl-preview>
-			{:else}
-				<p><small>{t('form.list.preview.empty')}</small></p>
-			{/if}
-		</aside>
+		{#if list || more}
+			<aside aria-labelledby="list-preview">
+				<h2 id="list-preview">{t('form.list.preview')}</h2>
+				{#if preview}
+					<jl-preview inert><ListItem list={preview} author={!local && Boolean(session.did)} /></jl-preview>
+				{:else}
+					<p><small>{t('form.list.preview.empty')}</small></p>
+				{/if}
+			</aside>
+		{/if}
 
 		<jl-form-actions>
 			{#if error}<p role="alert">{error}</p>{/if}
-			<SaveHint />
+			<!-- Signing in is only asked to publish. -->
+			{#if !local}<SaveHint />{/if}
 			<menu>
 				<button type="submit" disabled={busy}>{busy ? t('form.saving') : submitLabel}</button>
 				{#if oncancel}<button type="button" onclick={oncancel}>{t('form.cancel')}</button>{/if}
@@ -196,7 +217,8 @@
 		min-height: var(--textarea-min);
 		max-height: var(--textarea-max);
 	}
-	jl-form-fields > small {
+	jl-form-fields > small,
+	details > small {
 		display: block;
 	}
 	small:has(> data) {
@@ -207,6 +229,12 @@
 	data {
 		flex: none;
 		font-variant-numeric: tabular-nums;
+	}
+	details {
+		margin-top: var(--space-l);
+	}
+	summary small {
+		color: var(--color-muted);
 	}
 	fieldset {
 		margin: var(--space-l) 0 0;
@@ -222,7 +250,7 @@
 	legend data {
 		color: var(--color-muted);
 	}
-	/* The list as it will show: under the fields on phones, beside them on wide screens. */
+	/* The list as it will show, under its fields (FormPage). */
 	aside {
 		margin-top: var(--space-l);
 		padding: 0 var(--space-m);
@@ -242,24 +270,6 @@
 	}
 	jl-form-actions p {
 		margin: var(--space-m) 0 0;
-	}
-	@media (min-width: 64rem) {
-		form {
-			display: grid;
-			grid-template-columns: minmax(0, var(--reading-width)) minmax(0, var(--aside-width));
-			column-gap: var(--gutter);
-			align-items: start;
-		}
-		form > :not(aside) {
-			grid-column: 1;
-		}
-		aside {
-			grid-column: 2;
-			grid-row: 1 / 4;
-			position: sticky;
-			top: calc(var(--header-height) + var(--space-m));
-			margin-top: 0;
-		}
 	}
 	p small button {
 		min-height: 0;

@@ -1,4 +1,5 @@
 <script>
+	import FormPage from '#lib/components/FormPage.svelte';
 	import Icon from '#lib/components/Icon.svelte';
 	import config from '#lib/data/config.json';
 	import { page } from '$app/state';
@@ -59,40 +60,42 @@
 
 <svelte:head><title>{saved ? t('added.title') : title} · {config.name}</title></svelte:head>
 
-{#if saved}
-	<AddSaved {...saved} />
-{:else}
-	<h1>{title}</h1>
-
-	{#if !started}<AddMine />{/if}
-	{#if !key}
-		<AddLink value={input.link || input.name} {list} next={back} />
-	{/if}
-
-	{#if started}
-		{#await check}
-			<p aria-live="polite"><small>{t('add.checking')}</small></p>
-		{:then found}
-			{#if !key}<AddFound {board} count={found?.count} existing={company} />{/if}
-			{#key `${company?.key}:${page.url.search}`}
-				<CompanyForm
-					{company}
-					prefill={toPrefill(pasted, found?.name)}
-					focus={params.get('field') || ''}
-					{onsaved}
-					oncancel={() => history.back()}
-				/>
-			{/key}
-		{/await}
+<FormPage>
+	{#if saved}
+		<AddSaved {...saved} />
 	{:else}
-		<p><small><a href="/add?name=">{t('add.manual')}</a></small></p>
-		<section aria-labelledby="add-more">
-			<h2 id="add-more">{t('add.more')}</h2>
-			<menu>
-				<a href="/lists/new" data-add><Icon name="add" /> {t('list.new')}</a>
-				<a href="/jobs/new" data-add><Icon name="add" /> {t('post.title')}</a>
-			</menu>
-		</section>
-		<AddAnywhere />
+		<h1>{title}</h1>
+
+		{#if !started}<AddMine />{/if}
+		{#if !key}
+			<AddLink value={input.link || input.name} {list} next={back} />
+		{/if}
+
+		{#if started}
+			{#await check}
+				<p aria-live="polite"><small>{t('add.checking')}</small></p>
+			{:then found}
+				{#if !key}<AddFound {board} count={found?.count} existing={company} />{/if}
+				{#key `${company?.key}:${page.url.search}`}
+					<CompanyForm
+						{company}
+						prefill={toPrefill(pasted, found?.name)}
+						focus={params.get('field') || ''}
+						{onsaved}
+						oncancel={() => history.back()}
+					/>
+				{/key}
+			{/await}
+		{:else}
+			<p><small><a href="/add?name=">{t('add.manual')}</a></small></p>
+			<section aria-labelledby="add-more">
+				<h2 id="add-more">{t('add.more')}</h2>
+				<menu>
+					<a href="/lists/new" data-add><Icon name="add" /> {t('list.new')}</a>
+					<a href="/jobs/new" data-add><Icon name="add" /> {t('post.title')}</a>
+				</menu>
+			</section>
+			<AddAnywhere />
+		{/if}
 	{/if}
-{/if}
+</FormPage>

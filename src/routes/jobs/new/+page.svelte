@@ -1,4 +1,5 @@
 <script>
+	import FormPage from '#lib/components/FormPage.svelte';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import config from '#lib/data/config.json';
@@ -13,13 +14,15 @@
 
 <svelte:head><title>{t('post.title')} · {config.name}</title></svelte:head>
 
-<h1>{t('post.title')}</h1>
-<p><small>{t('post.intro')}</small></p>
+<FormPage>
+	<h1>{t('post.title')}</h1>
+	<p><small>{t('post.intro')}</small></p>
 
-{#key company}
-	<JobForm
-		{company}
-		onsaved={(rkey) => goto(`${postPath(/** @type {string} */ (session.did), rkey)}/lists`)}
-		oncancel={() => history.back()}
-	/>
-{/key}
+	{#key company}
+		<JobForm
+			{company}
+			onsaved={(rkey) => goto(`${postPath(/** @type {string} */ (session.did), rkey)}/lists`)}
+			oncancel={() => history.back()}
+		/>
+	{/key}
+</FormPage>
