@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { membership, mixedAuthors, toList, toRecord } from './list.js';
+import { SHARED, membership, mixedAuthors, sharedList, sharedPath, toList, toRecord } from './list.js';
 
 const LIST = 'at://did:owner/today.joblist.list/1';
 
@@ -50,5 +50,30 @@ describe('mixedAuthors', () => {
 	it('is true when lists come from several people', () => {
 		const other = toList({ did: 'did:other', rkey: '2', uri: 'at://did:other/today.joblist.list/2', cid: '', value: { name: 'O', createdAt: '' } });
 		expect(mixedAuthors([list({}), other])).toBe(true);
+	});
+});
+
+describe('a list carried by its link', () => {
+	it('goes there and back, its keys joined by "+"', () => {
+		const path = sharedPath({ name: 'Places I like', description: 'Near the canal', companies: ['ableton.com', 'gitlab.com'] });
+		expect(path).toBe('/lists/shared#name=Places+I+like&about=Near+the+canal&orgs=ableton.com+gitlab.com');
+		const list = sharedList(new URLSearchParams(String(path).split('#')[1]));
+		expect(list).toMatchObject({ did: SHARED, name: 'Places I like', description: 'Near the canal', companies: ['ableton.com', 'gitlab.com'], open: false });
+	});
+
+	it('keeps only what can be a company key, once each', () => {
+		const list = sharedList(new URLSearchParams('name=L&orgs=Acme.org+../etc+acme.org+3lksuk2pqx622'));
+		expect(list?.companies).toEqual(['acme.org']);
+	});
+
+	it('holds no list without a name or a company', () => {
+		expect(sharedList(new URLSearchParams('orgs=acme.org'))).toBe(null);
+		expect(sharedList(new URLSearchParams('name=L&orgs=../x'))).toBe(null);
+	});
+
+	it('has no link past the limit: such a list is published to be shared', () => {
+		const companies = Array.from({ length: 301 }, (_, i) => `c${i}.org`);
+		expect(sharedPath({ name: 'Big', companies })).toBe(null);
+		expect(sharedPath({ name: 'Big', companies: companies.slice(0, 300) })).toMatch(/^\/lists\/shared#/);
 	});
 });

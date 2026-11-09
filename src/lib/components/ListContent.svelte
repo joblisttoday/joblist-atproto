@@ -11,7 +11,7 @@
 	import { jobCounts } from '#lib/network/job-counts.svelte.js';
 	import { membersOf } from '#lib/network/network.svelte.js';
 	import { getListJobs } from '#lib/network/snapshot.js';
-	import { LOCAL } from '#lib/models/list.js';
+	import { LOCAL, SHARED } from '#lib/models/list.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
@@ -58,8 +58,8 @@
 	{/if}
 	<jl-list-jobs hidden={map || show !== 'jobs' || undefined}>
 		<Jobs {companies} search={false} filters={scoped} {source} bind:jobs bind:results>
-			<!-- Followed in a feed reader; a list on this device only has no address to follow. -->
-			{#snippet actions()}{#if list.did !== LOCAL}<FollowFeed feed={{ list: { did: list.did, rkey: list.rkey } }} />{/if}{/snippet}
+			<!-- Followed in a feed reader; a list on this device or from a link has no address to follow. -->
+			{#snippet actions()}{#if list.did !== LOCAL && list.did !== SHARED}<FollowFeed feed={{ list: { did: list.did, rkey: list.rkey } }} />{/if}{/snippet}
 		</Jobs>
 	</jl-list-jobs>
 	{#if show === 'companies' && !map}

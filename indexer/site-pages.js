@@ -19,11 +19,16 @@ import { t } from '../worker/text.js';
 const appPages = [
 	['/saved', en['saved.title']],
 	['/signin', en['signin.title']],
-	['/settings', en['settings.title']],
+	['/menu', en['nav.menu']],
+	['/menu/language', en['about.language']],
+	['/menu/profiles', en['profiles.label']],
+	['/menu/collections', en['collections.transfer']],
+	['/menu/outbox', en['outbox.title']],
 	['/me', en['nav.me']],
 	['/add', en['form.company.title']],
 	['/jobs/new', en['post.title']],
 	['/lists/new', en['list.new']],
+	['/lists/shared', en['list.shared.title']],
 	['/tools', config.name]
 ];
 

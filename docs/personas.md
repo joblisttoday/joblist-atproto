@@ -42,8 +42,8 @@ field.
 
 ### Curator
 Makes lists of companies (a city, a field, their network), adds companies.
-- **Today:** lists, private on this device until published, Add with a
-  pasted link, versions anyone can edit.
+- **Today:** lists, private on this device until published (and sent as a
+  link meanwhile), Add with a pasted link, versions anyone can edit.
 - **Missing:** knowing which of their list's companies have new jobs, or a
   closed board to fix.
 

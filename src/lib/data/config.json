@@ -179,7 +179,8 @@
 	},
 	"lists": {
 		"related": { "shown": 6, "nameWeight": 3, "minTermLength": 3 },
-		"explore": 8
+		"explore": 8,
+		"shareMax": 300
 	},
 	"jobCollections": {
 		"file": "joblist-collections.json",

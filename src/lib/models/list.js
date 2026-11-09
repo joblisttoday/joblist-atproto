@@ -1,5 +1,6 @@
 import config from '#lib/data/config.json' with { type: 'json' };
 import { capRecord } from './limits.js';
+import { isCompanyKey } from './landing.js';
 
 /**
  * @typedef {import('#lib/atproto/records.js').RepoRecord} RepoRecord
@@ -21,6 +22,38 @@ import { capRecord } from './limits.js';
 
 /** The author of the lists kept on this device only (network/local-lists.svelte.js): no handle is so, it has no dot. */
 export const LOCAL = 'local';
+/** The author of a list opened from a share link (sharedList): someone's, kept nowhere. */
+export const SHARED = 'shared';
+/** Where a share link opens. */
+export const SHARED_PATH = '/lists/shared';
+
+/**
+ * A list carried by its link, after the "#" (never sent to a server): its name, what it is
+ * about and its companies' keys, joined by "+" (a space, in an address: keys have none).
+ * Read within the lexicon's limits, like any record; null when the link holds none.
+ * @param {URLSearchParams} params
+ * @returns {List | null}
+ */
+export function sharedList(params) {
+	const companies = (params.get('orgs') || '').split(/\s+/).map((key) => key.trim().toLowerCase()).filter(isCompanyKey);
+	const name = (params.get('name') || '').trim();
+	if (!name || !companies.length) return null;
+	const record = { name, description: params.get('about') || undefined, companies: [...new Set(companies)].slice(0, config.lists.shareMax) };
+	return toList({ uri: `at://${SHARED}/${config.collections.list}/link`, cid: '', did: SHARED, rkey: 'link', value: record });
+}
+
+/**
+ * The link that carries a list (sharedList), or null past config.lists.shareMax companies:
+ * a longer link breaks in messages; such a list is shared by publishing it.
+ * @param {Pick<List, 'name' | 'description' | 'companies'>} list
+ */
+export function sharedPath(list) {
+	if (list.companies.length > config.lists.shareMax) return null;
+	const params = new URLSearchParams({ name: list.name });
+	if (list.description) params.set('about', list.description);
+	params.set('orgs', list.companies.join(' '));
+	return `${SHARED_PATH}#${params}`;
+}
 
 /**
  * @param {RepoRecord} record

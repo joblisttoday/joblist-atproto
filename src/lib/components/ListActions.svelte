@@ -4,8 +4,10 @@
 	import config from '#lib/data/config.json';
 	import Icon from './Icon.svelte';
 	import ListDelete from './ListDelete.svelte';
-	import { LOCAL } from '#lib/models/list.js';
+	import { goto } from '$app/navigation';
+	import { LOCAL, SHARED, sharedPath, toRecord } from '#lib/models/list.js';
 	import { session } from '#lib/auth/session.svelte.js';
+	import { newLocalKey, putLocalList } from '#lib/network/local-lists.svelte.js';
 	import { handleOf, ownsList } from '#lib/network/network.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
@@ -13,6 +15,8 @@
 	 * What one can do with a list, in one row: its author edits it and answers suggestions;
 	 * others suggest a company (signing in first). Sharing, copying and deleting
 	 * are in a small menu at the end.
+	 * A list on this device or opened from a link (SHARED) has no address of its own: it is
+	 * shared as a link that carries it (sharedPath), and one opened that way can be kept.
 	 * suggesting / reviewing: whether "Suggest a company" / the suggestions are open.
 	 * @type {{list: import('#lib/models/list.js').List, pending?: number, suggesting?: boolean, reviewing?: boolean}}
 	 */
@@ -26,9 +30,12 @@
 	const path = $derived(`/${handleOf(list.did)}/${list.rkey}`);
 	// Signed out, "Suggest" signs in first and comes back here with it open.
 	const signin = $derived(`/signin?${new URLSearchParams({ next: `${path}?suggest` })}`);
+	/** Published: its page. Else the link that carries it, if it fits in one (else it is published to be shared). */
+	const carried = $derived(list.did === LOCAL || list.did === SHARED);
+	const link = $derived(carried ? sharedPath(list) : window.location.pathname);
 
 	async function share() {
-		const url = window.location.origin + window.location.pathname;
+		const url = window.location.origin + link;
 		if (navigator.share) {
 			await navigator.share({ title: list.name, url }).catch(() => {});
 		} else {
@@ -36,6 +43,13 @@
 			copied = true;
 			setTimeout(() => (copied = false), config.layout.copiedMs);
 		}
+	}
+
+	// A list opened from a link, kept as one's own on this device (private until published).
+	async function keep() {
+		const rkey = newLocalKey();
+		putLocalList(rkey, toRecord({ name: list.name, description: list.description || '', companies: list.companies }));
+		await goto(`/${LOCAL}/${rkey}`);
 	}
 
 	// The small menu closes, and the dialog says what deleting does.
@@ -63,7 +77,9 @@
 				</li>
 			{/if}
 			<li><a href="{path}/edit"><Icon name="edit" /> {t('list.edit')}</a></li>
-		{:else if session.did && list.did !== LOCAL}
+		{:else if list.did === SHARED}
+			<li><button type="button" onclick={keep}><Icon name="save" /> {t('list.keep')}</button></li>
+		{:else if session.did}
 			<li>
 				<button type="button" aria-pressed={suggesting} onclick={() => (suggesting = !suggesting)}>
 					<Icon name="add" /> {t('list.suggest')}
@@ -72,8 +88,10 @@
 		{:else if session.ready}
 			<li><a href={signin}><Icon name="add" /> {t('list.suggest')}</a></li>
 		{/if}
-		<!-- On this device only: no one else can open its link. -->
-		{#if list.did !== LOCAL}
+		<!-- Too long to be carried by a link: shared once published (its edit page). -->
+		{#if !link}
+			<li><a href="{path}/edit" title={t('list.share.publish')}><Icon name="share" label={t('list.share.publish')} /></a></li>
+		{:else}
 			<li>
 				<button type="button" onclick={share} title={copied ? t('list.linkCopied') : t('list.share')}>
 					<Icon name={copied ? 'added' : 'share'} label={copied ? t('list.linkCopied') : t('list.share')} />
@@ -83,14 +101,14 @@
 		<li>
 			<button type="button" popovertarget="{id}-more" title={t('list.more')}><Icon name="more" label={t('list.more')} /></button>
 			<menu popover id="{id}-more" aria-label={t('list.more')}>
-				<li><a href="/lists/new?copy={encodeURIComponent(list.uri)}"><Icon name="copy" /> {t('list.copy')}</a></li>
-				{#if list.did !== LOCAL}<li><button type="button" onclick={embed}><Icon name="embed" /> {t('embed.section')}</button></li>{/if}
+				{#if list.did !== SHARED}<li><a href="/lists/new?copy={encodeURIComponent(list.uri)}"><Icon name="copy" /> {t('list.copy')}</a></li>{/if}
+				{#if !carried}<li><button type="button" onclick={embed}><Icon name="embed" /> {t('embed.section')}</button></li>{/if}
 				{#if mine}<li><button type="button" onclick={remove}><Icon name="delete" /> {t('list.delete')}</button></li>{/if}
 			</menu>
 		</li>
 	</menu>
 	{#if mine}<ListDelete bind:this={deleting} {list} />{/if}
-	{#if list.did !== LOCAL}
+	{#if !carried}
 		<Sheet bind:open={embedding} label={t('embed.section')}>
 			<Embed attribute="list" value="{list.did}/{list.rkey}" title={t('embed.list.title', { name: list.name })} />
 		</Sheet>
