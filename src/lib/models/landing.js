@@ -8,15 +8,15 @@ import fields from '#lib/data/fields.json' with { type: 'json' };
  *
  * @typedef {{slug: string, query: string, words: string[]}} Field
  *   query: what the explorer searches for this field; words: what a job's title or department says.
- * @typedef {{t: string, u: string, c: string, l?: string, d?: string, p?: string, r?: string, i?: string, m?: [number, number, string, string]}} LandingJob
+ * @typedef {{t: string, u: string, c: string, l?: string, d?: string, p?: string, r?: string, i?: string, m?: [number, number, string, string], g?: [number, number]}} LandingJob
  *   A job as these pages show it: title, link (its board, or its page here), company key,
  *   location, department and pay (the recent jobs searched by feeds only), first seen, workplace,
- *   id at its board (when the link does not end with it).
+ *   id at its board (when the link does not end with it), where it is ([longitude, latitude], for a map).
  * @typedef {{generatedAt: string, name?: string, count: number, names: Record<string, string>, jobs: LandingJob[],
  *   fields?: {slug: string, count: number}[], cities?: {slug: string, name: string, count: number}[], page?: number, pages?: number}} LandingFile
  *   One page's data: the newest jobs and their companies' names; a city's fields, a field's cities;
  *   which page of them it is (from 1) of how many (config.landing.pages at most, of config.landing.shown jobs each).
- * @typedef {{generatedAt: string, total: number, cities: {slug: string, name: string, count: number, updated?: string, fields: string[]}[], fields: {slug: string, count: number, updated?: string}[]}} LandingIndex
+ * @typedef {{generatedAt: string, total: number, cities: {slug: string, name: string, count: number, updated?: string, g?: [number, number], fields: string[]}[], fields: {slug: string, count: number, updated?: string}[]}} LandingIndex
  *   cities[].fields: the fields with a page in that city; updated: when its newest job was first seen.
  */
 

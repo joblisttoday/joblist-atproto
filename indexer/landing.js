@@ -26,21 +26,28 @@ const { landing } = config;
 const aliases = /** @type {Record<string, string>} */ (landing.cityAliases);
 
 /**
- * The cities a job is in, as found in the places cache.
+ * The cities a job is in, as found in the places cache, with where the cache found them.
  * @param {IndexedJob} job
  * @param {PlaceCache} places
- * @returns {{slug: string, name: string}[]}
+ * @returns {{slug: string, name: string, g: [number, number]}[]}
  */
 export function citiesOf(job, places) {
-	/** @type {Map<string, string>} */
+	/** @type {Map<string, {name: string, g: [number, number]}>} */
 	const found = new Map();
 	for (const place of placeNames(job.l)) {
-		if (!places[placeKey(place)]) continue;
+		const g = places[placeKey(place)];
+		if (!g) continue;
 		const name = place.split(',')[0].trim();
 		const slug = slugify(name);
-		if (slug) found.set(aliases[slug] || slug, name);
+		if (slug) found.set(aliases[slug] || slug, { name, g });
 	}
-	return [...found].map(([slug, name]) => ({ slug, name }));
+	return [...found].map(([slug, { name, g }]) => ({ slug, name, g }));
+}
+
+/** A city's place on a map, to about a kilometre: what its jobs name most. @param {Map<string, number> | undefined} points by "lon,lat" */
+function pointOf(points) {
+	const [best] = [...(points || [])].sort((a, b) => b[1] - a[1])[0] || [];
+	return best ? /** @type {[number, number]} */ (best.split(',').map(Number)) : undefined;
 }
 
 /**
@@ -67,7 +74,7 @@ function newest(jobs, most = landing.shown) {
 	});
 	return spread(unique, config.jobs.spread, (job) => job.c)
 		.slice(0, most)
-		.map((job) => ({ t: job.t, u: jobLink(job), c: job.c, l: job.l, p: job.p, r: job.r, i: job.i }));
+		.map((job) => ({ t: job.t, u: jobLink(job), c: job.c, l: job.l, p: job.p, r: job.r, i: job.i, g: job.g }));
 }
 
 /**
@@ -116,6 +123,8 @@ export function landingFiles(jobs, names, places, generatedAt) {
 	const groups = new Map();
 	/** @type {Map<string, Map<string, number>>} */
 	const spellings = new Map();
+	/** @type {Map<string, Map<string, number>>} where each city was found, by "lon,lat" */
+	const points = new Map();
 	/** @param {string} key @param {IndexedJob} job */
 	const add = (key, job) => {
 		const list = groups.get(key);
@@ -125,11 +134,15 @@ export function landingFiles(jobs, names, places, generatedAt) {
 	for (const job of sorted) {
 		const cities = citiesOf(job, places);
 		const fields = fieldsOf(job);
-		for (const { slug, name } of cities) {
+		for (const { slug, name, g } of cities) {
 			add(`in/${slug}`, job);
 			const counts = spellings.get(slug) || new Map();
 			counts.set(name, (counts.get(name) || 0) + 1);
 			spellings.set(slug, counts);
+			const at = `${g[0].toFixed(2)},${g[1].toFixed(2)}`;
+			const found = points.get(slug) || new Map();
+			found.set(at, (found.get(at) || 0) + 1);
+			points.set(slug, found);
 			for (const field of fields) add(`in/${slug}/${field}`, job);
 		}
 		for (const field of fields) add(`field/${field}`, job);
@@ -176,6 +189,7 @@ export function landingFiles(jobs, names, places, generatedAt) {
 					name: nameOf(spellings, slug),
 					count: count(`in/${slug}`),
 					updated: updated(`in/${slug}`),
+					g: pointOf(points.get(slug)),
 					fields: pairs.filter((p) => p.city === slug).map((p) => p.field)
 				})),
 				fields: fields.map((slug) => ({ slug, count: count(`field/${slug}`), updated: updated(`field/${slug}`) }))

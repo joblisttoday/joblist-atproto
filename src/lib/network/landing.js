@@ -45,5 +45,6 @@ export async function getLandingPage(page) {
 function toJob(j) {
 	const url = safeUrl(j?.u);
 	if (!url || !j.t) return null;
-	return { title: String(j.t), url, company: String(j.c || ''), location: j.l, published: j.p, remote: j.r, id: j.i ?? url.slice(url.lastIndexOf('/') + 1) };
+	const point = Array.isArray(j.g) && j.g.length === 2 && j.g.every(Number.isFinite) ? /** @type {[number, number]} */ ([j.g[0], j.g[1]]) : undefined;
+	return { title: String(j.t), url, company: String(j.c || ''), location: j.l, published: j.p, remote: j.r, id: j.i ?? url.slice(url.lastIndexOf('/') + 1), point };
 }
