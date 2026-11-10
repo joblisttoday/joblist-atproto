@@ -30,8 +30,15 @@ const TYPES = /** @type {const} */ ({
 });
 /** @typedef {keyof typeof TYPES} RecordType */
 
-/** Everything the app knows about the network, loaded in the browser. */
+/**
+ * Everything the app knows about the network, loaded in the browser.
+ * status: what the app can say about it. "reading": nothing known yet (a first visit);
+ * "known": from the snapshot or this browser's copy, so an empty result is really empty;
+ * "unreachable": no snapshot could be read and this browser has no copy.
+ */
 export const network = $state({
+	/** @type {'reading' | 'known' | 'unreachable'} */
+	status: 'reading',
 	loading: false,
 	/** @type {string | null} */
 	loadedAt: null,
@@ -123,6 +130,10 @@ export const data = {
 	},
 	get profiles() {
 		return profileMap;
+	},
+	/** What can be said about the data (network.status). */
+	get status() {
+		return network.status;
 	}
 };
 
@@ -171,6 +182,7 @@ export async function startNetwork() {
 	const reading = getSnapshotRecords();
 	const [cached] = await Promise.all([readCache(), loadOutbox()]);
 	if (cached && !network.loadedAt) Object.assign(network, cached);
+	if (network.loadedAt) network.status = 'known';
 	const snapshot = await reading;
 	if (snapshot && (!network.loadedAt || snapshot.loadedAt > network.loadedAt)) {
 		network.companyRecords = snapshot.companyRecords;
@@ -181,6 +193,9 @@ export async function startNetwork() {
 		network.loadedAt = snapshot.loadedAt;
 		if (session.did) showWaiting(session.did);
 	}
+	if (snapshot) network.status = 'known';
+	// Neither: nothing to show yet, said so (the network is still read below, and may answer).
+	else if (!network.loadedAt) network.status = 'unreachable';
 	// An old snapshot is still the network (it says when it is from): every visitor reading
 	// every account would be thousands of requests to other people's servers. Only without
 	// any snapshot (a copy of the app with none) is every repository read.
@@ -266,6 +281,7 @@ export async function refresh() {
 		network.profiles = Object.fromEntries(profiles);
 		network.loadedAt = new Date().toISOString();
 		network.error = null;
+		network.status = 'known';
 		keepNetwork();
 	} catch (err) {
 		// keep what was loaded before; the network can be retried

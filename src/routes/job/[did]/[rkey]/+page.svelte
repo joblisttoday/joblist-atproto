@@ -3,6 +3,7 @@
 	import { goto } from '$app/navigation';
 	import config from '#lib/data/config.json';
 	import JobPosting from '#lib/components/JobPosting.svelte';
+	import DataState from '#lib/components/DataState.svelte';
 	import Pending from '#lib/components/Pending.svelte';
 	import { data } from '#lib/network/network.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
@@ -19,6 +20,8 @@
 
 {#if post}
 	<JobPosting {post} ondeleted={() => goto(`/company/${post.company}`)} />
+{:else if found.unreachable}
+	<DataState state="unreachable" />
 {:else if post === null}
 	<h1>{t('job.notFoundTitle')}</h1>
 	<p>{t('job.notFound')}</p>

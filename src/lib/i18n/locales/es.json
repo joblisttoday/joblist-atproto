@@ -148,6 +148,9 @@
 	"network.progress": "Leyendo la red… {records} registros de {accounts} de {total} cuentas",
 	"network.error": "La red no respondió.",
 	"network.retry": "Reintentar",
+	"data.unreachable": "No se pudieron leer los datos de joblist: su servidor no respondió.",
+	"data.offline": "Estás sin conexión, y este navegador aún no tiene una copia de los datos de joblist.",
+	"data.kept": "No se pierde nada: tus búsquedas y listas en este navegador siguen aquí. Vuelve a intentarlo en un momento.",
 
 	"list.companies": "{count} organizaciones",
 	"list.by": "por",
@@ -653,6 +656,7 @@
 	"landing.newest.intro": "Las ofertas abiertas más recientes de todas las organizaciones en joblist.",
 	"landing.company": "Ofertas nuevas en {company}",
 	"landing.notFound": "No hay página para esta ciudad o sector: aún no hay suficientes ofertas abiertas.",
+	"landing.none": "Ninguna ciudad ni sector tiene aún suficientes ofertas para tener su página.",
 	"landing.unavailable": "No se pudieron leer las ofertas ahora. Vuelve a intentarlo en unos minutos.",
 	"field.engineering": "Ingeniería",
 	"field.data": "Datos e IA",

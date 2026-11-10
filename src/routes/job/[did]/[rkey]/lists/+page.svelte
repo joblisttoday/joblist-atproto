@@ -1,6 +1,7 @@
 <script>
 	import { page } from '$app/state';
 	import config from '#lib/data/config.json';
+	import DataState from '#lib/components/DataState.svelte';
 	import Pending from '#lib/components/Pending.svelte';
 	import PostInLists from '#lib/components/PostInLists.svelte';
 	import RequireSession from '#lib/components/RequireSession.svelte';
@@ -24,6 +25,8 @@
 		<p><small>{t('post.lists.job', { title: post.title })}</small></p>
 		<PostInLists {post} />
 		<menu><a href={postPath(post.did, post.rkey)}>{t('post.lists.done')}</a></menu>
+	{:else if found.unreachable}
+		<DataState state="unreachable" />
 	{:else if post === undefined}
 		<Pending />
 	{:else}

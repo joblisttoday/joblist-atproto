@@ -148,6 +148,9 @@
 	"network.progress": "Reading the network… {records} records from {accounts} of {total} accounts",
 	"network.error": "The network did not answer.",
 	"network.retry": "Retry",
+	"data.unreachable": "joblist's data could not be read: its server did not answer.",
+	"data.offline": "You are offline, and this browser has no copy of joblist's data yet.",
+	"data.kept": "Nothing is lost: your searches and lists in this browser are still here. Try again in a moment.",
 
 	"list.companies": "{count} organizations",
 	"list.by": "by",
@@ -653,6 +656,7 @@
 	"landing.newest.intro": "The newest open jobs at every organization on joblist.",
 	"landing.company": "New jobs at {company}",
 	"landing.notFound": "No page for this city or field: not enough open jobs there yet.",
+	"landing.none": "No city or field has enough open jobs for a page yet.",
 	"landing.unavailable": "The jobs could not be read right now. Try again in a few minutes.",
 	"field.engineering": "Engineering",
 	"field.data": "Data and AI",

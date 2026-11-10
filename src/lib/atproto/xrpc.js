@@ -12,8 +12,18 @@ export async function xrpcGet(service, method, params = {}) {
 		if (value !== undefined) url.searchParams.set(key, String(value));
 	}
 	const res = await fetch(url, { headers: { accept: 'application/json' } });
-	if (!res.ok) throw new Error(`${method} failed (${res.status})`);
+	if (!res.ok) throw Object.assign(new Error(`${method} failed (${res.status})`), { status: res.status });
 	return res.json();
+}
+
+/**
+ * Whether a failed request was answered "no" (it is not there: 400, 404), rather than
+ * not answered (offline, a server down): only then is something missing.
+ * @param {unknown} err
+ */
+export function refused(err) {
+	const status = /** @type {{status?: number}} */ (err)?.status;
+	return typeof status === 'number' && status >= 400 && status < 500;
 }
 
 /**

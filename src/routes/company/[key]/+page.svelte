@@ -11,11 +11,11 @@
 	import CompanyMap from '#lib/components/CompanyMap.svelte';
 	import CompanyVersions from '#lib/components/CompanyVersions.svelte';
 	import CompanyJobs from '#lib/components/CompanyJobs.svelte';
+	import DataState from '#lib/components/DataState.svelte';
 	import Empty from '#lib/components/Empty.svelte';
 	import ListItem from '#lib/components/ListItem.svelte';
-	import Pending from '#lib/components/Pending.svelte';
 	import { session } from '#lib/auth/session.svelte.js';
-	import { data, listsWith, network } from '#lib/network/network.svelte.js';
+	import { data, listsWith } from '#lib/network/network.svelte.js';
 	import { boardUrl, mapPoints } from '#lib/models/company.js';
 	import { mixedAuthors } from '#lib/models/list.js';
 	import { t } from '#lib/i18n/index.svelte.js';
@@ -79,8 +79,8 @@
 			<CompanyVersions {company} />
 		</aside>
 	</jl-company-page>
-{:else if network.loading}
-	<Pending />
+{:else if data.status !== 'known'}
+	<DataState />
 {:else}
 	<h1>{key}</h1>
 	<p>{t('company.notFound', { key })}</p>

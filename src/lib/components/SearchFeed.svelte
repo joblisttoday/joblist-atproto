@@ -14,7 +14,9 @@
 	let { filters } = $props();
 	/** @type {import('#lib/models/landing.js').LandingIndex | null} */
 	let index = $state.raw(null);
-	getLandingIndex().then((found) => (index = found));
+	getLandingIndex()
+		.then((found) => (index = found))
+		.catch(() => {});
 	const search = $derived(filters.near || filters.area ? '' : toParams(filters));
 	const feed = $derived(search ? searchFeed(index, filters) || { search } : null);
 </script>

@@ -1,4 +1,5 @@
 <script>
+	import DataState from '#lib/components/DataState.svelte';
 	import Empty from '#lib/components/Empty.svelte';
 	import Icon from '#lib/components/Icon.svelte';
 	import { replaceState } from '$app/navigation';
@@ -12,7 +13,7 @@
 	import ViewSwitch from '#lib/components/ViewSwitch.svelte';
 	import { findLists } from '#lib/models/list-filters.js';
 	import { LOCAL, mixedAuthors } from '#lib/models/list.js';
-	import { data, handleOf, membersOf, network } from '#lib/network/network.svelte.js';
+	import { data, handleOf, membersOf } from '#lib/network/network.svelte.js';
 	import { listJobStats } from '#lib/network/job-counts.svelte.js';
 	import { readView, viewParam } from '#lib/navigation/explore-view.js';
 	import { keepAddress, readAddress } from '#lib/navigation/address.js';
@@ -61,7 +62,7 @@
 			{#snippet chips()}
 				<li>
 					<button type="button" aria-pressed={hiring} onclick={() => (hiring = !hiring)}>
-						<Icon name="jobs" /> {t('lists.hiring')} <small>{formatNumber(hiringCount)}</small>
+						<Icon name="jobs" /> {t('lists.hiring')} {#if data.status === 'known'}<small>{formatNumber(hiringCount)}</small>{/if}
 					</button>
 				</li>
 				{#if openCount}
@@ -76,10 +77,11 @@
 		</SearchBar>
 	{/snippet}
 
-	{#if view === 'map'}
+	{#if view === 'map' && data.status === 'known'}
 		<CompanyMap {companies} full />
 	{:else}
 		<jl-lists-results {view}>
+			<DataState>
 			<ResultsHead count={t('lists.count', { count: found.length, total: published.length })}>
 				<a href="/lists/new" data-add><Icon name="add" /> {t('list.new')}</a>
 			</ResultsHead>
@@ -88,11 +90,12 @@
 					<li><ListItem {list} {author} stats={stats.get(list.uri)} /></li>
 				{/each}
 			</ul>
-			{#if !found.length && !network.loading}
+			{#if !found.length}
 				<Empty text={published.length ? t('search.none') : t('home.empty')}>
 					<a href="/lists/new" data-add="main"><Icon name="add" /> {t('list.new')}</a>
 				</Empty>
 			{/if}
+			</DataState>
 		</jl-lists-results>
 	{/if}
 </FullScreen>

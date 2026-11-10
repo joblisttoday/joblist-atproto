@@ -6,7 +6,8 @@
 	import ViewSwitch from './ViewSwitch.svelte';
 	import { pageView } from '#lib/navigation/page-view.svelte.js';
 	import PageHeader from './PageHeader.svelte';
-	import Pending from './Pending.svelte';
+	import DataState from './DataState.svelte';
+	import Empty from './Empty.svelte';
 	import config from '#lib/data/config.json';
 	import { page as route } from '$app/state';
 	import { explorerPath, landingPath, pageNumber, pagedPath } from '#lib/models/landing.js';
@@ -22,13 +23,16 @@
 	let { city, field } = $props();
 	/** The page's file; undefined while it loads, null when there is none. */
 	let page = $state.raw(/** @type {Awaited<ReturnType<typeof getLandingPage>> | undefined} */ (undefined));
+	// The snapshot did not answer: nothing can be said of this page (not that it has none).
+	let failed = $state(false);
 	const number = $derived(pageNumber(route.url.searchParams.get('page')) || 1);
 	$effect(() => {
 		const asked = number;
 		page = undefined;
-		getLandingPage({ city, field, page: asked }).then((found) => {
-			if (asked === number) page = found;
-		});
+		failed = false;
+		getLandingPage({ city, field, page: asked })
+			.then((found) => asked === number && (page = found))
+			.catch(() => asked === number && (failed = true));
 	});
 	const pages = $derived(Math.max(number, page?.pages || 1));
 	const shown = pageView('landing');
@@ -48,8 +52,8 @@
 
 <svelte:head><title>{title(cityName)}{nth} · {config.name}</title></svelte:head>
 
-{#if page === undefined}
-	<Pending />
+{#if failed || page === undefined}
+	<DataState state={failed ? 'unreachable' : 'reading'} />
 {:else if page}
 		<jl-landing-page view={shown.view}>
 			<nav><a href="/in">{t('landing.cities')}</a> · <a href="/field">{t('landing.fields')}</a></nav>
@@ -94,7 +98,15 @@
 			{/if}
 		</jl-landing-page>
 {:else}
-	<p>{t('landing.notFound')}</p>
+	<!-- No page here (too few jobs): what it would be, why not, and where its jobs still are. -->
+	<jl-landing-page>
+		<nav><a href="/in">{t('landing.cities')}</a> · <a href="/field">{t('landing.fields')}</a></nav>
+		<PageHeader title={title(cityName)} />
+		<Empty text={t('landing.notFound')}>
+			<a href={explorerPath({ cityName: city ? cityName : '', field })}><Icon name="search" /> {t('saved.explore')}</a>
+			<a href={city ? '/in' : '/field'}>{t(city ? 'landing.cities' : 'landing.fields')}</a>
+		</Empty>
+	</jl-landing-page>
 {/if}
 
 <style>

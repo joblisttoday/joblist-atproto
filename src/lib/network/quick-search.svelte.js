@@ -22,7 +22,10 @@ let asked = false;
 export function readSources() {
 	if (asked) return;
 	asked = true;
-	getLandingIndex().then((found) => (index = found));
+	// Without it (offline), the pages are simply not offered.
+	getLandingIndex()
+		.then((found) => (index = found))
+		.catch(() => {});
 	getSnapshotCounts().then((file) => {
 		if (file) {
 			places = file.places.slice(0, config.quickSearch.places);

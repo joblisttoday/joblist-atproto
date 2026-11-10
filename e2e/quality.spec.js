@@ -24,6 +24,16 @@ qualityTests([
 	{ name: 'post a job', path: '/jobs/new', touch },
 	{ name: 'new list', path: '/lists/new', touch },
 	{
+		// Nothing read (offline, the snapshot down): the page says why, not that it is empty.
+		name: 'data unreachable',
+		touch,
+		open: async (page) => {
+			await page.route((url) => url.hostname !== '127.0.0.1', (route) => route.abort());
+			await page.goto('/companies');
+			await page.locator('jl-data-state[state="unreachable"]').waitFor();
+		}
+	},
+	{
 		name: 'job dialog',
 		touch,
 		open: async (page) => {

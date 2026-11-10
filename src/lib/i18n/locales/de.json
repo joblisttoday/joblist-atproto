@@ -148,6 +148,9 @@
 	"network.progress": "Netzwerk wird gelesen… {records} Einträge von {accounts} von {total} Konten",
 	"network.error": "Das Netzwerk hat nicht geantwortet.",
 	"network.retry": "Erneut versuchen",
+	"data.unreachable": "Die Daten von joblist konnten nicht gelesen werden: Ihr Server hat nicht geantwortet.",
+	"data.offline": "Du bist offline, und dieser Browser hat noch keine Kopie der Daten von joblist.",
+	"data.kept": "Nichts geht verloren: Deine Suchen und Listen in diesem Browser sind noch da. Versuch es gleich noch einmal.",
 
 	"list.companies": "{count} Organisationen",
 	"list.by": "von",
@@ -653,6 +656,7 @@
 	"landing.newest.intro": "Die neuesten offenen Stellen aller Organisationen auf joblist.",
 	"landing.company": "Neue Jobs bei {company}",
 	"landing.notFound": "Keine Seite für diese Stadt oder diesen Bereich: Dort gibt es noch nicht genug offene Stellen.",
+	"landing.none": "Noch keine Stadt und kein Bereich hat genug offene Stellen für eine eigene Seite.",
 	"landing.unavailable": "Die Jobs konnten gerade nicht gelesen werden. Versuch es in ein paar Minuten noch einmal.",
 	"field.engineering": "Engineering",
 	"field.data": "Daten und KI",

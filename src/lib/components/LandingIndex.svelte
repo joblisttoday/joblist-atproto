@@ -2,7 +2,8 @@
 	import CompanyMap from './CompanyMap.svelte';
 	import FollowFeed from './FollowFeed.svelte';
 	import PageHeader from './PageHeader.svelte';
-	import Pending from './Pending.svelte';
+	import DataState from './DataState.svelte';
+	import Empty from './Empty.svelte';
 	import ViewSwitch from './ViewSwitch.svelte';
 	import config from '#lib/data/config.json';
 	import { landingPath } from '#lib/models/landing.js';
@@ -21,13 +22,21 @@
 	const views = $derived(by === 'city' ? ['list', 'grid', 'map'] : ['list', 'grid']);
 	const title = $derived(t(by === 'city' ? 'landing.cities' : 'landing.fields'));
 	const intro = $derived(t(by === 'city' ? 'landing.cities.intro' : 'landing.fields.intro'));
-	const index = getLandingIndex();
+	// The index: undefined while it is read, null when the snapshot has none.
+	let found = $state.raw(/** @type {import('#lib/models/landing.js').LandingIndex | null | undefined} */ (undefined));
+	let failed = $state(false);
+	getLandingIndex()
+		.then((index) => (found = index))
+		.catch(() => (failed = true));
+	const status = $derived(failed ? 'unreachable' : found === undefined ? 'reading' : 'known');
+	// No city has its place yet (a snapshot from before they had one): the map has nothing to show.
+	const mapless = $derived(by === 'city' && !found?.cities.some((c) => c.g));
 
 	// /in and /field are two routes: each page starts with its own.
 	// svelte-ignore state_referenced_locally
 	const shown = pageView(page, views);
 
-	/** The cities on the map: a tap leads to its page. @param {import('#lib/models/landing.js').LandingIndex | null} found */
+	/** The cities on the map: a tap leads to its page. @param {import('#lib/models/landing.js').LandingIndex | null | undefined} found */
 	const cityPoints = (found) =>
 		(found?.cities || [])
 			.filter((c) => c.g)
@@ -44,12 +53,12 @@
 <jl-landing-index view={shown.view}>
 	<nav><a href="/in">{t('landing.cities')}</a> · <a href="/field">{t('landing.fields')}</a></nav>
 	<PageHeader {title} {intro}>
-		{#snippet actions()}<ViewSwitch bind:view={shown.view} {page} {views} /><FollowFeed feed={{}} />{/snippet}
+		{#snippet actions()}<ViewSwitch bind:view={shown.view} {page} {views} {mapless} /><FollowFeed feed={{}} />{/snippet}
 	</PageHeader>
-	{#await index}
-		<Pending />
-	{:then found}
-		{#if shown.view === 'map'}
+	<DataState state={status}>
+		{#if !(by === 'city' ? found?.cities : found?.fields)?.length}
+			<Empty text={t('landing.none')} />
+		{:else if shown.view === 'map' && !mapless}
 			<jl-landing-map><CompanyMap places={cityPoints(found)} full /></jl-landing-map>
 		{:else}
 			<ul>
@@ -64,7 +73,7 @@
 				{/if}
 			</ul>
 		{/if}
-	{/await}
+	</DataState>
 </jl-landing-index>
 
 <style>

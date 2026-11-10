@@ -1,6 +1,6 @@
 import config from '#lib/data/config.json' with { type: 'json' };
 import { getPds } from './identity.js';
-import { xrpcGet } from './xrpc.js';
+import { xrpcGet, refused } from './xrpc.js';
 
 /**
  * @typedef {{uri: string, cid: string, value: Record<string, any>}} AtRecord
@@ -79,7 +79,7 @@ export async function listRecords(did, collection, onPage) {
 }
 
 /**
- * One record, or null when it does not exist.
+ * One record, or null when it does not exist; it throws when its server does not answer.
  * @param {string} did
  * @param {string} collection
  * @param {string} rkey
@@ -90,8 +90,10 @@ export async function getRecord(did, collection, rkey) {
 	try {
 		const r = await xrpcGet(pds, 'com.atproto.repo.getRecord', { repo: did, collection, rkey });
 		return { did, rkey, uri: r.uri, cid: r.cid, value: r.value };
-	} catch {
-		return null;
+	} catch (err) {
+		// Not there: null. Not answered: the error, for the page to say so.
+		if (refused(err)) return null;
+		throw err;
 	}
 }
 

@@ -9,21 +9,27 @@ import { indexFile, landingFile } from '#lib/models/landing.js';
  * @typedef {import('#lib/models/landing.js').LandingIndex} LandingIndex
  */
 
-/** @param {string} name @returns {Promise<any>} null when missing or unreadable */
+/**
+ * @param {string} name
+ * @returns {Promise<any>} null when there is no such file (no page there); it throws when the
+ *   snapshot did not answer (offline, a server down), so a page can say which.
+ */
 async function getFile(name) {
-	try {
-		const res = await fetch(`${config.snapshot.path}/${name}`);
-		return res.ok ? await res.json() : null;
-	} catch {
-		return null;
-	}
+	const res = await fetch(`${config.snapshot.path}/${name}`);
+	if (res.status === 404) return null;
+	if (!res.ok) throw new Error(`${name}: ${res.status}`);
+	return res.json();
 }
 
 /** @type {Promise<LandingIndex | null> | null} */
 let indexPromise = null;
 /** Every city and field with a page (read once). */
 export function getLandingIndex() {
-	indexPromise ??= getFile(indexFile());
+	// A failed read is tried again by the next page that asks.
+	indexPromise ??= getFile(indexFile()).catch((err) => {
+		indexPromise = null;
+		throw err;
+	});
 	return indexPromise;
 }
 

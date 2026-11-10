@@ -4,6 +4,7 @@
 	import { goto } from '$app/navigation';
 	import config from '#lib/data/config.json';
 	import JobForm from '#lib/components/JobForm.svelte';
+	import DataState from '#lib/components/DataState.svelte';
 	import Pending from '#lib/components/Pending.svelte';
 	import RequireSession from '#lib/components/RequireSession.svelte';
 	import { session } from '#lib/auth/session.svelte.js';
@@ -30,6 +31,8 @@
 					oncancel={() => history.back()}
 				/>
 			{/key}
+		{:else if found.unreachable}
+			<DataState state="unreachable" />
 		{:else if post === undefined}
 			<Pending />
 		{:else}

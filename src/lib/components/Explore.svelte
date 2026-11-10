@@ -2,6 +2,7 @@
 	import Icon from './Icon.svelte';
 	import config from '#lib/data/config.json';
 	import ExploreLists from './ExploreLists.svelte';
+	import DataState from './DataState.svelte';
 	import ExploreSearch from './ExploreSearch.svelte';
 	import ExploreSwitch from './ExploreSwitch.svelte';
 	import Jobs from './Jobs.svelte';
@@ -325,7 +326,10 @@
 		{/if}
 		<!-- Kept while a job is open, so its search and its place in the list are still there after. -->
 		<jl-explore-results id="explore-results" hidden={pickedJobs ? true : undefined}>
-			{#if !searching}
+			<!-- How many organizations, only once they are known: never "0" while they are read. -->
+			{#if data.status !== 'known'}
+				<DataState />
+			{:else if !searching}
 				<p>
 					{t('explore.welcome', { companies: companies.length })}
 					<a href="/jobs/new">{t('explore.publish')}</a>

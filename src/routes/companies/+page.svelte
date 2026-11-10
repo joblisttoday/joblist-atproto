@@ -1,4 +1,5 @@
 <script>
+	import DataState from '#lib/components/DataState.svelte';
 	import Empty from '#lib/components/Empty.svelte';
 	import Icon from '#lib/components/Icon.svelte';
 	import { replaceState } from '$app/navigation';
@@ -57,7 +58,7 @@
 			{#snippet chips()}
 				<li>
 					<button type="button" aria-pressed={hiring} onclick={() => (hiring = !hiring)}>
-						<Icon name="jobs" /> {t('companies.hiring')} <small>{formatNumber(hiringCount)}</small>
+						<Icon name="jobs" /> {t('companies.hiring')} {#if data.status === 'known'}<small>{formatNumber(hiringCount)}</small>{/if}
 					</button>
 				</li>
 				{#if blueskyCount}
@@ -72,10 +73,11 @@
 		</SearchBar>
 	{/snippet}
 
-	{#if view === 'map'}
+	{#if view === 'map' && data.status === 'known'}
 		<CompanyMap companies={found} full />
 	{:else}
 		<jl-companies-results>
+			<DataState>
 			<ResultsHead count={t('companies.count', { count: found.length, total: companies.length })}>
 				<a href={addHref} data-add><Icon name="add" /> {t('companies.add')}</a>
 			</ResultsHead>
@@ -89,6 +91,7 @@
 					<Empty text={t('search.none')} />
 				{/if}
 			{/if}
+			</DataState>
 		</jl-companies-results>
 	{/if}
 </FullScreen>
