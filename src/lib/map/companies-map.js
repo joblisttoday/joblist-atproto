@@ -2,7 +2,8 @@ import config from '#lib/data/config.json';
 import { createMap, cssColors, loadMapLibre } from './maplibre.js';
 
 /**
- * @typedef {{lat: number, lon: number, company: {key: string, name: string}}} Point
+ * @typedef {{lat: number, lon: number, company: {key: string, name: string}, href?: string}} Point
+ *   href: where a tap on it leads (a company's page by default; a city's, on /in)
  */
 
 /**
@@ -51,7 +52,7 @@ export function mountMap(node, points) {
 					features: points.map((p) => ({
 						type: 'Feature',
 						geometry: { type: 'Point', coordinates: [p.lon, p.lat] },
-						properties: { key: p.company.key, name: p.company.name }
+						properties: { key: p.company.key, name: p.company.name, href: p.href || `/company/${p.company.key}` }
 					}))
 				}
 			});
@@ -71,11 +72,11 @@ export function mountMap(node, points) {
 				const list = document.createElement('ul');
 				const seen = new Set();
 				for (const feature of features) {
-					const { key, name } = feature.properties;
+					const { key, name, href } = feature.properties;
 					if (seen.has(key) || seen.size >= config.map.popupMax) continue;
 					seen.add(key);
 					const link = document.createElement('a');
-					link.href = `/company/${key}`;
+					link.href = href;
 					link.textContent = name;
 					const item = document.createElement('li');
 					item.append(link);

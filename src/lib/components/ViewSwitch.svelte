@@ -6,11 +6,11 @@
 	/**
 	 * A list, a grid of cards (wide screens) or the map. The choice is kept, per page.
 	 * mapless: nothing found has a place, so the map has nothing to show (its button is off).
-	 * @type {{view: import('#lib/navigation/explore-view.js').ExploreView, page?: string, mapless?: boolean}}
+	 * views: those this page has (things without a place, such as fields, have no map).
+	 * @type {{view: import('#lib/navigation/explore-view.js').ExploreView, page?: string, mapless?: boolean, views?: import('#lib/navigation/explore-view.js').ExploreView[]}}
 	 */
-	let { view = $bindable(), page = 'jobs', mapless = false } = $props();
+	let { view = $bindable(), page = 'jobs', mapless = false, views = ['list', 'grid', 'map'] } = $props();
 	const id = $props.id();
-	const views = /** @type {const} */ (['list', 'grid', 'map']);
 	/** @type {Record<string, import('#lib/icons.js').IconName>} */
 	const icons = { list: 'listView', grid: 'gridView', map: 'map' };
 
@@ -21,7 +21,7 @@
 	}
 </script>
 
-<jl-view-switch role="group" aria-label={t(`explore.view.of.${page}`)} {view}>
+<jl-view-switch role="group" aria-label={t(`explore.view.of.${page}`)} {view} mapless-page={!views.includes('map') || undefined}>
 	{#each views as name (name)}
 		{@const off = name === 'map' && mapless}
 		<!-- Off, the map stays reachable, so its reason is heard and seen on focus. -->
@@ -114,6 +114,10 @@
 	/* Phones: no grid, cards are a list there (and the list shows as chosen). */
 	@media not (min-width: 64rem) {
 		button[data-view='grid'] {
+			display: none;
+		}
+		/* Without a map, a list is all there is on a phone: nothing to switch. */
+		jl-view-switch[mapless-page] {
 			display: none;
 		}
 		jl-view-switch[view='grid'] button[data-view='list'] {

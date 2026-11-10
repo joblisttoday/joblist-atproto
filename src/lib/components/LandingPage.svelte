@@ -2,6 +2,11 @@
 	import Icon from './Icon.svelte';
 	import FollowFeed from './FollowFeed.svelte';
 	import JobItem from './JobItem.svelte';
+	import JobsMap from './JobsMap.svelte';
+	import ViewSwitch from './ViewSwitch.svelte';
+	import { replaceState } from '$app/navigation';
+	import { keepAddress, readAddress } from '#lib/navigation/address.js';
+	import { readView, viewParam } from '#lib/navigation/explore-view.js';
 	import PageHeader from './PageHeader.svelte';
 	import Pending from './Pending.svelte';
 	import config from '#lib/data/config.json';
@@ -12,7 +17,8 @@
 
 	/**
 	 * The newest jobs of a city, a field, or a field in a city (/in/berlin/design),
-	 * and pages of older ones (?page=2), from the same files the Worker made this page's HTML from.
+	 * and pages of older ones (?page=2), from the same files the Worker made this page's HTML from:
+	 * as a list, a grid or on a map (their places are in the file). The view is in the address (#view=map).
 	 * @type {{city?: string, field?: string}}
 	 */
 	let { city, field } = $props();
@@ -27,6 +33,10 @@
 		});
 	});
 	const pages = $derived(Math.max(number, page?.pages || 1));
+	let view = $state(viewParam(readAddress(['view']).get('view')) || readView('landing', 'grid'));
+	$effect(() => keepAddress({ view: view === 'grid' ? '' : view }, (url) => replaceState(url, {})));
+	const names = $derived(new Map(Object.entries(page?.names || {})));
+	const mapless = $derived(!page?.jobs.some((j) => j.point));
 	const nth = $derived(number > 1 ? ` · ${t('landing.page', { page: number, pages })}` : '');
 	const fieldName = $derived(field ? t(`field.${field}`) : '');
 	const cityName = $derived(page?.name || city || '');
@@ -44,17 +54,21 @@
 {#if page === undefined}
 	<Pending />
 {:else if page}
-		<jl-landing-page>
+		<jl-landing-page {view}>
 			<nav><a href="/in">{t('landing.cities')}</a> · <a href="/field">{t('landing.fields')}</a></nav>
 			<PageHeader title={title(cityName)} intro={t('landing.intro', { count: page.count })}>
-				{#snippet actions()}<FollowFeed feed={{ city, field }} />{/snippet}
+				{#snippet actions()}<ViewSwitch bind:view page="landing" {mapless} /><FollowFeed feed={{ city, field }} />{/snippet}
 			</PageHeader>
 			<p><a href={explorerPath({ cityName: city ? cityName : '', field })}><Icon name="map" /> {t('landing.explore')}</a></p>
-			<ul>
-				{#each page.jobs as job (job.url)}
-					<li><JobItem {job} company={page.names[job.company] || job.company} /></li>
-				{/each}
-			</ul>
+			{#if view === 'map' && !mapless}
+				<jl-landing-map><JobsMap jobs={page.jobs} {names} fit /></jl-landing-map>
+			{:else}
+				<ul>
+					{#each page.jobs as job (job.url)}
+						<li><JobItem {job} company={page.names[job.company] || job.company} /></li>
+					{/each}
+				</ul>
+			{/if}
 			{#if pages > 1}
 				<nav>
 					{#if number > 1}<a href={pagedPath({ city, field, page: number - 1 })} rel="prev">{t('landing.newer')}</a> ·{/if}
@@ -100,6 +114,21 @@
 		column-gap: var(--column-gap);
 		padding: 0;
 		list-style: none;
+	}
+	jl-landing-page[view='list'] > ul {
+		grid-template-columns: 1fr;
+	}
+	jl-landing-map {
+		display: block;
+		height: var(--map-height);
+		margin: var(--space-s) calc(-1 * var(--gutter)) 0;
+	}
+	@media (min-width: 64rem) {
+		jl-landing-map {
+			margin-inline: 0;
+			border-radius: var(--radius-large);
+			overflow: hidden;
+		}
 	}
 	section {
 		margin-top: var(--space-xl);
