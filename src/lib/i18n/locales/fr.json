@@ -69,7 +69,6 @@
 	"nav.me": "Moi",
 	"nav.home": "Accueil",
 	"nav.explore": "Explorer",
-	"nav.add": "Ajouter",
 	"nav.me.account": "Moi, connecté en tant que @{handle}",
 	"nav.me.company": "Moi, connecté en tant que @{handle} : le compte de {name}",
 	"new.publish": "Publié depuis votre compte",

@@ -8,9 +8,9 @@ import links from '#lib/data/nav.json';
 
 /**
  * The main navigation, the same on every screen: Home, Explore (jobs, organizations, lists),
- * Add, and Me (what one keeps, the account with its picture, the menu).
+ * and Me (what one keeps, the account with its picture, the menu).
  * badge: the count it shows ("saved": the new jobs of the saved searches).
- * within: the paths it is the tab of, besides its own (Explore: every job, organization and list).
+ * within: the paths it is the tab of, besides its own (Explore: every job, organization and list, and adding one).
  * account: the tab that shows the signed-in account (its picture).
  * @returns {{href: string, label: string, icon: import('#lib/icons.js').IconName, badge?: string, account?: boolean, within: string[]}[]}
  */

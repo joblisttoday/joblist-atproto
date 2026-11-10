@@ -69,7 +69,6 @@
 	"nav.me": "Me",
 	"nav.home": "Home",
 	"nav.explore": "Explore",
-	"nav.add": "Add",
 	"nav.me.account": "Me, signed in as @{handle}",
 	"nav.me.company": "Me, signed in as @{handle}: the account of {name}",
 	"new.publish": "Published from your account",

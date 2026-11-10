@@ -1,6 +1,5 @@
 [
 	{ "href": "/", "icon": "home", "label": "nav.home" },
-	{ "href": "/jobs", "icon": "explore", "label": "nav.explore", "within": ["/jobs", "/companies", "/lists", "/in", "/field", "/company", "/job"] },
-	{ "href": "/add", "icon": "add", "label": "nav.add", "within": ["/add", "/jobs/new", "/lists/new"] },
+	{ "href": "/jobs", "icon": "explore", "label": "nav.explore", "within": ["/jobs", "/companies", "/lists", "/in", "/field", "/company", "/job", "/add"] },
 	{ "href": "/me", "icon": "me", "label": "nav.me", "badge": "saved", "account": true, "within": ["/me", "/menu", "/signin"] }
 ]

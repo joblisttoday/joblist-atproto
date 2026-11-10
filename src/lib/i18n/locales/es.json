@@ -69,7 +69,6 @@
 	"nav.me": "Yo",
 	"nav.home": "Inicio",
 	"nav.explore": "Explorar",
-	"nav.add": "Añadir",
 	"nav.me.account": "Yo, sesión iniciada como @{handle}",
 	"nav.me.company": "Yo, sesión iniciada como @{handle}: la cuenta de {name}",
 	"new.publish": "Publicado desde tu cuenta",

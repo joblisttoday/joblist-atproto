@@ -22,7 +22,7 @@
 		const path = page.url.pathname;
 		if (href === '/') return path === '/';
 		const under = (/** @type {string} */ p) => path === p || path.startsWith(`${p}/`);
-		// The most precise wins: /jobs/new is Add's, not Explore's.
+		// When two tabs claim a path, the more precise one wins.
 		const mine = [href, ...within].filter(under).reduce((a, b) => Math.max(a, b.length), 0);
 		const others = items.filter((i) => i.href !== href).flatMap((i) => [i.href, ...i.within].filter((p) => p !== '/' && under(p)));
 		return mine > 0 && others.every((p) => p.length < mine);

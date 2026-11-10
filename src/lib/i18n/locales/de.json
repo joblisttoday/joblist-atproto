@@ -69,7 +69,6 @@
 	"nav.me": "Ich",
 	"nav.home": "Start",
 	"nav.explore": "Entdecken",
-	"nav.add": "Hinzufügen",
 	"nav.me.account": "Ich, angemeldet als @{handle}",
 	"nav.me.company": "Ich, angemeldet als @{handle}: das Konto von {name}",
 	"new.publish": "Aus deinem Konto veröffentlicht",
