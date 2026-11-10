@@ -24,7 +24,7 @@ test('its feed says the search and links back to it', () => {
 	const feed = searchFeed('?q=design&where=Lisbon', data);
 	assert.match(feed, /<title>New jobs: design · Lisbon · joblist<\/title>/);
 	assert.match(feed, /<link rel="self" type="application\/atom\+xml" href="https:\/\/joblist\.today\/feed\/search\.xml\?q=design&amp;where=Lisbon"\/>/);
-	assert.match(feed, /<link rel="alternate" type="text\/html" href="https:\/\/joblist\.today\/#q=design&amp;where=Lisbon"\/>/);
+	assert.match(feed, /<link rel="alternate" type="text\/html" href="https:\/\/joblist\.today\/jobs#q=design&amp;where=Lisbon"\/>/);
 	assert.equal((feed.match(/<entry>/g) || []).length, 2);
 	assert.equal(searchLabel({ query: '', where: '', remote: 'remote', pay: true }), 'Remote · Shows pay');
 });

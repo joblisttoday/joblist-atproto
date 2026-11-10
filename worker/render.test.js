@@ -35,7 +35,7 @@ test('a page escapes what the jobs say and drops links that are not web links', 
 	assert.doesNotMatch(meta.body, /<script|<img|javascript:/);
 	assert.match(meta.body, /Designer &lt;img/);
 	assert.match(meta.body, /href="https:\/\/a\.example\/1\?x=1&amp;y=&quot;2&quot;"/);
-	assert.match(meta.body, /href="\/#where=Berlin%3Cscript%3E"/);
+	assert.match(meta.body, /href="\/jobs#where=Berlin%3Cscript%3E"/);
 	// The company with an odd key is named, not linked.
 	assert.doesNotMatch(meta.body, /\/company\/\.\.\/x/);
 	// A field the file names is linked only when its address is a plain one.
