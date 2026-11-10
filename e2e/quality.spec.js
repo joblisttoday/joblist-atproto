@@ -17,7 +17,6 @@ qualityTests([
 	{ name: 'me', path: '/me', touch },
 	{ name: 'my lists', path: '/me/lists', touch },
 	{ name: 'menu', path: '/menu', touch },
-	{ name: 'add', path: '/new', touch },
 	{ name: 'language', path: '/menu/language', touch },
 	{ name: 'trends', path: '/stats', touch },
 	{ name: 'add an organization', path: '/add', touch },

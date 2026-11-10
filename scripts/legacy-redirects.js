@@ -1,7 +1,7 @@
 /**
  * Write static/_redirects: the old joblist.today company pages (/<slug>)
  * moved to /company/<rkey> when the app took over the root domain,
- * and its sitemap to /sitemap.xml; /settings became /menu, /saved became /me.
+ * and its sitemap to /sitemap.xml; /settings became /menu, /saved became /me, /new became /add.
  *
  *   node scripts/legacy-redirects.js [<companies-dir>]
  *
@@ -21,6 +21,7 @@ writeFileSync(
 		'/sitemap-index.xml /sitemap.xml 301',
 		'/settings /menu 301',
 		'/saved /me 301',
+		'/new /add 301',
 		...lines,
 		''
 	].join('\n')
