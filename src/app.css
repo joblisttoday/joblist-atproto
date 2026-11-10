@@ -176,8 +176,16 @@ body {
 	-webkit-text-size-adjust: 100%;
 }
 
+/* The page is at least the screen's height: main takes what is left, the footer stays at the bottom. */
+body {
+	display: flex;
+	flex-direction: column;
+	min-height: 100dvh;
+}
+
 main {
 	display: block;
+	flex: 1 0 auto;
 	padding: 0 var(--gutter) var(--space-xl);
 }
 
