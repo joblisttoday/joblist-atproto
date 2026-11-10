@@ -176,6 +176,12 @@
 				boardJobs = list.length === 1 ? snapshot.jobs.get(list[0].key) || [] : snapshot.all.filter((j) => keys.has(j.company));
 				answered = list.length - unread.length;
 			}
+			// Live, only a few boards: those of a company's page, a small list, organizations added
+			// since the snapshot. Never every board: each visitor would ask hundreds of them.
+			if (unread.length > config.limits.liveBoards) {
+				answered = list.length;
+				return;
+			}
 			mapLimit(unread, config.limits.jobsConcurrency, async (company) => {
 				const found = await getJobs(company);
 				if (cancelled) return;

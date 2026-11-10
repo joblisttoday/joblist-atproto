@@ -6,8 +6,8 @@ import { newestFirst } from '#lib/models/job.js';
 
 /**
  * The AppView snapshot: static files rebuilt on a schedule by indexer/.
- * Optional: when missing (local development) or stale, the app reads
- * the network and the job boards directly, as before.
+ * Optional: when missing (local development) or too old, the app reads the network
+ * directly, and only a few job boards (config.limits.liveBoards), never all of them.
  */
 
 /** @param {string} name */
@@ -62,7 +62,7 @@ export function getSnapshotJobs() {
 }
 
 /**
- * One company's small file (indexer/company-files.js); null when it has none or it is stale.
+ * One company's small file (indexer/company-files.js); null when it has none.
  * @type {Map<string, Promise<ReturnType<typeof readCompanyFile>>>}
  */
 const companyFiles = new Map();
@@ -70,10 +70,7 @@ const companyFiles = new Map();
 function getCompanyFile(key) {
 	let promise = companyFiles.get(key);
 	if (!promise) {
-		promise = getFile(`${config.embed.dir}/${encodeURIComponent(key)}.json`).then((data) => {
-			const file = readCompanyFile(key, data);
-			return file && fresh(file.generatedAt) ? file : null;
-		});
+		promise = getFile(`${config.embed.dir}/${encodeURIComponent(key)}.json`).then((data) => readCompanyFile(key, data));
 		companyFiles.set(key, promise);
 	}
 	return promise;
@@ -89,6 +86,8 @@ function getCompanyFile(key) {
 export async function getCompaniesJobs(keys) {
 	const files = await Promise.all(keys.map(getCompanyFile));
 	if (files.some((file) => !file)) return getSnapshotJobs();
+	// Too old: so is every job; their boards are read live instead.
+	if (files.some((file) => !fresh(file?.generatedAt))) return null;
 	const read = /** @type {NonNullable<(typeof files)[number]>[]} */ (files);
 	const all = read.flatMap((file) => file.all);
 	// Each file is newest first; together they are sorted again (a few hundred jobs at most).
@@ -185,7 +184,8 @@ export function getSnapshotFirst() {
  */
 let countsPromise = null;
 export function getSnapshotCounts() {
-	countsPromise ??= getFile('counts.json').then((data) => (data && fresh(data.generatedAt) ? readCounts(data) : null));
+	// Too old: no counts, rather than every job (they are as old).
+	countsPromise ??= getFile('counts.json').then((data) => (data ? readCounts(fresh(data.generatedAt) ? data : { offers: {} }) : null));
 	return countsPromise;
 }
 

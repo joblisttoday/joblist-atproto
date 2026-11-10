@@ -69,6 +69,7 @@
 	"limits": {
 		"concurrency": 6,
 		"jobsConcurrency": 6,
+		"liveBoards": 20,
 		"pagesPerRepo": 100,
 		"indexerConcurrency": 8,
 		"boardPageSize": 100,
@@ -289,7 +290,7 @@
 		"everyHours": 6,
 		"companyFiles": 40,
 		"listsDir": "lists",
-		"maxAgeHours": 12,
+		"maxAgeHours": 48,
 		"prerenderFiles": ["records.json", "jobs.json", "meta.json", "bluesky.json", "landing/index.json"],
 		"preload": {
 			"page": ["records.json"],
