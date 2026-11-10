@@ -34,6 +34,7 @@
 		"sheetFullAbove": 0.72,
 		"copiedMs": 3000,
 		"bare": ["/jobs", "/companies", "/lists"],
+		"explore": ["/jobs", "/companies", "/lists"],
 		"ownMenu": ["/jobs", "/companies", "/lists", "/[handle]/[rkey]"],
 		"personal": ["/me", "/me/searches", "/me/lists", "/me/lists/[id]", "/signin", "/menu", "/menu/language", "/menu/profiles", "/menu/collections", "/menu/outbox"]
 	},

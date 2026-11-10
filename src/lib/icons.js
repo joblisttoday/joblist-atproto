@@ -27,6 +27,8 @@ import ChevronRight from '@lucide/svelte/icons/chevron-right';
 import LogOut from '@lucide/svelte/icons/log-out';
 import Info from '@lucide/svelte/icons/info';
 import House from '@lucide/svelte/icons/house';
+import Compass from '@lucide/svelte/icons/compass';
+import Globe from '@lucide/svelte/icons/globe';
 import Inbox from '@lucide/svelte/icons/inbox';
 import Languages from '@lucide/svelte/icons/languages';
 import List from '@lucide/svelte/icons/list';
@@ -60,7 +62,9 @@ export const icons = {
 	me: User,
 	signin: LogIn,
 	near: LocateFixed,
-	remote: House,
+	remote: Globe,
+	home: House,
+	explore: Compass,
 	pay: Banknote,
 	area: ScanSearch,
 	close: X,

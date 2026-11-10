@@ -8,7 +8,7 @@
 	import { i18n, t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * The menu: who you are here, what you can make, where else to look, and how joblist
+	 * The menu: who you are here, where else to look, and how joblist
 	 * works in this browser, each a row leading to its own page (as 4000.radio's).
 	 * What each page shows is on it; here, only where to go.
 	 */
@@ -24,11 +24,6 @@
 		{ href: `/${session.handle}`, icon: 'me', label: t('settings.profile'), value: `@${session.handle}` },
 		...(waiting ? [{ href: '/menu/outbox', icon: /** @type {const} */ ('suggestions'), label: t('outbox.title'), value: String(waiting) }] : []),
 		{ onclick: out, icon: 'signout', label: t('me.signout') }
-	]);
-	const make = $derived([
-		{ href: '/jobs/new', icon: /** @type {const} */ ('post'), label: t('nav.post') },
-		{ href: '/add', icon: /** @type {const} */ ('companies'), label: t('form.company.title') },
-		{ href: '/lists/new', icon: /** @type {const} */ ('lists'), label: t('list.new') }
 	]);
 	const explore = $derived([
 		{ href: '/in', icon: /** @type {const} */ ('place'), label: t('landing.cities') },
@@ -59,7 +54,6 @@
 			<menu><li><a href="/signin"><Icon name="signin" /> {t('nav.signin')}</a></li></menu>
 		</section>
 	{/if}
-	<MenuLinks label={t('menu.make')} items={make} />
 	<MenuLinks label={t('menu.explore')} items={explore} />
 	<MenuLinks label={t('settings.browser')} items={browser} />
 	<MenuLinks label={t('menu.about')} items={about} />

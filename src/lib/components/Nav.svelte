@@ -14,14 +14,18 @@
 	const company = $derived(session.handle ? data.companies.get(session.handle) : undefined);
 	/** What the menu tab says to screen readers, signed in. */
 	const accountLabel = $derived(
-		company ? t('nav.menu.company', { handle: session.handle || '', name: company.name }) : t('nav.menu.account', { handle: session.handle || '' })
+		company ? t('nav.me.company', { handle: session.handle || '', name: company.name }) : t('nav.me.account', { handle: session.handle || '' })
 	);
 
-	/** @param {string} href */
-	function current(href) {
+	/** The tab of the page shown: its own path, or one it is the tab of (nav.json "within"). @param {{href: string, within: string[]}} item */
+	function current({ href, within }) {
 		const path = page.url.pathname;
 		if (href === '/') return path === '/';
-		return path === href || path.startsWith(`${href}/`);
+		const under = (/** @type {string} */ p) => path === p || path.startsWith(`${p}/`);
+		// The most precise wins: /jobs/new is Add's, not Explore's.
+		const mine = [href, ...within].filter(under).reduce((a, b) => Math.max(a, b.length), 0);
+		const others = items.filter((i) => i.href !== href).flatMap((i) => [i.href, ...i.within].filter((p) => p !== '/' && under(p)));
+		return mine > 0 && others.every((p) => p.length < mine);
 	}
 </script>
 
@@ -31,16 +35,15 @@
 			{@const n = count(item.badge)}
 			<a
 				href={item.href}
-				aria-current={current(item.href) ? 'page' : undefined}
-				aria-label={item.account && session.handle ? accountLabel : n ? `${t(item.label)}, ${t('searches.new', { count: n })}` : undefined}
-				data-wide={item.wide || undefined}
+				aria-current={current(item) ? 'page' : undefined}
+				aria-label={item.account && session.handle ? `${accountLabel}${n ? `, ${t('searches.new', { count: n })}` : ''}` : n ? `${t(item.label)}, ${t('searches.new', { count: n })}` : undefined}
 				data-account={item.account && session.handle ? (company ? 'company' : 'person') : undefined}
 			>
 				<!-- The menu: signed in, the account's picture in place of its icon. -->
 				{#if item.account && session.handle}
 					{#if session.avatar}<img src={session.avatar} alt="" />{:else}<Icon name={item.icon} />{/if}
 					<span>{t(item.label)}</span>
-					{#if company}<Icon name="companies" />{/if}
+					{#if company}<Icon name="companies" />{/if}{#if n}<mark>{n > 99 ? '99+' : n}</mark>{/if}
 				{:else}
 					<Icon name={item.icon} />{t(item.label)}{#if n}<mark>{n > 99 ? '99+' : n}</mark>{/if}
 				{/if}
@@ -100,9 +103,6 @@
 		line-height: var(--badge-size);
 		text-align: center;
 	}
-	a[data-wide] {
-		display: none;
-	}
 	/* Signed in, the menu shows the account's picture; a company account says so. */
 	a[data-account] img {
 		width: var(--nav-icon-size);
@@ -141,8 +141,7 @@
 			margin: 0;
 		}
 		/* Wide screens: beside it. */
-		a,
-		a[data-wide] {
+		a {
 			display: flex;
 			flex-direction: row;
 			gap: var(--space-xs);

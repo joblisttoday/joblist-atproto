@@ -3,6 +3,7 @@
 	import config from '#lib/data/config.json';
 	import ExploreLists from './ExploreLists.svelte';
 	import ExploreSearch from './ExploreSearch.svelte';
+	import ExploreSwitch from './ExploreSwitch.svelte';
 	import Jobs from './Jobs.svelte';
 	import JobDialog from './JobDialog.svelte';
 	import JobItem from './JobItem.svelte';
@@ -271,8 +272,9 @@
 />
 
 <jl-explore {view}>
-	<!-- The search, and how the jobs are shown, at the same place in every view. -->
+	<!-- Jobs, organizations or lists; the search, and how the jobs are shown, at the same place in every view. -->
 	<jl-explore-bar>
+		<ExploreSwitch />
 		<ExploreSearch bind:filters {places}>
 			{#snippet tools()}<ViewSwitch bind:view {mapless} /><PageMenu />{/snippet}
 		</ExploreSearch>
@@ -401,6 +403,8 @@
 	}
 	jl-explore-bar {
 		flex: none;
+		display: grid;
+		gap: var(--space-s);
 		z-index: 2;
 		padding: calc(env(safe-area-inset-top) + var(--space-s)) var(--gutter) var(--space-s);
 		background: var(--color-bg);

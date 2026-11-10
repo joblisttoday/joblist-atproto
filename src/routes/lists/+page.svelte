@@ -11,36 +11,35 @@
 	import PageMenu from '#lib/components/PageMenu.svelte';
 	import ViewSwitch from '#lib/components/ViewSwitch.svelte';
 	import { findLists } from '#lib/models/list-filters.js';
-	import { mixedAuthors } from '#lib/models/list.js';
-	import { session } from '#lib/auth/session.svelte.js';
-	import { data, handleOf, membersOf, network, ownsList } from '#lib/network/network.svelte.js';
+	import { LOCAL, mixedAuthors } from '#lib/models/list.js';
+	import { data, handleOf, membersOf, network } from '#lib/network/network.svelte.js';
 	import { listJobStats } from '#lib/network/job-counts.svelte.js';
 	import { readView, viewParam } from '#lib/navigation/explore-view.js';
 	import { keepAddress, readAddress } from '#lib/navigation/address.js';
 	import { formatNumber, t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * Every list, like the companies page: a search bar at the top (words, lists hiring,
-	 * open to all, one's own, and how to show them), the lists using the whole screen under it,
+	 * Every public list, like the companies page: a search bar at the top (words, lists hiring,
+	 * open to all, and how to show them), the lists using the whole screen under it,
 	 * the most useful first (most open jobs). The map shows the companies of the lists found.
 	 */
 	// The search and the view are in the address (after the "#").
-	const params = readAddress(['q', 'hiring', 'open', 'mine', 'view']);
+	const params = readAddress(['q', 'hiring', 'open', 'view']);
 	let query = $state(params.get('q') || '');
 	let hiring = $state(params.has('hiring'));
 	let open = $state(params.has('open'));
-	let mine = $state(params.has('mine'));
 	let view = $state(viewParam(params.get('view')) || readView('lists', 'grid'));
 
+	/** The public lists (one's private lists are on /me/lists). */
+	const published = $derived(data.lists.filter((l) => l.did !== LOCAL));
 	/** The keys of each list's companies, by list uri. */
-	const members = $derived(new Map(data.lists.map((l) => [l.uri, membersOf(l).members.map((m) => m.key)])));
+	const members = $derived(new Map(published.map((l) => [l.uri, membersOf(l).members.map((m) => m.key)])));
 	// Open offers, in its place for a list about one: as its page shows them first.
-	const stats = $derived(new Map(data.lists.map((l) => [l.uri, listJobStats(l)])));
-	const found = $derived(findLists(data.lists, { query, hiring, open, mine }, stats, { me: session.did, handleOf }));
+	const stats = $derived(new Map(published.map((l) => [l.uri, listJobStats(l)])));
+	const found = $derived(findLists(published, { query, hiring, open }, stats, { handleOf }));
 	const hiringCount = $derived([...stats.values()].filter((s) => s.hiring).length);
-	const openCount = $derived(data.lists.filter((l) => l.open).length);
-	const mineCount = $derived(data.lists.filter(ownsList).length);
-	const author = $derived(mixedAuthors(data.lists));
+	const openCount = $derived(published.filter((l) => l.open).length);
+	const author = $derived(mixedAuthors(published));
 	// On the map: every company of the lists found, once.
 	const companies = $derived.by(() => {
 		if (view !== 'map') return [];
@@ -49,7 +48,7 @@
 	});
 
 	// The search and the view stay in the address, to share or come back to.
-	$effect(() => keepAddress({ q: query, hiring, open, mine, view: view === 'grid' ? '' : view }, (url) => replaceState(url, {})));
+	$effect(() => keepAddress({ q: query, hiring, open, view: view === 'grid' ? '' : view }, (url) => replaceState(url, {})));
 </script>
 
 <svelte:head><title>{t('nav.lists')} · {config.name}</title></svelte:head>
@@ -72,13 +71,6 @@
 						</button>
 					</li>
 				{/if}
-				{#if mineCount}
-					<li>
-						<button type="button" aria-pressed={mine} onclick={() => (mine = !mine)}>
-							<Icon name="me" /> {t('lists.mine')} <small>{formatNumber(mineCount)}</small>
-						</button>
-					</li>
-				{/if}
 			{/snippet}
 			{#snippet tools()}<ViewSwitch bind:view page="lists" /><PageMenu />{/snippet}
 		</SearchBar>
@@ -88,7 +80,7 @@
 		<CompanyMap {companies} full />
 	{:else}
 		<jl-lists-results {view}>
-			<ResultsHead count={t('lists.count', { count: found.length, total: data.lists.length })}>
+			<ResultsHead count={t('lists.count', { count: found.length, total: published.length })}>
 				<a href="/lists/new" data-add><Icon name="add" /> {t('list.new')}</a>
 			</ResultsHead>
 			<ul>
@@ -97,7 +89,7 @@
 				{/each}
 			</ul>
 			{#if !found.length && !network.loading}
-				<Empty text={data.lists.length ? t('search.none') : t('home.empty')}>
+				<Empty text={published.length ? t('search.none') : t('home.empty')}>
 					<a href="/lists/new" data-add="main"><Icon name="add" /> {t('list.new')}</a>
 				</Empty>
 			{/if}

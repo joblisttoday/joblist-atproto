@@ -29,6 +29,7 @@ const appPages = [
 	['/menu/collections', en['collections.transfer']],
 	['/menu/outbox', en['outbox.title']],
 	['/me', en['nav.me']],
+	['/new', en['nav.add']],
 	['/add', en['form.company.title']],
 	['/jobs/new', en['post.title']],
 	['/lists/new', en['list.new']],

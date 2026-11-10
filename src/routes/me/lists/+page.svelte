@@ -13,9 +13,9 @@
 	/**
 	 * Every list of yours, of jobs and of organizations, each saying whether it is private
 	 * or public; each opens on its own page. A new list of jobs is named here; a list of
-	 * organizations has its own form.
+	 * organizations has its own form. /me/lists#new opens the name of a new list of jobs.
 	 */
-	let naming = $state(false);
+	let naming = $state(location.hash === '#new');
 
 	/** @param {string} name */
 	async function create(name) {

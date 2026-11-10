@@ -19,8 +19,8 @@ const stats = new Map([
 	['3', listStats(['c.org', 'd.org', 'e.org'], counts)],
 	['4', listStats(['c.org'], counts)]
 ]);
-const none = { query: '', hiring: false, open: false, mine: false };
-const people = { me: 'did:b', handleOf: (/** @type {string} */ did) => (did === 'did:b' ? 'bea.bsky.social' : 'ana.bsky.social') };
+const none = { query: '', hiring: false, open: false };
+const people = { handleOf: (/** @type {string} */ did) => (did === 'did:b' ? 'bea.bsky.social' : 'ana.bsky.social') };
 const uris = (/** @type {any[]} */ found) => found.map((l) => l.uri);
 
 describe('listStats', () => {
@@ -40,10 +40,12 @@ describe('findLists', () => {
 		expect(uris(findLists(lists, { ...none, query: 'companies berlin' }, stats, people))).toEqual(['1']);
 		expect(uris(findLists(lists, { ...none, query: '@bea' }, stats, people))).toEqual(['2', '4']);
 	});
-	it('keeps only the lists hiring, open, or mine', () => {
+	it('keeps only the lists hiring, or open', () => {
 		expect(uris(findLists(lists, { ...none, hiring: true }, stats, people))).toEqual(['1', '2']);
 		expect(uris(findLists(lists, { ...none, open: true }, stats, people))).toEqual(['2']);
-		expect(uris(findLists(lists, { ...none, mine: true }, stats, people))).toEqual(['2', '4']);
-		expect(uris(findLists(lists, { ...none, mine: true }, stats, { ...people, me: null }))).toEqual([]);
+	});
+	it('leaves out the private lists: they are on /me/lists', () => {
+		const local = { ...lists[0], uri: 'l', did: 'local' };
+		expect(uris(findLists([...lists, local], none, stats, people))).toEqual(['1', '2', '3', '4']);
 	});
 });

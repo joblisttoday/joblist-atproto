@@ -16,7 +16,7 @@ import { isLive } from '#lib/models/job-post.js';
 export function listsBy(did) {
 	const lists = data.lists.filter((l) => l.did === did);
 	const stats = new Map(lists.map((l) => [l.uri, listJobStats(l)]));
-	return findLists(lists, { query: '', hiring: false, open: false, mine: false }, stats, { handleOf });
+	return findLists(lists, { query: '', hiring: false, open: false }, stats, { handleOf });
 }
 
 /** Its own page shows expired offers too, to renew or delete them. @param {string} did @param {boolean} self */

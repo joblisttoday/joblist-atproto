@@ -13,7 +13,7 @@
 	 */
 	const stats = $derived(new Map(data.lists.map((l) => [l.uri, listJobStats(l)])));
 	const shown = $derived(
-		findLists(data.lists, { query: '', hiring: true, open: false, mine: false }, stats, { handleOf }).slice(0, config.lists.explore)
+		findLists(data.lists, { query: '', hiring: true, open: false }, stats, { handleOf }).slice(0, config.lists.explore)
 	);
 </script>
 

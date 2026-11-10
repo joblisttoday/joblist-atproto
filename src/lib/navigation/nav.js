@@ -7,12 +7,12 @@ import links from '#lib/data/nav.json';
  */
 
 /**
- * The main navigation: the places to go, then the menu (/menu: the account, what to make,
- * this browser's settings), with the signed-in account's picture.
- * wide: only on wide screens, where there is room (phones keep five tabs).
+ * The main navigation, the same on every screen: Home, Explore (jobs, organizations, lists),
+ * Add, and Me (what one keeps, the account with its picture, the menu).
  * badge: the count it shows ("saved": the new jobs of the saved searches).
+ * within: the paths it is the tab of, besides its own (Explore: every job, organization and list).
  * account: the tab that shows the signed-in account (its picture).
- * @returns {{href: string, label: string, icon: import('#lib/icons.js').IconName, wide?: boolean, badge?: string, account?: boolean}[]}
+ * @returns {{href: string, label: string, icon: import('#lib/icons.js').IconName, badge?: string, account?: boolean, within: string[]}[]}
  */
 export function navLinks() {
 	return links.map((link) => {
@@ -21,9 +21,9 @@ export function navLinks() {
 			href,
 			label,
 			icon: /** @type {import('#lib/icons.js').IconName} */ (icon),
-			wide: 'wide' in link ? link.wide : undefined,
 			badge: 'badge' in link ? link.badge : undefined,
-			account: ('account' in link && link.account) || undefined
+			account: ('account' in link && link.account) || undefined,
+			within: ('within' in link && link.within) || []
 		};
 	});
 }
