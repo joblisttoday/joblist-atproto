@@ -4,11 +4,9 @@
 	import PageHeader from './PageHeader.svelte';
 	import Pending from './Pending.svelte';
 	import ViewSwitch from './ViewSwitch.svelte';
-	import { replaceState } from '$app/navigation';
 	import config from '#lib/data/config.json';
 	import { landingPath } from '#lib/models/landing.js';
-	import { keepAddress, readAddress } from '#lib/navigation/address.js';
-	import { readView, viewParam } from '#lib/navigation/explore-view.js';
+	import { pageView } from '#lib/navigation/page-view.svelte.js';
 	import { getLandingIndex } from '#lib/network/landing.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
@@ -25,15 +23,9 @@
 	const intro = $derived(t(by === 'city' ? 'landing.cities.intro' : 'landing.fields.intro'));
 	const index = getLandingIndex();
 
-	/** @param {string | null} asked */
-	const allowed = (asked) => {
-		const v = viewParam(asked);
-		return v && views.includes(v) ? v : null;
-	};
 	// /in and /field are two routes: each page starts with its own.
 	// svelte-ignore state_referenced_locally
-	let view = $state(allowed(readAddress(['view']).get('view')) || allowed(readView(page, 'grid')) || 'grid');
-	$effect(() => keepAddress({ view: view === 'grid' ? '' : view }, (url) => replaceState(url, {})));
+	const shown = pageView(page, views);
 
 	/** The cities on the map: a tap leads to its page. @param {import('#lib/models/landing.js').LandingIndex | null} found */
 	const cityPoints = (found) =>
@@ -49,15 +41,15 @@
 
 <svelte:head><title>{title} · {config.name}</title></svelte:head>
 
-<jl-landing-index {view}>
+<jl-landing-index view={shown.view}>
 	<nav><a href="/in">{t('landing.cities')}</a> · <a href="/field">{t('landing.fields')}</a></nav>
 	<PageHeader {title} {intro}>
-		{#snippet actions()}<ViewSwitch bind:view {page} {views} /><FollowFeed feed={{}} />{/snippet}
+		{#snippet actions()}<ViewSwitch bind:view={shown.view} {page} {views} /><FollowFeed feed={{}} />{/snippet}
 	</PageHeader>
 	{#await index}
 		<Pending />
 	{:then found}
-		{#if view === 'map'}
+		{#if shown.view === 'map'}
 			<jl-landing-map><CompanyMap places={cityPoints(found)} full /></jl-landing-map>
 		{:else}
 			<ul>

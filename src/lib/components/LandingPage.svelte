@@ -4,9 +4,7 @@
 	import JobItem from './JobItem.svelte';
 	import JobsMap from './JobsMap.svelte';
 	import ViewSwitch from './ViewSwitch.svelte';
-	import { replaceState } from '$app/navigation';
-	import { keepAddress, readAddress } from '#lib/navigation/address.js';
-	import { readView, viewParam } from '#lib/navigation/explore-view.js';
+	import { pageView } from '#lib/navigation/page-view.svelte.js';
 	import PageHeader from './PageHeader.svelte';
 	import Pending from './Pending.svelte';
 	import config from '#lib/data/config.json';
@@ -33,8 +31,7 @@
 		});
 	});
 	const pages = $derived(Math.max(number, page?.pages || 1));
-	let view = $state(viewParam(readAddress(['view']).get('view')) || readView('landing', 'grid'));
-	$effect(() => keepAddress({ view: view === 'grid' ? '' : view }, (url) => replaceState(url, {})));
+	const shown = pageView('landing');
 	const names = $derived(new Map(Object.entries(page?.names || {})));
 	const mapless = $derived(!page?.jobs.some((j) => j.point));
 	const nth = $derived(number > 1 ? ` · ${t('landing.page', { page: number, pages })}` : '');
@@ -54,13 +51,13 @@
 {#if page === undefined}
 	<Pending />
 {:else if page}
-		<jl-landing-page {view}>
+		<jl-landing-page view={shown.view}>
 			<nav><a href="/in">{t('landing.cities')}</a> · <a href="/field">{t('landing.fields')}</a></nav>
 			<PageHeader title={title(cityName)} intro={t('landing.intro', { count: page.count })}>
-				{#snippet actions()}<ViewSwitch bind:view page="landing" {mapless} /><FollowFeed feed={{ city, field }} />{/snippet}
+				{#snippet actions()}<ViewSwitch bind:view={shown.view} page="landing" {mapless} /><FollowFeed feed={{ city, field }} />{/snippet}
 			</PageHeader>
 			<p><a href={explorerPath({ cityName: city ? cityName : '', field })}><Icon name="map" /> {t('landing.explore')}</a></p>
-			{#if view === 'map' && !mapless}
+			{#if shown.view === 'map' && !mapless}
 				<jl-landing-map><JobsMap jobs={page.jobs} {names} fit /></jl-landing-map>
 			{:else}
 				<ul>
