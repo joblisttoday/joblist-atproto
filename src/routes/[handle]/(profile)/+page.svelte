@@ -1,5 +1,4 @@
 <script>
-	import Icon from '#lib/components/Icon.svelte';
 	import config from '#lib/data/config.json';
 	import CompanyMap from '#lib/components/CompanyMap.svelte';
 	import Empty from '#lib/components/Empty.svelte';
@@ -32,9 +31,6 @@
 		{:else}
 			<ul>{#each lists as list (list.uri)}<li><ListItem {list} author={false} /></li>{/each}</ul>
 		{/if}
-		{#if profile.self}<menu><a href="/lists/new" data-add><Icon name="add" /> {t('list.new')}</a></menu>{/if}
-	{:else if profile.self}
-		<Empty text={t('me.lists.empty')}><a href="/lists/new" data-add="main"><Icon name="add" /> {t('list.new')}</a></Empty>
 	{:else}
 		<Empty text={t('profile.empty')} />
 	{/if}

@@ -15,8 +15,7 @@
 	]);
 	/** @type {import('#lib/navigation/nav.js').MenuLink[]} */
 	const lists = $derived([
-		{ href: '/me/lists#new', icon: 'jobs', label: t('collections.new') },
-		{ href: '/lists/new', icon: 'lists', label: t('list.new.organizations') }
+		{ href: '/me/lists#new', icon: 'jobs', label: t('collections.new') }
 	]);
 </script>
 

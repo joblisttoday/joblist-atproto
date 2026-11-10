@@ -2,7 +2,6 @@
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import config from '#lib/data/config.json';
-	import AddToList from '#lib/components/AddToList.svelte';
 	import CompanyClaim from '#lib/components/CompanyClaim.svelte';
 	import CompanyEmbed from '#lib/components/CompanyEmbed.svelte';
 	import CompanyHeader from '#lib/components/CompanyHeader.svelte';
@@ -12,7 +11,6 @@
 	import CompanyVersions from '#lib/components/CompanyVersions.svelte';
 	import CompanyJobs from '#lib/components/CompanyJobs.svelte';
 	import DataState from '#lib/components/DataState.svelte';
-	import Empty from '#lib/components/Empty.svelte';
 	import ListItem from '#lib/components/ListItem.svelte';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { data, listsWith } from '#lib/network/network.svelte.js';
@@ -55,15 +53,12 @@
 		</jl-company-main>
 
 		<aside>
-			<section aria-labelledby="company-lists">
-				<h2 id="company-lists">{t('company.inLists')}</h2>
-				{#if lists.length}
+			{#if lists.length}
+				<section aria-labelledby="company-lists">
+					<h2 id="company-lists">{t('company.inLists')}</h2>
 					<ul>{#each lists as list (list.uri)}<li><ListItem {list} author={mixedAuthors(lists)} /></li>{/each}</ul>
-				{:else}
-					<Empty text={t('company.noLists')} />
-				{/if}
-				<AddToList {key} />
-			</section>
+				</section>
+			{/if}
 
 			<section aria-labelledby="company-places">
 				<h2 id="company-places">{t('form.locations')}</h2>

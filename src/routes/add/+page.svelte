@@ -91,7 +91,6 @@
 			<section aria-labelledby="add-more">
 				<h2 id="add-more">{t('add.more')}</h2>
 				<menu>
-					<a href="/lists/new" data-add><Icon name="add" /> {t('list.new')}</a>
 					<a href="/jobs/new" data-add><Icon name="add" /> {t('post.title')}</a>
 				</menu>
 			</section>

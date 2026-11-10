@@ -38,8 +38,7 @@
 	const ways = $derived([
 		{ href: '/in', icon: 'place', label: t('landing.cities') },
 		{ href: '/field', icon: 'jobs', label: t('landing.fields') },
-		{ href: '/companies', icon: 'companies', label: t('nav.companies') },
-		{ href: '/lists', icon: 'lists', label: t('home.lists') }
+		{ href: '/companies', icon: 'companies', label: t('nav.companies') }
 	]);
 </script>
 

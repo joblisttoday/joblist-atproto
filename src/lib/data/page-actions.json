@@ -1,7 +1,6 @@
 {
 	"/jobs": [{ "href": "/jobs/new", "label": "nav.post", "icon": "post" }],
 	"/companies": [{ "href": "/add", "label": "form.company.title", "icon": "add" }],
-	"/lists": [{ "href": "/lists/new", "label": "list.new", "icon": "add" }],
 	"/company/[key]": [
 		{ "href": "/jobs/new?company={key}", "label": "menu.postHere", "icon": "post" },
 		{ "href": "/add?key={key}", "label": "company.edit", "icon": "edit" }

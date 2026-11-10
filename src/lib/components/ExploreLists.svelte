@@ -1,5 +1,4 @@
 <script>
-	import Icon from './Icon.svelte';
 	import config from '#lib/data/config.json';
 	import { findLists } from '#lib/models/list-filters.js';
 	import { data, handleOf } from '#lib/network/network.svelte.js';
@@ -8,7 +7,7 @@
 
 	/**
 	 * Lists people made, as a way in: those with the most open jobs first
-	 * (config.lists.explore of them), each a job board of its own, then all of them.
+	 * (config.lists.explore of them), each a job board of its own.
 	 * One row, swiped sideways on a phone.
 	 */
 	const stats = $derived(new Map(data.lists.map((l) => [l.uri, listJobStats(l)])));
@@ -25,7 +24,6 @@
 					<a href="/{handleOf(list.did)}/{list.rkey}">{list.name} <small>{formatNumber(stats.get(list.uri)?.jobs || 0)}</small></a>
 				</li>
 			{/each}
-			<li><a href="/lists"><Icon name="lists" /> {t('explore.allLists')}</a></li>
 		</menu>
 	</jl-explore-lists>
 {/if}

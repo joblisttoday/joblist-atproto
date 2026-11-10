@@ -1,6 +1,5 @@
 <script>
 	import Icon from './Icon.svelte';
-	import AddToList from './AddToList.svelte';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
@@ -18,7 +17,6 @@
 		<a href="/company/{key}">{t('added.open', { name })}</a>
 		<a href="/jobs/new?company={encodeURIComponent(key)}"><Icon name="post" /> {t('added.post')}</a>
 	</menu>
-	<AddToList {key} />
 	<p><small><a href="/add">{t('added.another')}</a></small></p>
 </jl-add-saved>
 

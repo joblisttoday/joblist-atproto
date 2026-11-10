@@ -82,18 +82,14 @@
 	{:else}
 		<jl-lists-results {view}>
 			<DataState>
-			<ResultsHead count={t('lists.count', { count: found.length, total: published.length })}>
-				<a href="/lists/new" data-add><Icon name="add" /> {t('list.new')}</a>
-			</ResultsHead>
+			<ResultsHead count={t('lists.count', { count: found.length, total: published.length })} />
 			<ul>
 				{#each found as list (list.uri)}
 					<li><ListItem {list} {author} stats={stats.get(list.uri)} /></li>
 				{/each}
 			</ul>
 			{#if !found.length}
-				<Empty text={published.length ? t('search.none') : t('home.empty')}>
-					<a href="/lists/new" data-add="main"><Icon name="add" /> {t('list.new')}</a>
-				</Empty>
+				<Empty text={published.length ? t('search.none') : t('home.empty')} />
 			{/if}
 			</DataState>
 		</jl-lists-results>

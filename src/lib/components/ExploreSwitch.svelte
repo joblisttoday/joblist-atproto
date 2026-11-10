@@ -4,7 +4,7 @@
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * Explore: every job, organization or list, each its own page, one tap apart.
+	 * Explore: every job or organization, each its own page, one tap apart.
 	 * Wide screens have it in the header (in place of the search: the page has its own);
 	 * phones, on top of the page's bar (bar).
 	 * @type {{bar?: boolean}}
@@ -12,8 +12,7 @@
 	let { bar = false } = $props();
 	const places = [
 		{ href: '/jobs', icon: /** @type {const} */ ('jobs'), label: 'nav.jobs' },
-		{ href: '/companies', icon: /** @type {const} */ ('companies'), label: 'nav.companies' },
-		{ href: '/lists', icon: /** @type {const} */ ('lists'), label: 'nav.lists' }
+		{ href: '/companies', icon: /** @type {const} */ ('companies'), label: 'nav.companies' }
 	];
 </script>
 
@@ -32,7 +31,7 @@
 	}
 	nav {
 		display: grid;
-		grid-template-columns: repeat(3, 1fr);
+		grid-template-columns: repeat(2, 1fr);
 		gap: var(--space-xxs);
 	}
 	a {

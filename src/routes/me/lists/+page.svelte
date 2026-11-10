@@ -35,7 +35,6 @@
 	{:else}
 		<menu>
 			<button type="button" data-add onclick={() => (naming = true)}><Icon name="add" /> {t('collections.new')}</button>
-			<a href="/lists/new" data-add><Icon name="add" /> {t('list.new.organizations')}</a>
 		</menu>
 	{/if}
 	<p><small><a href="/menu/collections">{t('collections.transfer')}</a></small></p>
