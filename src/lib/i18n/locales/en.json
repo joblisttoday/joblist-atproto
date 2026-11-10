@@ -188,6 +188,7 @@
 	"list.hiring": "{count} hiring",
 	"list.hiring.one": "1 hiring",
 
+	"company.saved.list": "Saved organizations",
 	"company.jobBoard": "Job board",
 	"company.verified": "Verified: published by {domain} itself",
 	"company.inLists": "In lists",

@@ -4,6 +4,7 @@
 	import CompanyDelete from './CompanyDelete.svelte';
 	import CompanyEdited from './CompanyEdited.svelte';
 	import CompanyInvite from './CompanyInvite.svelte';
+	import CompanySave from './CompanySave.svelte';
 	import { data } from '#lib/network/network.svelte.js';
 	import { boardUrl } from '#lib/models/company.js';
 	import { accountOf } from '#lib/network/accounts.svelte.js';
@@ -52,6 +53,7 @@
 		{/if}
 		<CompanyInvite {company} field="tags" />
 		<menu>
+			<CompanySave key={company.key} />
 			{#if board}<a href={board} target="_blank" rel="noopener">{t('company.jobBoard')} <Icon name="external" /></a>{/if}
 			<a href="/add?key={encodeURIComponent(company.key)}">{t('company.edit')}</a>
 			<CompanyDelete {company} />

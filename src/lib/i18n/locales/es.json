@@ -188,6 +188,7 @@
 	"list.hiring": "{count} contratando",
 	"list.hiring.one": "1 contratando",
 
+	"company.saved.list": "Organizaciones guardadas",
 	"company.jobBoard": "Portal de empleo",
 	"company.verified": "Verificada: publicada por {domain}",
 	"company.inLists": "En listas",

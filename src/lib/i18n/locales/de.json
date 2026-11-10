@@ -188,6 +188,7 @@
 	"list.hiring": "{count} stellen ein",
 	"list.hiring.one": "1 stellt ein",
 
+	"company.saved.list": "Gemerkte Organisationen",
 	"company.jobBoard": "Jobbörse",
 	"company.verified": "Verifiziert: von {domain} selbst veröffentlicht",
 	"company.inLists": "In Listen",

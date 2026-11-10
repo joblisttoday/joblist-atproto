@@ -56,3 +56,26 @@ export function removeLocalList(rkey) {
 	localLists.records = localLists.records.filter((r) => r.rkey !== rkey);
 	write();
 }
+
+/**
+ * Saved organizations: like a saved job, one tap on an organization keeps it in a private
+ * list made on the first save. It is a list like the others: renamed, made public or deleted
+ * the same way, and its page shows the jobs of the organizations in it.
+ */
+export const SAVED = 'lsaved';
+
+/** @param {string} key an organization's */
+export const isSaved = (key) => !!localLists.records.find((r) => r.rkey === SAVED)?.value.companies?.includes(key);
+
+/**
+ * @param {string} key an organization's
+ * @param {string} name the list's name, when this save makes it
+ */
+export function toggleSaved(key, name) {
+	const list = localLists.records.find((r) => r.rkey === SAVED);
+	/** @type {string[]} */
+	const companies = list?.value.companies || [];
+	if (!companies.includes(key) && companies.length >= config.listForm.companiesMax) return;
+	const next = companies.includes(key) ? companies.filter((k) => k !== key) : [...companies, key];
+	putLocalList(SAVED, { ...(list?.value || { $type: config.collections.list, name, createdAt: new Date().toISOString() }), companies: next });
+}
