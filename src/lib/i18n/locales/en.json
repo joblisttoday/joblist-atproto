@@ -188,6 +188,11 @@
 	"list.hiring": "{count} hiring",
 	"list.hiring.one": "1 hiring",
 
+	"card.actions": "More: {name}",
+	"card.show": "Show again",
+	"card.open": "Open the offer",
+	"card.website": "Website",
+	"card.copy": "Copy link",
 	"company.saved.list": "Saved organizations",
 	"company.jobBoard": "Job board",
 	"company.verified": "Verified: published by {domain} itself",

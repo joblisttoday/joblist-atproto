@@ -182,7 +182,7 @@
 		<aside aria-labelledby="company-preview">
 			<h2 id="company-preview">{t('form.company.preview')}</h2>
 			{#if preview}
-				<jl-preview inert><CompanyItem company={preview} /></jl-preview>
+				<jl-preview inert><CompanyItem company={preview} menu={false} /></jl-preview>
 				{#if preview.description}<blockquote>{preview.description}</blockquote>{/if}
 			{:else}
 				<p><small>{t('form.company.preview.empty')}</small></p>

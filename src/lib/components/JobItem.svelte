@@ -2,6 +2,7 @@
 	import Icon from './Icon.svelte';
 	import config from '#lib/data/config.json';
 	import JobDescription from './JobDescription.svelte';
+	import JobMenu from './JobMenu.svelte';
 	import { isOlder, offerPlaces, time, workplace } from '#lib/models/job.js';
 	import { travelMinutes } from '#lib/models/distance.js';
 	import { payAmount } from '#lib/models/salary.js';
@@ -20,9 +21,10 @@
 	 * selected: the job open in the page.
 	 * read: read in full (a job open in a dialog, whose header shows its title).
 	 * actions: shown when unfolded, between the summary and the description.
-	 * @type {{job: import('#lib/ats/job.js').Job, company?: string, fresh?: boolean, onselect?: () => void, selected?: boolean, read?: boolean, actions?: import('svelte').Snippet}}
+	 * menu: its "…" (save, hide, its organization, the offer, its link); not on a preview, nor read in full (its actions are there).
+	 * @type {{job: import('#lib/ats/job.js').Job, company?: string, fresh?: boolean, onselect?: () => void, selected?: boolean, read?: boolean, menu?: boolean, actions?: import('svelte').Snippet}}
 	 */
-	let { job, company, fresh = false, onselect, selected = false, read = false, actions } = $props();
+	let { job, company, fresh = false, onselect, selected = false, read = false, menu = true, actions } = $props();
 	const MAX_PLACES = config.jobs.placesShown;
 	const posted = $derived(job.posted);
 	// Opened and its board says nothing: what its description says clearly, once it is read
@@ -74,7 +76,7 @@
 	<jl-chips>{#if fresh}<mark data-new>{t('job.new')}</mark>{/if}{#if applied}<mark><Icon name="applied" /> {t('marks.applied')}</mark>{/if}{#each chips as chip (chip)}<span>{#if chip === distance}<Icon name={travelIcon} />{' '}{/if}{chip}</span>{/each}{#if older}<em title={t('job.older.hint', { days: config.jobs.olderDays })}>{t('job.older')}</em>{/if}</jl-chips>
 {/snippet}
 
-<jl-job posted={posted ? (posted.verified ? 'company' : 'shared') : undefined} older={older || undefined} read={read || undefined} {open} fresh={fresh || undefined} selected={selected || undefined} applied={applied || undefined}>
+<jl-job menu={(menu && !read) || undefined} posted={posted ? (posted.verified ? 'company' : 'shared') : undefined} older={older || undefined} read={read || undefined} {open} fresh={fresh || undefined} selected={selected || undefined} applied={applied || undefined}>
 	{#if company}<jl-avatar style="--hue: {hue}" aria-hidden="true">{#if avatar}<img src={thumbnail(avatar)} alt="" loading="lazy" />{:else}{company.trim().charAt(0).toUpperCase()}{/if}</jl-avatar>{/if}
 	{#if posted}
 		{#if !read}<a href={postPath(posted.did, posted.rkey)}>{job.title}</a>{/if}
@@ -109,6 +111,7 @@
 			{#if open}{@render actions?.()}<JobDescription {job} {company} />{/if}
 		</details>
 	{/if}
+	{#if menu && !read}<jl-job-menu><JobMenu {job} {company} /></jl-job-menu>{/if}
 </jl-job>
 
 <style>
@@ -126,6 +129,17 @@
 	jl-job:not(:has(jl-avatar)) > *,
 	jl-job > jl-job-body {
 		grid-column: 1 / -1;
+	}
+	/* The "…" at the top of the card's end, over it. */
+	jl-job[menu] {
+		position: relative;
+		padding-inline-end: var(--tap-size);
+	}
+	jl-job-menu {
+		position: absolute;
+		top: var(--space-xxs);
+		inset-inline-end: calc(-1 * var(--space-s));
+		z-index: 1;
 	}
 	/* Read in full: the title is in the dialog's header. */
 	jl-job[read] {

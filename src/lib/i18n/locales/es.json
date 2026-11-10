@@ -188,6 +188,11 @@
 	"list.hiring": "{count} contratando",
 	"list.hiring.one": "1 contratando",
 
+	"card.actions": "Más: {name}",
+	"card.show": "Mostrar de nuevo",
+	"card.open": "Abrir la oferta",
+	"card.website": "Sitio web",
+	"card.copy": "Copiar el enlace",
 	"company.saved.list": "Organizaciones guardadas",
 	"company.jobBoard": "Portal de empleo",
 	"company.verified": "Verificada: publicada por {domain}",

@@ -219,7 +219,7 @@
 		{#if preview}
 			<section aria-labelledby="job-preview">
 				<h2 id="job-preview">{t('post.preview')}</h2>
-				<JobItem job={preview} company={data.companies.get(form.company)?.name || form.company} />
+				<JobItem job={preview} menu={false} company={data.companies.get(form.company)?.name || form.company} />
 			</section>
 		{/if}
 
