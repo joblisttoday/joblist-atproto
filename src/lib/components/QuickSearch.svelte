@@ -3,6 +3,7 @@
 	import config from '#lib/data/config.json';
 	import { afterNavigate, goto } from '$app/navigation';
 	import { quickResults } from '#lib/models/quick-search.js';
+	import { landingPath } from '#lib/models/landing.js';
 	import { searchState } from '#lib/models/saved-search.js';
 	import { addressOf } from '#lib/navigation/address.js';
 	import { handleOf } from '#lib/network/network.svelte.js';
@@ -87,6 +88,20 @@
 	{#if open && typed}
 		<ul>
 			<li><a onkeydown={keys} href={jobsPath({ query: text.trim() })}><Icon name="search" /> {t('quick.jobs', { text: text.trim() })}</a></li>
+			{#each found.fields as field (field.slug)}
+				<li>
+					<a onkeydown={keys} href={landingPath({ field: field.slug })}>
+						<Icon name="jobs" /> {t('landing.field', { field: field.name })} <small>{t('landing.count', { count: field.count })}</small>
+					</a>
+				</li>
+			{/each}
+			{#each found.cities as city (city.slug)}
+				<li>
+					<a onkeydown={keys} href={landingPath({ city: city.slug })}>
+						<Icon name="place" /> {t('landing.city', { city: city.name })} <small>{t('landing.count', { count: city.count })}</small>
+					</a>
+				</li>
+			{/each}
 			{#each found.places as place (place)}
 				<li><a onkeydown={keys} href={jobsPath({ where: place })}><Icon name="place" /> {t('quick.place', { place })}</a></li>
 			{/each}

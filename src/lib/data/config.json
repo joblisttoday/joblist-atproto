@@ -102,7 +102,7 @@
 	},
 	"quickSearch": {
 		"places": 2000,
-		"shown": { "companies": 4, "lists": 2, "places": 3 }
+		"shown": { "fields": 2, "cities": 2, "companies": 4, "lists": 2, "places": 3 }
 	},
 	"bluesky": {
 		"file": "bluesky.json",

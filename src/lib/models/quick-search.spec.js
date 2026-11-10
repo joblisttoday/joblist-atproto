@@ -31,4 +31,32 @@ describe('quick search', () => {
 		expect(found.places).toEqual(['Berlin', 'Berlingen']);
 		expect(quickResults('b', sources, limits).companies).toEqual([]);
 	});
+	it('offers the pages of fields, in the language read, and of cities, also by their other names', () => {
+		const sources = {
+			companies: [],
+			lists: [],
+			places: /** @type {[string, number][]} */ ([
+				['Munich', 90],
+				['Munich, Bavaria', 5],
+				['Ingolstadt', 3]
+			]),
+			counts: new Map(),
+			fields: [
+				{ slug: 'engineering', name: 'Ingénierie', count: 900 },
+				{ slug: 'legal', name: 'Juridique', count: 30 }
+			],
+			cities: [
+				{ slug: 'munich', name: 'Munich', count: 400 },
+				{ slug: 'mumbai', name: 'Mumbai', count: 300 }
+			],
+			aliases: { munchen: 'munich' }
+		};
+		expect(quickResults('ingé', sources, limits).fields.map((f) => f.slug)).toEqual(['engineering']);
+		expect(quickResults('engin', sources, limits).fields.map((f) => f.slug)).toEqual(['engineering']);
+		expect(quickResults('München', sources, limits).cities.map((c) => c.slug)).toEqual(['munich']);
+		const mu = quickResults('mu', sources, limits);
+		expect(mu.cities.map((c) => c.slug)).toEqual(['munich', 'mumbai']);
+		// Munich is offered as its page, not again as a place.
+		expect(mu.places).toEqual(['Munich, Bavaria']);
+	});
 });

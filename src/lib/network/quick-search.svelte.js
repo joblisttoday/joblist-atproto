@@ -1,23 +1,28 @@
 import { offerCount, placeCounts } from '#lib/models/job.js';
 import { data } from './network.svelte.js';
 import { getSnapshotCounts, getSnapshotJobs } from './snapshot.js';
+import { getLandingIndex } from './landing.js';
 import config from '#lib/data/config.json';
+import { t } from '#lib/i18n/index.svelte.js';
 
 /**
  * What the search box on every page looks through: companies and lists (already
  * read), and the places jobs name and each company's open offers, from the snapshot's
- * counts once the box is first used (from all its jobs when it has none).
+ * counts once the box is first used (from all its jobs when it has none), and the cities
+ * and fields with a page (landing/index.json, small).
  */
 
 /** @type {[string, number][]} */
 let places = $state.raw([]);
 /** @type {Map<string, number>} */
 let counts = $state.raw(new Map());
+let index = $state.raw(/** @type {import('#lib/models/landing.js').LandingIndex | null} */ (null));
 let asked = false;
 
 export function readSources() {
 	if (asked) return;
 	asked = true;
+	getLandingIndex().then((found) => (index = found));
 	getSnapshotCounts().then((file) => {
 		if (file) {
 			places = file.places.slice(0, config.quickSearch.places);
@@ -33,6 +38,9 @@ export function readSources() {
 }
 
 const companies = $derived([...data.companies.values()]);
+const cities = $derived((index?.cities || []).map((c) => ({ slug: c.slug, name: c.name, count: c.count })));
+// Fields by their name in the language read.
+const fields = $derived((index?.fields || []).map((f) => ({ slug: f.slug, name: t(`field.${f.slug}`), count: f.count })));
 
 export const sources = {
 	get companies() {
@@ -46,5 +54,12 @@ export const sources = {
 	},
 	get counts() {
 		return counts;
-	}
+	},
+	get cities() {
+		return cities;
+	},
+	get fields() {
+		return fields;
+	},
+	aliases: config.landing.cityAliases
 };
