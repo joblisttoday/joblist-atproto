@@ -13,7 +13,8 @@ qualityTests([
 	{ name: 'list', path: '/joblist.today/3my7zpwloir2s', touch },
 	{ name: 'organization', path: '/company/ableton.com', touch },
 	{ name: 'profile', path: '/joblist.today', touch },
-	{ name: 'saved', path: '/saved', touch },
+	{ name: 'me', path: '/me', touch },
+	{ name: 'my lists', path: '/me/lists', touch },
 	{ name: 'menu', path: '/menu', touch },
 	{ name: 'language', path: '/menu/language', touch },
 	{ name: 'trends', path: '/stats', touch },
@@ -33,9 +34,10 @@ qualityTests([
 		name: 'delete a collection',
 		touch,
 		open: async (page) => {
-			await page.goto('/saved');
-			await page.locator('section[aria-labelledby="saved-new"] input').fill('Dream jobs');
-			await page.locator('section[aria-labelledby="saved-new"] button[type="submit"]').click();
+			await page.goto('/me/lists');
+			await page.getByRole('button', { name: 'New list of jobs' }).click();
+			await page.locator('jl-collection-name input').fill('Dream jobs');
+			await page.locator('jl-collection-name button[type="submit"]').click();
 			await page.getByRole('button', { name: 'Delete', exact: true }).click();
 			await page.locator('dialog[open]').waitFor();
 		}

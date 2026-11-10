@@ -35,7 +35,7 @@
 		"copiedMs": 3000,
 		"bare": ["/", "/companies", "/lists"],
 		"ownMenu": ["/", "/companies", "/lists", "/[handle]/[rkey]"],
-		"personal": ["/saved", "/signin", "/menu", "/menu/language", "/menu/profiles", "/menu/collections", "/menu/outbox"]
+		"personal": ["/me", "/me/searches", "/me/lists", "/me/lists/[id]", "/signin", "/menu", "/menu/language", "/menu/profiles", "/menu/collections", "/menu/outbox"]
 	},
 	"map": {
 		"style": "https://tiles.openfreemap.org/styles/positron",
@@ -182,6 +182,7 @@
 		"explore": 8,
 		"shareMax": 300
 	},
+	"me": { "glance": 3 },
 	"jobCollections": {
 		"file": "joblist-collections.json",
 		"fileMaxBytes": 5000000,

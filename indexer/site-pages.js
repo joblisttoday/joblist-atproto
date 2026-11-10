@@ -17,7 +17,11 @@ import { t } from '../worker/text.js';
 
 /** The app's pages for people (their own data, forms): shells, kept out of search results. */
 const appPages = [
-	['/saved', en['saved.title']],
+	['/me/searches', en['me.searches.title']],
+	['/me/lists', en['me.lists.title']],
+	['/me/lists/saved', en['marks.saved']],
+	['/me/lists/applied', en['marks.applied']],
+	['/me/lists/hidden', en['marks.hidden']],
 	['/signin', en['signin.title']],
 	['/menu', en['nav.menu']],
 	['/menu/language', en['about.language']],

@@ -12,10 +12,11 @@
 	/**
 	 * The searches kept in this browser: each with its new jobs (published since last looked at)
 	 * and all its jobs; opens in the explorer, or is removed.
-	 * jobs: every job known, empty while they are read.
-	 * @type {{jobs: import('#lib/ats/job.js').Job[], names: Map<string, string>}}
+	 * jobs: every job known, empty while they are read; max: only the first ones (at a glance, on /me).
+	 * @type {{jobs: import('#lib/ats/job.js').Job[], names: Map<string, string>, max?: number}}
 	 */
-	let { jobs, names } = $props();
+	let { jobs, names, max = Infinity } = $props();
+	const shown = $derived(searches.list.slice(0, max));
 
 	/** @param {import('#lib/models/saved-search.js').SavedSearch} s */
 	const label = (s) =>
@@ -32,7 +33,7 @@
 
 <jl-saved-searches>
 	<ul>
-		{#each searches.list as search (searchId(search))}
+		{#each shown as search (searchId(search))}
 			{@const fresh = jobs.length ? newCount(search, jobs, names) : 0}
 			{@const all = jobs.length ? offerCount(filterJobs(jobs, search, names)) : null}
 			<li>
