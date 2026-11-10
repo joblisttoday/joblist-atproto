@@ -2,6 +2,7 @@
 	import Icon from './Icon.svelte';
 	import Logo from './Logo.svelte';
 	import QuickSearch from './QuickSearch.svelte';
+	import ExploreSwitch from './ExploreSwitch.svelte';
 	import { page } from '$app/state';
 	import config from '#lib/data/config.json';
 	import Nav from './Nav.svelte';
@@ -21,6 +22,8 @@
 	const bare = $derived(config.layout.bare.includes(page.route.id || ''));
 	// Their own search bar, their own menu in it: none here (config.layout.ownMenu).
 	const ownMenu = $derived(config.layout.ownMenu.includes(page.route.id || ''));
+	// Jobs, organizations, lists: each has its own search, so the header has the way between them.
+	const explore = $derived(config.layout.explore.includes(page.route.id || ''));
 
 	/** @param {MouseEvent} event */
 	function back(event) {
@@ -34,8 +37,8 @@
 	<header>
 		<a href="/" aria-current={page.url.pathname === '/' ? 'page' : undefined}><Logo /><b>{config.name}</b></a>
 		{#if !topLevel}<a href="/" onclick={back}><Icon name="back" /> {t('nav.back')}</a>{/if}
-		<!-- The explorer has its own search. -->
-		{#if page.url.pathname !== '/'}<QuickSearch />{/if}
+		<!-- The home and the explore pages have their own search. -->
+		{#if explore}<ExploreSwitch />{:else if page.url.pathname !== '/'}<QuickSearch />{/if}
 		<Nav />
 		<!-- Pages with their own menu have it next to their views. -->
 		{#if !ownMenu}<PageMenu />{/if}

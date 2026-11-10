@@ -17,7 +17,7 @@
 </script>
 
 <jl-full-screen {view} bare={bare || undefined}>
-	<jl-full-screen-bar>{#if explore}<ExploreSwitch />{/if}{@render bar()}</jl-full-screen-bar>
+	<jl-full-screen-bar>{#if explore}<ExploreSwitch bar />{/if}{@render bar()}</jl-full-screen-bar>
 	<jl-full-screen-stage>{@render children()}</jl-full-screen-stage>
 </jl-full-screen>
 

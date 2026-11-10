@@ -275,7 +275,7 @@
 <jl-explore {view}>
 	<!-- Jobs, organizations or lists; the search, and how the jobs are shown, at the same place in every view. -->
 	<jl-explore-bar>
-		<ExploreSwitch />
+		<ExploreSwitch bar />
 		<ExploreSearch bind:filters {places}>
 			{#snippet tools()}<ViewSwitch bind:view {mapless} /><PageMenu />{/snippet}
 		</ExploreSearch>
