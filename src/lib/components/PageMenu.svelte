@@ -8,8 +8,8 @@
 	/**
 	 * What can be done on this page: share it (the installed app has no address bar), and
 	 * make what fits here (src/lib/data/page-actions.json, by route; nothing else: making a
-	 * list from one's saved jobs makes no sense). Not on one's own pages (config.layout.personal),
-	 * which no one else would open. A native popover: it closes by itself on Escape or a tap outside.
+	 * list from one's saved jobs makes no sense). Only on pages someone would send to someone
+	 * else (config.layout.shareable): not on the home, a form, or one's own pages. A native popover: it closes by itself on Escape or a tap outside.
 	 */
 	const id = $props.id();
 	/** @type {HTMLElement | undefined} */
@@ -41,7 +41,7 @@
 	}
 </script>
 
-{#if !config.layout.personal.includes(page.route.id || '')}
+{#if config.layout.shareable.includes(page.route.id || '')}
 <jl-page-menu>
 	<button type="button" popovertarget="{id}-menu" title={t('menu.label')}><Icon name="more" label={t('menu.label')} /></button>
 	<menu id="{id}-menu" popover bind:this={menu}>

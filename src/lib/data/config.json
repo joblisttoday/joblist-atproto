@@ -36,7 +36,7 @@
 		"bare": ["/jobs", "/companies", "/lists"],
 		"explore": ["/jobs", "/companies", "/lists"],
 		"ownMenu": ["/jobs", "/companies", "/lists", "/[handle]/[rkey]"],
-		"personal": ["/me", "/me/searches", "/me/lists", "/me/lists/[id]", "/signin", "/menu", "/menu/language", "/menu/profiles", "/menu/collections", "/menu/outbox"]
+		"shareable": ["/jobs", "/companies", "/lists", "/company/[key]", "/in", "/in/[city]", "/in/[city]/[field]", "/field", "/field/[field]", "/[handle]/(profile)", "/[handle]/(profile)/companies", "/[handle]/(profile)/jobs", "/job/[did]/[rkey]", "/stats"]
 	},
 	"map": {
 		"style": "https://tiles.openfreemap.org/styles/positron",
