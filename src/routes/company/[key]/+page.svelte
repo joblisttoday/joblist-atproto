@@ -24,7 +24,7 @@
 	const company = $derived(data.companies.get(key));
 	// The same company added twice: its page is the kept one's.
 	$effect(() => {
-		if (company && company.key !== key) goto(`/company/${company.key}`, { replaceState: true });
+		if (company && company.key !== key) goto(`/company/${company.key}`, { replace: true });
 	});
 	const lists = $derived(listsWith(key));
 	const manager = $derived(Boolean(company) && session.handle === company?.key);

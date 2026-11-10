@@ -17,7 +17,7 @@
 	<p>{text}</p>
 	<p>{t('notFound.search')}</p>
 	<!-- The jobs explorer reads its search from the address (q). -->
-	<form role="search" action="/" method="get">
+	<form role="search" action="/jobs" method="get">
 		<input type="search" name="q" placeholder={t('explore.what')} aria-label={t('jobs.filter.what')} enterkeyhint="search" />
 		<button type="submit"><Icon name="search" /> {t('quick.label')}</button>
 	</form>

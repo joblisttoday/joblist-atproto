@@ -25,7 +25,7 @@
 	const found = $derived(quickResults(text, sources, config.quickSearch.shown));
 	const typed = $derived(text.trim().length >= 2);
 	/** @param {Partial<import('#lib/models/job.js').JobFilters>} filters */
-	const jobsPath = (filters) => addressOf(searchState({ query: '', where: '', remote: '', ...filters }), '/');
+	const jobsPath = (filters) => addressOf(searchState({ query: '', where: '', remote: '', ...filters }), '/jobs');
 
 	afterNavigate(() => {
 		text = '';

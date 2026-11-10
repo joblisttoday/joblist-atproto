@@ -28,7 +28,7 @@
 	let confirmer = $state();
 
 	$effect(() => {
-		if (!collection && localLists.records.some((r) => r.rkey === id)) goto(`/${LOCAL}/${id}`, { replaceState: true });
+		if (!collection && localLists.records.some((r) => r.rkey === id)) goto(`/${LOCAL}/${id}`, { replace: true });
 	});
 
 	/** @param {string} value */
@@ -39,7 +39,7 @@
 
 	async function remove() {
 		deleteCollection(id);
-		await goto('/me/lists', { replaceState: true });
+		await goto('/me/lists', { replace: true });
 	}
 </script>
 

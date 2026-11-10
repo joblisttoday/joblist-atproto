@@ -1,5 +1,5 @@
 [
-	{ "href": "/", "icon": "jobs", "label": "nav.jobs" },
+	{ "href": "/jobs", "icon": "jobs", "label": "nav.jobs" },
 	{ "href": "/me", "icon": "saved", "label": "nav.me", "badge": "saved" },
 	{ "href": "/companies", "icon": "companies", "label": "nav.companies" },
 	{ "href": "/lists", "icon": "lists", "label": "nav.lists" },

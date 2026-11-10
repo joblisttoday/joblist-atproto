@@ -18,7 +18,7 @@
 	{#if searches.list.length}
 		<SavedSearches jobs={savedJobs.jobs} names={savedJobs.names} />
 	{:else}
-		<Empty text={t('saved.empty')}><a href="/"><Icon name="search" /> {t('saved.explore')}</a></Empty>
+		<Empty text={t('saved.empty')}><a href="/jobs"><Icon name="search" /> {t('saved.explore')}</a></Empty>
 	{/if}
 </jl-me-searches>
 

@@ -15,7 +15,7 @@
 	// The app name is always there; deeper pages also get a way back
 	// (and the pages only wide screens have a tab for, such as posting a job: a form, left with Back).
 	const topLevel = $derived(
-		[...navLinks().filter((l) => !l.wide).map((l) => l.href), '/signin'].includes(page.url.pathname)
+		['/', ...navLinks().filter((l) => !l.wide).map((l) => l.href), '/signin'].includes(page.url.pathname)
 	);
 
 	// Phones: these pages take the whole screen, their own bar at the top (config.layout.bare).

@@ -7,7 +7,8 @@ import { qualityTests } from './quality.js';
 const touch = 44;
 
 qualityTests([
-	{ name: 'jobs', path: '/', touch },
+	{ name: 'home', path: '/', touch },
+	{ name: 'jobs', path: '/jobs', touch },
 	{ name: 'organizations', path: '/companies', touch },
 	{ name: 'lists', path: '/lists', touch },
 	{ name: 'list', path: '/joblist.today/3my7zpwloir2s', touch },
@@ -25,7 +26,7 @@ qualityTests([
 		name: 'job dialog',
 		touch,
 		open: async (page) => {
-			await page.goto('/#view=list');
+			await page.goto('/jobs#view=list');
 			await page.locator('jl-job button').first().click();
 			await page.locator('dialog[open]').waitFor();
 		}

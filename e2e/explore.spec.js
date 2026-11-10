@@ -11,7 +11,7 @@ for (const [device, use] of /** @type {const} */ ([
 	test.describe(`explorer map (${device})`, () => {
 		test.use(use);
 		test('can be moved and zoomed', async ({ page }) => {
-			await page.goto('/#view=map');
+			await page.goto('/jobs#view=map');
 			const map = page.locator('jl-explore-map');
 			await map.locator('canvas').waitFor();
 			expect(await map.evaluate((el) => /** @type {HTMLElement} */ (el).inert)).toBe(false);

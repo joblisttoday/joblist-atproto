@@ -27,7 +27,7 @@
 	/** In the explorer, with its place near someone (not in the address). @param {import('#lib/models/saved-search.js').SavedSearch} search */
 	function open(search) {
 		searches.opening = search;
-		goto(addressOf(searchState(search), '/'));
+		goto(addressOf(searchState(search), '/jobs'));
 	}
 </script>
 
@@ -38,7 +38,7 @@
 			{@const all = jobs.length ? offerCount(filterJobs(jobs, search, names)) : null}
 			<li>
 				<a
-					href={addressOf(searchState(search), '/')}
+					href={addressOf(searchState(search), '/jobs')}
 					onclick={(e) => {
 						e.preventDefault();
 						open(search);

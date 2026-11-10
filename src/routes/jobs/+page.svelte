@@ -6,5 +6,7 @@
 
 <svelte:head><title>{t('jobs.title')} · {config.name}</title></svelte:head>
 
-<!-- Kept for older links to saved searches (/jobs?q=…): the same explorer as the home page. -->
+<jl-visually-hidden><h1>{t('jobs.title')}</h1></jl-visually-hidden>
+
+<!-- Every job: search, filters, view and the job open after the "#" (/jobs#q=design&where=Berlin). -->
 <Explore path="/jobs" />

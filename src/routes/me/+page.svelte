@@ -42,7 +42,7 @@
 			<SavedSearches jobs={savedJobs.jobs} names={savedJobs.names} {max} />
 			{#if searches.list.length > max}<p><a href="/me/searches">{t('me.all', { count: formatNumber(searches.list.length) })} <Icon name="next" /></a></p>{/if}
 		{:else}
-			<Empty text={t('saved.empty')}><a href="/"><Icon name="search" /> {t('saved.explore')}</a></Empty>
+			<Empty text={t('saved.empty')}><a href="/jobs"><Icon name="search" /> {t('saved.explore')}</a></Empty>
 		{/if}
 	</section>
 

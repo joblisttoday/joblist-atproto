@@ -73,12 +73,21 @@ export function sitePages({ companies, lists, profiles, jobCounts, jobTotal, upd
 				title: `${config.name} · ${t('jobs.count', { count: jobTotal })}`,
 				description: welcome,
 				url: url('/'),
-				body: `<h1>${escape(config.name)}</h1><p>${escape(welcome)}</p><p><a href="/companies">${escape(en['companies.title'])}</a> · <a href="/lists">${escape(en['nav.lists'])}</a> · <a href="/in">${escape(t('landing.cities'))}</a> · <a href="/field">${escape(t('landing.fields'))}</a></p>${linkList(t('landing.cities'), places.cities)}${linkList(t('landing.fields'), places.fields)}`,
+				body: `<h1>${escape(config.name)}</h1><p>${escape(welcome)}</p><p><a href="/jobs">${escape(en['saved.explore'])}</a> · <a href="/companies">${escape(en['companies.title'])}</a> · <a href="/lists">${escape(en['nav.lists'])}</a> · <a href="/in">${escape(t('landing.cities'))}</a> · <a href="/field">${escape(t('landing.fields'))}</a></p>${linkList(t('landing.cities'), places.cities)}${linkList(t('landing.fields'), places.fields)}`
+			}
+		},
+		{
+			path: '/jobs',
+			listed: true,
+			updated,
+			meta: {
+				title: `${t('jobs.count', { count: jobTotal })} · ${config.name}`,
+				description: welcome,
+				url: url('/jobs'),
+				body: `<h1>${escape(t('jobs.count', { count: jobTotal }))}</h1><p>${escape(welcome)}</p>`,
 				preload: config.snapshot.preload.explore
 			}
 		},
-		// The explorer at another address: the home is the page to show in results.
-		{ path: '/jobs', listed: false, meta: { title: config.name, description: welcome, url: url('/'), body: '', preload: config.snapshot.preload.explore } },
 		{
 			path: '/companies',
 			listed: true,

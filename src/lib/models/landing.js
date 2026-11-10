@@ -133,7 +133,7 @@ export function explorerPath({ cityName, field }) {
 	if (query) params.set('q', query);
 	if (cityName) params.set('where', cityName);
 	const text = params.toString();
-	return text ? `/#${text}` : '/';
+	return text ? `/jobs#${text}` : '/jobs';
 }
 
 /**

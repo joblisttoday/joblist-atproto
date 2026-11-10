@@ -58,8 +58,8 @@ describe('landing pages', () => {
 		expect(pageNumber(null)).toBe(1);
 		expect(pageNumber('3')).toBe(3);
 		for (const v of ['1', '0', 'x', '02', '-2', '2.5', '999']) expect(pageNumber(v)).toBe(null);
-		expect(explorerPath({ cityName: 'São Paulo', field: 'design' })).toBe('/#q=design&where=S%C3%A3o+Paulo');
-		expect(explorerPath({})).toBe('/');
+		expect(explorerPath({ cityName: 'São Paulo', field: 'design' })).toBe('/jobs#q=design&where=S%C3%A3o+Paulo');
+		expect(explorerPath({})).toBe('/jobs');
 	});
 
 	it('finds the feed of a search in a city', () => {

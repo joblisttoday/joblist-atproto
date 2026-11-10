@@ -7,7 +7,7 @@ import { expect, test } from '@playwright/test';
 test.use({ serviceWorkers: 'allow' });
 
 test('opens, shows its jobs and an organization offline, on what it read last', async ({ page, context }) => {
-	await page.goto('/#view=list');
+	await page.goto('/jobs#view=list');
 	await page.evaluate(() => navigator.serviceWorker.ready);
 	// Controlled by the service worker from now on: what is read is kept.
 	await page.reload();
@@ -16,7 +16,7 @@ test('opens, shows its jobs and an organization offline, on what it read last', 
 	await expect(page.locator('h1')).toContainText('Ableton');
 
 	await context.setOffline(true);
-	await page.goto('/#view=list');
+	await page.goto('/jobs#view=list');
 	await expect(page.locator('jl-job').first()).toBeVisible({ timeout: 30_000 });
 	await expect(page.locator('jl-outbox-status[state="offline"]')).toBeVisible();
 	await page.goto('/company/ableton.com');

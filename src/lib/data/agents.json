@@ -3,7 +3,8 @@
 	"intro": "{name} ({url}) lists open jobs at organizations that hire, read straight from each one's own job board (Ashby, Greenhouse, Lever, Personio, Recruitee, Rippling, SmartRecruiters, Workable), and lists of organizations curated by people on atproto (the Bluesky protocol): every record lives in its author's own account. Open source (GPL-3.0), no ads, no tracking, no accounts of its own.",
 	"lead": "All the data is public and free to read. Prefer the snapshot files below over crawling the pages: they hold everything the pages show, in a few requests. Jobs from job boards link to the organization's own posting: apply there. Jobs posted on joblist have their own page.",
 	"pages": [
-		{ "title": "Home and job search", "path": "/", "about": "every open job, searchable by job, city and on a map (`/#q=design&where=Berlin`)" },
+		{ "title": "Home", "path": "/", "about": "what joblist is, a job search and the ways in" },
+		{ "title": "Job search", "path": "/jobs", "about": "every open job, searchable by job, city and on a map (`/jobs#q=design&where=Berlin`)" },
 		{ "title": "Jobs by city", "path": "/in", "about": "one page per city with enough jobs, e.g. `/in/berlin`, `/in/berlin/design`, older jobs at `?page=2`" },
 		{ "title": "Jobs by field", "path": "/field", "about": "e.g. `/field/engineering`, `/field/design`" },
 		{ "title": "Organizations", "path": "/companies", "about": "one page per organization at `/company/{domain}`, e.g. `/company/ableton.com`, linking its JSON file" },

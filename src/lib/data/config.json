@@ -33,8 +33,8 @@
 		"sheetPeekBelow": 0.3,
 		"sheetFullAbove": 0.72,
 		"copiedMs": 3000,
-		"bare": ["/", "/companies", "/lists"],
-		"ownMenu": ["/", "/companies", "/lists", "/[handle]/[rkey]"],
+		"bare": ["/jobs", "/companies", "/lists"],
+		"ownMenu": ["/jobs", "/companies", "/lists", "/[handle]/[rkey]"],
 		"personal": ["/me", "/me/searches", "/me/lists", "/me/lists/[id]", "/signin", "/menu", "/menu/language", "/menu/profiles", "/menu/collections", "/menu/outbox"]
 	},
 	"map": {
