@@ -154,10 +154,11 @@
 		color: var(--color-accent-fg);
 		border-color: var(--color-accent);
 	}
-	/* Wide screens: what, where and the chips on one row. */
+	/* Wide screens: what, where and the chips on one row; the fields as wide as what is
+	   typed in them, the chips (more of them near someone, or remote) and the tools get the rest. */
 	@media (min-width: 64rem) {
 		form {
-			grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+			grid-template-columns: minmax(10rem, 18vw) minmax(10rem, 18vw) minmax(0, 1fr);
 		}
 		jl-explore-chips {
 			grid-column: auto;

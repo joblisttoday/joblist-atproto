@@ -1,6 +1,5 @@
 <script>
 	import ExploreSearch from './ExploreSearch.svelte';
-	import FollowFeed from './FollowFeed.svelte';
 	import JobDialog from './JobDialog.svelte';
 	import Jobs from './Jobs.svelte';
 	import JobsMap from './JobsMap.svelte';
@@ -13,7 +12,6 @@
 	import { addressOf, keepAddress, readAddress } from '#lib/navigation/address.js';
 	import { fromParams, searchState } from '#lib/models/saved-search.js';
 	import { session } from '#lib/auth/session.svelte.js';
-	import { isCompanyKey } from '#lib/models/landing.js';
 
 	/**
 	 * A company's jobs, searched like the explorer's (what, where, near, remote, pay),
@@ -97,9 +95,6 @@
 			onselect={select}
 			selected={selected?.url}
 		>
-			{#snippet actions()}
-				{#if isCompanyKey(company.key)}<FollowFeed feed={{ company: company.key }} />{/if}
-			{/snippet}
 		</Jobs>
 	</jl-company-jobs-list>
 	{#if selected}

@@ -1,6 +1,5 @@
 <script>
 	import CompanyMap from './CompanyMap.svelte';
-	import FollowFeed from './FollowFeed.svelte';
 	import PageHeader from './PageHeader.svelte';
 	import PageMenu from './PageMenu.svelte';
 	import DataState from './DataState.svelte';
@@ -54,7 +53,7 @@
 <jl-landing-index view={shown.view}>
 	<nav><a href="/in">{t('landing.cities')}</a> · <a href="/field">{t('landing.fields')}</a></nav>
 	<PageHeader {title} {intro}>
-		{#snippet actions()}<ViewSwitch bind:view={shown.view} {page} {views} {mapless} /><FollowFeed feed={{}} /><PageMenu />{/snippet}
+		{#snippet actions()}<ViewSwitch bind:view={shown.view} {page} {views} {mapless} /><PageMenu feed={{}} />{/snippet}
 	</PageHeader>
 	<DataState state={status}>
 		{#if !(by === 'city' ? found?.cities : found?.fields)?.length}

@@ -6,6 +6,7 @@
 	import ListDelete from './ListDelete.svelte';
 	import { goto } from '$app/navigation';
 	import { LOCAL, SHARED, sharedPath, toRecord } from '#lib/models/list.js';
+	import { feedPath } from '#lib/models/landing.js';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { newLocalKey, putLocalList } from '#lib/network/local-lists.svelte.js';
 	import { handleOf, ownsList } from '#lib/network/network.svelte.js';
@@ -33,6 +34,8 @@
 	/** Published: its page. Else the link that carries it, if it fits in one (else it is published to be shared). */
 	const carried = $derived(list.did === LOCAL || list.did === SHARED);
 	const link = $derived(carried ? sharedPath(list) : window.location.pathname);
+	// Its jobs in a feed reader; a list on this device or from a link has no address to follow.
+	const feed = $derived(carried ? '' : feedPath({ list: { did: list.did, rkey: list.rkey } }));
 
 	async function share() {
 		const url = window.location.origin + link;
@@ -65,6 +68,8 @@
 		embedding = true;
 	}
 </script>
+
+<svelte:head>{#if feed}<link rel="alternate" type="application/atom+xml" title={t('landing.follow')} href={config.url + feed} />{/if}</svelte:head>
 
 <jl-list-actions>
 	<menu aria-label={t('list.actions')}>
@@ -102,6 +107,7 @@
 			<button type="button" popovertarget="{id}-more" title={t('list.more')}><Icon name="more" label={t('list.more')} /></button>
 			<menu popover id="{id}-more" aria-label={t('list.more')}>
 				{#if list.did !== SHARED}<li><a href="/lists/new?copy={encodeURIComponent(list.uri)}"><Icon name="copy" /> {t('list.copy')}</a></li>{/if}
+				{#if feed}<li><a href={feed} type="application/atom+xml" data-sveltekit-reload title={t('landing.follow.help')}><Icon name="feed" /> {t('landing.follow')}</a></li>{/if}
 				{#if !carried}<li><button type="button" onclick={embed}><Icon name="embed" /> {t('embed.section')}</button></li>{/if}
 				{#if mine}<li><button type="button" onclick={remove}><Icon name="delete" /> {t('list.delete')}</button></li>{/if}
 			</menu>

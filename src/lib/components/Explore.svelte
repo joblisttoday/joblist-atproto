@@ -11,7 +11,7 @@
 	import JobsMap from './JobsMap.svelte';
 	import SaveSearch from './SaveSearch.svelte';
 	import ViewSwitch from './ViewSwitch.svelte';
-	import PageMenu from './PageMenu.svelte';
+	import SearchMenu from './SearchMenu.svelte';
 	import { readView } from '#lib/navigation/explore-view.js';
 	import { tick, untrack } from 'svelte';
 	import { afterNavigate, pushState, replaceState } from '$app/navigation';
@@ -277,7 +277,7 @@
 	<jl-explore-bar>
 		<ExploreSwitch bar />
 		<ExploreSearch bind:filters {places}>
-			{#snippet tools()}<ViewSwitch bind:view {mapless} /><PageMenu />{/snippet}
+			{#snippet tools()}<ViewSwitch bind:view {mapless} /><SearchMenu {filters} />{/snippet}
 		</ExploreSearch>
 	</jl-explore-bar>
 	<jl-explore-stage>

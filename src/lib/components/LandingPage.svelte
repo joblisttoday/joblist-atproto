@@ -1,6 +1,5 @@
 <script>
 	import Icon from './Icon.svelte';
-	import FollowFeed from './FollowFeed.svelte';
 	import JobItem from './JobItem.svelte';
 	import JobsMap from './JobsMap.svelte';
 	import ViewSwitch from './ViewSwitch.svelte';
@@ -59,7 +58,7 @@
 		<jl-landing-page view={shown.view}>
 			<nav><a href="/in">{t('landing.cities')}</a> · <a href="/field">{t('landing.fields')}</a></nav>
 			<PageHeader title={title(cityName)} intro={t('landing.intro', { count: page.count })}>
-				{#snippet actions()}<ViewSwitch bind:view={shown.view} page="landing" {mapless} /><FollowFeed feed={{ city, field }} /><PageMenu />{/snippet}
+				{#snippet actions()}<ViewSwitch bind:view={shown.view} page="landing" {mapless} /><PageMenu feed={{ city, field }} />{/snippet}
 			</PageHeader>
 			<p><a href={explorerPath({ cityName: city ? cityName : '', field })}><Icon name="map" /> {t('landing.explore')}</a></p>
 			{#if shown.view === 'map' && !mapless}

@@ -8,6 +8,7 @@
 	import PageMenu from './PageMenu.svelte';
 	import { data } from '#lib/network/network.svelte.js';
 	import { boardUrl } from '#lib/models/company.js';
+	import { isCompanyKey } from '#lib/models/landing.js';
 	import { accountOf } from '#lib/network/accounts.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
@@ -58,7 +59,7 @@
 			{#if board}<a href={board} target="_blank" rel="noopener">{t('company.jobBoard')} <Icon name="external" /></a>{/if}
 			<a href="/add?key={encodeURIComponent(company.key)}">{t('company.edit')}</a>
 			<CompanyDelete {company} />
-			<PageMenu />
+			<PageMenu feed={isCompanyKey(company.key) ? { company: company.key } : null} />
 		</menu>
 	</header>
 </jl-company-header>

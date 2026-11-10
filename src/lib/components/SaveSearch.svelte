@@ -1,6 +1,5 @@
 <script>
 	import Icon from './Icon.svelte';
-	import SearchFeed from './SearchFeed.svelte';
 	import { isEmpty } from '#lib/models/saved-search.js';
 	import { forgetSearch, isSaved, saveSearch } from '#lib/network/saved-searches.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
@@ -24,7 +23,6 @@
 		>
 			<Icon name={saved ? 'savedOn' : 'save'} /> {saved ? t('searches.saved') : t('searches.save')}
 		</button>
-		<SearchFeed {filters} />
 	</jl-save-search>
 {/if}
 

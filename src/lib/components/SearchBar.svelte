@@ -74,7 +74,7 @@
 	}
 	@media (min-width: 64rem) {
 		form {
-			grid-template-columns: minmax(0, 1fr) auto;
+			grid-template-columns: minmax(12rem, 28rem) minmax(0, 1fr);
 		}
 	}
 </style>
