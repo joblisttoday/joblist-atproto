@@ -1,7 +1,7 @@
 import * as model from '#lib/models/job-collection.js';
 import { cleanCollections, fromMarks, readCollectionsFile } from '#lib/models/job-collection-check.js';
 import { markKey } from '#lib/models/job-mark.js';
-import { scoped } from '#lib/profiles/profiles.js';
+import { localKey } from '#lib/local/space.js';
 import { localLists, putLocalList } from './local-lists.svelte.js';
 
 /**
@@ -14,9 +14,9 @@ import { localLists, putLocalList } from './local-lists.svelte.js';
  */
 
 /** The current profile's (profiles.js). */
-const KEY = scoped('joblist.collections.v1');
+const KEY = localKey('joblist.collections.v1');
 // Before collections: the applied and hidden marks, read once to start from them (and left in place).
-const MARKS_KEY = scoped('joblist.marks.v1');
+const MARKS_KEY = localKey('joblist.marks.v1');
 
 /** @returns {Collections} */
 function read() {

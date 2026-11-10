@@ -1,10 +1,10 @@
 import { goto } from '$app/navigation';
 import { getProfiles } from '#lib/atproto/identity.js';
 import { nextPath } from '#lib/navigation/next.js';
-import { carryDrafts, forgetAll } from '#lib/network/drafts.js';
+import { forgetAll } from '#lib/network/drafts.js';
 import { notReached } from '#lib/models/outbox.js';
 import { signingIn } from '#lib/navigation/address.js';
-import { attachAccount, currentProfile, detachAccount, profiles, profilesKept, removeProfile } from '#lib/profiles/profiles.js';
+import { accounts, accountsKept, addAccount, currentAccount, removeAccount, useAccount } from './accounts.js';
 
 // The OAuth and API libraries are large: load them after the first paint.
 const auth = () => import('./client.js');
@@ -30,48 +30,41 @@ export const session = $state({
 
 /**
  * Whether there is a session to restore: the sign-in code (large) loads only then, on the
- * way back from signing in, or when the current profile has an account (profiles.js).
+ * way back from signing in, or when an account is in use (accounts.js).
  */
 async function mayHaveSession() {
 	if (signingIn()) return true;
-	if (currentProfile().did) return true;
-	if (profilesKept()) return false;
+	if (currentAccount()) return true;
+	if (accountsKept()) return false;
 	// Neither kept yet (signed in before either was): ask the sign-in store, once.
 	const databases = (await indexedDB.databases?.().catch(() => null)) ?? null;
 	return !databases || databases.some((db) => db.name === '@atproto-oauth-client');
 }
 
-/** Finish a sign-in, or restore the current profile's account. Call once. */
+/** Finish a sign-in, or restore the account in use. Call once. */
 export async function initSession() {
 	try {
 		if (!(await mayHaveSession())) return;
 		client = await (await auth()).loadClient(clear);
 		if (signingIn()) {
-			const from = currentProfile().id;
 			const result = await client.init().catch((err) => {
 				// Signing in failed: back where it started, saying why, rather than on the home page.
 				session.error = err instanceof Error ? err.message : String(err);
 				return null;
 			});
 			const back = takeBack();
-			if (result && 'state' in result) {
-				// An account already in another profile opens that profile, with what was being written.
-				if (attachAccount(result.session.sub)) {
-					carryDrafts(from, currentProfile().id);
-					return location.replace(result.state || back || '/');
-				}
-				await use(result.session);
-			}
+			// Another account signed in: added, and the one in use (the others stay signed in).
+			if (result && 'state' in result) await use(result.session);
 			if (result?.state || back) await goto(result?.state || back || '/', { replace: true });
 			return;
 		}
-		// Each profile its own account, restored by name (signed in before profiles: the last one).
-		const did = currentProfile().did || (profilesKept() ? null : (await client.init().catch(() => null))?.session.sub);
+		// The account in use, restored by name (signed in before accounts were kept: the last one).
+		const did = currentAccount() || (accountsKept() ? null : (await client.init().catch(() => null))?.session.sub);
 		if (!did) return;
 		await restore(did);
 	} catch (err) {
 		// Offline before the sign-in code could even start: the account stays, without its server for now.
-		const did = currentProfile().did;
+		const did = currentAccount();
 		if (did && notReached(err)) keepOffline(did);
 		else session.error = err instanceof Error ? err.message : String(err);
 	} finally {
@@ -81,14 +74,14 @@ export async function initSession() {
 
 /**
  * The account's session, restored. Offline it stays signed in, without its server for now
- * (reconnect() later); only a session its server ended leaves the profile.
+ * (reconnect() later); only a session its server ended leaves the list.
  * @param {string} did
  */
 async function restore(did) {
 	try {
 		await use(await /** @type {NonNullable<typeof client>} */ (client).restore(did));
 	} catch (err) {
-		if (!notReached(err)) return detachAccount(did);
+		if (!notReached(err)) return removeAccount(did);
 		keepOffline(did);
 	}
 }
@@ -96,7 +89,7 @@ async function restore(did) {
 /** @param {string} did */
 function keepOffline(did) {
 	session.did = did;
-	session.handle = currentProfile().name?.replace(/^@/, '') || did;
+	session.handle = accounts().list.find((a) => a.did === did)?.handle || did;
 	session.offline = true;
 }
 
@@ -125,34 +118,32 @@ export async function signIn(handle) {
 	await client.signIn(handle.trim().replace(/^@/, ''), { scope: SCOPE, state: back });
 }
 
-/** Sign out of this profile's account: what was being written goes too, for whoever uses it next. */
+/**
+ * Sign out of the account in use: the next one signed in here, if any, is used (the page
+ * reloads). What was being written goes, for whoever uses this browser next.
+ */
 export async function signOut() {
 	forgetAll();
-	if (client && session.did) {
+	const did = session.did;
+	if (client && did) {
 		try {
-			await client.revoke(session.did);
+			await client.revoke(did);
 		} catch {
 			// the local session is cleared either way
 		}
 	}
 	clear();
+	if (currentAccount()) location.reload();
 }
 
 /**
- * A profile gone from this browser, with what it kept, and signed out of its account.
- * @param {string} id
+ * Publish as another account signed in here: the page reloads with it.
+ * @param {string} did
  */
-export async function forgetProfile(id) {
-	const did = profiles().list.find((p) => p.id === id)?.did;
-	if (did) {
-		try {
-			client ??= await (await auth()).loadClient(clear);
-			await client.revoke(did);
-		} catch {
-			// gone from this browser either way
-		}
-	}
-	removeProfile(id);
+export function switchAccount(did) {
+	if (did === session.did) return;
+	useAccount(did);
+	location.reload();
 }
 
 /** Where signing in started, in this tab: back there even when it fails. */
@@ -185,15 +176,15 @@ async function use(oauthSession) {
 	const found = await getProfiles([oauthSession.sub]);
 	session.handle = found.get(oauthSession.sub)?.handle || oauthSession.sub;
 	session.avatar = found.get(oauthSession.sub)?.avatar || null;
-	attachAccount(oauthSession.sub, session.handle);
+	addAccount(oauthSession.sub, session.handle);
 }
 
 /** @param {string} [ended] the account whose session ended (the client says which) */
 function clear(ended) {
 	// A session that ended (signed out, expired, revoked): what was written in it is not left for the next person.
 	const did = typeof ended === 'string' ? ended : session.did;
-	if (did) detachAccount(did);
-	// Another profile's account: this one's session stays.
+	if (did) removeAccount(did);
+	// Another account's session ended: the one in use stays.
 	if (did && session.did && did !== session.did) return;
 	if (session.did) forgetAll();
 	session.did = null;

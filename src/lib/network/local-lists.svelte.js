@@ -1,10 +1,10 @@
 import config from '#lib/data/config.json';
-import { scoped } from '#lib/profiles/profiles.js';
+import { localKey } from '#lib/local/space.js';
 import { LOCAL } from '#lib/models/list.js';
 
 /**
  * Lists kept on this device only (local first): private, never published, kept per
- * profile (profiles.js), as records of the same shape as published ones, by the
+ * browser (local/space.js), as records of the same shape as published ones, by the
  * author "local", so the app shows and edits them like any other: their page is
  * /local/<key>. One can be published later, then it leaves this device.
  * @typedef {import('#lib/atproto/records.js').RepoRecord} RepoRecord
@@ -12,7 +12,7 @@ import { LOCAL } from '#lib/models/list.js';
 
 export { LOCAL };
 /** The current profile's. */
-const KEY = scoped('joblist.lists.v1');
+const KEY = localKey('joblist.lists.v1');
 
 /** @returns {RepoRecord[]} */
 function read() {

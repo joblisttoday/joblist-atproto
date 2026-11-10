@@ -1,6 +1,6 @@
 import config from '#lib/data/config.json';
 import { overEmpty, returningToSave } from '#lib/models/form-draft.js';
-import { scoped } from '#lib/profiles/profiles.js';
+import { localKey } from '#lib/local/space.js';
 
 /**
  * What is being written in a form, kept in this browser until it is saved: a reload,
@@ -14,9 +14,9 @@ const KEYS = {
 };
 /** The current profile's (profiles.js). */
 const DRAFTS = {
-	job: scoped(KEYS.job),
-	company: scoped(KEYS.company),
-	list: scoped(KEYS.list)
+	job: localKey(KEYS.job),
+	company: localKey(KEYS.company),
+	list: localKey(KEYS.list)
 };
 /** Left a form to sign in and save it (this tab only). */
 const RETURN = 'joblist.saveAfterSignIn.v1';
@@ -55,22 +55,6 @@ export function forget(name) {
 		localStorage.removeItem(DRAFTS[name]);
 	} catch {
 		// nothing kept
-	}
-}
-
-/**
- * Signing in opened another profile (the account is its): what was being written goes with it.
- * @param {string} from profile id
- * @param {string} to profile id
- */
-export function carryDrafts(from, to) {
-	try {
-		for (const key of Object.values(KEYS)) {
-			const draft = localStorage.getItem(scoped(key, from));
-			if (draft) localStorage.setItem(scoped(key, to), draft);
-		}
-	} catch {
-		// storage blocked: nothing was kept
 	}
 }
 

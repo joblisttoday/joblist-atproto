@@ -3,7 +3,8 @@
 	import config from '#lib/data/config.json';
 	import Icon from '#lib/components/Icon.svelte';
 	import MenuLinks from '#lib/components/MenuLinks.svelte';
-	import { session, signOut } from '#lib/auth/session.svelte.js';
+	import { session, signOut, switchAccount } from '#lib/auth/session.svelte.js';
+	import { accounts } from '#lib/auth/accounts.js';
 	import { outbox } from '#lib/network/outbox.svelte.js';
 	import { i18n, t } from '#lib/i18n/index.svelte.js';
 
@@ -25,6 +26,13 @@
 		...(waiting ? [{ href: '/menu/outbox', icon: /** @type {const} */ ('suggestions'), label: t('outbox.title'), value: String(waiting) }] : []),
 		{ onclick: out, icon: 'signout', label: t('me.signout') }
 	]);
+	// The other Bluesky accounts signed in here: publish as one of them in a tap (as yourself, as your organization).
+	const others = $derived([
+		...accounts()
+			.list.filter((a) => a.did !== session.did)
+			.map((a) => ({ onclick: () => switchAccount(a.did), icon: /** @type {const} */ ('me'), label: t('accounts.use', { handle: a.handle || a.did }) })),
+		{ href: '/signin?add', icon: /** @type {const} */ ('signin'), label: t('accounts.add') }
+	]);
 	const explore = $derived([
 		{ href: '/in', icon: /** @type {const} */ ('place'), label: t('landing.cities') },
 		{ href: '/field', icon: /** @type {const} */ ('jobs'), label: t('landing.fields') },
@@ -32,7 +40,6 @@
 	]);
 	const browser = $derived([
 		{ href: '/menu/language', icon: /** @type {const} */ ('language'), label: t('about.language'), value: t(`locale.${i18n.locale}`) },
-		{ href: '/menu/profiles', icon: /** @type {const} */ ('me'), label: t('profiles.label') },
 		{ href: '/menu/collections', icon: /** @type {const} */ ('saved'), label: t('collections.transfer') }
 	]);
 	const about = $derived([
@@ -47,6 +54,7 @@
 	<h1>{t('nav.menu')}</h1>
 	{#if session.handle}
 		<MenuLinks label={t('settings.account')} items={you} />
+		<MenuLinks label={t('accounts.others')} items={others} />
 	{:else}
 		<section aria-labelledby="menu-signin">
 			<h2 id="menu-signin">{t('settings.account')}</h2>
