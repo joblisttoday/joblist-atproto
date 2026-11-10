@@ -38,6 +38,7 @@
 			<a href="/lists/new" data-add><Icon name="add" /> {t('list.new.organizations')}</a>
 		</menu>
 	{/if}
+	<p><small><a href="/menu/collections">{t('collections.transfer')}</a></small></p>
 </jl-me-lists>
 
 <style>

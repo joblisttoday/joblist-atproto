@@ -7,10 +7,11 @@ them today and what is missing. New features start from one of them.
 
 ### Near home
 Wants a job they can reach by bike or on foot.
-- **Today:** the explorer opens on the map; "Near me" with bike or walking
-  minutes, a map area, saved searches, applied and hidden jobs, private
-  named lists of jobs ("Dream jobs") with a file to move them, and
-  private lists of organizations, all on Saved.
+- **Today:** a search on the home leads to the explorer (/jobs), with the
+  map; "Near me" with bike or walking minutes, a map area. On Me: saved
+  searches, applied and hidden jobs, private named lists of jobs ("Dream
+  jobs") and private lists of organizations, each at its own address
+  (/me/searches, /me/lists/…), with a file to move them all.
 - **Missing:** being told when a new job appears near them without opening
   the site; real bike routes (today: straight-line distance).
 
@@ -23,8 +24,8 @@ Wants remote work they are allowed to take from their country.
 ### Watching, not searching
 Has a job, looks now and then: wants the new jobs of their saved searches,
 and nothing else.
-- **Today:** the Saved tab counts the new jobs of their searches; /saved
-  shows them per search. Any search can be followed in a feed reader
+- **Today:** the Me tab counts the new jobs of their searches, and so does
+  the home; /me/searches shows them per search. Any search can be followed in a feed reader
   (`/feed/search.xml?q=…`), made from its address only: nothing is stored.
 - **Missing:** browser notifications (they would need the searches stored
   on a server: not unless asked for).
@@ -42,8 +43,8 @@ field.
 
 ### Curator
 Makes lists of companies (a city, a field, their network), adds companies.
-- **Today:** lists, private on this device until published (and sent as a
-  link meanwhile), Add with a pasted link, versions anyone can edit.
+- **Today:** lists, private until made public (and sent as a link
+  meanwhile), Add with a pasted link, versions anyone can edit.
 - **Missing:** knowing which of their list's companies have new jobs, or a
   closed board to fix.
 

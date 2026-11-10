@@ -44,7 +44,7 @@ Four record types, defined in [`lexicons/`](lexicons/today/joblist):
   version: a brand-new account cannot silently replace a long-standing page.
 - **`today.joblist.list`**: a named list of companies (by domain), in the
   curator's order. Lists can be copied; the copy keeps a `copiedFrom` link.
-  A list can also stay private, on this device (in the current profile), and
+  A list can also stay private, in this browser (in the current profile), and
   be shared as a link that carries it after the `#`
   (`/lists/shared#name=…&orgs=a.org+b.org`, up to `lists.shareMax`
   organizations): nothing is published or stored, and whoever opens it can

@@ -1,5 +1,6 @@
 import config from '#lib/data/config.json' with { type: 'json' };
 import { BUILTIN, FORMAT, emptyCollections, isBuiltin } from './job-collection.js';
+import { readPrivateLists } from './private-list-check.js';
 
 /**
  * Collections read from outside: this browser's storage, or a file someone imports.
@@ -103,9 +104,10 @@ export function fromMarks(marks) {
 }
 
 /**
- * Collections from an exported file, refused whole when anything in it is not right.
+ * The private lists of an exported file (lists of jobs, and since version 2 private lists
+ * of organizations), refused whole when anything in it is not right.
  * @param {string} text
- * @returns {Collections}
+ * @returns {{collections: Collections, lists: import('./private-list-check.js').PrivateList[]}}
  * @throws {Error} its message: 'json', 'format' or 'invalid'
  */
 export function readCollectionsFile(text) {
@@ -117,8 +119,10 @@ export function readCollectionsFile(text) {
 	} catch {
 		throw new Error('json');
 	}
-	if (!isObject(value) || value.format !== FORMAT || value.version !== 1 || !Array.isArray(value.collections)) throw new Error('format');
+	if (!isObject(value) || value.format !== FORMAT || ![1, 2].includes(/** @type {number} */ (value.version)) || !Array.isArray(value.collections))
+		throw new Error('format');
 	const { value: collections, dropped } = cleanCollections(value);
-	if (dropped) throw new Error('invalid');
-	return collections;
+	const lists = readPrivateLists(value.lists);
+	if (dropped || !lists) throw new Error('invalid');
+	return { collections, lists };
 }

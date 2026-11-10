@@ -80,7 +80,7 @@ describe('job collections', () => {
 	it('exports and imports all collections, merged with those here', () => {
 		const added = addCollection(emptyCollections(), 'Dream jobs', '2026-01-01T00:00:00Z');
 		const saved = toggleJob(added.state, added.id, 'k', job, '2026-01-01T00:00:00Z');
-		const read = readCollectionsFile(exportCollections(saved));
+		const read = readCollectionsFile(exportCollections(saved)).collections;
 		expect(read).toEqual(saved);
 		const here = toggleJob(emptyCollections(), 'applied', 'a', job, '2026-01-03T00:00:00Z');
 		const merged = mergeCollections(here, read);
@@ -94,7 +94,7 @@ describe('job collections', () => {
 		const ok = { title: 'T', company: 'C', url: 'https://a.example', at: '2026-01-01' };
 		expect(() => readCollectionsFile('{')).toThrow('json');
 		expect(() => readCollectionsFile('{"collections": []}')).toThrow('format');
-		expect(readCollectionsFile(file([named({ k: ok })])).collections).toHaveLength(4);
+		expect(readCollectionsFile(file([named({ k: ok })])).collections.collections).toHaveLength(4);
 		expect(() => readCollectionsFile(file([named({ k: { ...ok, url: 'javascript:alert(1)' } })]))).toThrow('invalid');
 		expect(() => readCollectionsFile(file([named({ k: { ...ok, title: 7 } })]))).toThrow('invalid');
 		expect(() => readCollectionsFile(file([named({ k: { ...ok, title: 'x'.repeat(5000) } })]))).toThrow('invalid');
@@ -102,6 +102,18 @@ describe('job collections', () => {
 		expect(() => readCollectionsFile(file([named({}, { id: '../x' })]))).toThrow('invalid');
 		expect(() => readCollectionsFile(file([named({}), named({})]))).toThrow('invalid');
 		expect(() => readCollectionsFile(file([{ id: 'applied', name: 'Mine', at: '', jobs: {} }]))).toThrow('invalid');
+	});
+
+	it('moves the private lists of organizations too, and still reads files from before them', () => {
+		const list = { rkey: 'lberlin1', value: { name: 'Coops in Berlin', companies: ['a.org', 'b.org'], createdAt: '2026-01-01T00:00:00Z' } };
+		expect(readCollectionsFile(exportCollections(emptyCollections(), [list])).lists).toEqual([list]);
+		const file = (/** @type {any} */ lists, version = 2) => JSON.stringify({ format: 'joblist.collections', version, collections: [], lists });
+		expect(readCollectionsFile(file(undefined, 1)).lists).toEqual([]);
+		expect(() => readCollectionsFile(file([{ ...list, rkey: '../x' }]))).toThrow('invalid');
+		expect(() => readCollectionsFile(file([{ ...list, value: { ...list.value, companies: ['not a domain'] } }]))).toThrow('invalid');
+		expect(() => readCollectionsFile(file([{ ...list, value: { ...list.value, name: '' } }]))).toThrow('invalid');
+		expect(() => readCollectionsFile(file([list, list]))).toThrow('invalid');
+		expect(() => readCollectionsFile(file([list], 3))).toThrow('format');
 	});
 
 	it('keeps what is right from storage', () => {

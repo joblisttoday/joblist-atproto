@@ -2,11 +2,13 @@ import * as model from '#lib/models/job-collection.js';
 import { cleanCollections, fromMarks, readCollectionsFile } from '#lib/models/job-collection-check.js';
 import { markKey } from '#lib/models/job-mark.js';
 import { scoped } from '#lib/profiles/profiles.js';
+import { localLists, putLocalList } from './local-lists.svelte.js';
 
 /**
  * The jobs someone keeps (Saved, Applied, Hidden and the collections they name), in this
  * browser only: job hunting is private, so none of it goes to their (public)
- * atproto repository. Moved between devices by exporting and importing a file.
+ * atproto repository. Moved between devices by exporting and importing a file, with the
+ * private lists of organizations (local-lists.svelte.js).
  * @typedef {import('#lib/models/job-collection.js').Collections} Collections
  * @typedef {import('#lib/ats/job.js').Job} Job
  */
@@ -87,16 +89,22 @@ export function deleteCollection(id) {
 	save(model.deleteCollection(kept.state, id));
 }
 
-/** The file of all collections, to download. */
+/** The file of every private list, to download. */
 export function exportFile() {
-	return new Blob([model.exportCollections(kept.state)], { type: 'application/json' });
+	/** @type {any[]} the records' values are lists (local-lists.svelte.js) */
+	const lists = localLists.records.map(({ rkey, value }) => ({ rkey, value }));
+	return new Blob([model.exportCollections(kept.state, lists)], { type: 'application/json' });
 }
 
 /**
- * Add the collections of an exported file to these.
+ * Add the private lists of an exported file to these: lists of jobs merged by id, lists
+ * of organizations not here yet added.
  * @param {string} text
  * @throws {Error} when the file is not right (see readCollectionsFile)
  */
 export function importFile(text) {
-	save(model.mergeCollections(kept.state, readCollectionsFile(text)));
+	const { collections, lists } = readCollectionsFile(text);
+	save(model.mergeCollections(kept.state, collections));
+	const here = new Set(localLists.records.map((r) => r.rkey));
+	for (const list of lists) if (!here.has(list.rkey)) putLocalList(list.rkey, list.value);
 }

@@ -148,7 +148,12 @@ export function mergeCollections(state, other) {
 	return { collections: [...merged, ...other.collections.filter((c) => !known.has(c.id))].slice(0, limits.max) };
 }
 
-/** All collections as the file to download. @param {Collections} state */
-export function exportCollections(state, now = new Date().toISOString()) {
-	return JSON.stringify({ format: FORMAT, version: 1, exportedAt: now, collections: state.collections }, null, '\t');
+/**
+ * Every private list as the file to download: the lists of jobs, and (since version 2)
+ * the private lists of organizations (private-list-check.js).
+ * @param {Collections} state
+ * @param {import('./private-list-check.js').PrivateList[]} [lists]
+ */
+export function exportCollections(state, lists = [], now = new Date().toISOString()) {
+	return JSON.stringify({ format: FORMAT, version: 2, exportedAt: now, collections: state.collections, lists }, null, '\t');
 }
