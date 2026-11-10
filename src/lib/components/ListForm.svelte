@@ -43,9 +43,9 @@
 	}
 
 	const { nameMax, descriptionMax } = config.listForm;
-	// Local first: a new list is kept on this device, private, unless published to the account;
-	// a published list stays published (its page is shared).
-	let local = $state(untrack(() => (list ? list.did === LOCAL : true)));
+	// Private first: a new list is kept in this browser unless made public (published to the account);
+	// a public list stays public (its page is shared). "Make public" opens the form at #public.
+	let local = $state(untrack(() => (list ? list.did === LOCAL : true) && location.hash !== '#public'));
 	const keepOptions = $derived([
 		{ value: 'device', label: t('form.list.keep.device') },
 		{ value: 'account', label: t('form.list.keep.account') }
@@ -135,7 +135,7 @@
 
 <jl-list-form editing={list ? true : undefined}>
 	{#if list}
-		<p><small>{t('form.list.editing', { name: list.name })}</small></p>
+		<p><small>{t(list.did === LOCAL ? 'form.list.editing.local' : 'form.list.editing', { name: list.name })}</small></p>
 	{/if}
 	<form onsubmit={submit} toolname={tool.toolname} tooldescription={tool.tooldescription}>
 		<!-- A name alone needs no word about the required fields. -->

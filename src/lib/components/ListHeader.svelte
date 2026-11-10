@@ -20,7 +20,7 @@
 	<ListActions {list} {pending} bind:suggesting bind:reviewing />
 	<p>
 		<small>
-			{#if list.did === LOCAL}{t('list.local')}{:else if list.did === SHARED}{t('list.shared')}{:else}{t('list.by')} <Author did={list.did} /> · {list.open ? t('list.open') : t('list.closed')}{/if}
+			{#if list.did === LOCAL}{t('list.local')} · <a href="/{LOCAL}/{list.rkey}/edit#public">{t('list.makePublic')}</a>{:else if list.did === SHARED}{t('list.shared')}{:else}{t('list.by')} <Author did={list.did} /> · {list.open ? t('list.open') : t('list.closed')}{/if}
 			{#if source}
 				· {t('list.copiedFrom')} <a href="/{handleOf(source.did)}/{source.rkey}">@{handleOf(source.did)}</a>
 			{/if}

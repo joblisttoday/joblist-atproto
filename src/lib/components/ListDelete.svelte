@@ -29,7 +29,7 @@
 		error = null;
 		try {
 			await deleteList(list);
-			await goto(list.did === LOCAL ? '/lists' : `/${session.handle}`);
+			await goto(list.did === LOCAL ? '/me/lists' : `/${session.handle}`);
 		} catch (err) {
 			error = err instanceof Error ? err.message : String(err);
 		} finally {
