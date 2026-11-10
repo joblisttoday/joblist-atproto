@@ -88,7 +88,7 @@
 		text-decoration: none;
 		white-space: nowrap;
 	}
-	menu :global(li > :is(a, button):hover) {
+	menu :global(li > :is(a, button):is(:hover, :focus-visible)) {
 		background: var(--color-soft);
 	}
 </style>

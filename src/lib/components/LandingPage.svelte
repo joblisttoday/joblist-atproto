@@ -6,6 +6,7 @@
 	import ViewSwitch from './ViewSwitch.svelte';
 	import { pageView } from '#lib/navigation/page-view.svelte.js';
 	import PageHeader from './PageHeader.svelte';
+	import PageMenu from './PageMenu.svelte';
 	import DataState from './DataState.svelte';
 	import Empty from './Empty.svelte';
 	import config from '#lib/data/config.json';
@@ -58,7 +59,7 @@
 		<jl-landing-page view={shown.view}>
 			<nav><a href="/in">{t('landing.cities')}</a> · <a href="/field">{t('landing.fields')}</a></nav>
 			<PageHeader title={title(cityName)} intro={t('landing.intro', { count: page.count })}>
-				{#snippet actions()}<ViewSwitch bind:view={shown.view} page="landing" {mapless} /><FollowFeed feed={{ city, field }} />{/snippet}
+				{#snippet actions()}<ViewSwitch bind:view={shown.view} page="landing" {mapless} /><FollowFeed feed={{ city, field }} /><PageMenu />{/snippet}
 			</PageHeader>
 			<p><a href={explorerPath({ cityName: city ? cityName : '', field })}><Icon name="map" /> {t('landing.explore')}</a></p>
 			{#if shown.view === 'map' && !mapless}

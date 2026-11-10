@@ -1,6 +1,7 @@
 <script>
 	import config from '#lib/data/config.json';
 	import PageHeader from '#lib/components/PageHeader.svelte';
+	import PageMenu from '#lib/components/PageMenu.svelte';
 	import PayTable from '#lib/components/stats/PayTable.svelte';
 	import RankedBars from '#lib/components/stats/RankedBars.svelte';
 	import WeekColumns from '#lib/components/stats/WeekColumns.svelte';
@@ -28,7 +29,7 @@
 	<meta name="description" content={t('stats.intro')} />
 </svelte:head>
 
-<PageHeader title={t('stats.title')} intro={t('stats.intro')} />
+<PageHeader title={t('stats.title')} intro={t('stats.intro')}>{#snippet actions()}<PageMenu />{/snippet}</PageHeader>
 
 {#if stats === undefined}
 	<p role="status">{t('stats.loading')}</p>

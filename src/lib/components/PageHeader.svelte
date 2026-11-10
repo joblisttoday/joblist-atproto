@@ -13,19 +13,26 @@
 </jl-page-header>
 
 <style>
+	/* The actions beside the title, or under it when the title needs the room. */
 	jl-page-header {
-		display: grid;
-		grid-template-columns: 1fr auto;
+		display: flex;
+		flex-wrap: wrap;
 		align-items: center;
-		column-gap: var(--space-m);
+		gap: var(--space-xs) var(--space-m);
 		padding: var(--space-m) 0 var(--space-s);
+	}
+	h1 {
+		flex: 1 1 14rem;
 	}
 	h1,
 	menu {
 		margin: 0;
 	}
+	menu {
+		flex: none;
+	}
 	p {
-		grid-column: 1 / -1;
+		flex-basis: 100%;
 		margin: var(--space-xs) 0 0;
 		color: var(--color-muted);
 		font-size: var(--font-size-small);

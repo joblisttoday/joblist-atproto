@@ -1,106 +1,47 @@
 <script>
+	import CardMenu from './CardMenu.svelte';
 	import Icon from './Icon.svelte';
 	import actions from '#lib/data/page-actions.json';
 	import { page } from '$app/state';
-	import config from '#lib/data/config.json';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * What can be done on this page: share it (the installed app has no address bar), and
-	 * make what fits here (src/lib/data/page-actions.json, by route; nothing else: making a
-	 * list from one's saved jobs makes no sense). Only on pages someone would send to someone
-	 * else (config.layout.shareable): not on the home, a form, or one's own pages. A native popover: it closes by itself on Escape or a tap outside.
+	 * A page's "…", with the page (beside its title, or in its search bar): share it (the
+	 * installed app has no address bar), and make what fits here (src/lib/data/page-actions.json,
+	 * by route). Only pages someone would send to someone else have one: they place it themselves.
 	 */
-	const id = $props.id();
-	/** @type {HTMLElement | undefined} */
-	let menu = $state();
-	let copied = $state(false);
-
-	const items = $derived(
+	const links = $derived(
 		(/** @type {Record<string, {href: string, label: string, icon: string}[]>} */ (actions)[page.route.id || ''] ?? []).map((a) => ({
 			...a,
 			href: a.href.replace(/\{(\w+)\}/g, (_, name) => encodeURIComponent((/** @type {Record<string, string | undefined>} */ (page.params))[name] || '')),
 			icon: /** @type {import('#lib/icons.js').IconName} */ (a.icon)
 		}))
 	);
+	let copied = $state(false);
 
-	async function share() {
+	/** @param {() => void} done */
+	async function share(done) {
 		const url = location.href;
 		try {
 			if (navigator.share) await navigator.share({ title: document.title, url });
 			else {
 				await navigator.clipboard.writeText(url);
 				copied = true;
-				setTimeout(() => (copied = false), 2000);
+				setTimeout(() => ((copied = false), done()), 1200);
 				return;
 			}
 		} catch {
 			// cancelled, or not allowed: nothing to say
 		}
-		menu?.hidePopover();
+		done();
 	}
 </script>
 
-{#if config.layout.shareable.includes(page.route.id || '')}
-<jl-page-menu>
-	<button type="button" popovertarget="{id}-menu" title={t('menu.label')}><Icon name="more" label={t('menu.label')} /></button>
-	<menu id="{id}-menu" popover bind:this={menu}>
-		<li><button type="button" onclick={share}><Icon name="share" /> {copied ? t('menu.copied') : t('menu.share')}</button></li>
-		{#each items as item (item.href)}
-			<li><a href={item.href} onclick={() => menu?.hidePopover()}><Icon name={item.icon} /> {t(item.label)}</a></li>
+<CardMenu label={t('menu.label')}>
+	{#snippet items(done)}
+		<li><button type="button" onclick={() => share(done)}><Icon name="share" /> {copied ? t('menu.copied') : t('menu.share')}</button></li>
+		{#each links as item (item.href)}
+			<li><a href={item.href} onclick={done}><Icon name={item.icon} /> {t(item.label)}</a></li>
 		{/each}
-	</menu>
-</jl-page-menu>
-{/if}
-
-<style>
-	jl-page-menu {
-		display: contents;
-	}
-	jl-page-menu > button {
-		min-width: var(--tap-size);
-		min-height: var(--tap-size);
-		border: 0;
-		background: none;
-	}
-	/* Closed, hidden: the site's own menu style would show it. */
-	menu:not(:popover-open) {
-		display: none;
-	}
-	menu {
-		display: block;
-		inset: var(--header-height) var(--gutter) auto auto;
-		margin: 0;
-		padding: var(--space-xs) 0;
-		min-width: var(--menu-width);
-		list-style: none;
-		background: var(--color-bg);
-		color: var(--color-fg);
-		border: var(--border);
-		border-radius: var(--radius);
-		box-shadow: var(--shadow);
-	}
-	menu a,
-	menu button {
-		display: flex;
-		align-items: center;
-		justify-content: flex-start;
-		gap: var(--space-s);
-		width: 100%;
-		min-height: var(--tap-size);
-		padding: 0 var(--space-m);
-		border: 0;
-		border-radius: 0;
-		background: none;
-		color: var(--color-fg);
-		font: inherit;
-		text-align: start;
-		text-decoration: none;
-	}
-	menu a:hover,
-	menu button:hover,
-	menu a:focus-visible,
-	menu button:focus-visible {
-		background: var(--color-soft);
-	}
-</style>
+	{/snippet}
+</CardMenu>

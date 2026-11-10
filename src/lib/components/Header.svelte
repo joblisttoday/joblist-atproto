@@ -7,7 +7,6 @@
 	import config from '#lib/data/config.json';
 	import Nav from './Nav.svelte';
 	import NetworkStatus from './NetworkStatus.svelte';
-	import PageMenu from './PageMenu.svelte';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { history } from '#lib/navigation/history.svelte.js';
 	import { navLinks } from '#lib/navigation/nav.js';
@@ -20,8 +19,6 @@
 
 	// Phones: these pages take the whole screen, their own bar at the top (config.layout.bare).
 	const bare = $derived(config.layout.bare.includes(page.route.id || ''));
-	// Their own search bar, their own menu in it: none here (config.layout.ownMenu).
-	const ownMenu = $derived(config.layout.ownMenu.includes(page.route.id || ''));
 	// Jobs, organizations, lists: each has its own search, so the header has the way between them.
 	const explore = $derived(config.layout.explore.includes(page.route.id || ''));
 
@@ -40,8 +37,6 @@
 		<!-- The home and the explore pages have their own search. -->
 		{#if explore}<ExploreSwitch />{:else if page.url.pathname !== '/'}<QuickSearch />{/if}
 		<Nav />
-		<!-- Pages with their own menu have it next to their views. -->
-		{#if !ownMenu}<PageMenu />{/if}
 	</header>
 	<NetworkStatus />
 </jl-header>

@@ -2,6 +2,7 @@
 	import Icon from './Icon.svelte';
 	import JobApply from './JobApply.svelte';
 	import JobPostMenu from './JobPostMenu.svelte';
+	import PageMenu from './PageMenu.svelte';
 	import { data, handleOf } from '#lib/network/network.svelte.js';
 	import { isLive, notFromCompany, placeNames, postPageUrl } from '#lib/models/job-post.js';
 	import { time } from '#lib/models/job.js';
@@ -48,6 +49,7 @@
 			</small>
 		</p>
 		<JobPostMenu {post} {ondeleted} />
+		<menu><PageMenu /></menu>
 		{#if unofficial}<p role="alert">{t('job.notFromCompany', { company: company?.name || post.company })}</p>{/if}
 	</header>
 

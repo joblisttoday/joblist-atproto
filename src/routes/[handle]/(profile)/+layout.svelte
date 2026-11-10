@@ -7,6 +7,7 @@
 	import { refused } from '#lib/atproto/xrpc.js';
 	import { data } from '#lib/network/network.svelte.js';
 	import ProfileHeader from '#lib/components/ProfileHeader.svelte';
+	import PageMenu from '#lib/components/PageMenu.svelte';
 	import ProfileTabs from '#lib/components/ProfileTabs.svelte';
 	import { resolveDid } from '#lib/atproto/identity.js';
 	import { session } from '#lib/auth/session.svelte.js';
@@ -61,10 +62,11 @@
 {:else}
 	<jl-profile self={self || undefined}>
 		<ProfileHeader did={did || undefined} {handle}>
-			{#if self}
+			<menu>
 				<!-- Signing out, the language, profiles: /menu. -->
-				<menu><a href="/menu"><Icon name="menu" /> {t('nav.menu')}</a></menu>
-			{/if}
+				{#if self}<a href="/menu"><Icon name="menu" /> {t('nav.menu')}</a>{/if}
+				<PageMenu />
+			</menu>
 		</ProfileHeader>
 		{#if did}
 			<ProfileTabs {handle} {did} {self} />
