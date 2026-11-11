@@ -2,7 +2,7 @@
 	import config from '#lib/data/config.json';
 	import Empty from '#lib/components/Empty.svelte';
 	import Icon from '#lib/components/Icon.svelte';
-	import KeepForm from '#lib/components/KeepForm.svelte';
+	import Collect from '#lib/components/Collect.svelte';
 	import KeptOrganizations from '#lib/components/KeptOrganizations.svelte';
 	import { kept } from '#lib/network/kept.svelte.js';
 	import OwnListItem from '#lib/components/OwnListItem.svelte';
@@ -57,7 +57,7 @@
 		{:else}
 			<Empty text={t('kept.empty')} />
 		{/if}
-		<jl-me-keep><KeepForm /></jl-me-keep>
+		<jl-me-keep><Collect /></jl-me-keep>
 	</section>
 
 	<section aria-labelledby="me-lists">

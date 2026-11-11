@@ -536,10 +536,6 @@
 	"kept.title": "Deine Organisationen",
 	"kept.short": "Organisationen",
 	"kept.intro": "Orte, an denen du gern arbeiten würdest: jeder Link, nur in diesem Browser gespeichert. joblist zeigt die offenen Stellen derer, die es kennt.",
-	"kept.link": "Link: Website, Karriereseite, Social-Profil, Gruppe…",
-	"kept.link.example": "acme.coop, instagram.com/acme…",
-	"kept.name": "Name (optional)",
-	"kept.keep": "Merken",
 	"kept.invalid": "Das ist kein Weblink.",
 	"kept.full": "Du merkst dir schon {max} Organisationen: vergiss zuerst eine.",
 	"kept.empty": "Noch nichts gemerkt. Füge den Link eines Ortes ein, an dem du gern arbeiten würdest, oder tippe bei einer Organisation auf Merken.",
@@ -887,5 +883,14 @@
 	"extension.posted.one": "1 Stelle auf Bluesky veröffentlicht",
 	"extension.careersPage": "Karriereseite",
 	"extension.joblistPage": "Auf joblist",
-	"extension.go": "Gehe zu"
+	"extension.go": "Gehe zu",
+	"collect.label": "Eine Organisation: ihre Website, Karriereseite, ein Social-Profil oder ihr Name",
+	"collect.example": "acme.coop, jobs.lever.co/acme, Acme…",
+	"collect.find": "Finden",
+	"collect.noName": "joblist kennt keine mit diesem Namen: füge ihre Website oder Karriereseite ein.",
+	"collect.addon": "Die Website selbst (Name, Links, Karriereseite) liest das joblist-Add-on auf der Seite:",
+	"collect.addonLink": "holen",
+	"collect.open": "Ihre Seite",
+	"home.collect": "Beginne dein Job-Notizbuch",
+	"home.collect.intro": "Sammle die Orte, an denen du gern arbeiten würdest: joblist findet, was es kann, du behältst sie hier, privat, und schlägst sie allen vor, wann du willst."
 }

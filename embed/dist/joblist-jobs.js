@@ -2281,7 +2281,10 @@ var X = {
 		shareMax: 300
 	},
 	me: { glance: 3 },
-	kept: { max: 500 },
+	kept: {
+		max: 500,
+		namesShown: 5
+	},
 	jobCollections: {
 		file: "joblist-collections.json",
 		fileMaxBytes: 5e6,

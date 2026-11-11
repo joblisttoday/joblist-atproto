@@ -1,7 +1,7 @@
 <script>
 	import config from '#lib/data/config.json';
 	import Empty from '#lib/components/Empty.svelte';
-	import KeepForm from '#lib/components/KeepForm.svelte';
+	import Collect from '#lib/components/Collect.svelte';
 	import KeptOrganizations from '#lib/components/KeptOrganizations.svelte';
 	import PageHeader from '#lib/components/PageHeader.svelte';
 	import { keptTags } from '#lib/models/kept.js';
@@ -17,7 +17,7 @@
 
 <jl-me-organizations>
 	<PageHeader title={t('kept.title')} intro={t('kept.intro')} />
-	<KeepForm />
+	<Collect />
 	{#if tags.length}
 		<menu aria-label={t('kept.tags')}>
 			{#each tags as each (each)}
@@ -55,7 +55,7 @@
 		color: var(--color-accent-fg);
 		border-color: var(--color-accent);
 	}
-	jl-me-organizations > :global(jl-keep-form) {
+	jl-me-organizations > :global(jl-collect) {
 		display: block;
 		margin-bottom: var(--space-m);
 	}

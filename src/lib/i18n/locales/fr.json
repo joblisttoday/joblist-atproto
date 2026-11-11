@@ -536,10 +536,6 @@
 	"kept.title": "Vos organisations",
 	"kept.short": "Organisations",
 	"kept.intro": "Les endroits où vous aimeriez travailler : n'importe quel lien, gardé dans ce navigateur seulement. joblist montre les offres de celles qu'il connaît.",
-	"kept.link": "Lien : site, page carrières, profil social, groupe…",
-	"kept.link.example": "acme.coop, instagram.com/acme…",
-	"kept.name": "Nom (facultatif)",
-	"kept.keep": "Garder",
 	"kept.invalid": "Ce n'est pas un lien web.",
 	"kept.full": "Vous gardez déjà {max} organisations : oubliez-en une d'abord.",
 	"kept.empty": "Rien de gardé pour l'instant. Collez le lien d'un endroit où vous aimeriez travailler, ou touchez Garder sur une organisation.",
@@ -887,5 +883,14 @@
 	"extension.posted.one": "1 offre publiée sur Bluesky",
 	"extension.careersPage": "Page carrières",
 	"extension.joblistPage": "Sur joblist",
-	"extension.go": "Aller à"
+	"extension.go": "Aller à",
+	"collect.label": "Une organisation : son site, sa page carrières, un profil social, ou son nom",
+	"collect.example": "acme.coop, jobs.lever.co/acme, Acme…",
+	"collect.find": "Chercher",
+	"collect.noName": "joblist n’en connaît aucune de ce nom : collez son site ou sa page carrières.",
+	"collect.addon": "Son site lui-même (son nom, ses liens, sa page carrières) se lit sur le site, avec le module joblist :",
+	"collect.addonLink": "l’obtenir",
+	"collect.open": "Sa page",
+	"home.collect": "Commencez votre carnet d’emplois",
+	"home.collect.intro": "Rassemblez les endroits où vous aimeriez travailler : joblist trouve ce qu’il peut, vous les gardez ici, en privé, et les proposez à tous quand vous voulez."
 }

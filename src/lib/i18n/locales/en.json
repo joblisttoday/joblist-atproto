@@ -536,10 +536,6 @@
 	"kept.title": "Your organizations",
 	"kept.short": "Organizations",
 	"kept.intro": "Places you would like to work: any link, kept in this browser only. joblist shows the open jobs of those it knows.",
-	"kept.link": "Link: website, job board, social profile, group…",
-	"kept.link.example": "acme.coop, instagram.com/acme…",
-	"kept.name": "Name (optional)",
-	"kept.keep": "Keep",
 	"kept.invalid": "This is not a web link.",
 	"kept.full": "You keep {max} organizations already: forget one first.",
 	"kept.empty": "Nothing kept yet. Paste the link of a place you would like to work, or tap Save on an organization.",
@@ -887,5 +883,14 @@
 	"extension.posted.one": "1 job posted on Bluesky",
 	"extension.careersPage": "Careers page",
 	"extension.joblistPage": "On joblist",
-	"extension.go": "Go to"
+	"extension.go": "Go to",
+	"collect.label": "An organization: its website, job board, social profile, or name",
+	"collect.example": "acme.coop, jobs.lever.co/acme, Acme…",
+	"collect.find": "Find",
+	"collect.noName": "joblist knows none by this name: paste its website or job board.",
+	"collect.addon": "Its website itself (its name, links, careers page) is read on the site, by the joblist add-on:",
+	"collect.addonLink": "get it",
+	"collect.open": "Its page",
+	"home.collect": "Start your book of jobs",
+	"home.collect.intro": "Collect the places you would like to work: joblist finds what it can, you keep them here, private, and suggest them to everyone when you like."
 }

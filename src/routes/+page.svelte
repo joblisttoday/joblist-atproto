@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import config from '#lib/data/config.json';
 	import Icon from '#lib/components/Icon.svelte';
+	import Collect from '#lib/components/Collect.svelte';
 	import MenuLinks from '#lib/components/MenuLinks.svelte';
 	import PageHeader from '#lib/components/PageHeader.svelte';
 	import SavedSearches from '#lib/components/SavedSearches.svelte';
@@ -38,6 +39,13 @@
 
 <jl-home>
 	<PageHeader title={t('home.heading')} intro={t('home.lead')} />
+
+	<!-- The book of jobs: collect organizations, joblist finds what it can. -->
+	<section aria-labelledby="home-collect">
+		<h2 id="home-collect">{t('home.collect')}</h2>
+		<p><small>{t('home.collect.intro')}</small></p>
+		<Collect />
+	</section>
 
 
 	{#if searches.list.length}

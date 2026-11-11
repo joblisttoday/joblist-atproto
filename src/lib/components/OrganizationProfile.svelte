@@ -3,6 +3,7 @@
 	import providers from '#lib/data/providers.json';
 	import { prettyId } from '#lib/models/paste.js';
 	import { discover } from '#lib/network/discover.js';
+	import { suggestAddress } from '#lib/models/suggest.js';
 	import { kept } from '#lib/network/kept.svelte.js';
 
 	/**
@@ -31,17 +32,9 @@
 	const bluesky = $derived(found?.bluesky ? `https://bsky.app/profile/${found.bluesky.handle}` : '');
 
 	/** The add form, filled in with what was found. */
-	const suggest = $derived.by(() => {
-		const params = new URLSearchParams();
-		const url = website || link;
-		params.set('url', url);
-		params.set('name', name === short ? '' : name);
-		if (boardHref) params.set('board', boardHref);
-		if (found?.bluesky?.description) params.set('description', found.bluesky.description);
-		// Its other links: its Bluesky profile, and the kept link when it is not its website or board.
-		for (const other of new Set([bluesky, link])) if (other && other !== url && other !== boardHref) params.append('link', other);
-		return `/add?${params}`;
-	});
+	const suggest = $derived(
+		suggestAddress({ link, website, name: name === short ? '' : name, board: boardHref, description: found?.bluesky?.description, others: bluesky ? [bluesky] : [] })
+	);
 
 	/** It, as joblist's organizations are (models/company.js), from what was found. */
 	const company = $derived(
