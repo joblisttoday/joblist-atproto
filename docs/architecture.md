@@ -95,6 +95,24 @@ and reversible on its own.
    (3). Check: old addresses still open their page.
 8. **Optional jobs by hand.** The bot (7) and the crawler (8) run only when started by hand
    (`workflow_dispatch`), or not at all; list curation (9) goes with lists.
+9. **Optional: GitHub Pages instead of Cloudflare.** Once there is no Worker (step 7), the site
+   is static files, and this repository's Pages can serve them with the index: one host, no
+   Cloudflare account, the build a GitHub workflow. What it costs:
+   - no `_headers`: the security headers (HSTS, `nosniff`, `frame-ancestors`, the embed's own
+     policy) go, except what a page's `<meta http-equiv>` can say (its content policy);
+   - no `_redirects`: old addresses (`/company/…`, the old site's 935) redirect in the app
+     (the router, as `/company/[key]` already does), not with a 301 a search engine follows;
+   - `404.html` the same way: the app starts on it (a domain's page answers 404, as now).
+
+## Hosting rules: few, and tried where they run
+
+Hosts differ from their local emulators. On 2026-11-11, a catch-all rewrite for one-part
+addresses (`/:name`, so that `/{domain}` answers 200), after a rewrite of each of the site's
+own names to itself, worked in `wrangler dev` and not in production: Cloudflare skips a
+rewrite to the same path, so `/robots.txt`, `/service-worker.js` and `/embed/joblist-jobs.js`
+got the app's page for ten minutes. Since then a domain's page is served by `404.html`, on
+which the app starts. The fewer rules joblist depends on, the more hosts can serve it: check
+any new one on the host itself (curl its files and their types) right after it is live.
 
 Later, each independent of the rest: the indexer follows Jetstream (changes in minutes);
 the app reads moderation labelers instead of the blocklist; a joblist labeler publishes
