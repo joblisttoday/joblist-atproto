@@ -1,0 +1,33 @@
+{
+	"$comment": "Sites where many organizations have a page (a group, a profile): a link there is not the organization's own domain, so it never names an organization by its host.",
+	"hosts": [
+		"facebook.com",
+		"fb.com",
+		"instagram.com",
+		"linkedin.com",
+		"x.com",
+		"twitter.com",
+		"bsky.app",
+		"threads.net",
+		"tiktok.com",
+		"youtube.com",
+		"github.com",
+		"gitlab.com",
+		"codeberg.org",
+		"tangled.sh",
+		"medium.com",
+		"substack.com",
+		"linktr.ee",
+		"google.com",
+		"notion.site",
+		"wellfound.com",
+		"welcometothejungle.com",
+		"indeed.com",
+		"glassdoor.com",
+		"meetup.com",
+		"mastodon.social",
+		"discord.gg",
+		"t.me",
+		"whatsapp.com"
+	]
+}

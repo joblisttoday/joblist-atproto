@@ -2,6 +2,9 @@
 	import config from '#lib/data/config.json';
 	import Empty from '#lib/components/Empty.svelte';
 	import Icon from '#lib/components/Icon.svelte';
+	import KeepForm from '#lib/components/KeepForm.svelte';
+	import KeptOrganizations from '#lib/components/KeptOrganizations.svelte';
+	import { kept } from '#lib/network/kept.svelte.js';
 	import OwnListItem from '#lib/components/OwnListItem.svelte';
 	import PageHeader from '#lib/components/PageHeader.svelte';
 	import SavedSearches from '#lib/components/SavedSearches.svelte';
@@ -46,6 +49,17 @@
 		{/if}
 	</section>
 
+	<section aria-labelledby="me-organizations">
+		<h2 id="me-organizations"><a href="/me/organizations">{t('kept.short')}</a></h2>
+		{#if kept.list.length}
+			<KeptOrganizations {max} />
+			{#if kept.list.length > max}<p><a href="/me/organizations">{t('me.all', { count: formatNumber(kept.list.length) })} <Icon name="next" /></a></p>{/if}
+		{:else}
+			<Empty text={t('kept.empty')} />
+		{/if}
+		<jl-me-keep><KeepForm /></jl-me-keep>
+	</section>
+
 	<section aria-labelledby="me-lists">
 		<h2 id="me-lists"><a href="/me/lists">{t('nav.lists')}</a></h2>
 		{#if lists.length}
@@ -70,6 +84,10 @@
 	}
 	section {
 		margin-top: var(--space-l);
+	}
+	jl-me-keep {
+		display: block;
+		margin-top: var(--space-s);
 	}
 	h2 {
 		margin-bottom: var(--space-xs);

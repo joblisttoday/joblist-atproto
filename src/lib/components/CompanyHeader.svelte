@@ -59,7 +59,7 @@
 		{/if}
 		<CompanyInvite {company} field="tags" />
 		<menu>
-			<CompanySave key={company.key} />
+			<CompanySave {company} />
 			{#if board}<a href={board} target="_blank" rel="noopener">{t('company.jobBoard')} <Icon name="external" /></a>{/if}
 			<a href="/add?key={encodeURIComponent(company.key)}">{t('company.edit')}</a>
 			<CompanyDelete {company} />

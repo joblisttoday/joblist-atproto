@@ -183,6 +183,7 @@
 		"shareMax": 300
 	},
 	"me": { "glance": 3 },
+	"kept": { "max": 500 },
 	"jobCollections": {
 		"file": "joblist-collections.json",
 		"fileMaxBytes": 5000000,

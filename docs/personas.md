@@ -3,7 +3,31 @@
 Each kind of person who comes to joblist, what they come to do, what serves
 them today and what is missing. New features start from one of them.
 
+## The journey
+
+joblist is a notebook for a job hunt: the organizations someone cares about and
+the searches they keep, private in their browser, with open jobs read straight
+from where they hire. What people publish (organizations, jobs, on their own
+atproto accounts) is a head start everyone can search, never a requirement:
+the app works with none of it, offline, on any domain.
+
+1. **Search** what joblist knows: jobs, organizations, cities, fields.
+2. **Keep** organizations to watch, any link (a website, a job board, a social
+   profile, a group): joblist shows their jobs when it can read them, else it is
+   a bookmark to look at. And keep searches, with their new jobs.
+3. **Share**, if they want: publish an organization they kept, so others find it.
+
 ## Looking for work
+
+### Keeper
+Starts from the places they would like to work, not from a search: a cooperative
+they heard of, a studio's Instagram, a lab's website.
+- **Today:** Keep any link (/me): an organization joblist knows shows its open
+  jobs; a job board link is recognized; anything else stays a link to look at,
+  with a way to add it to joblist. A Save on each organization's page and card.
+- **Missing:** the new jobs of kept organizations counted like a search's; a
+  browser extension that tells, on any site, whether joblist knows it and its
+  jobs, and keeps it in one tap; reading a site's name, links and board for them.
 
 ### Near home
 Wants a job they can reach by bike or on foot.
