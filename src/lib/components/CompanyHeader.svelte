@@ -41,7 +41,15 @@
 		<!-- Its menu at the right edge of its name, as on every page (PageHeader). -->
 		<jl-company-title>
 			<h1>{#if account?.avatar}<img src={account.avatar} alt="" />{/if}{company.name}</h1>
-			<PageMenu feed={!local && isCompanyKey(company.key) ? { company: company.key } : null} />
+			<PageMenu
+				feed={!local && isCompanyKey(company.key) ? { company: company.key } : null}
+				own={local
+					? []
+					: [
+							{ href: `/jobs/new?company=${encodeURIComponent(company.key)}`, label: 'menu.postHere', icon: 'post' },
+							{ href: `/add?key=${encodeURIComponent(company.key)}`, label: 'company.edit', icon: 'edit' }
+						]}
+			/>
 		</jl-company-title>
 		<p>
 			<small>

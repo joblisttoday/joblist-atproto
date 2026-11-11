@@ -50,7 +50,7 @@
 	// All of them: on joblist when it knows the organization, else on its board.
 	const whole = $derived(
 		asked.company
-			? `${settings.site}/company/${asked.company}`
+			? `${settings.site}/${asked.company}`
 			: asked.board
 				? `${settings.site}/me/organization#${new URLSearchParams({ url: board || '' })}`
 				: settings.site

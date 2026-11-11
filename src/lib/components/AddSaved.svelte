@@ -14,7 +14,7 @@
 	<h1 tabindex="-1"><Icon name="applied" /> {t(title, { name })}</h1>
 	<p>{t(`added.${outcome}.text`, { name })}</p>
 	<menu>
-		<a href="/company/{key}">{t('added.open', { name })}</a>
+		<a href="/{key}">{t('added.open', { name })}</a>
 		<a href="/jobs/new?company={encodeURIComponent(key)}"><Icon name="post" /> {t('added.post')}</a>
 	</menu>
 	<p><small><a href="/add">{t('added.another')}</a></small></p>

@@ -35,7 +35,7 @@
 		<!-- Its menu at the right edge of its title, as on every page (PageHeader). -->
 		<jl-job-title><h1>{post.title}</h1><PageMenu /></jl-job-title>
 		<p>
-			<a href="/company/{post.company}">{company?.name || post.company}</a>
+			<a href="/{post.company}">{company?.name || post.company}</a>
 			{#if post.verified}
 				· <mark><Icon name="verified" /> {t('job.verified')}</mark>
 			{:else}

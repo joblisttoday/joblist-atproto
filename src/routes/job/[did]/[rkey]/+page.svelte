@@ -21,7 +21,7 @@
 </svelte:head>
 
 {#if post}
-	<JobPosting {post} ondeleted={() => goto(`/company/${post.company}`)} />
+	<JobPosting {post} ondeleted={() => goto(`/${post.company}`)} />
 {:else if found.unreachable}
 	<DataState state="unreachable" />
 {:else if post === null}

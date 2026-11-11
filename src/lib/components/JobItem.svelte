@@ -71,7 +71,7 @@
 	{#if company}<JobAvatar key={job.company} name={company} src={avatar ? thumbnail(avatar) : ''} />{/if}
 	{#if posted}
 		{#if !read}<a href={postPath(posted.did, posted.rkey)}>{job.title}</a>{/if}
-		<small>{#if company}<a href="/company/{job.company}">{company}</a>{line ? ' · ' : ''}{/if}{line}</small>
+		<small>{#if company}<a href="/{job.company}">{company}</a>{line ? ' · ' : ''}{/if}{line}</small>
 		<jl-chips>
 			{#if applied}<mark><Icon name="applied" /> {t('marks.applied')}</mark>{/if}
 			{#each chips as chip (chip)}<span>{#if chip === distance}<Icon name={travelIcon} />{' '}{/if}{chip}</span>{/each}

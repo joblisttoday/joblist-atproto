@@ -18,7 +18,7 @@
 
 <jl-company verified={company.verified || undefined} menu={menu || undefined}>
 	{#if avatar}<img src={thumbnail(avatar)} alt="" loading="lazy" />{/if}
-	<a href="/company/{company.key}">{company.name}</a>
+	<a href="/{company.key}">{company.name}</a>
 	{#if company.verified}<span title={t('company.verified', { domain: company.key })}><Icon name="verified" label={t('company.verified', { domain: company.key })} /></span>{/if}
 	{#if jobs}<data value={jobs}>{t('jobs.count', { count: jobs })}</data>{/if}
 	{#if about}<small>{about}</small>{/if}

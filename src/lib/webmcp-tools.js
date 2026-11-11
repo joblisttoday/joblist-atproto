@@ -29,7 +29,7 @@ export function companySummary(company, origin) {
 		tags: company.tags,
 		locations: company.locations.map((l) => [l.name, l.country].filter(Boolean).join(', ')).filter(Boolean),
 		jobBoard: boardUrl(company.jobBoard) || undefined,
-		page: `${origin}/company/${company.key}`
+		page: `${origin}/${company.key}`
 	};
 }
 

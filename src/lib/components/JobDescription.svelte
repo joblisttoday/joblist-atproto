@@ -32,7 +32,7 @@
 	<menu>
 		<a href={job.url} target="_blank" rel="noopener">{t('job.offer')}{elsewhere.length && job.location ? `: ${job.location}` : ''} <Icon name="external" /></a>
 		{#each elsewhere as other (other.url)}<a href={other.url} target="_blank" rel="noopener">{other.location} <Icon name="external" /></a>{/each}
-		{#if company}<a href="/company/{job.company}">{t('jobs.aboutCompany', { name: company })}</a>{/if}
+		{#if company}<a href="/{job.company}">{t('jobs.aboutCompany', { name: company })}</a>{/if}
 	</menu>
 </jl-job-description>
 

@@ -7,7 +7,7 @@ Never: a tracker, an ad network, a middleman for applications, a central databas
 People: [docs/personas.md](docs/personas.md). Pieces, contracts and where they go: [docs/architecture.md](docs/architecture.md). Stage: alpha, not announced to anyone yet; usage is public on Umami (`analytics` in config).
 
 Choices, on purpose:
-- The app runs in the browser (`ssr = false`); `indexer/site.js` writes the site's own pages after the build, from no snapshot: organization and job pages are one page each, served for `/company/*` and `/job/*` by a rewrite (`_redirects`). The build never reads the snapshot, and a snapshot never rebuilds the site ([docs/architecture.md](docs/architecture.md)).
+- The app runs in the browser (`ssr = false`); `indexer/site.js` writes the site's own pages after the build, from no snapshot: one page serves every domain and handle (`/{domain}`: an organization, an account, or what a browser finds of a domain) and every job (`/job/*`), by rewrites (`_redirects`, after a rewrite of each of the site's own names to itself). The build never reads the snapshot, and a snapshot never rebuilds the site ([docs/architecture.md](docs/architecture.md)).
 - Unknown addresses get `404.html` with status 404, on which the app still starts, because records written since the last build have no page yet.
 - npm, not bun, because Cloudflare Workers Builds and the GitHub workflows use it.
 

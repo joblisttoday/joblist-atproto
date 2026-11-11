@@ -16,7 +16,7 @@
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * An organization's page, the same whether joblist knows it (/company/{domain}) or only
+	 * An organization's page, the same whether joblist knows it (/{domain}) or only
 	 * this browser does (local: /me/organization#url=…, or a domain joblist does not know):
 	 * its header, its jobs (searched, by team, on a map, opened in a dialog), and at the side
 	 * where it is. One joblist knows also has its lists, versions and "Is this your

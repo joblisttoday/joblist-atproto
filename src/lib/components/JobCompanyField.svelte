@@ -56,7 +56,7 @@
 		<legend data-required>{t('post.company')}</legend>
 		{#if company}
 			<p>
-				<a href="/company/{company}">{chosen?.name || company}</a> <small>{company}</small>
+				<a href="/{company}">{chosen?.name || company}</a> <small>{company}</small>
 				{#if !locked}<button type="button" bind:this={change} onclick={unpick}>{t('post.company.change')}</button>{/if}
 			</p>
 		{:else}

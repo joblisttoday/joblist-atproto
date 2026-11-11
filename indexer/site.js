@@ -1,13 +1,13 @@
 /**
  * The site's own files, after the app's build, from no index: its pages with a real title,
  * description and link-preview tags (indexer/site-pages.js), the page shared by every
- * organization and job (served for /company/* and /job/* by a rewrite: _redirects), the
+ * domain and handle (/{domain}) and every job (/job/…), served by rewrites (_redirects), the
  * 404 page, the sitemap and robots.txt, llms.txt. The app reads the
  * index itself, in the browser: an index never rebuilds the site (docs/architecture.md).
  *
  *   node indexer/site.js [build-dir]
  */
-import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { appendFileSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve, sep } from 'node:path';
 import config from '../src/lib/data/config.json' with { type: 'json' };
 import { page } from './html.js';
@@ -31,19 +31,27 @@ for (const { path, meta } of pages) {
 	// The home last: it is the template the others are made from.
 	if (path !== '/') write(path, page(template, meta));
 }
-const rules = [];
-for (const { path, rule, meta } of thingPages()) {
-	write(path, page(template, meta));
-	rules.push(`${rule}  ${path}  200`);
-}
-// After the site's own redirects (static/_redirects): theirs are more precise.
-const redirects = join(build, '_redirects');
-appendFileSync(redirects, `${existsSync(redirects) ? '\n' : ''}# One page for every organization and job: the app shows each (indexer/site.js).\n${rules.join('\n')}\n`);
 // Anything else: a real 404, on which the app still starts.
 writeFileSync(join(build, '404.html'), page(template, notFoundPage()));
 writeFileSync(join(build, 'sitemap.xml'), sitemap(config.url, pages.filter((p) => p.listed).map((p) => p.path)));
 writeFileSync(join(build, 'robots.txt'), robots(config.url));
 writeFileSync(join(build, 'llms.txt'), llmsTxt());
+/** _redirects after the site's own (static/_redirects): the first rule that matches is followed. */
+const rules = ['# An organization\'s page is its domain (indexer/site.js).', '/company/:key  /:key  301'];
+const things = thingPages();
+for (const { path, meta } of things) write(path, page(template, meta));
+// The site's own names first, each served as it is: a rewrite wins over a file, and the
+// catch-alls below would hide them (/jobs, /me/…, /_app/…, robots.txt).
+const own = readdirSync(build, { withFileTypes: true }).filter((entry) => !['index.html', '404.html', '_redirects', '_headers', '_page'].includes(entry.name));
+rules.push('# The site\'s own pages and files, as they are.');
+for (const entry of own) {
+	rules.push(`/${entry.name}  /${entry.name}  200`);
+	if (entry.isDirectory()) rules.push(`/${entry.name}/*  /${entry.name}/:splat  200`);
+}
+rules.push('# One page for every job, every domain and handle: the app shows each.');
+for (const { path, rules: patterns } of things) for (const pattern of patterns) rules.push(`${pattern}  ${path}  200`);
+const redirects = join(build, '_redirects');
+appendFileSync(redirects, `${existsSync(redirects) ? '\n' : ''}${rules.join('\n')}\n`);
 const home = pages.find((p) => p.path === '/');
 if (home) writeFileSync(join(build, 'index.html'), page(template, home.meta));
-console.log(`site: ${pages.length} pages, ${rules.length} shared ones, sitemap of ${pages.filter((p) => p.listed).length}`);
+console.log(`site: ${pages.length} pages, ${rules.length} rules, sitemap of ${pages.filter((p) => p.listed).length}`);

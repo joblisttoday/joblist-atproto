@@ -35,15 +35,15 @@
 	/>
 	<small id="url-help" aria-live="polite">
 		{#if read.state === 'new'}
-			<Icon name="added" /> {t('form.website.page')} <b>{site}/company/{read.key}</b>
+			<Icon name="added" /> {t('form.website.page')} <b>{site}/{read.key}</b>
 		{:else if read.state === 'exists' && existing}
 			{t('form.website.exists', { name: existing.name })}
-			<a href="/company/{read.key}">{t('form.website.open')}</a> ·
+			<a href="/{read.key}">{t('form.website.open')}</a> ·
 			<a href="/add?key={encodeURIComponent(read.key)}">{t('form.website.improve')}</a>
 		{:else if read.state === 'invalid'}
 			{t('form.website.invalid')}
 		{:else if read.state === 'kept'}
-			{t('form.website.kept')} <b>{site}/company/{read.key}</b>
+			{t('form.website.kept')} <b>{site}/{read.key}</b>
 		{:else}
 			{t('form.website.help')}
 		{/if}

@@ -12,12 +12,12 @@ test("the site's pages need no index: what joblist is, never its numbers", () =>
 	assert.ok(pages.some((p) => p.path === '/apps' && p.meta.noindex));
 });
 
-test('one page for every organization and every job, by a rewrite, with no address of its own', () => {
+test('one page for every job, and every domain and handle, by rewrites, with no address of its own', () => {
 	assert.deepEqual(
-		thingPages().map((p) => [p.rule, p.path, p.meta.url]),
+		thingPages().map((p) => [p.path, p.rules, p.meta.url]),
 		[
-			['/company/*', '/_page/company', undefined],
-			['/job/*', '/_page/job', undefined]
+			['/_page/job', ['/job/*'], undefined],
+			['/_page/domain', ['/:name', '/:name/:tab', '/:name/:rkey/:edit'], undefined]
 		]
 	);
 });

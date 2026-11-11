@@ -70,7 +70,7 @@
 	// A website (not a board, not a platform's page): only the add-on reads it.
 	const site = $derived(Boolean(found?.key) && !board && !known);
 	const saved = $derived(asked.link ? isKeptLink(asked.link) || kept.list.some((k) => known && keyOf(k.url) === known.key) : false);
-	const page = $derived(known ? `/company/${known.key}` : `/me/organization#${new URLSearchParams({ url: asked.link })}`);
+	const page = $derived(known ? `/${known.key}` : `/me/organization#${new URLSearchParams({ url: asked.link })}`);
 	const suggest = $derived(
 		suggestAddress({ link: asked.link, website, name: name === short ? '' : name, board: boardHref, description: found?.bluesky?.description, others: bluesky ? [bluesky] : [] })
 	);
@@ -96,7 +96,7 @@
 		{#if named.length}
 			<ul>
 				{#each named as company (company.key)}
-					<li><a href="/company/{company.key}">{company.name}</a> <small>{counts.get(company.key) ? t('kept.jobs', { count: counts.get(company.key) || 0 }) : t('kept.noJobs')}</small></li>
+					<li><a href="/{company.key}">{company.name}</a> <small>{counts.get(company.key) ? t('kept.jobs', { count: counts.get(company.key) || 0 }) : t('kept.noJobs')}</small></li>
 				{/each}
 			</ul>
 		{:else}

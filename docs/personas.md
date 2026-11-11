@@ -23,7 +23,7 @@ the app works with none of it, offline, on any domain.
 Starts from the places they would like to work, not from a search: a cooperative
 they heard of, a studio's Instagram, a lab's website.
 - **Today:** Keep any link (/me): an organization joblist knows shows its open
-  jobs; another has a profile (/me/organization#url=…, and /company/{domain} for
+  jobs; another has a profile (/me/organization#url=…, and /{domain} for
   any domain) with what their browser finds: its Bluesky account when its domain
   is its handle, its job board's name and open jobs (read live, one board), where
   they are; "Suggest to joblist" opens the add form filled in with all of it.

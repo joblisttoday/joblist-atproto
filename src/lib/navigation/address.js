@@ -3,7 +3,7 @@
  * address, so any state is a link to keep or share: after the "#" (/#q=design&where=Berlin),
  * which browsers never send, so no server, cache or log ever sees what someone searches.
  * Older links kept it in the query (?q=…): still read, and moved after the "#".
- * Pages themselves stay real paths (/company/acme.org, /in/berlin) for search engines.
+ * Pages themselves stay real paths (/acme.org, /in/berlin) for search engines.
  */
 
 /** A sign-in coming back puts its own answer after the "#": left alone until it is read. */

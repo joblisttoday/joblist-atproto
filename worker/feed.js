@@ -33,7 +33,7 @@ export function atom({ title, subtitle, path, page, jobs, names, generatedAt }) 
 	const updated = dates.reduce((a, b) => (b > a ? b : a), '') || fallback;
 	const entries = items.map((item, i) => {
 		const author = isCompanyKey(item.company)
-			? `<author><name>${xml(item.companyName)}</name><uri>${xml(`${config.url}/company/${item.company}`)}</uri></author>`
+			? `<author><name>${xml(item.companyName)}</name><uri>${xml(`${config.url}/${item.company}`)}</uri></author>`
 			: `<author><name>${xml(item.companyName || config.name)}</name></author>`;
 		const summary = [item.companyName, item.location, item.workplace].filter(Boolean).join(' · ');
 		return [

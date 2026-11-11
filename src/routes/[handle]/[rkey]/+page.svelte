@@ -30,7 +30,8 @@
 	});
 </script>
 
-<svelte:head><title>{list?.name || rkey} · {config.name}</title></svelte:head>
+<!-- Its own address: the page served for every handle has none (indexer/site.js). -->
+<svelte:head><title>{list?.name || rkey} · {config.name}</title><link rel="canonical" href="{config.url}{page.url.pathname}" /></svelte:head>
 
 {#if list}
 	<ListPage {list} />

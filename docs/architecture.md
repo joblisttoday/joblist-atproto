@@ -12,7 +12,7 @@ Pieces never share code paths at run time or at build time; they share these:
 |---|---|---|
 | Lexicons | the `today.joblist.*` records people write in their own accounts | [lexicons/](../lexicons), published by hand ([lexicons.md](lexicons.md)) |
 | Index format | the static files an indexer writes and clients read, with a `version` | `docs/index.md` (to write, step 3) |
-| Addresses | pages (`/company/{domain}`, `/in/{city}`) and their state after the `#` (`#q=…&where=…`) | [src/lib/navigation/address.js](../src/lib/navigation/address.js) |
+| Addresses | pages (`/{domain}`, `/in/{city}`) and their state after the `#` (`#q=…&where=…`) | [src/lib/navigation/address.js](../src/lib/navigation/address.js) |
 | Private data | what a person keeps in their browser (searches, organizations, tags) | `src/lib/local/`, `src/lib/network/kept.svelte.js`; the add-on syncs it ([extension/](../extension/README.md)) |
 
 ## In atproto

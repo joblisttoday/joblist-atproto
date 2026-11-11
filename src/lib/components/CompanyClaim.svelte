@@ -15,7 +15,7 @@
 	const edit = $derived(`/add?key=${encodeURIComponent(company.key)}`);
 	// Its domain is already its Bluesky handle: signing in with it is the only step left.
 	const onBluesky = $derived(Boolean(accountOf(company.key)));
-	const signin = $derived(`/signin?handle=${encodeURIComponent(company.key)}&next=${encodeURIComponent(`/company/${company.key}`)}`);
+	const signin = $derived(`/signin?handle=${encodeURIComponent(company.key)}&next=${encodeURIComponent(`/${company.key}`)}`);
 </script>
 
 {#if manager}

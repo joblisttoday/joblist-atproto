@@ -23,7 +23,7 @@
 				</small>
 			</p>
 			{#if company}
-				<p><small><Icon name="companies" /> {t('profile.company')} <a href="/company/{company.key}">{company.name}</a>{#if company.verified} <Icon name="verified" label={t('company.verified', { domain: company.key })} />{/if}</small></p>
+				<p><small><Icon name="companies" /> {t('profile.company')} <a href="/{company.key}">{company.name}</a>{#if company.verified} <Icon name="verified" label={t('company.verified', { domain: company.key })} />{/if}</small></p>
 			{/if}
 		</hgroup>
 		{@render children?.()}

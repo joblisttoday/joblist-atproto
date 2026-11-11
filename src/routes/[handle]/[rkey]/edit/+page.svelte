@@ -17,7 +17,8 @@
 	const back = $derived(`/${page.params.handle}/${rkey}`);
 </script>
 
-<svelte:head><title>{t('form.list.edit')} · {config.name}</title></svelte:head>
+<!-- Its own address: the page served for every handle has none (indexer/site.js). -->
+<svelte:head><title>{t('form.list.edit')} · {config.name}</title><link rel="canonical" href="{config.url}{page.url.pathname}" /></svelte:head>
 
 {#snippet editing()}
 	{#if list}

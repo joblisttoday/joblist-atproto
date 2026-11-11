@@ -37,7 +37,7 @@
 			{@const count = company ? counts.get(company.key) || 0 : 0}
 			<li>
 				{#if company}
-					<a href="/company/{company.key}">
+					<a href="/{company.key}">
 						<span>{item.name || company.name}</span>
 						<small>{count ? t('kept.jobs', { count }) : t('kept.noJobs')}{#if item.tags?.length}{' · '}{item.tags.join(', ')}{/if}</small>
 					</a>

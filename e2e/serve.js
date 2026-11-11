@@ -1,7 +1,8 @@
 /**
  * The built site served as Cloudflare serves it (wrangler.jsonc: assets), for the
- * end-to-end tests: a file, else its folder's index.html (the site's pages), else a
- * rewrite of _redirects (… 200: the page shared by every organization or job), else
+ * end-to-end tests: the rules of _redirects first (redirects, and rewrites: the site's own
+ * names as they are, the page shared by every domain or job), else a file, else its
+ * folder's index.html, else
  * 404.html with status 404, on which the app still starts. vite preview serves the
  * app's own build only, not the files indexer/site.js writes after it.
  *
@@ -40,17 +41,35 @@ async function read(path) {
 	return null;
 }
 
-/** The rewrites of _redirects ("/company/*  /_page/company  200"), as Cloudflare reads them. */
-const rewrites = (await readFile(join(root, '_redirects'), 'utf8').catch(() => ''))
+/**
+ * The rules of _redirects, as Cloudflare reads them: the first that matches is followed, a
+ * rewrite (200) before any file; :name is one part of the path, * the rest (:splat).
+ */
+const rules = (await readFile(join(root, '_redirects'), 'utf8').catch(() => ''))
 	.split('\n')
 	.map((line) => line.trim().split(/\s+/))
-	.filter(([from, , status]) => from && !from.startsWith('#') && status === '200')
-	.map(([from, to]) => ({ from: new RegExp(`^${from.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace('*', '.*')}$`), to }));
+	.filter(([from, to]) => from && to && !from.startsWith('#'))
+	.map(([from, to, status = '302']) => ({
+		from: new RegExp(
+			`^${from
+				.replace(/[.+?^${}()|[\]\\]/g, '\\$&')
+				.replace(/:(\w+)/g, '(?<$1>[^/]+)')
+				.replace('*', '(?<splat>.*)')}$`
+		),
+		to,
+		status: Number(status)
+	}));
 
 createServer(async (req, res) => {
 	const { pathname } = new URL(req.url || '/', 'http://localhost');
-	const rewrite = rewrites.find((r) => r.from.test(pathname));
-	const found = (await read(pathname)) || (rewrite ? await read(rewrite.to) : null);
+	const rule = rules.map((r) => ({ ...r, match: r.from.exec(pathname) })).find((r) => r.match);
+	const to = rule ? rule.to.replace(/:(\w+)/g, (_, name) => rule.match?.groups?.[name] ?? '') : '';
+	if (rule && rule.status !== 200) {
+		res.writeHead(rule.status, { location: to });
+		res.end();
+		return;
+	}
+	const found = rule ? await read(to) : await read(pathname);
 	const page = found || { file: join(root, '404.html'), body: await readFile(join(root, '404.html')) };
 	res.writeHead(found ? 200 : 404, { 'content-type': types[extname(page.file)] || 'application/octet-stream' });
 	res.end(page.body);

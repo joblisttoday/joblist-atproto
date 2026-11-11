@@ -4935,7 +4935,7 @@ function ko(e, t) {
 		query: `${s() || ""} ${K(h)}`.trim(),
 		where: c() || "",
 		remote: l() === "remote" ? "remote" : ""
-	}, K(g))) : []), v = /* @__PURE__ */ pt(() => K(_).slice(0, Math.max(1, Number(o()) || d.shown))), y = /* @__PURE__ */ pt(() => Z("embed.count", { count: K(_).length })), b = /* @__PURE__ */ pt(() => K(p).company ? `${d.site}/company/${K(p).company}` : K(p).board ? `${d.site}/me/organization#${new URLSearchParams({ url: n() || "" })}` : d.site);
+	}, K(g))) : []), v = /* @__PURE__ */ pt(() => K(_).slice(0, Math.max(1, Number(o()) || d.shown))), y = /* @__PURE__ */ pt(() => Z("embed.count", { count: K(_).length })), b = /* @__PURE__ */ pt(() => K(p).company ? `${d.site}/${K(p).company}` : K(p).board ? `${d.site}/me/organization#${new URLSearchParams({ url: n() || "" })}` : d.site);
 	var x = Do();
 	Ir(x, 1, "svelte-uruhdc");
 	var S = tn(x), ee = (e) => {

@@ -37,7 +37,7 @@
 			{@const company = data.companies.get(suggestion.company)}
 			<li>
 				<p>
-					<a href="/company/{suggestion.company}">{company?.name || suggestion.company}</a>
+					<a href="/{suggestion.company}">{company?.name || suggestion.company}</a>
 					<small>
 						{t('suggestion.by')} <Author did={suggestion.did} />{#if suggestion.note}: “{suggestion.note}”{/if}
 					</small>

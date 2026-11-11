@@ -28,7 +28,7 @@
 		{/if}
 		{#if existing}
 			<p>
-				{t('add.existing')} <a href="/company/{existing.key}">{existing.name}</a>.
+				{t('add.existing')} <a href="/{existing.key}">{existing.name}</a>.
 				<small>{t('add.existing.help')}</small>
 			</p>
 		{/if}

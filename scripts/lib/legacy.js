@@ -51,12 +51,12 @@ export function readLegacyCompanies(dir) {
 
 /**
  * Cloudflare `_redirects` lines from the old company pages (/<slug>)
- * to the new ones (/company/<rkey>), skipping slugs the app routes itself.
+ * to the new ones (/<rkey>: an organization's page is its domain), skipping slugs the app routes itself.
  * @param {{slug: string, rkey: string}[]} companies
  * @param {string[]} reserved top-level route names
  */
 export function toRedirects(companies, reserved) {
 	return companies
 		.filter(({ slug }) => !reserved.includes(slug))
-		.map(({ slug, rkey }) => `/${encodeURI(slug)} /company/${encodeURIComponent(rkey)} 301`);
+		.map(({ slug, rkey }) => `/${encodeURI(slug)} /${encodeURIComponent(rkey)} 301`);
 }

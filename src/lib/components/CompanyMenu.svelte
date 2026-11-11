@@ -17,7 +17,7 @@
 	/** @param {() => void} done */
 	async function copy(done) {
 		try {
-			await navigator.clipboard.writeText(new URL(`/company/${company.key}`, location.href).href);
+			await navigator.clipboard.writeText(new URL(`/${company.key}`, location.href).href);
 			copied = true;
 			setTimeout(() => ((copied = false), done()), 1200);
 		} catch {

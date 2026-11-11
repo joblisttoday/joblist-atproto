@@ -15,7 +15,7 @@ describe('search_companies', () => {
 	it('matches every word against name, domain, tags and places', () => {
 		const result = searchCompanies(companies, { query: 'music berlin' }, origin);
 		expect(result.total).toBe(1);
-		expect(result.companies[0]).toMatchObject({ key: 'ableton.com', name: 'Ableton', page: `${origin}/company/ableton.com` });
+		expect(result.companies[0]).toMatchObject({ key: 'ableton.com', name: 'Ableton', page: `${origin}/ableton.com` });
 	});
 });
 

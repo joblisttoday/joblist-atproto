@@ -12,7 +12,7 @@
 	const handle = $derived(session.handle || '');
 	const domain = $derived(handle && !config.hostedHandles.some((host) => handle.endsWith(host)) ? handle : '');
 	const company = $derived(domain ? data.companies.get(domain) : undefined);
-	const href = $derived(company ? `/company/${domain}` : `/add?url=${encodeURIComponent(`https://${domain}`)}`);
+	const href = $derived(company ? `/${domain}` : `/add?url=${encodeURIComponent(`https://${domain}`)}`);
 </script>
 
 {#if domain && !company?.verified}

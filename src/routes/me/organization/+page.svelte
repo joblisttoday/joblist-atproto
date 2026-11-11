@@ -21,7 +21,7 @@
 	});
 	const known = $derived(link ? knownBy(data.companies)(link) : undefined);
 	$effect(() => {
-		if (known) goto(`/company/${known.key}`, { replace: true });
+		if (known) goto(`/${known.key}`, { replace: true });
 	});
 </script>
 

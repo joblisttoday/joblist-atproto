@@ -52,7 +52,7 @@ export function mountMap(node, points) {
 					features: points.map((p) => ({
 						type: 'Feature',
 						geometry: { type: 'Point', coordinates: [p.lon, p.lat] },
-						properties: { key: p.company.key, name: p.company.name, href: p.href || `/company/${p.company.key}` }
+						properties: { key: p.company.key, name: p.company.name, href: p.href || `/${p.company.key}` }
 					}))
 				}
 			});

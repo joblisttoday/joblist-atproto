@@ -75,10 +75,10 @@
 			<section aria-labelledby="job-company">
 				<h2 id="job-company">
 					{#if avatar}<img src={thumbnail(avatar)} alt="" />{/if}
-					<a href="/company/{job.company}">{name}</a>
+					<a href="/{job.company}">{name}</a>
 				</h2>
 				{#if atCompany > 1}
-					<p><a href="/company/{job.company}">{t('job.company.more', { count: atCompany, name })}</a></p>
+					<p><a href="/{job.company}">{t('job.company.more', { count: atCompany, name })}</a></p>
 				{:else if atCompany === 1}
 					<p><small>{t('job.company.one', { name })}</small></p>
 				{/if}

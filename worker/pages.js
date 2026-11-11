@@ -38,7 +38,7 @@ function breadcrumbs(trail) {
 
 /** @param {ReturnType<typeof toItem> & {}} job */
 function jobHtml(job) {
-	const company = isCompanyKey(job.company) ? `<a href="/company/${escape(job.company)}">${escape(job.companyName)}</a>` : escape(job.companyName);
+	const company = isCompanyKey(job.company) ? `<a href="/${escape(job.company)}">${escape(job.companyName)}</a>` : escape(job.companyName);
 	const details = [company, escape(job.location), escape(job.workplace), job.date && `<time datetime="${escape(job.date)}">${escape(job.date.slice(0, 10))}</time>`];
 	return `<li><a href="${escape(job.url)}">${escape(job.title)}</a> · ${details.filter(Boolean).join(' · ')}</li>`;
 }

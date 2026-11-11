@@ -232,7 +232,7 @@ JOBLIST_HANDLE=joblist.today JOBLIST_APP_PASSWORD=… \
 
 Re-running updates the records instead of duplicating them.
 
-The old site's company pages (`/<slug>`) redirect to `/company/<key>` through
+The old site's company pages (`/<slug>`) redirect to `/<key>` (an organization's page is its domain) through
 [`static/_redirects`](static/_redirects), generated from the same folders:
 
 ```sh

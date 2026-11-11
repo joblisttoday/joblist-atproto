@@ -52,7 +52,7 @@ function feed(found, data) {
 			title: t('landing.company', { company: name }),
 			subtitle: t('landing.follow.help'),
 			path: feedPath({ company: key }),
-			page: `/company/${key}`,
+			page: `/${key}`,
 			jobs: jobs.map((/** @type {any} */ j) => ({ ...j, c: key })),
 			names: { [key]: name },
 			generatedAt: data?.generatedAt

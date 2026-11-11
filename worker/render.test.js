@@ -103,7 +103,7 @@ test('a company feed names the company on each entry', () => {
 	const { body, type } = render({ kind: 'feed', company: 'acme.org' }, { generatedAt: '2026-11-07T01:00Z', name: 'Acme', jobs: [{ t: 'Dev', u: 'https://a.example/9', p: '2026-11-03T08:00Z' }] }, '');
 	assert.equal(type, 'atom');
 	assert.match(body, /<title>New jobs at Acme<\/title>/);
-	assert.match(body, /<author><name>Acme<\/name><uri>https:\/\/joblist.today\/company\/acme.org<\/uri><\/author>/);
+	assert.match(body, /<author><name>Acme<\/name><uri>https:\/\/joblist.today\/acme.org<\/uri><\/author>/);
 	assert.match(body, /href="https:\/\/joblist.today\/feed\/company\/acme.org.xml"/);
 });
 

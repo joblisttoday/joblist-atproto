@@ -17,7 +17,7 @@
 		<summary>{name} <small>{formatNumber(jobs.length)}</small></summary>
 		{#if open}
 			<ul>{#each jobs as job (job.url)}<li><JobItem {job} onselect={onselect && (() => onselect(job))} /></li>{/each}</ul>
-			{#if key}<p><a href="/company/{key}">{t('jobs.aboutCompany', { name })}</a></p>{/if}
+			{#if key}<p><a href="/{key}">{t('jobs.aboutCompany', { name })}</a></p>{/if}
 		{/if}
 	</details>
 </jl-job-group>

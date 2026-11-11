@@ -7,7 +7,7 @@
 		{ "title": "Job search", "path": "/jobs", "about": "every open job, searchable by job, city and on a map (`/jobs#q=design&where=Berlin`)" },
 		{ "title": "Jobs by city", "path": "/in", "about": "one page per city with enough jobs, e.g. `/in/berlin`, `/in/berlin/design`, older jobs at `?page=2`" },
 		{ "title": "Jobs by field", "path": "/field", "about": "e.g. `/field/engineering`, `/field/design`" },
-		{ "title": "Organizations", "path": "/companies", "about": "one page per organization at `/company/{domain}`, e.g. `/company/ableton.com`, linking its JSON file" },
+		{ "title": "Organizations", "path": "/companies", "about": "one page per organization at its domain, `/{domain}`, e.g. `/ableton.com` (an account's handle the same way)" },
 		{ "title": "Lists", "path": "/lists", "about": "lists of organizations made by people, at `/{handle}/{rkey}`; each person's at `/{handle}`" },
 		{ "title": "Jobs posted on joblist", "about": "`/job/{did}/{rkey}`, with schema.org JobPosting data" },
 		{ "title": "Sitemap", "path": "/sitemap.xml", "about": "the pages; the pages per city and field in `/sitemap-places.xml`" }

@@ -34,7 +34,7 @@
 	{#snippet items(done)}
 		<li><button type="button" onclick={() => (toggleJob(job, 'saved', name), done())}><Icon name={saved ? 'savedOn' : 'save'} /> {t(saved ? 'collections.saved' : 'collections.save')}</button></li>
 		<li><button type="button" onclick={() => (toggleMark(job, 'hidden', name), done())}><Icon name={hidden ? 'unhide' : 'hide'} /> {t(hidden ? 'card.show' : 'marks.hide')}</button></li>
-		<li><a href="/company/{job.company}" onclick={done}><Icon name="companies" /> {name}</a></li>
+		<li><a href="/{job.company}" onclick={done}><Icon name="companies" /> {name}</a></li>
 		{#if posted}
 			<li><a href={posted} onclick={done}><Icon name="jobs" /> {t('card.open')}</a></li>
 		{:else}

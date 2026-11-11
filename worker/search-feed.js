@@ -52,7 +52,7 @@ export function searchFeed(search, data) {
 		title: `${t('feed.search.title', { search: [company && (names[company] || company), searchLabel(filters)].filter(Boolean).join(' · ') })} · ${config.name}`,
 		subtitle: t('feed.search.intro', { hours: config.searchFeed.hours }),
 		path: feedPath({ search }),
-		page: company ? `/company/${company}#${search.slice(1).replace(/&company=[^&]*/, '')}` : `/jobs#${search.slice(1)}`,
+		page: company ? `/${company}#${search.slice(1).replace(/&company=[^&]*/, '')}` : `/jobs#${search.slice(1)}`,
 		jobs: matching(company ? rows.filter((row) => row?.c === company) : rows, names, filters),
 		names,
 		generatedAt: data?.generatedAt

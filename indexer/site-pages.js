@@ -89,15 +89,16 @@ export function sitePages() {
 }
 
 /**
- * The app's page for addresses with one page per thing (an organization, a job): answered
- * with it (and 200) for any of them, by a rewrite (_redirects); the app shows the thing.
- * No canonical address: the app knows each one's.
- * @returns {{path: string, rule: string, meta: Parameters<typeof import('./html.js').page>[1]}[]}
+ * The app's page for addresses with one page per thing, answered with it (and 200) for any
+ * of them by rewrites (_redirects, indexer/site.js); the app shows the thing. A domain or a
+ * handle (/{domain}, /{handle}/…): an organization, an account, or what a browser finds of a
+ * domain. A job posted on atproto (/job/…). No canonical address: the app knows each one's.
+ * @returns {{path: string, rules: string[], meta: Parameters<typeof import('./html.js').page>[1]}[]}
  */
 export function thingPages() {
 	return [
-		{ path: '/_page/company', rule: '/company/*', meta: { title: config.name, description: en['companies.intro'], body: '', preload: config.snapshot.preload.company } },
-		{ path: '/_page/job', rule: '/job/*', meta: { title: config.name, description: en['home.lead'], body: '' } }
+		{ path: '/_page/job', rules: ['/job/*'], meta: { title: config.name, description: en['home.lead'], body: '' } },
+		{ path: '/_page/domain', rules: ['/:name', '/:name/:tab', '/:name/:rkey/:edit'], meta: { title: config.name, description: en['companies.intro'], body: '', preload: config.snapshot.preload.company } }
 	];
 }
 

@@ -1,6 +1,11 @@
 <script>
 	import Icon from '#lib/components/Icon.svelte';
 	import { page } from '$app/state';
+	import { goto } from '$app/navigation';
+	import config from '#lib/data/config.json';
+	import CompanyPage from '#lib/components/CompanyPage.svelte';
+	import OrganizationProfile from '#lib/components/OrganizationProfile.svelte';
+	import { keptUrl, keyOf } from '#lib/models/kept.js';
 	import NotFound from '#lib/components/NotFound.svelte';
 	import DataState from '#lib/components/DataState.svelte';
 	import Pending from '#lib/components/Pending.svelte';
@@ -15,12 +20,25 @@
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * An account's pages: who it is, then its lists, the jobs it posted and the
-	 * organizations it described, each a tab (/{handle}, /{handle}/jobs, /{handle}/companies).
+	 * A domain's page, joblist.today/{domain}: a handle is a domain, and an organization is known
+	 * by its domain. An organization joblist knows: its page (with its Bluesky account when the
+	 * domain is its handle). Else an account: who it is, then its lists, the jobs it posted and
+	 * the organizations it described, each a tab (/{handle}, /{handle}/jobs, /{handle}/companies).
+	 * Else a domain: what this browser finds of it (its local profile). Else not found.
 	 * @type {{children: import('svelte').Snippet}}
 	 */
 	let { children } = $props();
 	const handle = $derived(page.params.handle || '');
+	const company = $derived(data.companies.get(handle));
+	// The same organization added twice: its page is the kept one's.
+	$effect(() => {
+		if (company && company.key !== handle) goto(`/${company.key}`, { replace: true });
+	});
+	// A domain (acme.org): its local profile when it is neither an organization nor an account.
+	const domain = $derived.by(() => {
+		const link = keptUrl(handle);
+		return link && keyOf(link) === handle ? link : '';
+	});
 	/** undefined while it is resolved, null when it is not an account. @type {string | null | undefined} */
 	let did = $state();
 	// The server that resolves handles did not answer: nothing can be said of the account.
@@ -54,8 +72,24 @@
 	});
 </script>
 
-{#if unreachable}
+<!-- Its own address: the page served for every domain and handle has none (indexer/site.js). -->
+<svelte:head>
+	{#if company}
+		<title>{company.name} · {config.name}</title>
+		<link rel="canonical" href="{config.url}/{company.key}" />
+	{:else}
+		<link rel="canonical" href="{config.url}{page.url.pathname}" />
+	{/if}
+</svelte:head>
+
+{#if company}
+	<CompanyPage {company} />
+{:else if data.status !== 'known'}
+	<DataState />
+{:else if unreachable}
 	<DataState state="unreachable" />
+{:else if did === null && domain}
+	<OrganizationProfile link={domain} />
 {:else if did === null}
 	<!-- Not an account: most often a mistyped page address. -->
 	<NotFound title={t('notFound.title')} text={t('notFound.path', { path: `/${handle}` })} />

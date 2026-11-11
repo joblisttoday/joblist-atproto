@@ -109,7 +109,7 @@
 				{@const avatar = accountOf(company.key)?.avatar}
 				{@const jobs = sources.counts.get(company.key)}
 				<li>
-					<a onkeydown={keys} href="/company/{company.key}">
+					<a onkeydown={keys} href="/{company.key}">
 						{#if avatar}<img src={thumbnail(avatar)} alt="" />{:else}<Icon name="companies" />{/if}
 						{company.name}
 						{#if jobs}<small>{t('jobs.count', { count: jobs })}</small>{/if}

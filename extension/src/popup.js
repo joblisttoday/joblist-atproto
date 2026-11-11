@@ -142,7 +142,7 @@ async function start() {
 		const kept = item();
 		const tags = kept?.tags || [];
 		const name = found.state === 'in' && found.name ? found.name : read.name;
-		const page = found.state === 'in' ? site(`/company/${found.key}`) : '';
+		const page = found.state === 'in' ? site(`/${found.key}`) : '';
 		const status =
 			found.state === 'in'
 				? link(page, { class: 'status', 'data-in': true }, h('span', {}, t('in')), h('b', {}, found.gone ? t('gone') : found.jobs ? t('jobs', { count: found.jobs }) : t('noJobs')))
@@ -183,7 +183,7 @@ async function start() {
 		// Where to go from here: its careers page, its job board, its page on joblist (one a domain
 		// joblist does not know has too: what a browser finds of it), those that exist.
 		const boardUrl = board?.url || knownUrl;
-		const joblistPage = found.state === 'in' ? page : read.key ? site(`/company/${read.key}`) : '';
+		const joblistPage = found.state === 'in' ? page : read.key ? site(`/${read.key}`) : '';
 		/** @type {[string, string][]} */
 		const ways = [
 			[read.careers && read.careers !== boardUrl ? read.careers : '', t('careersPage')],

@@ -8,7 +8,7 @@ import config from '../src/lib/data/config.json' with { type: 'json' };
  */
 const ours = (/** @type {URL} */ url) => url.hostname === '127.0.0.1' || url.href.startsWith(config.snapshot.path) || /openfreemap|umami|bsky/.test(url.hostname);
 
-for (const path of ['/jobs', '/companies', '/company/gitlab.com']) {
+for (const path of ['/jobs', '/companies', '/gitlab.com']) {
 	test(`${path} asks few job boards, the snapshot too old`, async ({ page }) => {
 		await page.clock.setFixedTime(Date.now() + 30 * 24 * 3600 * 1000);
 		let asked = 0;

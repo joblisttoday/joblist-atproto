@@ -12,17 +12,18 @@
 	 * installed app has no address bar), and make what fits here (src/lib/data/page-actions.json,
 	 * by route), and follow its jobs in a feed reader (feed: an Atom feed made by the Worker, also
 	 * told to browsers and readers in the page's head). Only pages someone would send to someone
-	 * else have one: they place it themselves.
-	 * @type {{feed?: Parameters<typeof feedPath>[0] | null}}
+	 * else have one: they place it themselves. own: what fits this thing, given by the page
+	 * (an organization's: post a job there, edit it), after the route's.
+	 * @type {{feed?: Parameters<typeof feedPath>[0] | null, own?: {href: string, label: string, icon: import('#lib/icons.js').IconName}[]}}
 	 */
-	let { feed = null } = $props();
+	let { feed = null, own = [] } = $props();
 	const feedHref = $derived(feed ? feedPath(feed) : '');
 	const links = $derived(
 		(/** @type {Record<string, {href: string, label: string, icon: string}[]>} */ (actions)[page.route.id || ''] ?? []).map((a) => ({
 			...a,
 			href: a.href.replace(/\{(\w+)\}/g, (_, name) => encodeURIComponent((/** @type {Record<string, string | undefined>} */ (page.params))[name] || '')),
 			icon: /** @type {import('#lib/icons.js').IconName} */ (a.icon)
-		}))
+		})).concat(own)
 	);
 	let copied = $state(false);
 

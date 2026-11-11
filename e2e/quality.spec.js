@@ -12,7 +12,7 @@ qualityTests([
 	{ name: 'organizations', path: '/companies', touch },
 	{ name: 'lists', path: '/lists', touch },
 	{ name: 'list', path: '/joblist.today/3my7zpwloir2s', touch },
-	{ name: 'organization', path: '/company/ableton.com', touch },
+	{ name: 'organization', path: '/ableton.com', touch },
 	{ name: 'profile', path: '/joblist.today', touch },
 	{ name: 'me', path: '/me', touch },
 	{ name: 'my lists', path: '/me/lists', touch },
