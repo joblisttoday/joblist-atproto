@@ -34,7 +34,8 @@ const appPages = [
 	['/jobs/new', en['post.title']],
 	['/lists/new', en['list.new']],
 	['/lists/shared', en['list.shared.title']],
-	['/tools', config.name]
+	['/tools', config.name],
+	['/apps', en['apps.title']]
 ];
 
 /** A profile's tabs after its lists (src/lib/data/profile-tabs.json): their path and title. */

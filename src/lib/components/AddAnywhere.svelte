@@ -4,7 +4,12 @@
 	import { bookmarklet } from '#lib/tools/bookmarklet.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
-	/** Ways to send a company to joblist from the page it is on: share target, bookmarklet, AI assistants. */
+	/**
+	 * Ways to send a company to joblist from the page it is on: share target, bookmarklet, AI assistants.
+	 * open: unfolded (on /apps).
+	 * @type {{open?: boolean}}
+	 */
+	let { open = false } = $props();
 	const code = $derived(bookmarklet(page.url.origin));
 	let dragHint = $state(false);
 
@@ -17,7 +22,7 @@
 </script>
 
 <jl-add-anywhere hinted={dragHint || undefined}>
-	<details>
+	<details {open}>
 		<summary>{t('anywhere.title')}</summary>
 		<p>{t('anywhere.intro')}</p>
 

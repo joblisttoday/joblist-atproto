@@ -36,7 +36,8 @@
 	const explore = $derived([
 		{ href: '/in', icon: /** @type {const} */ ('place'), label: t('landing.cities') },
 		{ href: '/field', icon: /** @type {const} */ ('jobs'), label: t('landing.fields') },
-		{ href: '/stats', icon: /** @type {const} */ ('area'), label: t('stats.link') }
+		{ href: '/stats', icon: /** @type {const} */ ('area'), label: t('stats.link') },
+		{ href: '/apps', icon: /** @type {const} */ ('embed'), label: t('menu.apps') }
 	]);
 	const browser = $derived([
 		{ href: '/menu/language', icon: /** @type {const} */ ('language'), label: t('about.language'), value: t(`locale.${i18n.locale}`) },

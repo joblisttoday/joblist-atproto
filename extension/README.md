@@ -16,11 +16,16 @@ browsing is never looked up.
 
 ## Build and try
 
+Each site build packs it: **joblist.today/apps** has the download (`/apps/joblist-firefox.zip`)
+and the steps to load it in Firefox as a temporary add-on (until it is signed by Mozilla,
+release Firefox installs it only that way, until it restarts).
+
 ```sh
 npm run build:extension        # writes extension/dist, the add-on
+node scripts/build-extension.js --zip joblist-firefox.zip   # and packs it
 ```
 
-Firefox: `about:debugging` → This Firefox → Load Temporary Add-on → `extension/dist/manifest.json`.
+Firefox: `about:debugging` → This Firefox → Load Temporary Add-on → `extension/dist/manifest.json` (or the .zip).
 
 Check and pack it for addons.mozilla.org (submitted by hand, from the owner's account):
 

@@ -42,3 +42,16 @@ test('the popup reads a website, saves and tags it in this browser', async ({ pa
 		['tags', 'https://www.acme-design.coop', ['Design']]
 	]);
 });
+
+test('/apps offers the add-on, packed with the site, and how to try it', async ({ page, request }) => {
+	await page.goto('/apps');
+	const download = page.getByRole('link', { name: 'Download the add-on' });
+	await expect(download).toHaveAttribute('href', '/apps/joblist-firefox.zip');
+	const file = await request.get('/apps/joblist-firefox.zip');
+	expect(file.ok()).toBe(true);
+	const bytes = await file.body();
+	// a zip ("PK"), with the manifest in it
+	expect(bytes.subarray(0, 2).toString()).toBe('PK');
+	expect(bytes.includes(Buffer.from('manifest.json'))).toBe(true);
+	await expect(page.getByText('about:debugging#/runtime/this-firefox')).toBeVisible();
+});

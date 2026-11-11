@@ -12,7 +12,7 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
 		"test:unit": "vitest",
 		"test": "npm run test:unit -- --run && node --test 'scripts/**/*.test.js' 'indexer/**/*.test.js' 'worker/**/*.test.js' 'bot/**/*.test.js'",
-		"build:site": "node indexer/fetch-snapshot.js static/snapshot && vite build && node indexer/prerender.js build static/snapshot",
+		"build:site": "node indexer/fetch-snapshot.js static/snapshot && vite build && node indexer/prerender.js build static/snapshot && node scripts/build-extension.js --zip build/apps/joblist-firefox.zip",
 		"deploy": "npm run build:site && wrangler deploy",
 		"import": "node scripts/import-joblist.js",
 		"index": "node indexer/index.js static/snapshot",
