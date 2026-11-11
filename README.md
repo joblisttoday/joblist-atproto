@@ -37,8 +37,8 @@ Four record types, defined in [`lexicons/`](lexicons/today/joblist):
 
   The company page shows the history (every author's version); anyone can
   restore an older one, which saves its content as their own new version.
-  Accounts listed in `bots` (config) are crawlers: their versions are marked
-  "not checked by a person yet" until a person saves or confirms a newer one.
+  Accounts listed in `bots` (config) are crawlers: their versions say "Added by
+  the crawler" until a person edits it (nothing to confirm: an edit is a correction).
   So are versions from an account the indexer first saw less than
   `versions.newAccountDays` (config) before, written over someone else's
   version: a brand-new account cannot silently replace a long-standing page.
