@@ -159,7 +159,7 @@ Configuration lives in data files, not code:
 - [`src/lib/data/need-lists.json`](src/lib/data/need-lists.json): lists by need, from the commons map (`scripts/curate-lists.js`)
 - [`scripts/starter-lists.json`](scripts/starter-lists.json): lists created by the import
 
-The embed (`<joblist-jobs board="greenhouse:acme">`, [`embed/src/joblist-jobs.js`](embed/src/joblist-jobs.js)):
+The embed (`<joblist-jobs board="greenhouse:acme">`, [`embed/src/`](embed/src/JoblistJobs.svelte)):
 an organization's open jobs on its own site, read live from its job board by the visitor's
 browser, with no joblist and no index (`company="acme.org"` asks an index for its board).
 Built to `embed/dist`, kept in the repository, so jsDelivr serves it from GitHub:

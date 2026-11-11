@@ -4,7 +4,7 @@
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
-		"predev": "npm run build:extension",
+		"predev": "npm run build:extension && npm run build:embed",
 		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "vite preview",
@@ -13,7 +13,7 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
 		"test:unit": "vitest",
 		"test": "npm run test:unit -- --run && node --test 'scripts/**/*.test.js' 'indexer/**/*.test.js' 'worker/**/*.test.js' 'bot/**/*.test.js'",
-		"build:site": "npm run build:extension && node scripts/build-embed.js && vite build && node indexer/site.js build",
+		"build:site": "npm run build:extension && npm run build:embed && vite build && node indexer/site.js build",
 		"build:embed": "node scripts/build-embed.js",
 		"deploy": "npm run build:site && wrangler deploy",
 		"import": "node scripts/import-joblist.js",

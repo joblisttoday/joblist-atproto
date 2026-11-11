@@ -5,7 +5,7 @@
 	/**
 	 * How to show an organization's jobs on another website: a frame for any site, an element
 	 * styled by the site, or a whole page of its own (jobs.your-domain). All stay up to date by
-	 * themselves (embed/src/joblist-jobs.js): with its board (board="greenhouse:acme"), the
+	 * themselves (embed/src/JoblistJobs.svelte): with its board (board="greenhouse:acme"), the
 	 * visitor's browser reads it live, with no joblist and no index; with its domain only
 	 * (company="acme.org"), an index says which board it has.
 	 * @type {{attribute: 'board' | 'company', value: string, title: string}}

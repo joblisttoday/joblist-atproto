@@ -1,18 +1,19 @@
 <script>
 	import Icon from './Icon.svelte';
 	import config from '#lib/data/config.json';
+	import JobAvatar from './JobAvatar.svelte';
+	import JobCard from './JobCard.svelte';
 	import JobDescription from './JobDescription.svelte';
+	import { jobFacts } from '#lib/models/job-card.js';
 	import JobMenu from './JobMenu.svelte';
-	import { isOlder, offerPlaces, time, workplace } from '#lib/models/job.js';
+	import { workplace } from '#lib/models/job.js';
 	import { travelMinutes } from '#lib/models/distance.js';
-	import { payAmount } from '#lib/models/salary.js';
 	import { postPath } from '#lib/models/job-post.js';
 	import { data, handleOf } from '#lib/network/network.svelte.js';
 	import { getDescription } from '#lib/ats/index.js';
 	import { workplaceFromText } from '#lib/models/workplace-text.js';
 	import { markOf } from '#lib/network/job-marks.svelte.js';
 	import { accountOf, thumbnail } from '#lib/network/accounts.svelte.js';
-	import { ago } from '#lib/i18n/dates.js';
 	import { i18n, t } from '#lib/i18n/index.svelte.js';
 
 	/**
@@ -25,7 +26,6 @@
 	 * @type {{job: import('#lib/ats/job.js').Job, company?: string, fresh?: boolean, onselect?: () => void, selected?: boolean, read?: boolean, menu?: boolean, actions?: import('svelte').Snippet}}
 	 */
 	let { job, company, fresh = false, onselect, selected = false, read = false, menu = true, actions } = $props();
-	const MAX_PLACES = config.jobs.placesShown;
 	const posted = $derived(job.posted);
 	// Opened and its board says nothing: what its description says clearly, once it is read
 	// (the same reading as the description below, not a second request).
@@ -39,14 +39,8 @@
 			if (asked === job) told = workplaceFromText(text);
 		});
 	});
-	const where = $derived(workplace(job) || told);
-	// The work place, unless the location already says it ("Remote - USA").
-	const place = $derived(where && !(job.location || '').toLowerCase().includes(t(`job.remote.${where}`).toLowerCase()) ? t(`job.remote.${where}`) : '');
-	// The same offer at several places: the first ones, then how many more.
-	const places = $derived(offerPlaces(job));
-	const location = $derived(
-		places.length > MAX_PLACES ? `${places.slice(0, MAX_PLACES).join('; ')} ${t('job.places.more', { count: places.length - MAX_PLACES })}` : places.join('; ')
-	);
+	// What its card says (the same in the embed on other sites): models/job-card.js.
+	const facts = $derived(jobFacts(job, { t, locale: i18n.locale, where: workplace(job) || told }));
 	const travelIcon = /** @type {import('#lib/icons.js').IconName} */ (config.travel.mode);
 	// How far, when the person searches near them.
 	const distance = $derived(
@@ -57,27 +51,24 @@
 					minutes: travelMinutes(job.km)
 				})
 	);
-	// What it pays, when its board says.
-	const pay = $derived(job.salary ? t(`job.salary.${job.salary.period}`, { amount: payAmount(job.salary, i18n.locale) }) : '');
 	// Where and for whom on one line; how far, how, how much and when as chips.
-	const line = $derived([location, job.department].filter(Boolean).join(' · '));
-	const chips = $derived([distance, place, pay, ago(time(job.published), i18n.locale)].filter(Boolean));
+	const line = $derived(facts.line);
+	const chips = $derived([distance, facts.place, facts.pay, facts.age].filter(Boolean));
 	const applied = $derived(markOf(job) === 'applied');
 	// First seen long ago: still listed, said so beside its date.
-	const older = $derived(isOlder(job));
-	// Each company keeps its color, from its key.
-	// Its Bluesky picture, when the company is there; else its initial.
+	const older = $derived(facts.older);
+	// Its Bluesky picture, when the company is there; else its initial (JobAvatar).
 	const avatar = $derived(company ? accountOf(job.company)?.avatar : undefined);
-	const hue = $derived([...job.company].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 360, 7));
 	let open = $state(false);
 </script>
 
 {#snippet chipsRow()}
 	<jl-chips>{#if fresh}<mark data-new>{t('job.new')}</mark>{/if}{#if applied}<mark><Icon name="applied" /> {t('marks.applied')}</mark>{/if}{#each chips as chip (chip)}<span>{#if chip === distance}<Icon name={travelIcon} />{' '}{/if}{chip}</span>{/each}{#if older}<em title={t('job.older.hint', { days: config.jobs.olderDays })}>{t('job.older')}</em>{/if}</jl-chips>
 {/snippet}
+{#snippet lead()}{#if fresh}<mark data-new>{t('job.new')}</mark>{/if}{#if applied}<mark><Icon name="applied" /> {t('marks.applied')}</mark>{/if}{#if distance}<span><Icon name={travelIcon} /> {distance}</span>{/if}{/snippet}
 
 <jl-job menu={(menu && !read) || undefined} posted={posted ? (posted.verified ? 'company' : 'shared') : undefined} older={older || undefined} read={read || undefined} {open} fresh={fresh || undefined} selected={selected || undefined} applied={applied || undefined}>
-	{#if company}<jl-avatar style="--hue: {hue}" aria-hidden="true">{#if avatar}<img src={thumbnail(avatar)} alt="" loading="lazy" />{:else}{company.trim().charAt(0).toUpperCase()}{/if}</jl-avatar>{/if}
+	{#if company}<JobAvatar key={job.company} name={company} src={avatar ? thumbnail(avatar) : ''} />{/if}
 	{#if posted}
 		{#if !read}<a href={postPath(posted.did, posted.rkey)}>{job.title}</a>{/if}
 		<small>{#if company}<a href="/company/{job.company}">{company}</a>{line ? ' · ' : ''}{/if}{line}</small>
@@ -97,16 +88,12 @@
 		<jl-job-body>{@render actions?.()}<JobDescription {job} {company} /></jl-job-body>
 	{:else if onselect}
 		<button type="button" onclick={onselect} aria-current={selected ? 'true' : undefined}>
-			<strong>{job.title}</strong>
-			<small>{company ? `${company}${line ? ' · ' : ''}` : ''}{line}</small>
-			{@render chipsRow()}
+			<JobCard title={job.title} {company} {facts} {lead} />
 		</button>
 	{:else}
 		<details bind:open>
 			<summary>
-				<strong>{job.title}</strong>
-				<small>{company ? `${company}${line ? ' · ' : ''}` : ''}{line}</small>
-				{@render chipsRow()}
+				<JobCard title={job.title} {company} {facts} {lead} />
 			</summary>
 			{#if open}{@render actions?.()}<JobDescription {job} {company} />{/if}
 		</details>
@@ -123,10 +110,10 @@
 		padding: var(--space-s) 0;
 		border-bottom: var(--border);
 	}
-	jl-job > :not(jl-avatar) {
+	jl-job > :not(:global(jl-avatar)) {
 		grid-column: 2;
 	}
-	jl-job:not(:has(jl-avatar)) > *,
+	jl-job:not(:has(> :global(jl-avatar))) > *,
 	jl-job > jl-job-body {
 		grid-column: 1 / -1;
 	}
@@ -148,26 +135,12 @@
 	jl-job-body {
 		display: block;
 	}
-	/* The company's initial, in its own color. */
-	jl-avatar {
+	/* The company's picture or initial (JobAvatar), in the first column. */
+	jl-job > :global(jl-avatar) {
 		grid-row: 1;
-		display: grid;
-		place-items: center;
-		width: var(--avatar-small);
-		height: var(--avatar-small);
-		border-radius: var(--radius);
-		background: hsl(var(--hue) var(--avatar-saturation) var(--avatar-lightness));
-		color: var(--color-avatar-fg);
-		font-weight: var(--font-weight-strong);
-		overflow: hidden;
-	}
-	jl-avatar img {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
 	}
 	/* A posted job lists its parts side by side with the initial. */
-	jl-job[posted] jl-avatar {
+	jl-job[posted] > :global(jl-avatar) {
 		grid-row: 1 / span 4;
 	}
 	jl-chips {
@@ -197,29 +170,24 @@
 	jl-job > button:hover:not(:disabled) {
 		background: none;
 	}
-	jl-job > button:hover strong {
+	jl-job > button:hover :global(strong) {
 		text-decoration: underline;
 	}
 	jl-job[selected] {
 		box-shadow: inset var(--selected-bar) 0 0 var(--color-focus);
 		padding-inline-start: var(--space-s);
 	}
-	jl-job > button strong {
-		display: block;
-		font-weight: var(--font-weight-strong);
-	}
 	jl-job > a {
 		min-height: var(--chip-height);
 		align-content: center;
 	}
-	jl-job > a,
-	summary strong {
+	jl-job > a {
 		display: block;
 		font-weight: var(--font-weight-strong);
 		text-decoration: none;
 	}
 	jl-job > a:hover,
-	summary:hover strong {
+	summary:hover :global(strong) {
 		text-decoration: underline;
 	}
 	summary {
@@ -240,7 +208,7 @@
 		color: var(--color-ok);
 	}
 	/* New since the search was last seen: the first chip, filled. */
-	jl-chips > mark[data-new] {
+	:global(jl-chips) > mark[data-new] {
 		background: var(--color-ok);
 		color: var(--color-bg);
 		font-weight: var(--font-weight-strong);

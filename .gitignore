@@ -35,3 +35,4 @@ vite.config.ts.timestamp-*
 # Browser add-on (scripts/build-extension.js)
 /extension/dist
 /static/apps/joblist-firefox.zip
+/static/embed/joblist-jobs.js
