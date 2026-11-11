@@ -26,7 +26,11 @@
 
 <jl-company-header verified={company.verified || undefined}>
 	<header>
-		<h1>{#if account?.avatar}<img src={account.avatar} alt="" />{/if}{company.name}</h1>
+		<!-- Its menu at the right edge of its name, as on every page (PageHeader). -->
+		<jl-company-title>
+			<h1>{#if account?.avatar}<img src={account.avatar} alt="" />{/if}{company.name}</h1>
+			<PageMenu feed={isCompanyKey(company.key) ? { company: company.key } : null} />
+		</jl-company-title>
 		<p>
 			<small>
 				{#if company.url}<a href={company.url} target="_blank" rel="noopener">{company.key} <Icon name="external" /></a>{:else}{company.key}{/if}
@@ -59,7 +63,6 @@
 			{#if board}<a href={board} target="_blank" rel="noopener">{t('company.jobBoard')} <Icon name="external" /></a>{/if}
 			<a href="/add?key={encodeURIComponent(company.key)}">{t('company.edit')}</a>
 			<CompanyDelete {company} />
-			<PageMenu feed={isCompanyKey(company.key) ? { company: company.key } : null} />
 		</menu>
 	</header>
 </jl-company-header>
@@ -86,11 +89,18 @@
 		text-decoration: underline;
 		font-size: var(--font-size-small);
 	}
+	jl-company-title {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		align-items: center;
+		gap: var(--space-m);
+		margin: var(--space-m) 0 var(--space-xs);
+	}
 	h1 {
 		display: flex;
 		align-items: center;
 		gap: var(--space-s);
-		margin-bottom: var(--space-xs);
+		margin: 0;
 	}
 	h1 img {
 		width: var(--avatar-small);

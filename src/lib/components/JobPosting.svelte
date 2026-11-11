@@ -32,7 +32,8 @@
 
 <jl-job-posting verified={post.verified || undefined} expired={live ? undefined : true} unofficial={unofficial || undefined}>
 	<header>
-		<h1>{post.title}</h1>
+		<!-- Its menu at the right edge of its title, as on every page (PageHeader). -->
+		<jl-job-title><h1>{post.title}</h1><PageMenu /></jl-job-title>
 		<p>
 			<a href="/company/{post.company}">{company?.name || post.company}</a>
 			{#if post.verified}
@@ -49,7 +50,6 @@
 			</small>
 		</p>
 		<JobPostMenu {post} {ondeleted} />
-		<menu><PageMenu /></menu>
 		{#if unofficial}<p role="alert">{t('job.notFromCompany', { company: company?.name || post.company })}</p>{/if}
 	</header>
 
@@ -63,8 +63,15 @@
 	jl-job-posting {
 		display: block;
 	}
+	jl-job-title {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		align-items: center;
+		gap: var(--space-m);
+		margin: var(--space-m) 0 var(--space-xs);
+	}
 	h1 {
-		margin-bottom: var(--space-xs);
+		margin: 0;
 	}
 	header {
 		margin-bottom: var(--space-l);
