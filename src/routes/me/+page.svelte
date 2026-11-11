@@ -2,7 +2,6 @@
 	import config from '#lib/data/config.json';
 	import Empty from '#lib/components/Empty.svelte';
 	import Icon from '#lib/components/Icon.svelte';
-	import MenuLinks from '#lib/components/MenuLinks.svelte';
 	import OwnListItem from '#lib/components/OwnListItem.svelte';
 	import PageHeader from '#lib/components/PageHeader.svelte';
 	import SavedSearches from '#lib/components/SavedSearches.svelte';
@@ -15,26 +14,27 @@
 
 	/**
 	 * What is yours, at a glance: a few of your searches and lists, each leading to
-	 * its own page (/me/searches, /me/lists), then your account and the menu.
+	 * its own page (/me/searches, /me/lists), under a link to your page (or to sign in).
 	 * Kept in this browser, signed in or not: signing in is only for publishing.
 	 */
 	const max = config.me.glance;
 	const lists = $derived(recentLists(own.lists, max));
 	const listCount = $derived(own.lists.length);
 
-	/** @type {import('#lib/navigation/nav.js').MenuLink[]} */
-	const more = $derived([
-		session.handle
-			? { href: `/${session.handle}`, icon: 'me', label: t('settings.profile'), value: `@${session.handle}` }
-			: { href: '/signin', icon: 'signin', label: t('nav.signin') },
-		{ href: '/menu', icon: 'menu', label: t('nav.menu') }
-	]);
 </script>
 
 <svelte:head><title>{t('nav.me')} · {config.name}</title></svelte:head>
 
 <jl-me>
 	<PageHeader title={t('nav.me')} intro={t('me.intro')} />
+	<!-- Your public page, signed in; else where to sign in (only to publish). -->
+	<p data-account>
+		{#if session.handle}
+			<a href="/{session.handle}"><Icon name="me" /> {t('settings.profile')} <small>@{session.handle}</small></a>
+		{:else}
+			<a href="/signin"><Icon name="signin" /> {t('nav.signin')}</a>
+		{/if}
+	</p>
 
 	<section aria-labelledby="me-searches">
 		<h2 id="me-searches"><a href="/me/searches">{t('saved.searches')}</a></h2>
@@ -58,7 +58,6 @@
 		<p><a href="/me/lists">{t('me.all', { count: formatNumber(listCount) })} <Icon name="next" /></a></p>
 	</section>
 
-	<MenuLinks label={t('settings.account')} items={more} />
 </jl-me>
 
 <style>
@@ -84,6 +83,15 @@
 		margin: 0;
 		padding: 0;
 		list-style: none;
+	}
+	[data-account] {
+		margin: 0;
+	}
+	[data-account] a {
+		gap: var(--space-xs);
+	}
+	[data-account] small {
+		color: var(--color-muted);
 	}
 	p a {
 		display: inline-flex;
