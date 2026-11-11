@@ -1,7 +1,7 @@
 <script>
 	import Icon from './Icon.svelte';
 	import config from '#lib/data/config.json';
-	import ExploreLists from './ExploreLists.svelte';
+	import ExploreFields from './ExploreFields.svelte';
 	import DataState from './DataState.svelte';
 	import ExploreSearch from './ExploreSearch.svelte';
 	import ExploreSwitch from './ExploreSwitch.svelte';
@@ -79,7 +79,7 @@
 	/** @param {import('#lib/models/saved-search.js').SavedSearch} search */
 	function open(search) {
 		since = search.seen;
-		filters = { query: search.query, where: search.where, remote: search.remote, pay: search.pay, near: search.near ?? null, within: search.within || 0, area: null };
+		filters = { query: search.query, where: search.where, remote: search.remote, pay: search.pay, field: search.field || '', near: search.near ?? null, within: search.within || 0, area: null };
 		markSeen(search);
 	}
 
@@ -334,8 +334,9 @@
 					{t('explore.welcome', { companies: companies.length })}
 					<a href="/jobs/new">{t('explore.publish')}</a>
 				</p>
-				<ExploreLists />
 			{/if}
+			<!-- The fields jobs are in: one tap shows a field's jobs, searched or not. -->
+			<ExploreFields bind:field={filters.field} {jobs} />
 			<!-- The newest jobs at once, until the list has jobs of its own to show (it needs the companies first). -->
 			{#if !jobs.length && first?.jobs.length && !searching}
 				<jl-explore-first aria-busy="true">

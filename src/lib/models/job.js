@@ -2,14 +2,15 @@ import config from '#lib/data/config.json' with { type: 'json' };
 import { distanceKm, inArea, travelMinutes } from './distance.js';
 import { placeMatcher, remoteRegion } from './place.js';
 import { placeParts } from './place-names.js';
+import { fieldsOf } from './landing.js';
 
 /**
  * @typedef {import('#lib/ats/job.js').Job} Job
  * @typedef {'' | 'remote' | 'anywhere'} RemoteFilter
  *   remote: jobs done remotely; anywhere: remote jobs that name no country or region they are limited to.
  * @typedef {[[number, number], [number, number]]} Area [[west, south], [east, north]]
- * @typedef {{query: string, where: string, remote: RemoteFilter, pay?: boolean, near?: [number, number] | null, within?: number, area?: Area | null, places?: string[]}} JobFilters
- *   pay: only the jobs whose board says what they pay.
+ * @typedef {{query: string, where: string, remote: RemoteFilter, pay?: boolean, field?: string, near?: [number, number] | null, within?: number, area?: Area | null, places?: string[]}} JobFilters
+ *   pay: only the jobs whose board says what they pay. field: only those of a field (data/fields.json: engineering, design…).
  *   places: only the jobs in one of them, as for `where` (a list about places: "Paris & Lyon").
  *   near: where the person is ([longitude, latitude]), to find jobs close by; never kept in the page address.
  *   area: only the jobs in it (the part of the map someone looks at).
@@ -66,15 +67,16 @@ export function remoteLimit(job) {
  * @param {JobFilters} filters
  * @param {Map<string, string>} names company names by key
  */
-export function filterJobs(jobs, { query, where, remote, pay, near, within = 0, area, places }, names) {
+export function filterJobs(jobs, { query, where, remote, pay, field, near, within = 0, area, places }, names) {
 	const what = words(query);
 	const place = where.trim() ? placeMatcher(where) : null;
 	const among = places?.length ? places.map(placeMatcher) : null;
 	const matching =
-		!what.length && !place && !among && !remote && !pay && !area
+		!what.length && !place && !among && !remote && !pay && !field && !area
 			? jobs
 			: jobs.filter((job) => {
 					if (pay && !job.salary) return false;
+					if (field && !fieldsOf({ t: job.title, d: job.department }).includes(field)) return false;
 					if (area && !(job.point && inArea(job.point, area))) return false;
 					if (remote && !isRemote(job)) return false;
 					if (remote === 'anywhere' && remoteLimit(job)) return false;

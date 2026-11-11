@@ -1,4 +1,5 @@
 import { filterJobs, sameOffers, time } from './job.js';
+import { FIELDS } from './landing.js';
 
 /**
  * A job search someone keeps: its filters, and when they last looked at its jobs.
@@ -15,6 +16,8 @@ import { filterJobs, sameOffers, time } from './job.js';
 const params = { query: 'q', where: 'where', remote: 'remote' };
 /** Only jobs showing their pay: ?pay=1 */
 const payParam = 'pay';
+/** Only the jobs of a field: ?field=design */
+const fieldParam = 'field';
 
 /**
  * Filters from a page address: /jobs?q=frontend&where=berlin&remote=remote&pay=1
@@ -30,6 +33,8 @@ export function fromParams(search) {
 		remote: remote === 'remote' || remote === 'anywhere' ? remote : ''
 	};
 	if (search.get(payParam) === '1') filters.pay = true;
+	const field = search.get(fieldParam) || '';
+	if (FIELDS.some((f) => f.slug === field)) filters.field = field;
 	return filters;
 }
 
@@ -44,12 +49,13 @@ export function toParams(filters) {
 		if (value) search.set(name, value);
 	}
 	if (filters.pay) search.set(payParam, '1');
+	if (filters.field) search.set(fieldParam, filters.field);
 	const text = search.toString();
 	return text ? `?${text}` : '';
 }
 
 /** The address keys of a search, after the "#" (see navigation/address.js). */
-export const searchKeys = [...Object.values(params), payParam, 'area'];
+export const searchKeys = [...Object.values(params), payParam, fieldParam, 'area'];
 
 /**
  * A search as kept after the "#": its filters, and the part of the map searched
@@ -63,6 +69,7 @@ export function searchState(filters) {
 		[params.where]: filters.where,
 		[params.remote]: filters.remote,
 		[payParam]: Boolean(filters.pay),
+		[fieldParam]: filters.field || '',
 		area: filters.area ? filters.area.flat().map((n) => n.toFixed(3)).join(',') : ''
 	};
 }
@@ -116,10 +123,10 @@ export function nearby(near) {
 }
 
 /** @param {JobFilters} filters */
-function normalize({ query, where, remote, pay }) {
+function normalize({ query, where, remote, pay, field }) {
 	/** @param {string} s */
 	const tidy = (s) => s.trim().toLowerCase().replace(/\s+/g, ' ');
-	return { query: tidy(query), where: tidy(where), remote, pay };
+	return { query: tidy(query), where: tidy(where), remote, pay, field };
 }
 
 /**

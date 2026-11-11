@@ -10,6 +10,10 @@ describe('search addresses', () => {
 		expect(fromParams(new URLSearchParams('q=frontend&where=Berlin&remote=remote'))).toEqual(search);
 		expect(toParams({ query: ' ', where: '', remote: '' })).toBe('');
 		expect(isEmpty({ query: '', where: '', remote: '' })).toBe(true);
+		expect(toParams({ query: '', where: '', remote: '', field: 'design' })).toBe('?field=design');
+		expect(fromParams(new URLSearchParams('field=design')).field).toBe('design');
+		expect(fromParams(new URLSearchParams('field=astrology')).field).toBeUndefined();
+		expect(sameSearch({ ...search, field: 'data' }, search)).toBe(false);
 	});
 	it('keeps "shows pay" as pay=1', () => {
 		expect(toParams({ ...search, pay: true })).toBe('?q=frontend&where=Berlin&remote=remote&pay=1');
@@ -56,7 +60,7 @@ describe('searches near someone', () => {
 	it('keeps a search after the #, with its map area, never where someone is', async () => {
 		const { searchState, areaOf } = await import('./saved-search.js');
 		const state = searchState({ query: 'design', where: '', remote: 'remote', pay: true, near: [1, 2], area: [[13.0881, 52.3383], [13.7611, 52.6758]] });
-		expect(state).toEqual({ q: 'design', where: '', remote: 'remote', pay: true, area: '13.088,52.338,13.761,52.676' });
+		expect(state).toEqual({ q: 'design', where: '', remote: 'remote', pay: true, field: '', area: '13.088,52.338,13.761,52.676' });
 		expect(areaOf(String(state.area))).toEqual([[13.088, 52.338], [13.761, 52.676]]);
 		expect(areaOf('1,2,3')).toBe(null);
 		expect(areaOf('0,50,1,40')).toBe(null);

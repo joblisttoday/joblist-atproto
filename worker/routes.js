@@ -51,9 +51,9 @@ export function route(pathname) {
  */
 export function withPage(found, query) {
 	if (found.kind === 'feed' && found.search !== undefined) {
-		const { query: words, where, remote, pay } = fromParams(query);
+		const { query: words, where, remote, pay, field } = fromParams(query);
 		const most = config.searchFeed.maxLength;
-		const search = toParams({ query: words.slice(0, most), where: where.slice(0, most), remote, pay });
+		const search = toParams({ query: words.slice(0, most), where: where.slice(0, most), remote, pay, field });
 		// One company's jobs only (an embed's feed, embed/joblist-jobs.js).
 		const company = query.get('company') || '';
 		if (company && !isCompanyKey(company)) return { kind: 'redirect', location: feedPath({}) };

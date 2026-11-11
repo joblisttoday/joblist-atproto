@@ -45,9 +45,9 @@ export function isSaved(filters) {
 /** @param {JobFilters} filters */
 export function saveSearch(filters) {
 	if (isSaved(filters)) return;
-	const { query, where, remote, pay, near, within } = filters;
+	const { query, where, remote, pay, field, near, within } = filters;
 	const place = nearby(near);
-	const kept = { query: query.trim(), where: where.trim(), remote, ...(pay ? { pay } : {}), seen: new Date().toISOString() };
+	const kept = { query: query.trim(), where: where.trim(), remote, ...(pay ? { pay } : {}), ...(field ? { field } : {}), seen: new Date().toISOString() };
 	searches.list = [...searches.list, place ? { ...kept, near: place, within: within || 0 } : kept];
 	write();
 }

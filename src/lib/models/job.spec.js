@@ -51,6 +51,11 @@ describe('tidyPlace', () => {
 });
 
 describe('filterJobs', () => {
+	it('keeps only the jobs of a field, from their title or department', () => {
+		const design = job({ url: 'https://x/1', title: 'Product designer' });
+		const team = job({ url: 'https://x/2', title: 'Lead', department: 'Design' });
+		expect(filterJobs([design, job({ url: 'https://x/3', title: 'Accountant' }), team], { ...none, field: 'design' }, names)).toEqual([design, team]);
+	});
 	it('keeps only the jobs that show their pay', () => {
 		const paid = job({ url: 'https://x/1', salary: { min: 1, currency: 'EUR', period: 'hour' } });
 		expect(filterJobs([paid, job({ url: 'https://x/2' })], { ...none, pay: true }, names)).toEqual([paid]);

@@ -20,7 +20,7 @@
 
 	/** @param {import('#lib/models/saved-search.js').SavedSearch} s */
 	const label = (s) =>
-		[s.query, s.where, s.remote && t(`jobs.filter.workplace.${s.remote}`), s.pay && t('jobs.filter.pay')].filter(Boolean).join(' · ') || (s.near ? '' : t('saved.all'));
+		[s.query, s.where, s.remote && t(`jobs.filter.workplace.${s.remote}`), s.pay && t('jobs.filter.pay'), s.field && t(`field.${s.field}`)].filter(Boolean).join(' · ') || (s.near ? '' : t('saved.all'));
 	/** A search near someone: how far, not where. @param {number | undefined} within */
 	const near = (within) => (within ? t(`near.within.${config.travel.mode}`, { minutes: within }) : t('near.me'));
 
