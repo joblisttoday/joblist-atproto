@@ -42,12 +42,12 @@ service (index, labeler, feeds) is optional and replaceable.
 | 6 | Deploy hook (index → rebuild 1) | end of 4 | `SITE_DEPLOY_HOOK` (failing since 2026-11-08) |
 | 7 | Bot (the week's trends on Bluesky) | end of 4 | `BOT_HANDLE`, `BOT_APP_PASSWORD` |
 | 8 | Crawler (repairs and adds organizations) | GitHub workflow, weekly | the crawler account's password |
-| 9 | List curation | GitHub workflow, by hand | an account's password |
+| 9 | List curation | removed (2026-11-11), with lists | — |
 | 10 | Lexicon publishing | GitHub workflow, by hand | an account's password |
 | 11 | Browser add-on | built with 1, served at `/apps` | — |
 | 12 | Embed (`<joblist-jobs>`) | on organizations' own sites; served by jsDelivr from this repository, and by 1 | nothing: reads the board live (an index only for `company="…"`) |
 
-Two repositories, four workflows, two hosts, six secrets. The couplings: the app's build reads
+Two repositories, three workflows, two hosts, six secrets. The couplings: the app's build reads
 the index (2), the index rebuilds the app (6), the Worker reads the index (3).
 Steps 1 and 2 removed 2 and 6: the site is built from no index (`indexer/site.js`), and
 organization and job pages are one page each, served for any of them by a rewrite.
@@ -77,8 +77,8 @@ only); the crawler's weekly repairs stop unless run by hand; no weekly post on B
 Each step is a commit, checked (types, unit tests, the built site's tests, 390px and 1440px),
 and reversible on its own.
 
-1. **Done (2026-11-11).** **The app's build reads no index.** Remove the prerender (2) from `build:site`; organization,
-   job and list pages are the app's (`404.html` already starts the app on any address). The
+1. **Done (2026-11-11).** **The app's build reads no index.** Remove the prerender (2) from `build:site`; organization
+   and job pages are the app's (`404.html` already starts the app on any address). The
    home's and `/stats`' titles say no numbers. Check: the build runs offline.
 2. **Done (2026-11-11).** **No deploy after an index.** Remove the deploy hook step (6) and its secret: an index never
    rebuilds the app. Check: the snapshot workflow succeeds.
@@ -94,7 +94,7 @@ and reversible on its own.
 7. **No Worker.** `/in`, `/field` and the sitemap become the app's pages and a static sitemap
    (3). Check: old addresses still open their page.
 8. **Optional jobs by hand.** The bot (7) and the crawler (8) run only when started by hand
-   (`workflow_dispatch`), or not at all; list curation (9) goes with lists.
+   (`workflow_dispatch`), or not at all; list curation (9) went with lists.
 9. **Optional: GitHub Pages instead of Cloudflare.** Once there is no Worker (step 7), the site
    is static files, and this repository's Pages can serve them with the index: one host, no
    Cloudflare account, the build a GitHub workflow. What it costs:

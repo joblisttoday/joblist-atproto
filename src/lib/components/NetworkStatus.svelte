@@ -3,7 +3,7 @@
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	// Quiet by default: shown on the first visit (nothing cached yet), or when the network failed.
-	const first = $derived(network.loading && !data.companies.size && !data.lists.length);
+	const first = $derived(network.loading && !data.companies.size);
 	const progress = $derived(
 		network.progress.total
 			? t('network.progress', { records: network.progress.records, accounts: network.progress.accounts, total: network.progress.total })

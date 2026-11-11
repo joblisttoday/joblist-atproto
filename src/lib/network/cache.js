@@ -6,7 +6,7 @@ const KEY = 'network.v2';
 const OLD = 'joblist.network.v1';
 
 /**
- * @typedef {{loadedAt: string | null, companyRecords: any[], listRecords: any[], suggestionRecords: any[], jobRecords: any[], profiles: Record<string, any>}} Cached
+ * @typedef {{loadedAt: string | null, companyRecords: any[], jobRecords: any[], profiles: Record<string, any>}} Cached
  */
 
 /**
@@ -36,7 +36,7 @@ let timer;
  * Keep the network as it is now: once, after a burst of changes.
  * @param {Cached} state plain data
  */
-export function writeCache({ loadedAt, companyRecords, listRecords, suggestionRecords, jobRecords, profiles }) {
+export function writeCache({ loadedAt, companyRecords, jobRecords, profiles }) {
 	clearTimeout(timer);
-	timer = setTimeout(() => keep(KEY, { loadedAt, companyRecords, listRecords, suggestionRecords, jobRecords, profiles }), config.cache.writeDelayMs);
+	timer = setTimeout(() => keep(KEY, { loadedAt, companyRecords, jobRecords, profiles }), config.cache.writeDelayMs);
 }

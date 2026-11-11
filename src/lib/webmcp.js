@@ -1,13 +1,12 @@
 import webmcp from '#lib/data/webmcp.json';
 import { getSnapshotJobs } from '#lib/network/snapshot.js';
-import { loadList } from '#lib/network/load-list.js';
 import { mergeJobs } from '#lib/models/job-post.js';
-import { data, handleOf, membersOf } from '#lib/network/network.svelte.js';
-import { listSummary, parseListUrl, searchCompanies, searchJobs } from './webmcp-tools.js';
+import { data } from '#lib/network/network.svelte.js';
+import { searchCompanies, searchJobs } from './webmcp-tools.js';
 
 /**
  * Read-only WebMCP tools (https://developer.chrome.com/docs/ai/webmcp), for
- * browsers that offer them; the add and list forms are declarative tools too.
+ * browsers that offer them; the add forms are declarative tools too.
  * Writing stays with the person: no tool saves anything.
  */
 
@@ -20,16 +19,6 @@ const handlers = {
 		// Offers posted on joblist are read from their records, not the snapshot.
 		const posted = [...data.postedJobs.values()].flat();
 		return searchJobs(mergeJobs(posted, snapshot.all), data.companies, args);
-	},
-	get_list: async ({ url }) => {
-		const ref = parseListUrl(url);
-		if (!ref) return { error: 'Not a joblist list link.' };
-		const known = data.lists.find((l) => l.rkey === ref.rkey && (l.did === ref.actor || handleOf(l.did) === ref.actor));
-		const list = known || (await loadList(ref.actor, ref.rkey).catch(() => null));
-		if (!list) return { error: 'List not found.' };
-		// Open lists include the companies others added.
-		const companies = membersOf(list).members.map((m) => m.key);
-		return listSummary({ ...list, companies }, data.companies, handleOf(list.did), location.origin);
 	}
 };
 

@@ -1,4 +1,4 @@
-import { applyChanges, readKept, savedToKept } from '../../src/lib/models/kept.js';
+import { applyChanges, listsToKept, readKept } from '../../src/lib/models/kept.js';
 import { api } from './api.js';
 
 /**
@@ -8,12 +8,12 @@ import { api } from './api.js';
  */
 const KEY = 'joblist.kept.v1';
 
-/** The site's list; the first time, the organizations it saved before. */
+/** The site's list; the first time, the organizations of its private lists before. */
 function siteList() {
 	try {
 		const text = localStorage.getItem(KEY);
 		if (text !== null) return readKept(JSON.parse(text));
-		return savedToKept(JSON.parse(localStorage.getItem('joblist.lists.v1') || '[]'));
+		return listsToKept(JSON.parse(localStorage.getItem('joblist.lists.v1') || '[]'));
 	} catch {
 		return [];
 	}

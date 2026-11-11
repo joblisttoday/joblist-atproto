@@ -2055,9 +2055,7 @@ var X = {
 	},
 	collections: {
 		company: "today.joblist.company",
-		list: "today.joblist.list",
-		job: "today.joblist.job",
-		suggestion: "today.joblist.suggestion"
+		job: "today.joblist.job"
 	},
 	bots: ["did:plc:jqaucxlucukeif3bltpuc7zx"],
 	lexicons: {
@@ -2124,9 +2122,7 @@ var X = {
 		jobsPerBoard: 2e3,
 		perAccount: {
 			company: 200,
-			list: 50,
-			job: 50,
-			suggestion: 200
+			job: 50
 		},
 		boardsPerAccount: 100,
 		boards: 3e3
@@ -2169,7 +2165,7 @@ var X = {
 			fields: 2,
 			cities: 2,
 			companies: 4,
-			lists: 2,
+			tags: 2,
 			places: 3
 		}
 	},
@@ -2264,22 +2260,7 @@ var X = {
 		tagSuggestions: 8,
 		boardCheckDelayMs: 600
 	},
-	listForm: {
-		nameMax: 100,
-		descriptionMax: 3e3,
-		companiesMax: 2e3,
-		suggestions: 8
-	},
 	saveSignIn: { returnMinutes: 30 },
-	lists: {
-		related: {
-			shown: 6,
-			nameWeight: 3,
-			minTermLength: 3
-		},
-		explore: 8,
-		shareMax: 300
-	},
 	me: { glance: 3 },
 	kept: {
 		max: 500,
@@ -2438,7 +2419,6 @@ var X = {
 		path: "https://raw.githubusercontent.com/joblisttoday/joblist-snapshot/gh-pages",
 		everyHours: 6,
 		companyFiles: 40,
-		listsDir: "lists",
 		maxAgeHours: 48,
 		prerenderFiles: [
 			"records.json",
@@ -2451,7 +2431,6 @@ var X = {
 			page: ["records.json"],
 			counts: ["records.json", "counts.json"],
 			company: ["records.json"],
-			list: ["records.json", "counts.json"],
 			explore: [
 				"first.json",
 				"records.json",
@@ -2545,7 +2524,6 @@ var X = {
 	strings: {
 		en: {
 			"embed.title": "Open jobs at {name}",
-			"embed.list.title": "{name}: open jobs",
 			"embed.count": "{count} open jobs",
 			"embed.count.one": "1 open job",
 			"embed.none": "No open jobs right now.",
@@ -2607,7 +2585,6 @@ var X = {
 		},
 		fr: {
 			"embed.title": "Offres chez {name}",
-			"embed.list.title": "{name} : offres ouvertes",
 			"embed.count": "{count} offres",
 			"embed.count.one": "1 offre",
 			"embed.none": "Aucune offre pour l'instant.",
@@ -2669,7 +2646,6 @@ var X = {
 		},
 		de: {
 			"embed.title": "Offene Stellen bei {name}",
-			"embed.list.title": "{name}: offene Stellen",
 			"embed.count": "{count} offene Stellen",
 			"embed.count.one": "1 offene Stelle",
 			"embed.none": "Gerade keine offenen Stellen.",
@@ -2731,7 +2707,6 @@ var X = {
 		},
 		es: {
 			"embed.title": "Ofertas abiertas en {name}",
-			"embed.list.title": "{name}: ofertas abiertas",
 			"embed.count": "{count} ofertas abiertas",
 			"embed.count.one": "1 oferta abierta",
 			"embed.none": "No hay ofertas abiertas por ahora.",
@@ -4669,7 +4644,6 @@ function ko(e, t) {
 		strings: {
 			en: {
 				"embed.title": "Open jobs at {name}",
-				"embed.list.title": "{name}: open jobs",
 				"embed.count": "{count} open jobs",
 				"embed.count.one": "1 open job",
 				"embed.none": "No open jobs right now.",
@@ -4731,7 +4705,6 @@ function ko(e, t) {
 			},
 			fr: {
 				"embed.title": "Offres chez {name}",
-				"embed.list.title": "{name} : offres ouvertes",
 				"embed.count": "{count} offres",
 				"embed.count.one": "1 offre",
 				"embed.none": "Aucune offre pour l'instant.",
@@ -4793,7 +4766,6 @@ function ko(e, t) {
 			},
 			de: {
 				"embed.title": "Offene Stellen bei {name}",
-				"embed.list.title": "{name}: offene Stellen",
 				"embed.count": "{count} offene Stellen",
 				"embed.count.one": "1 offene Stelle",
 				"embed.none": "Gerade keine offenen Stellen.",
@@ -4855,7 +4827,6 @@ function ko(e, t) {
 			},
 			es: {
 				"embed.title": "Ofertas abiertas en {name}",
-				"embed.list.title": "{name}: ofertas abiertas",
 				"embed.count": "{count} ofertas abiertas",
 				"embed.count.one": "1 oferta abierta",
 				"embed.none": "No hay ofertas abiertas por ahora.",

@@ -32,8 +32,6 @@ const appPages = [
 	['/me', en['nav.me']],
 	['/add', en['form.company.title']],
 	['/jobs/new', en['post.title']],
-	['/lists/new', en['list.new']],
-	['/lists/shared', en['list.shared.title']],
 	['/tools', config.name],
 	['/apps', en['apps.title']]
 ];

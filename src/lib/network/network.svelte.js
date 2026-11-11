@@ -1,12 +1,9 @@
 import config from '#lib/data/config.json';
 import { getProfiles } from '#lib/atproto/identity.js';
 import { listRecords, listRepos } from '#lib/atproto/records.js';
-import { LOCAL, localLists } from './local-lists.svelte.js';
 import { mapLimit } from '#lib/atproto/xrpc.js';
 import { session } from '#lib/auth/session.svelte.js';
 import { toCompany } from '#lib/models/company.js';
-import { membership, toList } from '#lib/models/list.js';
-import { toSuggestion } from '#lib/models/suggestion.js';
 import { claimedCompanies, isLive, notFromCompany, toJob, toPost } from '#lib/models/job-post.js';
 import { allowed } from '#lib/models/moderation.js';
 import { isCompanyKey } from '#lib/models/landing.js';
@@ -24,8 +21,6 @@ import { getSnapshotJobs, getSnapshotRecords } from './snapshot.js';
 /** The record types the app reads, and where each is kept. */
 const TYPES = /** @type {const} */ ({
 	company: 'companyRecords',
-	list: 'listRecords',
-	suggestion: 'suggestionRecords',
 	job: 'jobRecords'
 });
 /** @typedef {keyof typeof TYPES} RecordType */
@@ -46,10 +41,6 @@ export const network = $state({
 	error: null,
 	/** @type {RepoRecord[]} */
 	companyRecords: [],
-	/** @type {RepoRecord[]} */
-	listRecords: [],
-	/** @type {RepoRecord[]} */
-	suggestionRecords: [],
 	/** @type {RepoRecord[]} */
 	jobRecords: [],
 	/** @type {Record<string, Profile>} */
@@ -73,17 +64,6 @@ const companies = $derived.by(() => {
 	// The same company added twice is shown once (companies.js).
 	return new Companies([...byKey.values()].map((versions) => toCompany(versions, profileMap)));
 });
-
-const lists = $derived(
-	[...network.listRecords.filter((r) => allowed(r)), ...localLists.records]
-		.filter((r) => r.value?.name)
-		.map(toList)
-		.sort((a, b) => b.createdAt.localeCompare(a.createdAt))
-);
-
-const suggestions = $derived(
-	network.suggestionRecords.filter((r) => r.value?.list && r.value?.company && allowed(r)).map(toSuggestion)
-);
 
 /** Every job offer posted on joblist, also expired ones (their posters can renew them). */
 const posts = $derived(
@@ -113,12 +93,6 @@ export const data = {
 	get companies() {
 		return companies;
 	},
-	get lists() {
-		return lists;
-	},
-	get suggestions() {
-		return suggestions;
-	},
 	get posts() {
 		return posts;
 	},
@@ -142,30 +116,6 @@ export function handleOf(did) {
 	return network.profiles[did]?.handle || did;
 }
 
-/**
- * Whether a list is the person's to change: kept on this device, or in their account.
- * @param {{did: string}} list
- */
-export function ownsList(list) {
-	return list.did === LOCAL || list.did === session.did;
-}
-
-/**
- * A list's companies, with what others suggested for it.
- * @param {import('#lib/models/list.js').List} list
- */
-export function membersOf(list) {
-	return membership(list, suggestions);
-}
-
-/**
- * Lists that include a company (also as an accepted suggestion of an open list).
- * @param {string} key
- */
-export function listsWith(key) {
-	return lists.filter((l) => membersOf(l).members.some((m) => m.key === key));
-}
-
 let started = false;
 
 /**
@@ -186,8 +136,6 @@ export async function startNetwork() {
 	const snapshot = await reading;
 	if (snapshot && (!network.loadedAt || snapshot.loadedAt > network.loadedAt)) {
 		network.companyRecords = snapshot.companyRecords;
-		network.listRecords = snapshot.listRecords;
-		network.suggestionRecords = snapshot.suggestionRecords || [];
 		network.jobRecords = snapshot.jobRecords || [];
 		network.profiles = snapshot.profiles;
 		network.loadedAt = snapshot.loadedAt;

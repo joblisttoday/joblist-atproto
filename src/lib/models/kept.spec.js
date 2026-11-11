@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applyChanges, savedToKept, cleanTags, keptTags, keptUrl, keyOf, knownBy, readKept, withKept, withTags } from './kept.js';
+import { applyChanges, cleanTags, listsToKept, mergeKept, keptTags, keptUrl, keyOf, knownBy, readKept, withKept, withTags } from './kept.js';
 
 describe('keptUrl', () => {
 	it('reads a link, a bare domain too; a home is its domain', () => {
@@ -74,10 +74,28 @@ describe('applyChanges', () => {
 	});
 });
 
-describe('savedToKept', () => {
-	it('keeps the organizations saved before, by their domains', () => {
-		const lists = [{ rkey: 'lother', value: { companies: ['x.org'] } }, { rkey: 'lsaved', value: { companies: ['acme.org', 'acme.org'], createdAt: 't' } }];
-		expect(savedToKept(lists)).toEqual([{ url: 'https://acme.org', name: '', at: 't' }]);
-		expect(savedToKept(null)).toEqual([]);
+describe('listsToKept', () => {
+	it('keeps the organizations of private lists, tagged with their names; the saved ones untagged', () => {
+		const lists = [
+			{ rkey: 'lother', value: { name: 'Coops', companies: ['x.org', 'acme.org'], createdAt: 'u' } },
+			{ rkey: 'lsaved', value: { name: 'Saved organizations', companies: ['acme.org', 'acme.org'], createdAt: 't' } }
+		];
+		expect(listsToKept(lists)).toEqual([
+			{ url: 'https://x.org', name: '', at: 'u', tags: ['coops'] },
+			{ url: 'https://acme.org', name: '', at: 'u', tags: ['coops'] }
+		]);
+		expect(listsToKept(null)).toEqual([]);
+	});
+});
+
+describe('mergeKept', () => {
+	it('keeps each link once, its first name, both tags, at most max', () => {
+		const a = [{ url: 'https://a.org', name: 'A', at: '1', tags: ['x'] }];
+		const b = [
+			{ url: 'https://a.org', name: 'Other', at: '2', tags: ['y'] },
+			{ url: 'https://b.org', name: '', at: '2' }
+		];
+		expect(mergeKept(a, b, 10)).toEqual([{ url: 'https://a.org', name: 'A', at: '1', tags: ['x', 'y'] }, b[1]]);
+		expect(mergeKept(a, b, 1)).toHaveLength(1);
 	});
 });

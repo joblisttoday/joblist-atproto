@@ -1,6 +1,5 @@
 import config from '../src/lib/data/config.json' with { type: 'json' };
-import { feedPath, fieldOf, indexFile, isCompanyKey, isListPath, isSlug, landingFile, landingPath, pageNumber, pagedPath } from '../src/lib/models/landing.js';
-import { listFilePath } from '../src/lib/models/snapshot-job.js';
+import { feedPath, fieldOf, indexFile, isCompanyKey, isSlug, landingFile, landingPath, pageNumber, pagedPath } from '../src/lib/models/landing.js';
 import { fromParams, toParams } from '../src/lib/models/saved-search.js';
 
 /**
@@ -10,7 +9,7 @@ import { fromParams, toParams } from '../src/lib/models/saved-search.js';
  *
  * @typedef {{kind: 'cities'} | {kind: 'fields'} | {kind: 'sitemap'}
  *   | {kind: 'page', city?: string, field?: string, page?: number}
- *   | {kind: 'feed', city?: string, field?: string, company?: string, search?: string, list?: {did: string, rkey: string}}
+ *   | {kind: 'feed', city?: string, field?: string, company?: string, search?: string}
  *   | {kind: 'redirect', location: string}} Route
  */
 
@@ -85,7 +84,6 @@ function feed(parts) {
 	if (by === 'new' && !rest.length) return { kind: 'feed' };
 	if (`/feed/${by}.xml` === config.searchFeed.path && !rest.length) return { kind: 'feed', search: '' };
 	if (by === 'company' && rest.length === 1 && isCompanyKey(rest[0])) return { kind: 'feed', company: rest[0] };
-	if (by === 'list') return rest.length === 2 && isListPath(rest[0], rest[1]) ? { kind: 'feed', list: { did: rest[0], rkey: rest[1] } } : null;
 	if (by !== 'in' && by !== 'field') return null;
 	const pieces = rest.length && pick(rest, by === 'in' ? 'city' : 'field');
 	return pieces ? { kind: 'feed', ...pieces } : null;
@@ -131,7 +129,6 @@ export function pathOf(found) {
  */
 export function fileOf(found) {
 	if (found.kind === 'feed' && found.company) return `${config.embed.dir}/${found.company}.json`;
-	if (found.kind === 'feed' && found.list) return listFilePath(found.list);
 	if (found.kind === 'feed' && found.search !== undefined) return config.searchFeed.file;
 	if (found.kind === 'page' || found.kind === 'feed') return landingFile(found);
 	return indexFile();

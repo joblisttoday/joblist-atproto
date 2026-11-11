@@ -1,11 +1,12 @@
 # joblist
 
 Open jobs at organizations that hire, read straight from their own job boards,
-and lists of organizations curated by people on [atproto](https://atproto.com).
+and organizations described by people on [atproto](https://atproto.com).
 For people looking for work, and for projects looking for people to work with.
 
-Anyone with a Bluesky (or any atproto) account can describe an organization,
-make a list of them, or post a job. Every record lives in its author's own
+Anyone with a Bluesky (or any atproto) account can describe an organization
+or post a job; anyone, signed in or not, keeps the organizations they like,
+tagged, in their own browser. Every record lives in its author's own
 account: nobody can take it down, rank it or sell it, and any other app can
 read it. For organizations with a supported job board, open jobs are read
 from that board.
@@ -17,7 +18,7 @@ a static snapshot rebuilt every 6 hours, and a static site.
 
 ## Records
 
-Four record types, defined in [`lexicons/`](lexicons/today/joblist):
+Two record types joblist reads, defined in [`lexicons/`](lexicons/today/joblist):
 
 - **`today.joblist.company`**: one company, keyed by its domain
   (`at://did:…/today.joblist.company/example.org`). Name, website,
@@ -42,24 +43,16 @@ Four record types, defined in [`lexicons/`](lexicons/today/joblist):
   So are versions from an account the indexer first saw less than
   `versions.newAccountDays` (config) before, written over someone else's
   version: a brand-new account cannot silently replace a long-standing page.
-- **`today.joblist.list`**: a named list of companies (by domain), in the
-  curator's order. Lists can be copied; the copy keeps a `copiedFrom` link.
-  A list can also stay private, in this browser, and
-  be shared as a link that carries it after the `#`
-  (`/lists/shared#name=…&orgs=a.org+b.org`, up to `lists.shareMax`
-  organizations): nothing is published or stored, and whoever opens it can
-  keep a copy.
-  An `open` list takes contributions: companies others suggest appear in it
-  at once, credited to them, and its author can hide any (`hidden`). For
-  other lists, the author accepts or dismisses each suggestion.
-- **`today.joblist.suggestion`**: a company suggested for someone else's
-  list (`list` at-uri, `company` key, optional `note`), written in the
-  contributor's own account.
 - **`today.joblist.job`**: a job offer posted on joblist, in the poster's
   own account: title, company key, description, places, remote, contract,
   `url` (the full offer, or its joblist page), `apply` (a link, an email,
   and/or "message me on Bluesky") and `expiresAt`; optionally `salary`,
   `status` (filled or closed offers are hidden) and `updatedAt`.
+
+`today.joblist.list` and `today.joblist.suggestion` (lists of organizations, and
+organizations suggested for them) were published before, and joblist no longer reads
+them: organizations' tags and places say the same (`/companies#q=music`, `/in/berlin`),
+and lists kept in a browser became saved organizations, tagged with the list's name.
 
 Every field added later is optional; how keys are normalised and how to
 publish the lexicons: [docs/lexicons.md](docs/lexicons.md).
@@ -105,7 +98,7 @@ A static SvelteKit app (it runs in the browser), served by Cloudflare, and a
 snapshot of the network rebuilt every 6 hours by the indexer ([`indexer/`](indexer),
 `.github/workflows/snapshot.yml`) and published to
 [joblisttoday/joblist-snapshot](https://github.com/joblisttoday/joblist-snapshot):
-every record, every open job, one small file per organization and per list.
+every record, every open job, one small file per organization.
 The app reads the snapshot; only the signed-in person's own records are read
 live, from their own server.
 
@@ -156,8 +149,6 @@ Configuration lives in data files, not code:
 - [`src/lib/data/config.json`](src/lib/data/config.json): services, map, limits, locales
 - [`src/lib/data/providers.json`](src/lib/data/providers.json): job board providers
 - [`src/lib/i18n/locales/`](src/lib/i18n/locales): interface text (English, French, German, Spanish: every key in each)
-- [`src/lib/data/need-lists.json`](src/lib/data/need-lists.json): lists by need, from the commons map (`scripts/curate-lists.js`)
-- [`scripts/starter-lists.json`](scripts/starter-lists.json): lists created by the import
 
 The embed (`<joblist-jobs board="greenhouse:acme">`, [`embed/src/`](embed/src/JoblistJobs.svelte)):
 an organization's open jobs on its own site, read live from its job board by the visitor's
@@ -169,7 +160,7 @@ the site serves a copy at `/embed/joblist-jobs.js`. `npm run build:embed` after 
 
 The Firefox add-on ([`extension/`](extension/README.md)): on any website, whether the
 organization is on joblist and hires, its job board and social profiles; save and tag it
-in the browser (one list with "Your organizations"), or suggest it.
+in the browser (the same as "Your organizations" here), or suggest it.
 
 ```sh
 npm run build:extension           # extension/dist: load its manifest.json in about:debugging
@@ -209,7 +200,6 @@ Workflows ([`.github/workflows/`](.github/workflows)):
 | `crawl` | Mondays | the crawler ([docs/crawler.md](docs/crawler.md)) |
 | `lexicons` | by hand, by the owner | publishes the changed schemas ([docs/lexicons.md](docs/lexicons.md)) |
 | `gate` | each push, Mondays | the quality gate on the built site |
-| `curate-lists` | by hand | lists by need: a plan, or with `write` the records |
 
 Only the site's own scripts may run (`kit.csp` in `vite.config.js`). The page
 view counter (Umami) is a pinned copy served from the site,
@@ -222,7 +212,7 @@ Web Analytics turned off for joblist.today in the Cloudflare dashboard.
 ## Import joblist's companies
 
 The historical joblist data (CC0, [joblisttoday/data](https://github.com/joblisttoday/data))
-can be published as records from one account, with starter lists by city and tag:
+can be published as records from one account:
 
 ```sh
 node scripts/import-joblist.js <companies-dir>              # dry run

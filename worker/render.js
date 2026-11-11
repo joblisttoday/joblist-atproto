@@ -38,7 +38,7 @@ export function render(found, data, template) {
 }
 
 /**
- * @param {{city?: string, field?: string, company?: string, search?: string, list?: {did: string, rkey: string}}} found
+ * @param {{city?: string, field?: string, company?: string, search?: string}} found
  * @param {any} data
  */
 function feed(found, data) {
@@ -55,18 +55,6 @@ function feed(found, data) {
 			page: `/${key}`,
 			jobs: jobs.map((/** @type {any} */ j) => ({ ...j, c: key })),
 			names: { [key]: name },
-			generatedAt: data?.generatedAt
-		});
-	}
-	if (found.list) {
-		// A list's file (indexer/list-files.js): its organizations' jobs, with their names.
-		return atom({
-			title: `${t('embed.list.title', { name: String(data?.name || found.list.rkey) })} · ${config.name}`,
-			subtitle: t('landing.follow.help'),
-			path: feedPath({ list: found.list }),
-			page: `/${found.list.did}/${found.list.rkey}`,
-			jobs,
-			names: data?.names || {},
 			generatedAt: data?.generatedAt
 		});
 	}

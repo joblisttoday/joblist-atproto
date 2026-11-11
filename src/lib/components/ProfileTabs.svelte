@@ -2,7 +2,7 @@
 	import Icon from './Icon.svelte';
 	import tabs from '#lib/data/profile-tabs.json';
 	import { page } from '$app/state';
-	import { companiesBy, listsBy, postsBy } from '#lib/network/profile.svelte.js';
+	import { companiesBy, postsBy } from '#lib/network/profile.svelte.js';
 	import { formatNumber, t } from '#lib/i18n/index.svelte.js';
 
 	/**
@@ -13,7 +13,7 @@
 	 */
 	let { handle, did, self } = $props();
 	/** @type {Record<string, number>} */
-	const counts = $derived({ lists: listsBy(did).length, posts: postsBy(did, self).length, companies: companiesBy(did).length });
+	const counts = $derived({ posts: postsBy(did, self).length, companies: companiesBy(did).length });
 	const shown = $derived(
 		tabs
 			.filter((tab) => !tab.whenAny || self || counts[tab.count])

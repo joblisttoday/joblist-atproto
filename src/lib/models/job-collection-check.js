@@ -1,6 +1,6 @@
 import config from '#lib/data/config.json' with { type: 'json' };
 import { BUILTIN, FORMAT, emptyCollections, isBuiltin } from './job-collection.js';
-import { readPrivateLists } from './private-list-check.js';
+import { listsToKept, mergeKept, readKept } from './kept.js';
 
 /**
  * Collections read from outside: this browser's storage, or a file someone imports.
@@ -104,10 +104,11 @@ export function fromMarks(marks) {
 }
 
 /**
- * The private lists of an exported file (lists of jobs, and since version 2 private lists
- * of organizations), refused whole when anything in it is not right.
+ * What an exported file keeps: its lists of jobs, refused whole when anything in them is not
+ * right; its saved organizations (version 3), or those of its private lists (version 2),
+ * each checked, those not right left out.
  * @param {string} text
- * @returns {{collections: Collections, lists: import('./private-list-check.js').PrivateList[]}}
+ * @returns {{collections: Collections, organizations: import('./kept.js').Kept[]}}
  * @throws {Error} its message: 'json', 'format' or 'invalid'
  */
 export function readCollectionsFile(text) {
@@ -119,10 +120,10 @@ export function readCollectionsFile(text) {
 	} catch {
 		throw new Error('json');
 	}
-	if (!isObject(value) || value.format !== FORMAT || ![1, 2].includes(/** @type {number} */ (value.version)) || !Array.isArray(value.collections))
+	if (!isObject(value) || value.format !== FORMAT || ![1, 2, 3].includes(/** @type {number} */ (value.version)) || !Array.isArray(value.collections))
 		throw new Error('format');
 	const { value: collections, dropped } = cleanCollections(value);
-	const lists = readPrivateLists(value.lists);
-	if (dropped || !lists) throw new Error('invalid');
-	return { collections, lists };
+	if (dropped) throw new Error('invalid');
+	const organizations = mergeKept(readKept(value.organizations), listsToKept(value.lists), config.kept.max);
+	return { collections, organizations };
 }

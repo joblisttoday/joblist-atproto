@@ -17,10 +17,6 @@ test('feeds', () => {
 	assert.deepEqual(route('/feed/in/berlin/design.xml'), { kind: 'feed', city: 'berlin', field: 'design' });
 	assert.deepEqual(route('/feed/field/design.xml'), { kind: 'feed', field: 'design' });
 	assert.deepEqual(route('/feed/company/acme.org.xml'), { kind: 'feed', company: 'acme.org' });
-	const list = { kind: 'feed', list: { did: 'did:plc:abc123', rkey: '3my7yphuxc72y' } };
-	assert.deepEqual(route('/feed/list/did:plc:abc123/3my7yphuxc72y.xml'), list);
-	assert.equal(fileOf(list), 'lists/plc/abc123/3my7yphuxc72y.json');
-	assert.equal(pathOf(list), '/feed/list/did:plc:abc123/3my7yphuxc72y.xml');
 });
 
 test('the feed of any search, kept as the explorer writes it', () => {
@@ -53,11 +49,7 @@ test('anything else is not ours', () => {
 		'/feed/in/berlin.json',
 		'/feed/company/..%2Fx.xml',
 		'/feed/company/a/b.xml',
-		'/feed/list/did:plc:abc/..%2F..%2Fx.xml',
-		'/feed/list/did:plc:abc/...xml',
-		'/feed/list/notadid/3my7.xml',
-		'/feed/list/did:plc:abc.xml',
-		'/feed/list/did:plc:abc/3my7/more.xml',
+		'/feed/list/did:plc:abc/3my7.xml',
 		'/feed/field/unknown.xml',
 		'//evil.example/',
 		'/in//',

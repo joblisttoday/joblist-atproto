@@ -8,7 +8,7 @@
  * can run this script and get the same snapshot from the same network.
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { dirname, join, resolve, sep } from 'node:path';
+import { dirname, join } from 'node:path';
 import { mapPoints, toCompany } from '../src/lib/models/company.js';
 import { Companies } from '../src/lib/models/companies.js';
 import { crawlRecords } from './crawl.js';
@@ -16,8 +16,6 @@ import { limitAccounts } from './caps.js';
 import config from '../src/lib/data/config.json' with { type: 'json' };
 import { installPoliteFetch } from '../scripts/lib/http.js';
 import { companyFiles } from './company-files.js';
-import { listFiles } from './list-files.js';
-import { listFileName } from '../src/lib/models/snapshot-job.js';
 import { fetchBoardJobs, firstJobs, recordJobs, toMinute } from './jobs.js';
 import { dateOffers } from './ledger.js';
 import { readWorkplaces } from './workplaces.js';
@@ -47,11 +45,11 @@ for (const { did, type, count } of dropped) console.warn(`records: ${count} ${ty
 const handles = await verifyCompanyHandles(profiles, records.company, records.job);
 console.log(`handles: ${handles.checked} company handles checked, ${handles.unknown} could not be, not verified: ${handles.failed.join(', ') || 'none'}`);
 // Company versions ordered by when they first appeared, not by the date their author gives.
-const versions = seeVersions(records.company, [...records.list, ...records.job, ...records.suggestion], /** @type {any} */ (await loadCache(config.versions.file)), generatedAt, config.versions.newAccountDays);
+const versions = seeVersions(records.company, records.job, /** @type {any} */ (await loadCache(config.versions.file)), generatedAt, config.versions.newAccountDays);
 records.company = versions.records;
 console.log(`versions: ${versions.added} new company versions, ${versions.newAuthors} from new accounts over someone else's`);
 const companies = groupCompanies(records.company, profiles);
-console.log(`records: ${records.company.length} company, ${records.list.length} list, ${records.suggestion.length} suggestion, ${records.job.length} job, from ${profiles.size} accounts`);
+console.log(`records: ${records.company.length} company, ${records.job.length} job, from ${profiles.size} accounts`);
 
 const board = await fetchBoardJobs(companies);
 // Where the work happens, from the descriptions of jobs whose board does not say (workplaces.js).
@@ -100,16 +98,14 @@ const files = {
 	'records.json': {
 		loadedAt: generatedAt,
 		companyRecords: records.company,
-		listRecords: records.list,
-		suggestionRecords: records.suggestion,
 		jobRecords: records.job,
 		profiles: Object.fromEntries(profiles)
 	},
 	// `checked`: companies whose board was read, so the app knows an empty result is real.
 	// gone: companies whose job board closed, as the last crawl found.
 	'jobs.json': { generatedAt, checked: Object.keys(board.health), gone, jobs },
-	// What pages that only count jobs need (companies, lists, the search box): small, instead of every job.
-	'counts.json': countsFile(jobs, records.list, generatedAt, companies.map((c) => c.key)),
+	// What pages that only count jobs need (companies, the search box): small, instead of every job.
+	'counts.json': countsFile(jobs, generatedAt, companies.map((c) => c.key)),
 	// The newest offers, small: the list shows them at once, while jobs.json loads.
 	// With their companies' names: the page shows them before it reads the companies.
 	'first.json': (() => {
@@ -132,8 +128,6 @@ const files = {
 		counts: {
 			accounts: profiles.size,
 			companies: companies.length,
-			lists: records.list.length,
-			suggestions: records.suggestion.length,
 			jobRecords: records.job.length,
 			jobs: jobs.length
 		}
@@ -164,16 +158,6 @@ const embeds = join(out, config.embed.dir);
 mkdirSync(embeds, { recursive: true });
 for (const [key, file] of companyFiles(companies, jobs, { generatedAt, checked: Object.keys(board.health), gone })) {
 	writeFileSync(join(embeds, `${key}.json`), JSON.stringify(file));
-}
-
-// One small file per list, for its page here, its embed and its feed (list-files.js).
-for (const [path, file] of listFiles(records.list, records.suggestion, jobs, { generatedAt, checked: Object.keys(board.health), gone, names: new Map(companies.map((c) => [c.key, c.name])) })) {
-	const cut = path.lastIndexOf('/');
-	const at = join(out, listFileName({ did: path.slice(0, cut), rkey: path.slice(cut + 1) }));
-	// Paths come from records: none may lead out of the snapshot.
-	if (!resolve(at).startsWith(resolve(out, config.snapshot.listsDir) + sep)) continue;
-	mkdirSync(dirname(at), { recursive: true });
-	writeFileSync(at, JSON.stringify(file));
 }
 
 // Small files for the pages per city and field and their feeds (landing.js), read by the Worker.

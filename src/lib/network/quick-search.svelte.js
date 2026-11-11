@@ -6,7 +6,7 @@ import config from '#lib/data/config.json';
 import { t } from '#lib/i18n/index.svelte.js';
 
 /**
- * What the search box on every page looks through: companies and lists (already
+ * What the search box on every page looks through: companies and their tags (already
  * read), and the places jobs name and each company's open offers, from the snapshot's
  * counts once the box is first used (from all its jobs when it has none), and the cities
  * and fields with a page (landing/index.json, small).
@@ -48,9 +48,6 @@ const fields = $derived((index?.fields || []).map((f) => ({ slug: f.slug, name: 
 export const sources = {
 	get companies() {
 		return companies;
-	},
-	get lists() {
-		return data.lists;
 	},
 	get places() {
 		return places;

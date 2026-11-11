@@ -6,14 +6,13 @@
 	import { landingPath } from '#lib/models/landing.js';
 	import { searchState } from '#lib/models/saved-search.js';
 	import { addressOf } from '#lib/navigation/address.js';
-	import { handleOf } from '#lib/network/network.svelte.js';
 	import { readSources, sources } from '#lib/network/quick-search.svelte.js';
 	import { accountOf, thumbnail } from '#lib/network/accounts.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
 	 * The search box of every page: Enter searches jobs in the explorer; as one
-	 * types, it also offers the places, companies and lists that match.
+	 * types, it also offers the places, organizations and tags that match.
 	 * On phones it is a button that opens the box over the header.
 	 */
 	let text = $state('');
@@ -116,12 +115,12 @@
 					</a>
 				</li>
 			{/each}
-			{#each found.lists as list (list.uri)}
+			{#each found.tags as [tag, count] (tag)}
 				<li>
-					<a onkeydown={keys} href="/{handleOf(list.did)}/{list.rkey}">
-						<Icon name="lists" />
-						{list.name}
-						<small>{t('list.companies', { count: list.companies.length })}</small>
+					<a onkeydown={keys} href="/companies#q={encodeURIComponent(tag)}">
+						<Icon name="companies" />
+						{tag}
+						<small>{t('list.companies', { count })}</small>
 					</a>
 				</li>
 			{/each}

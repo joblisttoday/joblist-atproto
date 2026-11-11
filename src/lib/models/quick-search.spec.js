@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { fold, matchRank, quickResults } from './quick-search.js';
 
-const limits = { companies: 3, lists: 2, places: 3 };
+const limits = { companies: 3, tags: 2, places: 3 };
 
 describe('quick search', () => {
 	it('matches names by their start or a word, ignoring case and accents', () => {
@@ -10,14 +10,13 @@ describe('quick search', () => {
 		expect(matchRank('Deutsche Bahn', 'bahn')).toBe(1);
 		expect(matchRank('Absentee', 'sen')).toBe(0);
 	});
-	it('offers companies, lists and places, the best first', () => {
+	it('offers companies, their tags and places, the best first', () => {
 		const sources = {
 			companies: [
-				{ key: 'berlinbank.de', name: 'Bank of Berlin' },
-				{ key: 'berlin.io', name: 'Berlin Startup' },
-				{ key: 'acme.org', name: 'Acme' }
+				{ key: 'berlinbank.de', name: 'Bank of Berlin', tags: ['bank'] },
+				{ key: 'berlin.io', name: 'Berlin Startup', tags: ['berlin-tech'] },
+				{ key: 'acme.org', name: 'Acme', tags: ['berlin-tech', 'bank'] }
 			],
-			lists: [{ uri: 'at://did:plc:a/today.joblist.list/1', did: 'did:plc:a', rkey: '1', name: 'Berlin', companies: ['acme.org'] }],
 			places: /** @type {[string, number][]} */ ([
 				['Berlin', 300],
 				['Berlingen', 2],
@@ -27,14 +26,13 @@ describe('quick search', () => {
 		};
 		const found = quickResults('berl', sources, limits);
 		expect(found.companies.map((c) => c.key)).toEqual(['berlin.io', 'berlinbank.de']);
-		expect(found.lists.map((l) => l.name)).toEqual(['Berlin']);
+		expect(found.tags).toEqual([['berlin-tech', 2]]);
 		expect(found.places).toEqual(['Berlin', 'Berlingen']);
 		expect(quickResults('b', sources, limits).companies).toEqual([]);
 	});
 	it('offers the pages of fields, in the language read, and of cities, also by their other names', () => {
 		const sources = {
 			companies: [],
-			lists: [],
 			places: /** @type {[string, number][]} */ ([
 				['Munich', 90],
 				['Munich, Bavaria', 5],

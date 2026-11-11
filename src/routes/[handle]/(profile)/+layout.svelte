@@ -22,8 +22,8 @@
 	/**
 	 * A domain's page, joblist.today/{domain}: a handle is a domain, and an organization is known
 	 * by its domain. An organization joblist knows: its page (with its Bluesky account when the
-	 * domain is its handle). Else an account: who it is, then its lists, the jobs it posted and
-	 * the organizations it described, each a tab (/{handle}, /{handle}/jobs, /{handle}/companies).
+	 * domain is its handle). Else an account: who it is, then the organizations it described
+	 * and the jobs it posted, each a tab (/{handle}, /{handle}/jobs).
 	 * Else a domain: what this browser finds of it (its local profile). Else not found.
 	 * @type {{children: import('svelte').Snippet}}
 	 */
@@ -104,7 +104,7 @@
 		</ProfileHeader>
 		{#if did}
 			<ProfileTabs {handle} {did} {self} />
-			<!-- Its lists, jobs and organizations are known once the data is: until then, it says why. -->
+			<!-- Its organizations and jobs are known once the data is: until then, it says why. -->
 			<DataState>{@render children()}</DataState>
 		{:else}
 			<Pending />

@@ -9,23 +9,18 @@ const collections = [
 	{ id: 'applied', name: '', at: '', jobs: {} },
 	{ id: 'cdream', name: 'Dream jobs', at: '2026-11-02T00:00:00Z', jobs: { b: job('2026-11-05T00:00:00Z'), c: job('2026-11-03T00:00:00Z') } }
 ];
-/** @param {string} did @param {string} rkey @param {string} createdAt */
-const list = (did, rkey, createdAt) => ({ uri: `at://${did}/l/${rkey}`, did, rkey, name: rkey, companies: ['a.org', 'b.org'], open: false, hidden: [], createdAt });
-const lists = [list('local', 'berlin', '2026-11-04T00:00:00Z'), list('did:plc:me', 'coops', '2026-10-01T00:00:00Z')];
-const rows = ownLists(collections, lists, (l) => `/${l.did}/${l.rkey}`, (l) => l.did !== 'local');
+const rows = ownLists(collections);
 
 describe('own lists', () => {
-	it('lists the lists of jobs first, private, then the lists of organizations, each saying whether it is public', () => {
-		expect(rows.map((r) => [r.href, r.kind, r.count, r.public, r.builtin])).toEqual([
-			['/me/lists/saved', 'jobs', 1, false, true],
-			['/me/lists/applied', 'jobs', 0, false, true],
-			['/me/lists/cdream', 'jobs', 2, false, false],
-			['/local/berlin', 'organizations', 2, false, false],
-			['/did:plc:me/coops', 'organizations', 2, true, false]
+	it('lists the lists of jobs: the built-in ones, then the named ones', () => {
+		expect(rows.map((r) => [r.href, r.count, r.builtin])).toEqual([
+			['/me/lists/saved', 1, true],
+			['/me/lists/applied', 0, true],
+			['/me/lists/cdream', 2, false]
 		]);
 	});
 
 	it('shows at a glance the few with something in them, the latest changed first', () => {
-		expect(recentLists(rows, 3).map((r) => r.href)).toEqual(['/me/lists/cdream', '/local/berlin', '/me/lists/saved']);
+		expect(recentLists(rows, 3).map((r) => r.href)).toEqual(['/me/lists/cdream', '/me/lists/saved']);
 	});
 });

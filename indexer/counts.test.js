@@ -13,7 +13,7 @@ test('newestByCompany keeps companies together, each newest first whatever its d
 	assert.deepEqual(jobs.map((j) => j.t), ['e', 'd', 'a', 'c', 'b']);
 });
 
-test('countsFile counts board jobs only, and the places of lists about places', () => {
+test('countsFile counts board jobs only, and knows every organization', () => {
 	const file = countsFile(
 		[
 			{ t: 'Engineer', u: 'https://acme.org/1', c: 'acme.org', l: 'Berlin, Germany' },
@@ -21,13 +21,11 @@ test('countsFile counts board jobs only, and the places of lists about places', 
 			{ t: 'Writer', u: 'https://beta.io/1', c: 'beta.io', l: 'Paris, France' },
 			{ t: 'Posted', u: 'https://beta.io/2', c: 'beta.io', l: 'Berlin', s: 'at://did:plc:b/today.joblist.job/1' }
 		],
-		[{ value: { name: 'Startups in Berlin' } }, { value: { name: 'Robotics' } }, {}],
 		'2026-11-07T00:00:00.000Z',
 		['gamma.org', 'acme.org', 'beta.io', 'acme.org']
 	);
 	assert.deepEqual(file.known, ['acme.org', 'beta.io', 'gamma.org']);
 	assert.equal(file.generatedAt, '2026-11-07T00:00:00.000Z');
 	assert.deepEqual(file.offers, { 'acme.org': 1, 'beta.io': 1 });
-	assert.deepEqual(file.here, { Berlin: { 'acme.org': 1 } });
 	assert.deepEqual(file.places[0], ['Paris', 2]);
 });

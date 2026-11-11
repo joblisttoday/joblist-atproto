@@ -44,8 +44,7 @@ node --test 'scripts/**/*.test.js'          # the rules, unit tested
      no website yet, the same search as for a new company (below), which
      also gives the website. At most `bluesky.maxConnect` (30) a run.
 3. **New companies**, only ones somebody already points at:
-   - keys used in lists, in suggestions for a list
-     (`today.joblist.suggestion`) or in job records that have no company
+   - keys used in job records that have no company
      record ([`indexer/suggest.js`](../indexer/suggest.js));
    - Bluesky accounts **whose handle is their own domain** (acme.com, not
      acme.bsky.social nor another of `hostedHandles`), from public, read-only
@@ -104,7 +103,7 @@ Every run saves two files (default `static/snapshot/crawl/`, set by
 
 | Source | What for | Reproducible |
 |---|---|---|
-| atproto relay + each author's PDS | every company, list and job record | yes, public |
+| atproto relay + each author's PDS | every company and job record | yes, public |
 | companies' websites and boards | health, links to their boards | the web at that moment |
 | [Open Jobs](https://github.com/elliottdehn/open-jobs) `slugs.json` (CC0), pinned to commit `a6bb3ab` | board ids, as a lookup only | yes, pinned file |
 | Bluesky post search (`app.bsky.feed.searchPosts`) | domain accounts hiring now | no, recent posts |

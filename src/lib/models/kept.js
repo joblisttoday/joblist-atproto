@@ -184,14 +184,45 @@ export function keptTags(list) {
 }
 
 /**
- * The organizations saved before (a private list, "Saved organizations", rkey "lsaved"),
- * as kept ones: links to their domains.
- * @param {unknown} lists the private lists as stored (joblist.lists.v1)
+ * Two sets of kept organizations as one: each link once, its name the first given, its tags
+ * both's, at most config.kept.max (those of the first first).
+ * @param {Kept[]} list
+ * @param {Kept[]} more
+ * @param {number} max
  * @returns {Kept[]}
  */
-export function savedToKept(lists) {
-	const saved = Array.isArray(lists) ? lists.find((r) => r?.rkey === 'lsaved') : null;
-	const keys = Array.isArray(saved?.value?.companies) ? saved.value.companies : [];
-	const at = typeof saved?.value?.createdAt === 'string' ? saved.value.createdAt : '';
-	return readKept(keys.map((/** @type {unknown} */ key) => ({ url: `https://${key}`, name: '', at })));
+export function mergeKept(list, more, max) {
+	/** @type {Map<string, Kept>} */
+	const by = new Map(list.map((k) => [k.url, k]));
+	for (const k of more) {
+		const here = by.get(k.url);
+		if (!here) by.set(k.url, k);
+		else {
+			const tags = cleanTags([...(here.tags || []), ...(k.tags || [])]);
+			by.set(k.url, { ...here, name: here.name || k.name, ...(tags.length ? { tags } : {}) });
+		}
+	}
+	return [...by.values()].slice(0, max);
+}
+
+/**
+ * The private lists of organizations kept before (joblist.lists.v1, and the files that moved
+ * them), as kept organizations: links to their domains, each tagged with its list's name;
+ * those of "Saved organizations" (rkey "lsaved") without a tag.
+ * @param {unknown} lists [{rkey, value: {name, companies, createdAt}}]
+ * @returns {Kept[]}
+ */
+export function listsToKept(lists) {
+	if (!Array.isArray(lists)) return [];
+	/** @type {Kept[]} */
+	let all = [];
+	for (const list of lists) {
+		const value = list?.value;
+		const keys = Array.isArray(value?.companies) ? value.companies : [];
+		const at = typeof value?.createdAt === 'string' ? value.createdAt : '';
+		const tags = list?.rkey === 'lsaved' || typeof value?.name !== 'string' ? [] : cleanTags([value.name]);
+		const found = readKept(keys.map((/** @type {unknown} */ key) => ({ url: `https://${key}`, name: '', at, tags })));
+		all = mergeKept(all, found, Infinity);
+	}
+	return all;
 }

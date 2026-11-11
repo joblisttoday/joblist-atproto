@@ -104,16 +104,17 @@ describe('job collections', () => {
 		expect(() => readCollectionsFile(file([{ id: 'applied', name: 'Mine', at: '', jobs: {} }]))).toThrow('invalid');
 	});
 
-	it('moves the private lists of organizations too, and still reads files from before them', () => {
-		const list = { rkey: 'lberlin1', value: { name: 'Coops in Berlin', companies: ['a.org', 'b.org'], createdAt: '2026-01-01T00:00:00Z' } };
-		expect(readCollectionsFile(exportCollections(emptyCollections(), [list])).lists).toEqual([list]);
+	it('moves the saved organizations too, and those of the private lists of files from before', () => {
+		const org = { url: 'https://a.org', name: 'A', at: '2026-01-01T00:00:00Z', tags: ['coop'] };
+		expect(readCollectionsFile(exportCollections(emptyCollections(), [org])).organizations).toEqual([org]);
+		const list = { rkey: 'lberlin1', value: { name: 'Coops in Berlin', companies: ['a.org', 'b.org', 'not a domain'], createdAt: 't' } };
 		const file = (/** @type {any} */ lists, version = 2) => JSON.stringify({ format: 'joblist.collections', version, collections: [], lists });
-		expect(readCollectionsFile(file(undefined, 1)).lists).toEqual([]);
-		expect(() => readCollectionsFile(file([{ ...list, rkey: '../x' }]))).toThrow('invalid');
-		expect(() => readCollectionsFile(file([{ ...list, value: { ...list.value, companies: ['not a domain'] } }]))).toThrow('invalid');
-		expect(() => readCollectionsFile(file([{ ...list, value: { ...list.value, name: '' } }]))).toThrow('invalid');
-		expect(() => readCollectionsFile(file([list, list]))).toThrow('invalid');
-		expect(() => readCollectionsFile(file([list], 3))).toThrow('format');
+		expect(readCollectionsFile(file(undefined, 1)).organizations).toEqual([]);
+		expect(readCollectionsFile(file([list])).organizations.map((k) => [k.url, k.tags])).toEqual([
+			['https://a.org', ['coops-in-berlin']],
+			['https://b.org', ['coops-in-berlin']]
+		]);
+		expect(() => readCollectionsFile(file([list], 4))).toThrow('format');
 	});
 
 	it('keeps what is right from storage', () => {

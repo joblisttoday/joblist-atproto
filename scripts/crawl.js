@@ -113,8 +113,8 @@ const connected = await mapLimit(toConnect, settings.bluesky.concurrency, async 
 repairs.splice(0, repairs.length, ...repairsByKey.values());
 step(`boards for companies on Bluesky: looked at ${toConnect.length}, found ${count(connected, (c) => c.changes)}`);
 
-// (c) New companies: keys in lists, suggestions and jobs without a record, and Bluesky accounts whose handle is a domain.
-const fromLists = suggest(
+// (c) New companies: keys in jobs without a record, and Bluesky accounts whose handle is a domain.
+const fromJobs = suggest(
 	[...versionsByKey.keys()].map((key) => /** @type {any} */ ({ key })),
 	records
 );
@@ -124,7 +124,7 @@ try {
 } catch (error) {
 	console.warn(`hiring posts unavailable: ${/** @type {Error} */ (error).message}`);
 }
-const listed = new Set(fromLists.map((s) => s.key));
+const listed = new Set(fromJobs.map((s) => s.key));
 const unavailable = (/** @type {string} */ what) => (/** @type {Error} */ error) => {
 	console.warn(`${what} unavailable: ${error.message}`);
 	return /** @type {import('./lib/accounts.js').DomainAccount[]} */ ([]);
@@ -142,7 +142,7 @@ const fromProfiles = pickAccounts(listening, { known: (d) => known(d) || hiringK
 const accounts = await verifyAccounts([...fromHiring.accounts, ...fromProfiles.accounts], settings.bluesky.concurrency);
 /** @type {{domain: string, source: string}[]} */
 const candidates = [
-	...fromLists.map((s) => ({ domain: s.key, source: `lists and suggestions (${s.mentions} mentions)` })),
+	...fromJobs.map((s) => ({ domain: s.key, source: `jobs (${s.mentions} mentions)` })),
 	// Profile names are not used: the name comes from the company's own website.
 	...accounts.verified.map((a) => ({ domain: a.handle, source: a.source }))
 ].filter((c) => !versionsByKey.has(c.domain));
@@ -179,9 +179,9 @@ const summary = {
 		onBluesky: { companies: Object.keys(onBluesky).length, withoutBoard: toConnect.length, newBoard: count(connected, (c) => c.changes) }
 	},
 	discovery: {
-		fromLists: { candidates: fromLists.length, found: count(discoveries, (d) => d.source.startsWith('lists')) },
+		fromJobs: { candidates: fromJobs.length, found: count(discoveries, (d) => d.source.startsWith('jobs')) },
 		fromHiringPosts: { via: hiring.via, posts: hiring.posts, domainAccounts: hiring.accounts.length, new: count(candidates, (c) => c.source.startsWith('hiring')), found: count(discoveries, (d) => d.source.startsWith('hiring')) },
-		fromProfiles: { accounts: listening.flat().length, domainAccounts: fromProfiles.accounts.length, overCap: fromProfiles.dropped, new: count(candidates, (c) => !c.source.startsWith('hiring') && !c.source.startsWith('lists')), found: count(discoveries, (d) => !d.source.startsWith('hiring') && !d.source.startsWith('lists')) },
+		fromProfiles: { accounts: listening.flat().length, domainAccounts: fromProfiles.accounts.length, overCap: fromProfiles.dropped, new: count(candidates, (c) => !c.source.startsWith('hiring') && !c.source.startsWith('jobs')), found: count(discoveries, (d) => !d.source.startsWith('hiring') && !d.source.startsWith('jobs')) },
 		handlesNotVerified: accounts.rejected.length,
 		openJobsBoards: openJobs ? [...openJobs.values()].reduce((n, b) => n + b.length, 0) : 0
 	},

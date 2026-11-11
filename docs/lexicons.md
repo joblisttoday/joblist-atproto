@@ -2,6 +2,9 @@
 
 joblist's record types are defined in [`lexicons/today/joblist/`](../lexicons/today/joblist):
 `company`, `list`, `suggestion`, `job`, and `authFull` (an OAuth permission set).
+joblist reads `company` and `job` only (`collections` in config): `list` and `suggestion`
+were published before, and their records stay valid, but lists gave way to organizations'
+tags and places, and to each person's saved organizations in their browser.
 Every field added since the first records is optional: older records stay valid,
 and apps that do not know a field ignore it.
 
@@ -42,8 +45,8 @@ is left out.
 
 The indexer also bounds each account ([`indexer/caps.js`](../indexer/caps.js),
 numbers in `limits` of [`config.json`](../src/lib/data/config.json)): at most
-`perAccount` records of each type (200 companies, 50 lists, 50 jobs, live ones
-first, 200 suggestions), and job boards read for at most `boardsPerAccount`
+`perAccount` records of each type (200 companies, 50 jobs, live ones
+first), and job boards read for at most `boardsPerAccount`
 companies per author of the version shown and `boards` in all (companies' own
 versions first). Accounts in `bots` are exempt. What is left out is logged.
 

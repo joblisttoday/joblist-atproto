@@ -2,13 +2,13 @@ import * as model from '#lib/models/job-collection.js';
 import { cleanCollections, fromMarks, readCollectionsFile } from '#lib/models/job-collection-check.js';
 import { markKey } from '#lib/models/job-mark.js';
 import { localKey } from '#lib/local/space.js';
-import { localLists, putLocalList } from './local-lists.svelte.js';
+import { keepAll, kept as organizations } from './kept.svelte.js';
 
 /**
  * The jobs someone keeps (Saved, Applied, Hidden and the collections they name), in this
  * browser only: job hunting is private, so none of it goes to their (public)
  * atproto repository. Moved between devices by exporting and importing a file, with the
- * private lists of organizations (local-lists.svelte.js).
+ * saved organizations (kept.svelte.js).
  * @typedef {import('#lib/models/job-collection.js').Collections} Collections
  * @typedef {import('#lib/ats/job.js').Job} Job
  */
@@ -89,22 +89,18 @@ export function deleteCollection(id) {
 	save(model.deleteCollection(kept.state, id));
 }
 
-/** The file of every private list, to download. */
+/** The file of what is kept here, to download. */
 export function exportFile() {
-	/** @type {any[]} the records' values are lists (local-lists.svelte.js) */
-	const lists = localLists.records.map(({ rkey, value }) => ({ rkey, value }));
-	return new Blob([model.exportCollections(kept.state, lists)], { type: 'application/json' });
+	return new Blob([model.exportCollections(kept.state, organizations.list)], { type: 'application/json' });
 }
 
 /**
- * Add the private lists of an exported file to these: lists of jobs merged by id, lists
- * of organizations not here yet added.
+ * Add what an exported file keeps to these: lists of jobs merged by id, organizations added.
  * @param {string} text
  * @throws {Error} when the file is not right (see readCollectionsFile)
  */
 export function importFile(text) {
-	const { collections, lists } = readCollectionsFile(text);
+	const { collections, organizations: more } = readCollectionsFile(text);
 	save(model.mergeCollections(kept.state, collections));
-	const here = new Set(localLists.records.map((r) => r.rkey));
-	for (const list of lists) if (!here.has(list.rkey)) putLocalList(list.rkey, list.value);
+	keepAll(more);
 }

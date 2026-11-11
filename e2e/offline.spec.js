@@ -21,6 +21,6 @@ test('opens, shows its jobs and an organization offline, on what it read last', 
 	await expect(page.locator('jl-outbox-status[state="offline"]')).toBeVisible();
 	await page.goto('/ableton.com');
 	await expect(page.locator('h1')).toContainText('Ableton');
-	await page.goto('/lists');
-	await expect(page.locator('h1')).toBeVisible();
+	await page.goto('/companies');
+	await expect(page.locator('h1')).toBeAttached();
 });

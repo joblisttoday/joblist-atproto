@@ -8,7 +8,7 @@ import agents from '../src/lib/data/agents.json' with { type: 'json' };
  * types from the lexicons, the docs from docs/, and the snapshot's counts, so it never
  * says less than the project knows.
  *
- * @param {{root?: string, counts?: {jobs?: number, companies?: number, lists?: number}, generatedAt?: string}} [from]
+ * @param {{root?: string, counts?: {jobs?: number, companies?: number}, generatedAt?: string}} [from]
  *   root: the repository (lexicons/, docs/); counts and generatedAt: the snapshot's meta.json.
  */
 export function llmsTxt({ root = '.', counts = {}, generatedAt = '' } = {}) {
@@ -25,8 +25,7 @@ export function llmsTxt({ root = '.', counts = {}, generatedAt = '' } = {}) {
 		`- ${item.path ? `[${item.title}](${config.url}${item.path})` : item.title}${item.about ? `: ${fill(item.about)}` : ''}`;
 	const now = [
 		counts.jobs && `${counts.jobs.toLocaleString('en')} open jobs`,
-		counts.companies && `${counts.companies.toLocaleString('en')} organizations`,
-		counts.lists && `${counts.lists.toLocaleString('en')} lists`
+		counts.companies && `${counts.companies.toLocaleString('en')} organizations`
 	].filter(Boolean);
 	return [
 		`# ${config.name}`,
@@ -69,13 +68,13 @@ export function llmsTxt({ root = '.', counts = {}, generatedAt = '' } = {}) {
 	].join('\n');
 }
 
-/** The record types, with the first sentence of their own description. @param {string} root */
+/** The record types joblist reads (config.collections), with the first sentence of their own description. @param {string} root */
 function lexicons(root) {
 	const dir = 'lexicons/today/joblist';
 	return readdirSync(join(root, dir))
 		.filter((f) => f.endsWith('.json'))
 		.map((f) => ({ path: `${dir}/${f}`, ...JSON.parse(readFileSync(join(root, dir, f), 'utf8')) }))
-		.filter((l) => l.defs?.main?.type === 'record')
+		.filter((l) => l.defs?.main?.type === 'record' && Object.values(config.collections).includes(l.id))
 		.map((l) => ({ id: l.id, path: l.path, description: firstSentence(l.description || '') }));
 }
 

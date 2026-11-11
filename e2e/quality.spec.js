@@ -10,8 +10,6 @@ qualityTests([
 	{ name: 'home', path: '/', touch },
 	{ name: 'jobs', path: '/jobs', touch },
 	{ name: 'organizations', path: '/companies', touch },
-	{ name: 'lists', path: '/lists', touch },
-	{ name: 'list', path: '/joblist.today/3my7zpwloir2s', touch },
 	{ name: 'organization', path: '/ableton.com', touch },
 	{ name: 'profile', path: '/joblist.today', touch },
 	{ name: 'me', path: '/me', touch },
@@ -21,7 +19,7 @@ qualityTests([
 	{ name: 'trends', path: '/stats', touch },
 	{ name: 'add an organization', path: '/add', touch },
 	{ name: 'post a job', path: '/jobs/new', touch },
-	{ name: 'new list', path: '/lists/new', touch },
+	{ name: 'my organizations', path: '/me/organizations', touch },
 	{
 		// Nothing read (offline, the snapshot down): the page says why, not that it is empty.
 		name: 'data unreachable',

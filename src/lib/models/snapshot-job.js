@@ -66,38 +66,3 @@ export function readCompanyFile(key, data) {
 		points: Array.isArray(data.points) ? data.points : []
 	};
 }
-
-/**
- * A list's file (lists/plc/{id}/{rkey}.json, see indexer/list-files.js) as the jobs of the whole
- * snapshot are used, with only that list's organizations; null when it is not one.
- * @param {any} data
- * @returns {{generatedAt: string, companies: string[], all: import('#lib/ats/job.js').Job[], checked: string[], gone: string[], points: [string, [number, number]][]} | null}
- */
-export function readListFile(data) {
-	if (!data || !Array.isArray(data.jobs) || !Array.isArray(data.companies)) return null;
-	return {
-		generatedAt: String(data.generatedAt || ''),
-		companies: data.companies.map(String),
-		all: data.jobs.map(fromSnapshot).filter(Boolean),
-		checked: Array.isArray(data.checked) ? data.checked : [],
-		gone: Array.isArray(data.gone) ? data.gone : [],
-		points: Array.isArray(data.points) ? data.points : []
-	};
-}
-
-/**
- * A list's file name in the snapshot: lists/plc/{id}/{rkey}.json. A DID's colons become folders
- * (no colon in a file name: Windows and GitHub's artifacts refuse them); anything unusual
- * is escaped, so the name is the same on every system.
- * @param {{did: string, rkey: string}} list
- */
-export function listFileName({ did, rkey }) {
-	const segment = (/** @type {string} */ part) => encodeURIComponent(part).replace(/^\.{1,2}$/, (dots) => dots.replaceAll('.', '%2E'));
-	return [config.snapshot.listsDir, ...did.split(':').slice(1).map(segment), `${segment(rkey)}.json`].join('/');
-}
-
-/**
- * Where a list's file is read from: its name as an address (the same, but for unusual names).
- * @param {{did: string, rkey: string}} list
- */
-export const listFilePath = (list) => listFileName(list).split('/').map(encodeURIComponent).join('/');

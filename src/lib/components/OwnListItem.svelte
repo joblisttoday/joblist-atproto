@@ -2,18 +2,17 @@
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * One of someone's lists (models/own-lists.js): its name, what it holds and how many,
-	 * and whether others can see it.
+	 * One of someone's lists of jobs (models/own-lists.js): its name and how many it holds.
 	 * @type {{list: import('#lib/models/own-lists.js').OwnList}}
 	 */
 	let { list } = $props();
 	const name = $derived(list.builtin ? t(`marks.${list.id}`) : list.name);
-	const count = $derived(list.kind === 'jobs' ? t('saved.matching', { count: list.count }) : t('list.companies', { count: list.count }));
+	const count = $derived(t('saved.matching', { count: list.count }));
 </script>
 
-<jl-own-list public={list.public || undefined}>
+<jl-own-list>
 	<a href={list.href}>{name}</a>
-	<small><mark>{t(list.public ? 'list.public' : 'list.private')}</mark> {count}</small>
+	<small>{count}</small>
 </jl-own-list>
 
 <style>
@@ -39,12 +38,5 @@
 	small {
 		display: block;
 		color: var(--color-muted);
-	}
-	mark {
-		margin-inline-end: var(--space-xs);
-		padding: 0 var(--space-xs);
-		border-radius: var(--radius);
-		background: var(--color-soft);
-		color: var(--color-fg);
 	}
 </style>

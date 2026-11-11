@@ -7,7 +7,6 @@ import { filterJobs, newestFirst, workplace } from '#lib/models/job.js';
  * Plain functions of their inputs, so they can be tested without a browser.
  *
  * @typedef {import('#lib/models/company.js').Company} Company
- * @typedef {import('#lib/models/list.js').List} List
  * @typedef {import('#lib/ats/job.js').Job} Job
  */
 
@@ -69,41 +68,5 @@ export function searchJobs(jobs, companies, { query = '', place = '', remote = f
 			published: j.published,
 			url: j.url
 		}))
-	};
-}
-
-/**
- * The author (handle or DID) and record key of a list link or at:// URI.
- * @param {string} input
- * @returns {{actor: string, rkey: string} | null}
- */
-export function parseListUrl(input) {
-	const value = (input || '').trim();
-	const at = value.match(/^at:\/\/([^/]+)\/[^/]+\/([^/?#]+)/);
-	if (at) return { actor: at[1], rkey: at[2] };
-	try {
-		const [actor, rkey] = new URL(value).pathname.split('/').filter(Boolean);
-		return actor && rkey ? { actor: decodeURIComponent(actor), rkey } : null;
-	} catch {
-		return null;
-	}
-}
-
-/**
- * @param {List} list
- * @param {Map<string, Company>} companies
- * @param {string} author
- * @param {string} origin
- */
-export function listSummary(list, companies, author, origin) {
-	return {
-		name: list.name,
-		description: list.description,
-		author,
-		page: `${origin}/${author}/${list.rkey}`,
-		companies: list.companies.map((key) => {
-			const company = companies.get(key);
-			return company ? companySummary(company, origin) : { key, name: key };
-		})
 	};
 }

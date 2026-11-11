@@ -1,12 +1,11 @@
 import config from '#lib/data/config.json';
 import { localKey } from '#lib/local/space.js';
-import { keptUrl, keyOf, readKept, savedToKept, withKept, withTags } from '#lib/models/kept.js';
-import { SAVED, localLists, removeLocalList } from './local-lists.svelte.js';
+import { keptUrl, keyOf, listsToKept, mergeKept, readKept, withKept, withTags } from '#lib/models/kept.js';
 
 /**
  * The organizations kept in this browser (models/kept.js): private, never sent anywhere.
- * They began as a private list, "Saved organizations": its organizations are kept here,
- * once, and the list is gone.
+ * They began as private lists of organizations (joblist.lists.v1): those are kept here once,
+ * each tagged with its list's name, and the lists are gone.
  * The joblist browser add-on (extension/) keeps them too, on any website: when this site
  * is open, it makes its changes here and tells ("joblist:kept"), and is told of each change
  * made here ("joblist:kept-written"), so both are one list.
@@ -14,24 +13,37 @@ import { SAVED, localLists, removeLocalList } from './local-lists.svelte.js';
  */
 
 const KEY = localKey('joblist.kept.v1');
+const LISTS = localKey('joblist.lists.v1');
 
 /** @returns {Kept[]} */
 function read() {
 	try {
-		const text = localStorage.getItem(KEY);
-		if (text !== null) return readKept(JSON.parse(text));
+		return readKept(JSON.parse(localStorage.getItem(KEY) || '[]'));
 	} catch {
 		return [];
 	}
-	// The first time: the organizations saved before, as links to their domains.
-	return savedToKept(localLists.records);
 }
 
 export const kept = $state({ list: read() });
-// Moved: written here, and the old list removed.
-if (localLists.records.some((r) => r.rkey === SAVED)) {
+// The private lists of organizations kept before, once: their organizations, tagged.
+try {
+	const lists = localStorage.getItem(LISTS);
+	if (lists !== null) {
+		kept.list = mergeKept(kept.list, listsToKept(JSON.parse(lists)), config.kept.max);
+		write();
+		localStorage.removeItem(LISTS);
+	}
+} catch {
+	// storage blocked, or not lists: nothing to move
+}
+
+/**
+ * Organizations from elsewhere (a file from another device) added to these.
+ * @param {Kept[]} more
+ */
+export function keepAll(more) {
+	kept.list = mergeKept(kept.list, more, config.kept.max);
 	write();
-	removeLocalList(SAVED);
 }
 
 function write() {

@@ -1,6 +1,6 @@
 import config from '#lib/data/config.json';
 import { safeUrl } from '#lib/models/url.js';
-import { fromSnapshot, listFilePath, readCompanyFile, readJobsFile, readListFile } from '#lib/models/snapshot-job.js';
+import { fromSnapshot, readCompanyFile, readJobsFile } from '#lib/models/snapshot-job.js';
 import { readCounts } from '#lib/models/snapshot-counts.js';
 import { newestFirst } from '#lib/models/job.js';
 
@@ -99,26 +99,6 @@ export async function getCompaniesJobs(keys) {
 		gone: new Set(read.flatMap((file) => file.gone)),
 		points: new Map(read.flatMap((file) => file.points))
 	};
-}
-
-/**
- * A list's jobs, from its own small file (indexer/list-files.js), in the shape of getSnapshotJobs.
- * Only when it holds the organizations the list has now: a list changed since the snapshot
- * reads them as any few companies do (getCompaniesJobs), or every job when they are many.
- * @param {{did: string, rkey: string}} list
- * @param {string[]} keys the list's organizations now
- * @returns {Promise<SnapshotJobs | null>}
- */
-export async function getListJobs({ did, rkey }, keys) {
-	const file = readListFile(await getFile(listFilePath({ did, rkey })));
-	const same = file && file.companies.length === keys.length && keys.every((key) => file.companies.includes(key));
-	if (file && same && fresh(file.generatedAt)) {
-		/** @type {Map<string, import('#lib/ats/job.js').Job[]>} */
-		const jobs = new Map(keys.map((key) => [key, []]));
-		for (const job of file.all) jobs.get(job.company)?.push(job);
-		return { all: file.all, jobs, checked: new Set(file.checked), gone: new Set(file.gone), points: new Map(file.points) };
-	}
-	return keys.length <= config.snapshot.companyFiles ? getCompaniesJobs(keys) : getSnapshotJobs();
 }
 
 /** @param {string} name */

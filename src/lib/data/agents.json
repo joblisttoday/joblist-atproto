@@ -1,14 +1,13 @@
 {
 	"about": "What /llms.txt says to agents and other programs, written at each build by indexer/llms.js. {url}, {snapshot}, {source}, {userAgent} and {hours} are filled from config; the record types, the docs and the counts are added from the lexicons, docs/ and the snapshot.",
-	"intro": "{name} ({url}) lists open jobs at organizations that hire, read straight from each one's own job board (Ashby, Greenhouse, Lever, Personio, Recruitee, Rippling, SmartRecruiters, Workable), and lists of organizations curated by people on atproto (the Bluesky protocol): every record lives in its author's own account. Open source (GPL-3.0), no ads, no tracking, no accounts of its own.",
+	"intro": "{name} ({url}) lists open jobs at organizations that hire, read straight from each one's own job board (Ashby, Greenhouse, Lever, Personio, Recruitee, Rippling, SmartRecruiters, Workable), and organizations described by people on atproto (the Bluesky protocol): every record lives in its author's own account. Open source (GPL-3.0), no ads, no tracking, no accounts of its own.",
 	"lead": "All the data is public and free to read. Prefer the snapshot files below over crawling the pages: they hold everything the pages show, in a few requests. Jobs from job boards link to the organization's own posting: apply there. Jobs posted on joblist have their own page.",
 	"pages": [
 		{ "title": "Home", "path": "/", "about": "what joblist is, a job search and the ways in" },
 		{ "title": "Job search", "path": "/jobs", "about": "every open job, searchable by job, city and on a map (`/jobs#q=design&where=Berlin`)" },
 		{ "title": "Jobs by city", "path": "/in", "about": "one page per city with enough jobs, e.g. `/in/berlin`, `/in/berlin/design`, older jobs at `?page=2`" },
 		{ "title": "Jobs by field", "path": "/field", "about": "e.g. `/field/engineering`, `/field/design`" },
-		{ "title": "Organizations", "path": "/companies", "about": "one page per organization at its domain, `/{domain}`, e.g. `/ableton.com` (an account's handle the same way)" },
-		{ "title": "Lists", "path": "/lists", "about": "lists of organizations made by people, at `/{handle}/{rkey}`; each person's at `/{handle}`" },
+		{ "title": "Organizations", "path": "/companies", "about": "one page per organization at its domain, `/{domain}`, e.g. `/ableton.com` (an account's handle the same way); by tag at `/companies#q={tag}`" },
 		{ "title": "Jobs posted on joblist", "about": "`/job/{did}/{rkey}`, with schema.org JobPosting data" },
 		{ "title": "Sitemap", "path": "/sitemap.xml", "about": "the pages; the pages per city and field in `/sitemap-places.xml`" }
 	],
@@ -16,16 +15,14 @@
 		{ "title": "New jobs everywhere", "path": "/feed/new.xml" },
 		{ "title": "Per city, field or both", "about": "`/feed/in/berlin.xml`, `/feed/field/design.xml`, `/feed/in/berlin/design.xml`" },
 		{ "title": "Per organization", "about": "`/feed/company/{domain}.xml`" },
-		{ "title": "Per list", "about": "`/feed/list/{did}/{rkey}.xml` (its author's DID, its record key)" },
 		{ "title": "Any search", "about": "`/feed/search.xml?q=design&where=Berlin` (the explorer's search, words after the `#`, as a query)" }
 	],
 	"snapshot": [
 		{ "file": "jobs.json", "about": "every open job (large: prefer the smaller files). Compact keys: `t` title, `u` link, `c` organization key (its domain), `l` location, `d` department, `p` first seen (ISO date), `i` id at its board, `r` onsite/hybrid/remote (said by its board, or clearly by its text), `g` [longitude, latitude], `m` pay [min, max, currency, period], `s` atproto record of a job posted on joblist, `v` posted by the organization itself" },
 		{ "file": "companies/{domain}.json", "about": "one organization's open jobs, small, with the same keys; `checked`: its board was read, `gone`: its board closed" },
-		{ "file": "lists/{method}/{id}/{rkey}.json", "about": "one list (its DID did:plc:abc as plc/abc)'s organizations (`companies`, `names`) and their open jobs, small, with the same keys; shown on any site with `<joblist-jobs list=\"{did}/{rkey}\">` (/embed)" },
-		{ "file": "records.json", "about": "every organization, list, suggestion and job record, with their authors' handles" },
+		{ "file": "records.json", "about": "every organization and job record, with their authors' handles" },
 		{ "file": "first.json", "about": "the newest jobs, small" },
-		{ "file": "counts.json", "about": "open jobs per organization, and per list in its place" },
+		{ "file": "counts.json", "about": "open jobs per organization, the places named most, and every organization's domain (`known`)" },
 		{ "file": "landing/index.json", "about": "the cities and fields with a page, and their job counts; `landing/in/{city}.json`, `landing/field/{field}.json`: their newest jobs" },
 		{ "file": "meta.json", "about": "when the snapshot was made, and counts" }
 	],

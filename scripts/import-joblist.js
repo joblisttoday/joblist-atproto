@@ -1,6 +1,6 @@
 /**
  * Publish joblist's historical companies (CC0, github.com/joblisttoday/data)
- * as atproto records, plus a few starter lists.
+ * as atproto records.
  *
  *   node scripts/import-joblist.js <companies-dir>            # dry run, prints a summary
  *   node scripts/import-joblist.js <companies-dir> --out x.json  # dry run, saves the records
@@ -16,11 +16,10 @@ import config from '../src/lib/data/config.json' with { type: 'json' };
 import providers from '../src/lib/data/providers.json' with { type: 'json' };
 import { toDomain } from '../src/lib/models/company.js';
 import { isUrl, readLegacyCompanies } from './lib/legacy.js';
-import starterLists from './starter-lists.json' with { type: 'json' };
 
 const [dir = '../workers/.db-github-data/companies', ...flags] = process.argv.slice(2);
 const write = flags.includes('--write');
-const { company: COMPANY, list: LIST } = config.collections;
+const { company: COMPANY } = config.collections;
 const PROVIDER_ALIASES = { ashbyhq: 'ashby' };
 const LINK_FIELDS = ['twitter_url', 'linkedin_url', 'facebook_url', 'instagram_url', 'youtube_url', 'github_url', 'wikipedia_url'];
 const now = new Date().toISOString();
@@ -78,29 +77,6 @@ function readCompanies() {
 	});
 }
 
-/**
- * Starter lists: by city or by tag, as configured in starter-lists.json.
- * @param {{rkey: string, record: Record<string, any>}[]} companies
- */
-function buildLists(companies) {
-	return starterLists.map((spec) => {
-		const matches = companies.filter(({ record }) =>
-			spec.city
-				? (record.locations || []).some((/** @type {any} */ l) => l.name?.toLowerCase() === spec.city.toLowerCase())
-				: (record.tags || []).includes(spec.tag)
-		);
-		return {
-			$type: LIST,
-			name: spec.name,
-			...(spec.description && { description: spec.description }),
-			companies: matches.map((c) => c.rkey),
-			// Starter lists are open: anyone can add a company to them.
-			open: true,
-			createdAt: now
-		};
-	});
-}
-
 /** @param {AtpAgent} agent @param {string} collection */
 async function existing(agent, collection) {
 	/** @type {Map<string, any>} */
@@ -123,16 +99,14 @@ async function applyInBatches(agent, writes) {
 }
 
 const companies = readCompanies();
-const lists = buildLists(companies);
 const withBoard = companies.filter((c) => c.record.jobBoard?.provider).length;
 const withMap = companies.filter((c) => c.record.locations?.some((/** @type {any} */ l) => l.latitude)).length;
 const byDomain = companies.filter((c) => c.rkey.includes('.')).length;
 console.log(`${companies.length} companies: ${byDomain} keyed by domain, ${withBoard} with a job board API, ${withMap} on the map`);
-for (const list of lists) console.log(`list "${list.name}": ${list.companies.length} companies`);
 
 const out = flags[flags.indexOf('--out') + 1];
 if (flags.includes('--out') && out) {
-	writeFileSync(out, JSON.stringify({ companies, lists }, null, '\t'));
+	writeFileSync(out, JSON.stringify({ companies }, null, '\t'));
 	console.log(`records saved to ${out}`);
 }
 
@@ -159,21 +133,4 @@ await applyInBatches(
 	}))
 );
 
-const knownLists = await existing(agent, LIST);
-const listKeys = new Map([...knownLists].map(([rkey, value]) => [value.name, rkey]));
-console.log('publishing lists');
-await applyInBatches(
-	agent,
-	lists.map((value) =>
-		listKeys.has(value.name)
-			? {
-					$type: 'com.atproto.repo.applyWrites#update',
-					collection: LIST,
-					rkey: listKeys.get(value.name),
-					// keep the companies the list's author hid since the last import
-					value: { ...value, hidden: knownLists.get(listKeys.get(value.name))?.hidden }
-				}
-			: { $type: 'com.atproto.repo.applyWrites#create', collection: LIST, value }
-	)
-);
 console.log('done');

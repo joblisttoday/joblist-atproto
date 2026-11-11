@@ -1,5 +1,4 @@
 [
-	{ "path": "", "icon": "lists", "label": "profile.tab.lists", "count": "lists" },
-	{ "path": "/jobs", "icon": "jobs", "label": "profile.tab.jobs", "count": "posts", "whenAny": true },
-	{ "path": "/companies", "icon": "companies", "label": "profile.tab.companies", "count": "companies" }
+	{ "path": "", "icon": "companies", "label": "profile.tab.companies", "count": "companies" },
+	{ "path": "/jobs", "icon": "jobs", "label": "profile.tab.jobs", "count": "posts", "whenAny": true }
 ]

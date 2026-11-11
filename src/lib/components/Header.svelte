@@ -14,12 +14,12 @@
 
 	// The app name is always there; deeper pages also get a way back.
 	const topLevel = $derived(
-		[...navLinks().map((l) => l.href), '/companies', '/lists', '/signin'].includes(page.url.pathname)
+		[...navLinks().map((l) => l.href), '/companies', '/signin'].includes(page.url.pathname)
 	);
 
 	// Phones: these pages take the whole screen, their own bar at the top (config.layout.bare).
 	const bare = $derived(config.layout.bare.includes(page.route.id || ''));
-	// Jobs, organizations, lists: each has its own search, so the header has the way between them.
+	// Jobs, organizations: each has its own search, so the header has the way between them.
 	const explore = $derived(config.layout.explore.includes(page.route.id || ''));
 
 	/** @param {MouseEvent} event */

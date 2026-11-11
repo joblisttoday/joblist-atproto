@@ -16,14 +16,6 @@
 				"links": "Another public page of the company (its Bluesky or LinkedIn profile, Wikipedia…)."
 			}
 		},
-		"list": {
-			"toolname": "create_list",
-			"tooldescription": "Fill in the name and description of a new list of companies, for the signed-in person to add companies, check and save.",
-			"params": {
-				"name": "The list's name, e.g. 'Co-ops in Lyon'.",
-				"description": "What the list is about and who it is for."
-			}
-		},
 		"job": {
 			"toolname": "post_job",
 			"tooldescription": "Fill in a job offer for the signed-in person to check and post on joblist, from their own account. The company must already be chosen on the page. Applications go to the poster directly, never through joblist.",
@@ -64,17 +56,6 @@
 					"pay": { "type": "boolean", "description": "Only jobs whose job board says what they pay (salary: min, max, currency, period)." }
 				},
 				"required": ["query"]
-			}
-		},
-		{
-			"name": "get_list",
-			"description": "Read a curated list of companies on joblist: its name, description, author and companies in order.",
-			"inputSchema": {
-				"type": "object",
-				"properties": {
-					"url": { "type": "string", "description": "The list's joblist link (https://…/{handle}/{id}) or its at:// URI." }
-				},
-				"required": ["url"]
 			}
 		}
 	]

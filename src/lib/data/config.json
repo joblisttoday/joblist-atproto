@@ -6,9 +6,7 @@
 	"shareImage": { "path": "/og.png", "width": 1200, "height": 630 },
 	"collections": {
 		"company": "today.joblist.company",
-		"list": "today.joblist.list",
-		"job": "today.joblist.job",
-		"suggestion": "today.joblist.suggestion"
+		"job": "today.joblist.job"
 	},
 	"bots": [
 		"did:plc:jqaucxlucukeif3bltpuc7zx"
@@ -74,7 +72,7 @@
 		"indexerConcurrency": 8,
 		"boardPageSize": 100,
 		"jobsPerBoard": 2000,
-		"perAccount": { "company": 200, "list": 50, "job": 50, "suggestion": 200 },
+		"perAccount": { "company": 200, "job": 50 },
 		"boardsPerAccount": 100,
 		"boards": 3000
 	},
@@ -101,7 +99,7 @@
 	},
 	"quickSearch": {
 		"places": 2000,
-		"shown": { "fields": 2, "cities": 2, "companies": 4, "lists": 2, "places": 3 }
+		"shown": { "fields": 2, "cities": 2, "companies": 4, "tags": 2, "places": 3 }
 	},
 	"bluesky": {
 		"file": "bluesky.json",
@@ -168,19 +166,8 @@
 		"tagSuggestions": 8,
 		"boardCheckDelayMs": 600
 	},
-	"listForm": {
-		"nameMax": 100,
-		"descriptionMax": 3000,
-		"companiesMax": 2000,
-		"suggestions": 8
-	},
 	"saveSignIn": {
 		"returnMinutes": 30
-	},
-	"lists": {
-		"related": { "shown": 6, "nameWeight": 3, "minTermLength": 3 },
-		"explore": 8,
-		"shareMax": 300
 	},
 	"me": { "glance": 3 },
 	"kept": { "max": 500, "namesShown": 5 },
@@ -290,14 +277,12 @@
 		"path": "https://raw.githubusercontent.com/joblisttoday/joblist-snapshot/gh-pages",
 		"everyHours": 6,
 		"companyFiles": 40,
-		"listsDir": "lists",
 		"maxAgeHours": 48,
 		"prerenderFiles": ["records.json", "jobs.json", "meta.json", "bluesky.json", "landing/index.json"],
 		"preload": {
 			"page": ["records.json"],
 			"counts": ["records.json", "counts.json"],
 			"company": ["records.json"],
-			"list": ["records.json", "counts.json"],
 			"explore": ["first.json", "records.json", "jobs.json"]
 		},
 		"refreshDelayMs": 15000

@@ -8,7 +8,7 @@
 	import { postPath } from '#lib/models/job-post.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
-	// /jobs/new?company=key starts with the company chosen. Once posted: show it in lists.
+	// /jobs/new?company=key starts with the company chosen. Once posted: its page.
 	const company = $derived(page.url.searchParams.get('company') || '');
 </script>
 
@@ -21,7 +21,7 @@
 	{#key company}
 		<JobForm
 			{company}
-			onsaved={(rkey) => goto(`${postPath(/** @type {string} */ (session.did), rkey)}/lists`)}
+			onsaved={(rkey) => goto(postPath(/** @type {string} */ (session.did), rkey))}
 			oncancel={() => history.back()}
 		/>
 	{/key}

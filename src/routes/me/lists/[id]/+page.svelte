@@ -9,14 +9,12 @@
 	import JobMarks from '#lib/components/JobMarks.svelte';
 	import PageHeader from '#lib/components/PageHeader.svelte';
 	import { collectionOf, isBuiltin } from '#lib/models/job-collection.js';
-	import { LOCAL } from '#lib/models/list.js';
 	import { deleteCollection, kept, renameCollection } from '#lib/network/job-collections.svelte.js';
-	import { localLists } from '#lib/network/local-lists.svelte.js';
 	import { formatNumber, t } from '#lib/i18n/index.svelte.js';
 
 	/**
 	 * One private list of jobs (Saved, Applied, Hidden or one someone named): its jobs,
-	 * and for a named one, rename and delete. A private list of organizations has its own page.
+	 * and for a named one, rename and delete.
 	 */
 	const id = $derived(page.params.id || '');
 	const collection = $derived(collectionOf(kept.state, id));
@@ -26,10 +24,6 @@
 	let renaming = $state(false);
 	/** @type {ConfirmDialog | undefined} */
 	let confirmer = $state();
-
-	$effect(() => {
-		if (!collection && localLists.records.some((r) => r.rkey === id)) goto(`/${LOCAL}/${id}`, { replace: true });
-	});
 
 	/** @param {string} value */
 	function rename(value) {

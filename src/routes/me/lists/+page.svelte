@@ -11,9 +11,8 @@
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * Every list of yours, of jobs and of organizations, each saying whether it is private
-	 * or public; each opens on its own page. A new list of jobs is named here; a list of
-	 * organizations has its own form. /me/lists#new opens the name of a new list of jobs.
+	 * Your lists of jobs, private in this browser, each on its own page. A new one is named
+	 * here; /me/lists#new opens its name.
 	 */
 	let naming = $state(location.hash === '#new');
 
