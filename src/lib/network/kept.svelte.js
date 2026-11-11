@@ -63,6 +63,9 @@ export function forget(url) {
 	write();
 }
 
+/** Whether a link is kept. @param {string} link */
+export const isKeptLink = (link) => kept.list.some((k) => k.url === link);
+
 /** Whether an organization joblist knows is kept (by its domain). @param {string} key */
 export const isKept = (key) => kept.list.some((k) => keyOf(k.url) === key);
 

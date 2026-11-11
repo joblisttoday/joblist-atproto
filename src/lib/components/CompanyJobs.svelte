@@ -17,9 +17,13 @@
 	 * A company's jobs, searched like the explorer's (what, where, near, remote, pay),
 	 * as a list, by team, a grid of cards (wide screens) or on a map. A job opens in a dialog
 	 * over them: a history entry (back closes it), in the address to share.
-	 * @type {{company: import('#lib/models/company.js').Company}}
+	 * jobs: every job read, for the page. local: an organization only this browser knows
+	 * (CompanyPage): its board is read live, never the snapshot's jobs, and its address keeps
+	 * the link it is found by (#url=…).
+	 * @type {{company: import('#lib/models/company.js').Company, jobs?: import('#lib/ats/job.js').Job[], address?: Record<string, string>, local?: boolean}}
 	 */
-	let { company } = $props();
+	let { company, jobs = $bindable([]), address = {}, local = false } = $props();
+	const noSnapshot = () => Promise.resolve(null);
 
 	// Its search, its view and the job open are in the address (after the "#").
 	const params = readAddress(['q', 'where', 'remote', 'pay', 'view', config.jobs.jobParam]);
@@ -29,9 +33,7 @@
 	const views = ['list', 'teams', 'grid', 'map'];
 	let view = $state(viewParam(params.get('view'), views) || readView('company', 'list', views));
 	/** @param {string} [job] */
-	const stateOf = (job) => ({ ...searchState(filters), area: '', view: view === 'list' ? '' : view, [config.jobs.jobParam]: job });
-	/** @type {import('#lib/ats/job.js').Job[]} */
-	let jobs = $state.raw([]);
+	const stateOf = (job) => ({ ...address, ...searchState(filters), area: '', view: view === 'list' ? '' : view, [config.jobs.jobParam]: job });
 	/** @type {import('#lib/ats/job.js').Job[]} */
 	let results = $state.raw([]);
 	/** @type {string[]} */
@@ -71,6 +73,7 @@
 		<Jobs
 			companies={[company]}
 			search={false}
+			source={local ? noSnapshot : undefined}
 			grouped={view === 'teams'}
 			{filters}
 			bind:jobs

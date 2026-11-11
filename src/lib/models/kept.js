@@ -7,6 +7,8 @@ import { detectBoard } from '#lib/ats/detect.js';
  * an organization it knows (by the link's domain, or its job board), else the link.
  * @typedef {{url: string, name: string, at: string}} Kept
  * @typedef {{key: string, name: string, jobBoard?: import('./company.js').JobBoard}} Known an organization joblist knows
+ * @typedef {{link: string, suggest: string, account?: {handle: string, avatar?: string, followers?: number}}} Local
+ *   one only a browser knows, on its page: the link it is kept by, the add form filled in, its Bluesky account
  */
 
 const PLATFORMS = new Set(platforms.hosts);

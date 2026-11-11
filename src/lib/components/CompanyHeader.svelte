@@ -10,18 +10,30 @@
 	import { boardUrl } from '#lib/models/company.js';
 	import { isCompanyKey } from '#lib/models/landing.js';
 	import { accountOf } from '#lib/network/accounts.svelte.js';
+	import { forget, isKeptLink, keep } from '#lib/network/kept.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
-	/** @type {{company: import('#lib/models/company.js').Company}} */
-	let { company } = $props();
+	/**
+	 * An organization's name, links, description and tags, and what can be done with it.
+	 * local: one only this browser knows (CompanyPage): the link it is kept by, the Bluesky
+	 * account found for it, Save in this browser and Suggest to joblist, instead of editing it.
+	 * @type {{company: import('#lib/models/company.js').Company, local?: import('#lib/models/kept.js').Local}}
+	 */
+	let { company, local } = $props();
 	const board = $derived(boardUrl(company.jobBoard));
 	// The company's own account (it wrote the version shown, or its domain is its handle): its Bluesky picture and profile.
 	const author = $derived(company.verified ? data.profiles.get(company.record.did) : undefined);
 	const bluesky = $derived(accountOf(company.key));
 	let unfolded = $state(false);
 	const account = $derived(
-		author || bluesky ? { handle: author?.handle || company.key, avatar: author?.avatar || bluesky?.avatar, followers: bluesky?.followers } : undefined
+		local
+			? local.account
+			: author || bluesky
+				? { handle: author?.handle || company.key, avatar: author?.avatar || bluesky?.avatar, followers: bluesky?.followers }
+				: undefined
 	);
+	const short = (/** @type {string} */ link) => link.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
+	const kept = $derived(local ? isKeptLink(local.link) : false);
 </script>
 
 <jl-company-header verified={company.verified || undefined}>
@@ -29,11 +41,12 @@
 		<!-- Its menu at the right edge of its name, as on every page (PageHeader). -->
 		<jl-company-title>
 			<h1>{#if account?.avatar}<img src={account.avatar} alt="" />{/if}{company.name}</h1>
-			<PageMenu feed={isCompanyKey(company.key) ? { company: company.key } : null} />
+			<PageMenu feed={!local && isCompanyKey(company.key) ? { company: company.key } : null} />
 		</jl-company-title>
 		<p>
 			<small>
-				{#if company.url}<a href={company.url} target="_blank" rel="noopener">{company.key} <Icon name="external" /></a>{:else}{company.key}{/if}
+				{#if local}<a href={local.link} target="_blank" rel="noopener noreferrer">{short(local.link)} <Icon name="external" /></a>
+				{:else if company.url}<a href={company.url} target="_blank" rel="noopener">{company.key} <Icon name="external" /></a>{:else}{company.key}{/if}
 				{#if company.verified}· <span><Icon name="verified" /> {t('company.verified', { domain: company.key })}</span>{/if}
 				{#if account}
 					· <a href={config.links.profile.replace('{handle}', account.handle)} target="_blank" rel="noopener">{t('company.onBluesky', { handle: account.handle })}</a>
@@ -41,7 +54,7 @@
 				{/if}
 			</small>
 		</p>
-		<CompanyEdited {company} />
+		{#if local}<p data-local><small>{t('org.intro')}</small></p>{:else}<CompanyEdited {company} />{/if}
 		{#if company.description}
 			<!-- Long, it folds: the jobs come right after the company, on a phone too. -->
 			{@const long = company.description.length > config.companyForm.foldAt}
@@ -50,20 +63,30 @@
 				{#if long}<button type="button" aria-expanded={unfolded} onclick={() => (unfolded = !unfolded)}>{t(unfolded ? 'company.less' : 'company.more')}</button>{/if}
 			</jl-company-about>
 		{/if}
-		<CompanyInvite {company} field="description" />
+		{#if !local}<CompanyInvite {company} field="description" />{/if}
 		{#if company.tags.length || company.kind}
 			<ul aria-label={t('form.tags')}>
 				{#if company.kind}<li><a href="/companies#q={company.kind}" data-kind>{t(`kind.${company.kind}`)}</a></li>{/if}
 				{#each company.tags as tag (tag)}<li><a href="/companies#q={encodeURIComponent(tag)}">{tag}</a></li>{/each}
 			</ul>
 		{/if}
-		<CompanyInvite {company} field="tags" />
-		<menu>
-			<CompanySave {company} />
-			{#if board}<a href={board} target="_blank" rel="noopener">{t('company.jobBoard')} <Icon name="external" /></a>{/if}
-			<a href="/add?key={encodeURIComponent(company.key)}">{t('company.edit')}</a>
-			<CompanyDelete {company} />
-		</menu>
+		{#if local}
+			<menu>
+				<a href={local.suggest} data-primary><Icon name="add" /> {t('org.suggest')}</a>
+				<button type="button" aria-pressed={kept ? 'true' : 'false'} onclick={() => (kept ? forget(local.link) : keep(local.link, company.name))} title={t('collections.private')}>
+					<Icon name={kept ? 'savedOn' : 'save'} /> {t(kept ? 'collections.saved' : 'collections.save')}
+				</button>
+				{#if board}<a href={board} target="_blank" rel="noopener noreferrer">{t('company.jobBoard')} <Icon name="external" /></a>{/if}
+			</menu>
+		{:else}
+			<CompanyInvite {company} field="tags" />
+			<menu>
+				<CompanySave {company} />
+				{#if board}<a href={board} target="_blank" rel="noopener">{t('company.jobBoard')} <Icon name="external" /></a>{/if}
+				<a href="/add?key={encodeURIComponent(company.key)}">{t('company.edit')}</a>
+				<CompanyDelete {company} />
+			</menu>
+		{/if}
 	</header>
 </jl-company-header>
 
@@ -129,5 +152,17 @@
 	}
 	menu > * {
 		font-size: var(--font-size-small);
+	}
+	menu [data-primary] {
+		background: var(--color-accent);
+		color: var(--color-accent-fg);
+		border-color: var(--color-accent);
+	}
+	menu button[aria-pressed='true'] {
+		background: var(--color-soft);
+		color: var(--color-ok);
+	}
+	[data-local] {
+		margin-bottom: var(--space-s);
 	}
 </style>

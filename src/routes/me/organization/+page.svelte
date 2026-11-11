@@ -25,11 +25,10 @@
 	});
 </script>
 
-<svelte:head><title>{t('kept.title')} · {config.name}</title></svelte:head>
 
 <jl-me-organization>
 	{#if link && !known}
-		{#key link}<OrganizationProfile {link} />{/key}
+		{#key link}<OrganizationProfile {link} address={{ url: link }} />{/key}
 	{:else if !link}
 		<Empty text={t('kept.invalid')}><a href="/me/organizations">{t('kept.title')}</a></Empty>
 	{/if}
@@ -38,7 +37,5 @@
 <style>
 	jl-me-organization {
 		display: block;
-		max-width: var(--reading-width);
-		margin-inline: auto;
 	}
 </style>
