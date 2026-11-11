@@ -444,16 +444,11 @@
 	"me.lists.intro": "Listas de empleos, privadas en este navegador.",
 	"me.list.missing": "Esta lista no está guardada en este navegador.",
 	"list.private": "Privada",
-	"me.companies.empty": "Aún no has descrito ninguna organización.",
 
-	"profile.companies": "Organizaciones descritas",
 	"profile.jobs": "Ofertas publicadas",
 	"profile.empty": "Aún no hay nada aquí.",
 	"profile.bluesky": "Perfil de Bluesky",
 	"profile.company": "Cuenta de organización:",
-	"profile.tabs": "Lo que hizo esta cuenta",
-	"profile.tab.jobs": "Ofertas",
-	"profile.tab.companies": "Organizaciones",
 
 	"about.source": "Código fuente",
 	"about.data": "Publicado: registros públicos de atproto. Privado: solo en este navegador.",

@@ -1,6 +1,5 @@
 <script>
 	import Logo from './Logo.svelte';
-	import QuickSearch from './QuickSearch.svelte';
 	import ExploreSwitch from './ExploreSwitch.svelte';
 	import { page } from '$app/state';
 	import config from '#lib/data/config.json';
@@ -12,15 +11,13 @@
 	const bare = $derived(config.layout.bare.includes(page.route.id || ''));
 	// Jobs, organizations: each has its own search, so the header has the way between them.
 	const explore = $derived(config.layout.explore.includes(page.route.id || ''));
-	// The home and Me show the search in the page: not a second one here.
-	const inPage = $derived(config.layout.searchInPage.includes(page.route.id || ''));
 </script>
 
 <jl-header bare={bare || undefined}>
 	<header>
 		<a href="/" aria-current={page.url.pathname === '/' ? 'page' : undefined}><Logo /><b>{config.name}</b></a>
-		<!-- The home and the explore pages have their own search. -->
-		{#if explore}<ExploreSwitch />{:else if inPage}<jl-header-space></jl-header-space>{:else}<QuickSearch />{/if}
+		<!-- No search here: the home has it, and the explore pages their own. -->
+		{#if explore}<ExploreSwitch />{:else}<jl-header-space></jl-header-space>{/if}
 		<Nav />
 	</header>
 	<NetworkStatus />

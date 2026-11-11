@@ -13,7 +13,6 @@
 	import { data } from '#lib/network/network.svelte.js';
 	import ProfileHeader from '#lib/components/ProfileHeader.svelte';
 	import PageMenu from '#lib/components/PageMenu.svelte';
-	import ProfileTabs from '#lib/components/ProfileTabs.svelte';
 	import { resolveDid } from '#lib/atproto/identity.js';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { setProfile } from '#lib/network/profile.svelte.js';
@@ -22,8 +21,8 @@
 	/**
 	 * A domain's page, joblist.today/{domain}: a handle is a domain, and an organization is known
 	 * by its domain. An organization joblist knows: its page (with its Bluesky account when the
-	 * domain is its handle), in tabs (/{domain}, /{domain}/places, /{domain}/history). Else an account: who it is, then the organizations it described
-	 * and the jobs it posted, each a tab (/{handle}, /{handle}/jobs).
+	 * domain is its handle), in tabs (/{domain}, /{domain}/places, /{domain}/history). Else an account:
+	 * who it is, then the jobs it posted (/{handle}): its own things, not its edits of others'.
 	 * Else a domain: what this browser finds of it (its local profile). Else not found.
 	 * @type {{children: import('svelte').Snippet}}
 	 */
@@ -37,8 +36,6 @@
 	// The same organization added twice: its page is the kept one's.
 	$effect(() => {
 		if (company && company.key !== handle) goto(`/${company.key}`, { replace: true });
-		// An organization's jobs are its page itself.
-		else if (company && page.route.id?.endsWith('/jobs')) goto(`/${company.key}${location.hash}`, { replace: true });
 	});
 	// A domain (acme.org): its local profile when it is neither an organization nor an account.
 	// Only a real one: test.env, llms.txt or fake.no-tld are no organization's (isDomain).
@@ -117,8 +114,7 @@
 			</menu>
 		</ProfileHeader>
 		{#if did}
-			<ProfileTabs {handle} {did} {self} />
-			<!-- Its organizations and jobs are known once the data is: until then, it says why. -->
+			<!-- Its jobs are known once the data is: until then, it says why. -->
 			<DataState>{@render children()}</DataState>
 		{:else}
 			<Pending />

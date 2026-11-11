@@ -444,16 +444,11 @@
 	"me.lists.intro": "Listen von Stellen, privat in diesem Browser.",
 	"me.list.missing": "Diese Liste ist nicht in diesem Browser gespeichert.",
 	"list.private": "Privat",
-	"me.companies.empty": "Du hast noch keine Organisation beschrieben.",
 
-	"profile.companies": "Beschriebene Organisationen",
 	"profile.jobs": "Veröffentlichte Jobs",
 	"profile.empty": "Hier ist noch nichts.",
 	"profile.bluesky": "Bluesky-Profil",
 	"profile.company": "Konto einer Organisation:",
-	"profile.tabs": "Was dieses Konto gemacht hat",
-	"profile.tab.jobs": "Jobs",
-	"profile.tab.companies": "Organisationen",
 
 	"about.source": "Quellcode",
 	"about.data": "Veröffentlicht: öffentliche atproto-Einträge. Privat: nur in diesem Browser.",

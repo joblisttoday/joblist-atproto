@@ -1,4 +1,0 @@
-[
-	{ "path": "", "icon": "companies", "label": "profile.tab.companies", "count": "companies" },
-	{ "path": "/jobs", "icon": "jobs", "label": "profile.tab.jobs", "count": "posts", "whenAny": true }
-]

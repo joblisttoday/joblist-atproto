@@ -32,8 +32,7 @@
 		"sheetFullAbove": 0.72,
 		"copiedMs": 3000,
 		"bare": ["/jobs", "/companies"],
-		"explore": ["/jobs", "/companies"],
-		"searchInPage": ["/", "/me/organizations"]
+		"explore": ["/jobs", "/companies"]
 	},
 	"map": {
 		"style": "https://tiles.openfreemap.org/styles/positron",
