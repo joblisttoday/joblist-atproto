@@ -4,7 +4,6 @@
 	import JobGroup from './JobGroup.svelte';
 	import JobsDialog from './JobsDialog.svelte';
 	import { openJob, showJob } from '#lib/navigation/job-open.svelte.js';
-	import { byTeam } from '#lib/models/team.js';
 	import JobItem from './JobItem.svelte';
 	import { getJobs } from '#lib/ats/index.js';
 	import { mapLimit } from '#lib/atproto/xrpc.js';
@@ -28,7 +27,7 @@
 	 * results: the jobs matching the filters, for the page (a map of them). busy: still reading job boards.
 	 * actions: shown under the filters.
 	 * search: show the filters (false when the page has its own search).
-	 * grouped: by organization, or by team on one organization's page.
+	 * grouped: by organization.
 	 * onselect, selected: open a job in the page (the explorer), and which one is open;
 	 *   by default, a job opens in a dialog over the list (JobsDialog).
 	 * @type {{
@@ -130,10 +129,10 @@
 		if (visible === jobs) unfiltered = { jobs, count: matching.length };
 		return unfiltered.jobs === jobs ? unfiltered.count : allOffers;
 	});
-	// One organization: its jobs by team; many: by organization.
 	// The organizations with open jobs (not every one listed): "28,294 open jobs at 361 organizations".
 	const hiring = $derived(single ? 1 : new Set(jobs.map((j) => j.company)).size);
-	const groups = $derived(!grouped ? [] : single ? byTeam(filtered, (field) => t(`field.${field}`)) : byCompany(filtered));
+	// Grouped: by organization.
+	const groups = $derived(grouped ? byCompany(filtered) : []);
 	// Suggestions are computed once all boards answered, not on every answer;
 	// in the explorer (every company) the snapshot counted them already.
 	/** @type {string[]} */
@@ -149,7 +148,7 @@
 	});
 	// A new search starts from its first page.
 	$effect(() => {
-		[filters.query, filters.where, filters.remote, filters.pay, filters.field, filters.near, filters.within, filters.area, filters.places];
+		[filters.query, filters.where, filters.remote, filters.pay, filters.field, filters.team, filters.near, filters.within, filters.area, filters.places];
 		shown = PAGE;
 	});
 
@@ -212,7 +211,7 @@
 		<progress value={answered} max={targets.length} aria-label={t('jobs.loading')}></progress>
 	{/if}
 	{#if search && (jobs.length > 10 || actions)}
-		<JobFilters bind:filters bind:grouped groupLabel={single ? t('jobs.filter.teams') : undefined} {places} onchange={() => (shown = PAGE)} />
+		<JobFilters bind:filters bind:grouped {places} onchange={() => (shown = PAGE)} />
 	{/if}
 	<!-- How many, and what to do with them, on one line. -->
 	<jl-jobs-bar>
@@ -238,7 +237,7 @@
 		<ul>
 			{#each groups as [key, list] (key)}
 				<li>
-					{#if single}<JobGroup name={key || t('jobs.team.none')} jobs={list} {onselect} />{:else}<JobGroup {key} name={names.get(key) || key} jobs={list} {onselect} />{/if}
+					<JobGroup {key} name={names.get(key) || key} jobs={list} {onselect} />
 				</li>
 			{/each}
 		</ul>

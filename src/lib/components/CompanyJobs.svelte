@@ -1,5 +1,9 @@
 <script>
 	import ExploreSearch from './ExploreSearch.svelte';
+	import FilterChips from './FilterChips.svelte';
+	import { teamsOf } from '#lib/models/team.js';
+	import { offerCount } from '#lib/models/job.js';
+	import { t } from '#lib/i18n/index.svelte.js';
 	import Jobs from './Jobs.svelte';
 	import JobsMap from './JobsMap.svelte';
 	import ViewSwitch from './ViewSwitch.svelte';
@@ -15,7 +19,7 @@
 
 	/**
 	 * A company's jobs, searched like the explorer's (what, where, near, remote, pay),
-	 * as a list, by team, a grid of cards (wide screens) or on a map. A job opens in a dialog
+	 * as a list, a grid of cards (wide screens) or on a map; its teams as chips to filter by (#team=…). A job opens in a dialog
 	 * over them: a history entry (back closes it), in the address to share.
 	 * jobs: every job read, for the page. local: an organization only this browser knows
 	 * (CompanyPage): its board is read live, never the snapshot's jobs, and its address keeps
@@ -26,14 +30,14 @@
 	const noSnapshot = () => Promise.resolve(null);
 
 	// Its search, its view and the job open are in the address (after the "#").
-	const params = readAddress(['q', 'where', 'remote', 'pay', 'view', config.jobs.jobParam]);
+	const params = readAddress(['q', 'where', 'remote', 'pay', 'team', 'view', config.jobs.jobParam]);
 	/** @type {import('#lib/models/job.js').JobFilters} */
-	let filters = $state({ ...fromParams(params), near: null, within: 0 });
+	let filters = $state({ ...fromParams(params), team: params.get('team') || '', near: null, within: 0 });
 	/** @type {import('#lib/navigation/explore-view.js').ExploreView[]} */
-	const views = ['list', 'teams', 'grid', 'map'];
+	const views = ['list', 'grid', 'map'];
 	let view = $state(viewParam(params.get('view'), views) || readView('company', 'list', views));
 	/** @param {string} [job] */
-	const stateOf = (job) => ({ ...address, ...searchState(filters), area: '', view: view === 'list' ? '' : view, [config.jobs.jobParam]: job });
+	const stateOf = (job) => ({ ...address, ...searchState(filters), team: filters.team, area: '', view: view === 'list' ? '' : view, [config.jobs.jobParam]: job });
 	/** @type {import('#lib/ats/job.js').Job[]} */
 	let results = $state.raw([]);
 	/** @type {string[]} */
@@ -45,6 +49,9 @@
 	const map = $derived(view === 'map');
 	// Nothing found has a place: no map to show (once the jobs are read).
 	const mapless = $derived(!busy && jobs.length > 0 && !results.some((job) => job.point));
+
+	// Its teams, the largest first: chips when there are two or more.
+	const teams = $derived(teamsOf(jobs, offerCount).map(({ id, count }) => ({ id, count, label: id.startsWith('field:') ? t(`field.${id.slice(6)}`) : id })));
 
 	// A job opens in a dialog over them (Jobs, job-open.svelte.js).
 	const selected = $derived(openJob());
@@ -69,12 +76,12 @@
 	{#if map}
 		<jl-company-jobs-map><JobsMap jobs={results} {names} fit /></jl-company-jobs-map>
 	{/if}
+	{#if teams.length > 1}<FilterChips label={t('jobs.teams')} items={teams} bind:value={filters.team} />{/if}
 	<jl-company-jobs-list hidden={map || undefined}>
 		<Jobs
 			companies={[company]}
 			search={false}
 			source={local ? noSnapshot : undefined}
-			grouped={view === 'teams'}
 			{filters}
 			bind:jobs
 			bind:results

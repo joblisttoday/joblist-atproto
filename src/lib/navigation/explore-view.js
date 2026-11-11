@@ -1,11 +1,11 @@
 /**
  * How someone likes to see a page of things (jobs, companies): on the map, as a
- * list, as a grid of cards (wide screens), or (an organization's jobs) by team.
+ * list, or as a grid of cards (wide screens).
  * Kept in this browser, per page; the page's own default until they choose.
- * @typedef {'map' | 'list' | 'grid' | 'teams'} ExploreView
+ * @typedef {'map' | 'list' | 'grid'} ExploreView
  */
 
-/** The views most pages have; teams only an organization's jobs. @type {ExploreView[]} */
+/** The views pages have. @type {ExploreView[]} */
 const VIEWS = ['list', 'grid', 'map'];
 
 /** @param {string} page @param {ExploreView} fallback @param {ExploreView[]} [views] the page's @returns {ExploreView} */

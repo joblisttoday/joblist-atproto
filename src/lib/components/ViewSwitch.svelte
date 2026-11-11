@@ -12,7 +12,7 @@
 	let { view = $bindable(), page = 'jobs', mapless = false, views = ['list', 'grid', 'map'] } = $props();
 	const id = $props.id();
 	/** @type {Record<string, import('#lib/icons.js').IconName>} */
-	const icons = { list: 'listView', grid: 'gridView', teams: 'teamsView', map: 'map' };
+	const icons = { list: 'listView', grid: 'gridView', map: 'map' };
 
 	/** @param {import('#lib/navigation/explore-view.js').ExploreView} next */
 	function show(next) {

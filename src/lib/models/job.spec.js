@@ -51,6 +51,12 @@ describe('tidyPlace', () => {
 });
 
 describe('filterJobs', () => {
+	it("keeps only the jobs of an organization's team", () => {
+		const platform = job({ url: 'https://x/1', title: 'SRE', department: 'Platform' });
+		const frontend = job({ url: 'https://x/2', title: 'Frontend developer' });
+		expect(filterJobs([platform, frontend], { ...none, team: 'Platform' }, names)).toEqual([platform]);
+		expect(filterJobs([platform, frontend], { ...none, team: 'field:engineering' }, names)).toEqual([frontend]);
+	});
 	it('keeps only the jobs of a field, from their title or department', () => {
 		const design = job({ url: 'https://x/1', title: 'Product designer' });
 		const team = job({ url: 'https://x/2', title: 'Lead', department: 'Design' });

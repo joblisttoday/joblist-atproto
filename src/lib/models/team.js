@@ -1,22 +1,35 @@
 import { fieldsOf } from './landing.js';
 
 /**
- * An organization's jobs by team: the department its board gives (consistent within one
- * organization), else the field read from the title, else none ('').
+ * An organization's teams: the department its board gives a job (consistent within one
+ * organization), else the field its title says ("field:engineering"), else none ('').
+ * The chips of an organization's page filter its jobs by them (#team=…).
  * @typedef {import('#lib/ats/job.js').Job} Job
- * @param {Job[]} jobs
- * @param {(field: string) => string} fieldName a field's name, in the language read
- * @returns {[string, Job[]][]} [team, jobs], the largest first, those with no team last
  */
-export function byTeam(jobs, fieldName) {
+
+/** @param {Job} job */
+export function teamOf(job) {
+	const department = job.department?.trim();
+	if (department) return department;
+	const field = fieldsOf({ t: job.title, d: '' })[0];
+	return field ? `field:${field}` : '';
+}
+
+/**
+ * The teams of some jobs, the largest first (none left out), counted as the list counts them.
+ * @param {Job[]} jobs
+ * @param {(jobs: Job[]) => number} count how many a team's jobs are (job.js offerCount: each offer once)
+ * @returns {{id: string, count: number}[]}
+ */
+export function teamsOf(jobs, count = (list) => list.length) {
 	/** @type {Map<string, Job[]>} */
-	const groups = new Map();
+	const teams = new Map();
 	for (const job of jobs) {
-		const field = job.department?.trim() ? '' : fieldsOf({ t: job.title, d: '' })[0];
-		const team = job.department?.trim() || (field ? fieldName(field) : '');
-		const group = groups.get(team) || [];
-		group.push(job);
-		groups.set(team, group);
+		const team = teamOf(job);
+		if (!team) continue;
+		const list = teams.get(team);
+		if (list) list.push(job);
+		else teams.set(team, [job]);
 	}
-	return [...groups].sort((a, b) => Number(!a[0]) - Number(!b[0]) || b[1].length - a[1].length);
+	return [...teams].map(([id, list]) => ({ id, count: count(list) })).sort((a, b) => b.count - a.count);
 }
