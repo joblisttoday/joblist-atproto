@@ -6,7 +6,8 @@
 	import CompanySave from './CompanySave.svelte';
 	import PageMenu from './PageMenu.svelte';
 	import { data } from '#lib/network/network.svelte.js';
-	import { boardUrl } from '#lib/models/company.js';
+	import { boardUrl, mayDescribe } from '#lib/models/company.js';
+	import { session } from '#lib/auth/session.svelte.js';
 	import { isCompanyKey } from '#lib/models/landing.js';
 	import { accountOf } from '#lib/network/accounts.svelte.js';
 	import { forget, isKeptLink, keep } from '#lib/network/kept.svelte.js';
@@ -33,6 +34,8 @@
 	);
 	const short = (/** @type {string} */ link) => link.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
 	const kept = $derived(local ? isKeptLink(local.link) : false);
+	// Only the organization (or joblist's starter account) writes its page.
+	const writer = $derived(!local && mayDescribe(company, session));
 </script>
 
 <jl-company-header verified={company.verified || undefined}>
@@ -46,7 +49,7 @@
 					? []
 					: [
 							{ href: `/jobs/new?company=${encodeURIComponent(company.key)}`, label: 'menu.postHere', icon: 'post' },
-							{ href: `/add?key=${encodeURIComponent(company.key)}`, label: 'company.edit', icon: 'edit' }
+							...(writer ? [{ href: `/add?key=${encodeURIComponent(company.key)}`, label: 'company.edit', icon: /** @type {const} */ ('edit') }] : [])
 						]}
 			/>
 		</jl-company-title>
@@ -90,7 +93,7 @@
 			<menu>
 				<CompanySave {company} />
 				{#if board}<a href={board} target="_blank" rel="noopener">{t('company.jobBoard')} <Icon name="external" /></a>{/if}
-				<a href="/add?key={encodeURIComponent(company.key)}">{t('company.edit')}</a>
+				{#if writer}<a href="/add?key={encodeURIComponent(company.key)}">{t('company.edit')}</a>{/if}
 				<CompanyDelete {company} />
 			</menu>
 		{/if}

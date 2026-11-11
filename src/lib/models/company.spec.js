@@ -156,3 +156,14 @@ describe('posting on atproto', () => {
 		expect(boardUrl({ provider: 'atproto' })).toBe('');
 	});
 });
+
+describe('mayDescribe', () => {
+	it('lets the organization itself, or joblist starter account, write its page', async () => {
+		const { mayDescribe } = await import('./company.js');
+		const config = (await import('#lib/data/config.json')).default;
+		expect(mayDescribe({ key: 'acme.org' }, { handle: 'acme.org', did: 'did:plc:x' })).toBe(true);
+		expect(mayDescribe({ key: 'acme.org' }, { handle: 'someone.bsky.social', did: config.bots[0] })).toBe(true);
+		expect(mayDescribe({ key: 'acme.org' }, { handle: 'someone.bsky.social', did: 'did:plc:y' })).toBe(false);
+		expect(mayDescribe({ key: 'acme.org' }, {})).toBe(false);
+	});
+});

@@ -277,6 +277,17 @@ export function searchCompanies(companies, query, limit) {
  */
 
 /**
+ * Who writes an organization's page: the organization itself (signed in with its domain
+ * as its handle), or joblist's starter account (config.bots), whose records it replaces.
+ * Anyone else keeps it privately, or tells it.
+ * @param {{key: string}} company
+ * @param {{did?: string | null, handle?: string | null}} who the signed-in person
+ */
+export function mayDescribe(company, who) {
+	return Boolean(who.handle && who.handle === company.key) || Boolean(who.did && config.bots.includes(who.did));
+}
+
+/**
  * The provider of an organization that posts its jobs as atproto records from its own
  * account (today.joblist.job, on joblist and any app that reads them): no board to read,
  * no id (the account is the organization's, its handle its domain).

@@ -1,15 +1,18 @@
 <script>
 	import Icon from './Icon.svelte';
 	import { missingFields } from '#lib/models/company-form.js';
+	import { mayDescribe } from '#lib/models/company.js';
+	import { session } from '#lib/auth/session.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
 	 * A part of the company page nobody has filled in yet: a small link to the
-	 * form, opened on that part. Shown only while it is missing.
+	 * form, opened on that part. Shown only while it is missing, and only to who
+	 * writes the page (the organization itself, or joblist's starter account).
 	 * @type {{company: import('#lib/models/company.js').Company, field: ReturnType<typeof missingFields>[number]}}
 	 */
 	let { company, field } = $props();
-	const missing = $derived(missingFields(company).includes(field));
+	const missing = $derived(mayDescribe(company, session) && missingFields(company).includes(field));
 	const href = $derived(`/add?${new URLSearchParams({ key: company.key, field })}`);
 </script>
 

@@ -49,9 +49,9 @@
 
 <jl-company-page verified={company.verified || undefined} tabbed={!local || undefined}>
 	<CompanyHeader {company} {local} />
+	<!-- The organization writes its page: "Is this your organization?" first, or, signed in as it, what it can do. -->
+	{#if !local}<CompanyClaim {company} />{/if}
 	{#if !local}<Tabs base="/{key}" label={t('company.tabs')} {tabs} />{/if}
-	<!-- The company itself first sees what it can do. -->
-	{#if manager && tab === 'jobs'}<CompanyClaim {company} />{/if}
 
 	{#if showJobs}
 		<section aria-labelledby="company-jobs">
@@ -64,9 +64,8 @@
 			{/if}
 		</section>
 		{#if !local}
-			<!-- Anyone else finds "Is this your organization?" after the jobs; its jobs on a website, at hand. -->
+			<!-- Its jobs on a website, at hand. -->
 			<jl-company-more>
-				{#if !manager}<CompanyClaim {company} />{/if}
 				<CompanyEmbed {company} open={manager} />
 			</jl-company-more>
 		{/if}
