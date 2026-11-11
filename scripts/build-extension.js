@@ -28,7 +28,7 @@ async function messages() {
 await rm(out, { recursive: true, force: true });
 await mkdir(out, { recursive: true });
 const define = { __MESSAGES__: JSON.stringify(await messages()) };
-for (const name of ['popup', 'sync']) {
+for (const name of ['popup', 'sync', 'background']) {
 	await build({
 		configFile: false,
 		logLevel: 'warn',

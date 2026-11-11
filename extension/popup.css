@@ -99,6 +99,36 @@ a {
 .status span {
 	flex: 1;
 }
+.offers {
+	display: grid;
+	gap: 0.4rem;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.offers li {
+	display: grid;
+}
+.offers small {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.offers a {
+	font-weight: 600;
+	text-decoration: none;
+}
+.offers a:hover {
+	text-decoration: underline;
+}
+.offers .more {
+	font-weight: 400;
+	text-decoration: underline;
+	font-size: 0.9em;
+}
+.more-actions {
+	font-size: 0.9em;
+}
 .tags {
 	display: flex;
 	flex-wrap: wrap;

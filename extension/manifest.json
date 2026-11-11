@@ -1,8 +1,8 @@
 {
 	"manifest_version": 3,
 	"name": "joblist",
-	"version": "0.1.0",
-	"description": "On any website: is this organization on joblist, does it hire, where is it on social networks. Keep it, tag it, in your browser only.",
+	"version": "0.2.0",
+	"description": "On any website: is this organization on joblist, how many jobs it has open, where it is on social networks. Save it and tag it, in your browser only.",
 	"homepage_url": "https://joblist.today",
 	"icons": {
 		"48": "icon.svg",
@@ -15,10 +15,16 @@
 			"48": "icon.svg"
 		}
 	},
+	"background": {
+		"scripts": [
+			"background.js"
+		]
+	},
 	"permissions": [
 		"activeTab",
 		"scripting",
-		"storage"
+		"storage",
+		"tabs"
 	],
 	"host_permissions": [
 		"https://joblist.today/*"

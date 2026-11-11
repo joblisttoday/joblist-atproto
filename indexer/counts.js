@@ -20,16 +20,19 @@ export function newestByCompany(jobs) {
 
 /**
  * counts.json: what the companies, lists and search box count, without every job (see snapshot-counts.js).
+ * known: every organization's domain, hiring or not, so the browser add-on tells at a glance
+ * whether joblist knows the site open, from this one file (never a request per site).
  * @param {import('./jobs.js').IndexedJob[]} jobs
  * @param {{value?: {name?: unknown}}[]} listRecords
  * @param {string} generatedAt
+ * @param {string[]} [known]
  */
-export function countsFile(jobs, listRecords, generatedAt) {
+export function countsFile(jobs, listRecords, generatedAt, known = []) {
 	const board = /** @type {import('../src/lib/ats/job.js').Job[]} */ (jobs.map(fromSnapshot).filter(Boolean));
 	const placeSets = listRecords.flatMap((r) => {
 		const place = listPlace({ name: String(r.value?.name || '') });
 		return place ? [place.places] : [];
 	});
 	const limit = Math.max(config.quickSearch.places, config.jobs.placesSuggested);
-	return { generatedAt, ...countJobs(board, placeSets, limit) };
+	return { generatedAt, ...countJobs(board, placeSets, limit), known: [...new Set(known)].sort() };
 }

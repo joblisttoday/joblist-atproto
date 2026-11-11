@@ -875,5 +875,15 @@
 	"apps.firefox.temporary": "Firefox retire un module temporaire quand il redémarre : chargez-le à nouveau de la même façon. Une fois sur addons.mozilla.org, il s’installera en un clic et restera.",
 	"apps.copy": "Copier",
 	"apps.copied": "Copié",
-	"menu.apps": "Applis et module"
+	"menu.apps": "Applis et module",
+	"extension.reading": "Lecture de la page…",
+	"extension.noJobs": "pas d’offre ouverte",
+	"extension.allJobs": "Les {count} offres sur joblist",
+	"extension.edit": "La modifier sur joblist",
+	"extension.failed": "Une erreur est survenue",
+	"extension.glance.jobs": "joblist : {count} offres ouvertes ici",
+	"extension.glance.jobs.one": "joblist : 1 offre ouverte ici",
+	"extension.glance.known": "joblist connaît cette organisation : pas d’offre ouverte",
+	"extension.glance.saved": "joblist : vous l’avez gardée",
+	"extension.glance.none": "joblist : pas encore sur joblist"
 }

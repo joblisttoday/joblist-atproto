@@ -22,8 +22,10 @@ test('countsFile counts board jobs only, and the places of lists about places', 
 			{ t: 'Posted', u: 'https://beta.io/2', c: 'beta.io', l: 'Berlin', s: 'at://did:plc:b/today.joblist.job/1' }
 		],
 		[{ value: { name: 'Startups in Berlin' } }, { value: { name: 'Robotics' } }, {}],
-		'2026-11-07T00:00:00.000Z'
+		'2026-11-07T00:00:00.000Z',
+		['gamma.org', 'acme.org', 'beta.io', 'acme.org']
 	);
+	assert.deepEqual(file.known, ['acme.org', 'beta.io', 'gamma.org']);
 	assert.equal(file.generatedAt, '2026-11-07T00:00:00.000Z');
 	assert.deepEqual(file.offers, { 'acme.org': 1, 'beta.io': 1 });
 	assert.deepEqual(file.here, { Berlin: { 'acme.org': 1 } });

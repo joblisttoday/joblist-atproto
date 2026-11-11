@@ -1,35 +1,28 @@
 import config from '../../src/lib/data/config.json' with { type: 'json' };
 import providers from '../../src/lib/data/providers.json' with { type: 'json' };
+import { glanceOf } from '../../src/lib/models/glance.js';
 import { keyOf } from '../../src/lib/models/kept.js';
 import { readPage } from '../../src/lib/models/page-read.js';
 import { bluesky } from '../../src/lib/network/bluesky-account.js';
 import { api } from './api.js';
 import { collectPage } from './collect.js';
+import { counts } from './counts.js';
 import { change, keptNow } from './store.js';
+import { locale, t } from './texts.js';
 
 /**
  * The add-on's popup, on the website open: what it is (read in the page), whether joblist
- * knows it and its open jobs (one small file, asked only now), its job board and social
- * profiles; keep it and tag it (in this browser), or suggest it to joblist.
+ * knows it and its open jobs (at once from joblist's counts, then its newest jobs from its
+ * small file, asked only now), its job board and social profiles; save and tag it (in this
+ * browser), open it on joblist or suggest it. It shows something at once, and says what went
+ * wrong rather than staying empty.
  * @typedef {import('../../src/lib/models/page-read.js').Read} Read
- * @typedef {{state: 'asking'} | {state: 'in', name: string, jobs: number, gone: boolean, key: string} | {state: 'out'} | {state: 'offline'}} Known
+ * @typedef {{title: string, url: string, place: string}} Offer
+ * @typedef {{state: 'asking'} | {state: 'in', name: string, jobs: number, offers: Offer[], gone: boolean, key: string} | {state: 'out'} | {state: 'offline'}} Known
  */
 
-/** The add-on's texts (extension.*), in the browser's language; built in by scripts/build-extension.js (env.d.ts). */
-const MESSAGES = __MESSAGES__;
-const locale = (navigator.language || 'en').slice(0, 2);
-const messages = MESSAGES[locale] || MESSAGES.en;
-
-/**
- * @param {string} key without "extension."
- * @param {Record<string, string | number>} [vars]
- */
-function t(key, vars = {}) {
-	const one = vars.count === 1 && messages[`extension.${key}.one`];
-	let text = one || messages[`extension.${key}`] || MESSAGES.en[`extension.${key}`] || key;
-	for (const [name, value] of Object.entries(vars)) text = text.replaceAll(`{${name}}`, typeof value === 'number' ? value.toLocaleString(locale) : value);
-	return text;
-}
+const NEWEST = 5;
+const WAIT = 4000;
 
 /**
  * An element, its attributes (on…: listeners) and children.
@@ -57,26 +50,37 @@ function open(url) {
 	};
 }
 
+/** A link that opens in a new tab. @param {string} url @param {Record<string, any>} attrs @param {...(Node | string)} children */
+const link = (url, attrs, ...children) => h('a', { href: url, onclick: open(url), ...attrs }, ...children);
+
 /** A joblist.today page. @param {string} path */
 const site = (path) => `${config.url}${path}`;
 
-/** Asks joblist whether it knows the organization: its small file (its name, its open jobs). @param {Read} read */
-async function known(read) {
-	if (!read.key) return /** @type {Known} */ ({ state: 'out' });
-	// acme.org, else the organization of a subdomain (careers.acme.org)
-	const keys = [read.key, read.key.split('.').slice(1).join('.')].filter((k) => k.includes('.'));
+/** Gives up waiting after a while. @template T @param {Promise<T>} promise @param {T} fallback @returns {Promise<T>} */
+const within = (promise, fallback) => Promise.race([promise, new Promise((done) => setTimeout(() => done(fallback), WAIT))]);
+
+/** Its small file: its name and newest jobs. @param {string} key @returns {Promise<Known>} */
+async function companyFile(key) {
 	try {
-		for (const key of keys) {
-			const res = await fetch(`${config.snapshot.path}/${config.embed.dir}/${encodeURIComponent(key)}.json`);
-			if (res.ok) {
-				const file = await res.json();
-				return /** @type {Known} */ ({ state: 'in', key, name: String(file.name || ''), jobs: Array.isArray(file.jobs) ? file.jobs.length : 0, gone: Boolean(file.gone) });
-			}
-			if (res.status !== 404) return /** @type {Known} */ ({ state: 'offline' });
+		const res = await fetch(`${config.snapshot.path}/${config.embed.dir}/${encodeURIComponent(key)}.json`);
+		if (res.status === 404) return { state: 'out' };
+		if (!res.ok) return { state: 'offline' };
+		const file = await res.json();
+		const jobs = Array.isArray(file.jobs) ? file.jobs : [];
+		// One offer posted for several places is one line, with its places (as joblist counts it).
+		/** @type {Map<string, Offer>} */
+		const offers = new Map();
+		for (const job of jobs) {
+			const title = String(job.t || '').trim();
+			const place = String(job.l || '').trim();
+			const same = offers.get(title.toLowerCase());
+			if (same) {
+				if (place && !same.place.includes(place)) same.place = same.place ? `${same.place} · ${place}` : place;
+			} else offers.set(title.toLowerCase(), { title, url: String(job.u || ''), place });
 		}
-		return /** @type {Known} */ ({ state: 'out' });
+		return { state: 'in', key, name: String(file.name || ''), jobs: offers.size, gone: Boolean(file.gone), offers: [...offers.values()].slice(0, NEWEST) };
 	} catch {
-		return /** @type {Known} */ ({ state: 'offline' });
+		return { state: 'offline' };
 	}
 }
 
@@ -99,41 +103,56 @@ async function currentTab() {
 
 /** What the page has; a page the add-on may not read (the browser's own) gives only its address. @param {any} tab */
 async function collect(tab) {
+	const fallback = { url: tab.url || '', title: tab.title || '', metas: {}, links: [] };
 	try {
-		const [result] = await api.scripting.executeScript({ target: { tabId: tab.id }, func: collectPage });
-		if (result?.result) return result.result;
+		const [result] = await within(api.scripting.executeScript({ target: { tabId: tab.id }, func: collectPage }), [{ result: null }]);
+		return result?.result || fallback;
 	} catch {
-		// not readable: its address and title only
+		return fallback;
 	}
-	return { url: tab.url || '', title: tab.title || '', metas: {}, links: [] };
 }
 
 const app = /** @type {HTMLElement} */ (document.getElementById('app'));
-document.documentElement.lang = MESSAGES[locale] ? locale : 'en';
+document.documentElement.lang = locale;
+
+/** @param {string} text */
+const say = (text) => app.replaceChildren(h('p', { class: 'muted' }, text), h('footer', {}, link(site('/me/organizations'), {}, t('yours'))));
 
 async function start() {
+	say(t('reading'));
 	const tab = await currentTab();
-	const read = tab ? readPage(await collect(tab)) : null;
-	if (!read) {
-		app.replaceChildren(h('p', { class: 'muted' }, t('notPage')), h('footer', {}, h('a', { href: site('/me/organizations'), onclick: open(site('/me/organizations')) }, t('yours'))));
-		return;
-	}
-	/** @type {Known} */
-	let found = { state: 'asking' };
+	if (!tab) return say(t('notPage'));
+	const read = readPage(await collect(tab));
+	if (!read) return say(t('notPage'));
 	let list = await keptNow();
+	// At once, from joblist's counts (as the button): known, and how many jobs.
+	const glance = glanceOf(tab.url || read.link, await within(counts(), { offers: {}, known: [] }), list);
+	/** @type {Known} */
+	let found = glance?.known ? { state: 'in', key: glance.key, name: '', jobs: glance.jobs, offers: [], gone: false } : { state: 'asking' };
+
 	// Kept by the domain joblist knows it by (gitlab.com for about.gitlab.com), else its link.
-	const link = () => (found.state === 'in' ? `https://${found.key}` : read.link);
-	const item = () => list.find((k) => k.url === read.link || k.url === link() || (read.key && keyOf(k.url) === read.key));
+	const keptLink = () => (found.state === 'in' ? `https://${found.key}` : read.link);
+	const item = () => list.find((k) => k.url === read.link || k.url === keptLink() || (read.key && keyOf(k.url) === read.key));
 
 	function render() {
+		if (!read) return;
 		const kept = item();
 		const tags = kept?.tags || [];
-		const name = found.state === 'in' && found.name ? found.name : read?.name || '';
-		if (!read) return;
+		const name = found.state === 'in' && found.name ? found.name : read.name;
+		const page = found.state === 'in' ? site(`/company/${found.key}`) : '';
 		const status =
 			found.state === 'in'
-				? h('a', { class: 'status', 'data-in': true, href: site(`/company/${found.key}`), onclick: open(site(`/company/${found.key}`)) }, h('span', {}, t('in')), h('b', {}, found.gone ? t('gone') : t('jobs', { count: found.jobs })))
+				? link(page, { class: 'status', 'data-in': true }, h('span', {}, t('in')), h('b', {}, found.gone ? t('gone') : found.jobs ? t('jobs', { count: found.jobs }) : t('noJobs')))
 				: h('p', { class: 'status' }, h('span', {}, t(found.state === 'asking' ? 'asking' : found.state === 'offline' ? 'offline' : 'out')));
+		const offers =
+			found.state === 'in' && found.offers.length
+				? h(
+						'ul',
+						{ class: 'offers' },
+						...found.offers.map((o) => h('li', {}, link(`${page}#${new URLSearchParams({ [config.jobs.jobParam]: o.url })}`, {}, o.title), o.place ? h('small', {}, o.place) : null)),
+						found.jobs > found.offers.length ? h('li', {}, link(page, { class: 'more' }, t('allJobs', { count: found.jobs }))) : null
+					)
+				: null;
 		const board = read.boards[0];
 		const tagInput = h('input', {
 			type: 'text',
@@ -144,57 +163,49 @@ async function start() {
 				const input = /** @type {HTMLInputElement} */ (e.target);
 				if ((e.key !== 'Enter' && e.key !== ',') || !input.value.trim()) return;
 				e.preventDefault();
-				await save([...tags, input.value], true);
+				await save([...tags, input.value]);
 			}
 		});
-		app.replaceChildren(
-			...[
-				h('header', {}, h('h1', {}, name), h('small', {}, read.link.replace(/^https?:\/\/(www\.)?/, ''))),
-				read.description ? h('p', { class: 'about' }, read.description) : null,
-				status,
-				h(
-					'dl',
-					{},
-					h('dt', {}, t('board')),
-					h('dd', {}, board ? h('a', { href: board.url, onclick: open(board.url) }, `${providers.find((p) => p.id === board.provider)?.name || board.provider} · ${board.id}`) : h('span', { class: 'muted' }, t('noBoard'))),
-					h('dt', {}, t('links')),
-					h(
-						'dd',
-						{},
-						read.socials.length
-							? h('span', {}, ...read.socials.flatMap((s, i) => [i ? ' · ' : '', h('a', { href: s.url, onclick: open(s.url) }, s.name)]))
-							: h('span', { class: 'muted' }, t('noLinks'))
-					)
-				),
-				h(
-					'div',
-					{ class: 'tags', role: 'group', 'aria-label': t('tags') },
-					...tags.map((tag) => h('span', { class: 'tag' }, tag, h('button', { type: 'button', 'aria-label': t('removeTag', { tag }), onclick: () => save(tags.filter((x) => x !== tag), true) }, '×'))),
-					tagInput
-				),
-				h(
-					'div',
-					{ class: 'actions' },
-					h('button', { type: 'button', 'aria-pressed': kept ? 'true' : 'false', onclick: () => (kept ? forget() : save(tags, false)) }, kept ? t('saved') : t('save')),
-					found.state === 'in'
-						? h('a', { class: 'primary', href: site(`/company/${found.key}`), onclick: open(site(`/company/${found.key}`)) }, t('open'))
-						: h('a', { class: 'primary', href: suggestUrl(read), onclick: open(suggestUrl(read)) }, t('suggest'))
-				),
-				h('footer', {}, h('small', {}, t('private')), h('a', { href: site('/me/organizations'), onclick: open(site('/me/organizations')) }, t('yours')))
-			].filter((node) => node !== null)
-		);
-		if (document.activeElement === document.body && tags.length) tagInput.focus();
+		/** @type {(Node | null)[]} */
+		const parts = [
+			h('header', {}, h('h1', {}, name), h('small', {}, read.link.replace(/^https?:\/\/(www\.)?/, ''))),
+			read.description ? h('p', { class: 'about' }, read.description) : null,
+			status,
+			offers,
+			h(
+				'dl',
+				{},
+				h('dt', {}, t('board')),
+				h('dd', {}, board ? link(board.url, {}, `${providers.find((p) => p.id === board.provider)?.name || board.provider} · ${board.id}`) : h('span', { class: 'muted' }, t('noBoard'))),
+				h('dt', {}, t('links')),
+				h('dd', {}, read.socials.length ? h('span', {}, ...read.socials.flatMap((s, i) => [i ? ' · ' : '', link(s.url, {}, s.name)])) : h('span', { class: 'muted' }, t('noLinks')))
+			),
+			h(
+				'div',
+				{ class: 'tags', role: 'group', 'aria-label': t('tags') },
+				...tags.map((tag) => h('span', { class: 'tag' }, tag, h('button', { type: 'button', 'aria-label': t('removeTag', { tag }), onclick: () => save(tags.filter((x) => x !== tag)) }, '×'))),
+				tagInput
+			),
+			h(
+				'div',
+				{ class: 'actions' },
+				h('button', { type: 'button', 'aria-pressed': kept ? 'true' : 'false', onclick: () => (kept ? forget() : save(tags)) }, kept ? t('saved') : t('save')),
+				found.state === 'in' ? link(page, { class: 'primary' }, t('open')) : link(suggestUrl(read), { class: 'primary' }, t('suggest'))
+			),
+			found.state === 'in' ? h('p', { class: 'more-actions' }, link(site(`/add?key=${encodeURIComponent(found.key)}`), {}, t('edit'))) : null,
+			h('footer', {}, h('small', {}, t('private')), link(site('/me/organizations'), {}, t('yours')))
+		];
+		app.replaceChildren(...parts.filter((part) => part !== null));
 	}
 
-	/** Keeps it (tags kept or changed). @param {string[]} tags @param {boolean} focusTags */
-	async function save(tags, focusTags) {
-		if (!read) return;
+	/** Keeps it, its tags kept or changed. @param {string[]} tags */
+	async function save(tags) {
 		const at = new Date().toISOString();
 		const kept = item();
-		await change(kept ? { op: 'tags', url: kept.url, tags, at } : { op: 'keep', url: link(), name: found.state === 'in' ? found.name : read.name, tags, at });
+		await change(kept ? { op: 'tags', url: kept.url, tags, at } : { op: 'keep', url: keptLink(), name: found.state === 'in' && found.name ? found.name : read?.name || '', tags, at });
 		list = await keptNow();
 		render();
-		if (focusTags) /** @type {HTMLInputElement | null} */ (app.querySelector('.tags input'))?.focus();
+		/** @type {HTMLInputElement | null} */ (app.querySelector('.tags input'))?.focus();
 	}
 	async function forget() {
 		const kept = item();
@@ -205,11 +216,15 @@ async function start() {
 	}
 
 	render();
-	// Asked only now that the popup is open: does joblist know it, is its domain a Bluesky handle.
-	const [answer, account] = await Promise.all([known(read), read.key ? bluesky(read.key) : Promise.resolve(null)]);
-	found = answer;
+	// Asked only now that the popup is open: its newest jobs, and whether its domain is a Bluesky handle.
+	const keys = read.key ? [...new Set([found.state === 'in' ? found.key : '', read.key, read.key.split('.').slice(1).join('.')])].filter((k) => k.includes('.')) : [];
+	const [answers, account] = await Promise.all([Promise.all(keys.map(companyFile)), read.key ? bluesky(read.key) : Promise.resolve(null)]);
+	const counted = found.state === 'in' ? found.jobs : 0;
+	found = answers.find((a) => a.state === 'in') || answers.find((a) => a.state === 'offline') || { state: 'out' };
+	// The number joblist shows (each offer once), as the button says.
+	if (found.state === 'in' && counted) found.jobs = counted;
 	if (account && !read.socials.some((s) => s.id === 'bluesky')) read.socials.unshift({ id: 'bluesky', name: 'Bluesky', url: `https://bsky.app/profile/${account.handle}` });
 	render();
 }
 
-start();
+start().catch((err) => say(`${t('failed')} (${err instanceof Error ? err.message : String(err)})`));

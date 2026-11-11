@@ -109,7 +109,7 @@ const files = {
 	// gone: companies whose job board closed, as the last crawl found.
 	'jobs.json': { generatedAt, checked: Object.keys(board.health), gone, jobs },
 	// What pages that only count jobs need (companies, lists, the search box): small, instead of every job.
-	'counts.json': countsFile(jobs, records.list, generatedAt),
+	'counts.json': countsFile(jobs, records.list, generatedAt, companies.map((c) => c.key)),
 	// The newest offers, small: the list shows them at once, while jobs.json loads.
 	// With their companies' names: the page shows them before it reads the companies.
 	'first.json': (() => {

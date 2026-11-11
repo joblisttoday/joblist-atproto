@@ -875,5 +875,15 @@
 	"apps.firefox.temporary": "Firefox quita un complemento temporal al reiniciarse: cárgalo de nuevo igual. Cuando esté en addons.mozilla.org, se instalará con un clic y se quedará.",
 	"apps.copy": "Copiar",
 	"apps.copied": "Copiado",
-	"menu.apps": "Apps y complemento"
+	"menu.apps": "Apps y complemento",
+	"extension.reading": "Leyendo esta página…",
+	"extension.noJobs": "ninguna oferta abierta ahora",
+	"extension.allJobs": "Las {count} ofertas en joblist",
+	"extension.edit": "Editarla en joblist",
+	"extension.failed": "Algo salió mal",
+	"extension.glance.jobs": "joblist: {count} ofertas abiertas aquí",
+	"extension.glance.jobs.one": "joblist: 1 oferta abierta aquí",
+	"extension.glance.known": "joblist conoce esta organización: ninguna oferta abierta ahora",
+	"extension.glance.saved": "joblist: la guardaste",
+	"extension.glance.none": "joblist: aún no está en joblist"
 }

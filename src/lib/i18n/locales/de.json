@@ -875,5 +875,15 @@
 	"apps.firefox.temporary": "Firefox entfernt ein temporäres Add-on beim Neustart: lade es auf dieselbe Weise neu. Sobald es auf addons.mozilla.org ist, installiert es sich mit einem Klick und bleibt.",
 	"apps.copy": "Kopieren",
 	"apps.copied": "Kopiert",
-	"menu.apps": "Apps und Add-on"
+	"menu.apps": "Apps und Add-on",
+	"extension.reading": "Lese diese Seite…",
+	"extension.noJobs": "gerade keine offenen Stellen",
+	"extension.allJobs": "Alle {count} Stellen auf joblist",
+	"extension.edit": "Auf joblist bearbeiten",
+	"extension.failed": "Etwas ist schiefgelaufen",
+	"extension.glance.jobs": "joblist: {count} offene Stellen hier",
+	"extension.glance.jobs.one": "joblist: 1 offene Stelle hier",
+	"extension.glance.known": "joblist kennt diese Organisation: gerade keine offenen Stellen",
+	"extension.glance.saved": "joblist: von dir gemerkt",
+	"extension.glance.none": "joblist: noch nicht auf joblist"
 }

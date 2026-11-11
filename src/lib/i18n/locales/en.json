@@ -875,5 +875,15 @@
 	"apps.firefox.temporary": "Firefox removes a temporary add-on when it restarts: load it again the same way. Once it is on addons.mozilla.org, it will install in one click and stay.",
 	"apps.copy": "Copy",
 	"apps.copied": "Copied",
-	"menu.apps": "Apps and add-on"
+	"menu.apps": "Apps and add-on",
+	"extension.reading": "Reading this page…",
+	"extension.noJobs": "no open jobs now",
+	"extension.allJobs": "All {count} jobs on joblist",
+	"extension.edit": "Edit it on joblist",
+	"extension.failed": "Something went wrong",
+	"extension.glance.jobs": "joblist: {count} open jobs here",
+	"extension.glance.jobs.one": "joblist: 1 open job here",
+	"extension.glance.known": "joblist knows this organization: no open jobs now",
+	"extension.glance.saved": "joblist: you saved it",
+	"extension.glance.none": "joblist: not on joblist yet"
 }
