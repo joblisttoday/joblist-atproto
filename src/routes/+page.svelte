@@ -3,7 +3,6 @@
 	import config from '#lib/data/config.json';
 	import Icon from '#lib/components/Icon.svelte';
 	import QuickSearch from '#lib/components/QuickSearch.svelte';
-	import PageHeader from '#lib/components/PageHeader.svelte';
 	import SavedSearches from '#lib/components/SavedSearches.svelte';
 	import { searchKeys } from '#lib/models/saved-search.js';
 	import { signingIn } from '#lib/navigation/address.js';
@@ -12,7 +11,7 @@
 	import { formatNumber, t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * The home, short: what joblist is, the one search (jobs, organizations, or a link to
+	 * The home, short and centered, a start page: a title, the one search (jobs, organizations, or a link to
 	 * keep one), and your searches (kept in this browser) with their new jobs. The ways to
 	 * browse are the Explore tab and the footer. The explorer is /jobs; an older
 	 * link to a search here (/#q=design) goes on to it.
@@ -31,8 +30,7 @@
 <svelte:head><title>{config.name}</title></svelte:head>
 
 <jl-home>
-	<PageHeader title={t('home.heading')} intro={t('home.lead')} />
-
+	<h1>{t('home.heading')}</h1>
 	<QuickSearch inline />
 
 	{#if searches.list.length}
@@ -45,13 +43,26 @@
 </jl-home>
 
 <style>
-	/* One column, as wide as reading: the field is not stretched across a desktop. */
+	/* A start page: one centered column, as wide as reading, a little down the screen. */
 	jl-home {
 		display: block;
 		max-width: var(--reading-width);
-		padding-bottom: var(--space-xl);
+		margin-inline: auto;
+		padding: var(--space-xl) 0;
+	}
+	h1 {
+		margin: 0 0 var(--space-l);
+		text-align: center;
 	}
 	section {
-		margin-top: var(--space-l);
+		margin-top: var(--space-xl);
+	}
+	@media (min-width: 48rem) {
+		jl-home {
+			padding-top: 18vh;
+		}
+		h1 {
+			font-size: 2.5rem;
+		}
 	}
 </style>

@@ -115,8 +115,8 @@
 	"anywhere.agents.title": "Für KI-Assistenten",
 	"anywhere.agents.text": "In Browsern mit WebMCP kann ein KI-Assistent hier Organisationen und Jobs durchsuchen und das Formular zum Hinzufügen ausfüllen, damit du es prüfst und speicherst.",
 
-	"home.heading": "Arbeit finden, die sich richtig anfühlt",
-	"home.lead": "Offene Stellen, direkt von den Jobbörsen der Organisationen. Merk dir die Orte, an denen du gern arbeiten würdest, hier in deinem Browser.",
+	"site.description": "Offene Stellen bei Organisationen und Projekten, von ihren eigenen Jobbörsen.",
+	"home.heading": "Projekte und Jobs entdecken",
 
 	"search.companies": "Organisationen, Tags, Orte suchen",
 	"search.none": "Keine Treffer.",

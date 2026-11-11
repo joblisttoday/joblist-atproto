@@ -41,7 +41,7 @@ const url = (path) => config.url + (path === '/' ? '' : path);
 
 /** @returns {SitePage[]} */
 export function sitePages() {
-	const welcome = en['home.lead'];
+	const welcome = en['site.description'];
 	const ways = `<p><a href="/jobs">${escape(en['saved.explore'])}</a> · <a href="/companies">${escape(en['companies.title'])}</a> · <a href="/in">${escape(t('landing.cities'))}</a> · <a href="/field">${escape(t('landing.fields'))}</a></p>`;
 	/** @type {SitePage[]} */
 	const pages = [
@@ -95,7 +95,7 @@ export function sitePages() {
  */
 export function thingPages() {
 	return [
-		{ path: '/_page/job', rules: ['/job/*'], meta: { title: config.name, description: en['home.lead'], body: '' } },
+		{ path: '/_page/job', rules: ['/job/*'], meta: { title: config.name, description: en['site.description'], body: '' } },
 		{ path: '/_page/domain', rules: [], meta: { title: config.name, description: en['companies.intro'], body: '', preload: config.snapshot.preload.company } }
 	];
 }

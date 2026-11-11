@@ -115,8 +115,8 @@
 	"anywhere.agents.title": "For AI assistants",
 	"anywhere.agents.text": "In browsers with WebMCP, an AI assistant can search organizations and jobs here, and fill in the add form for you to check and save.",
 
-	"home.heading": "Find work that feels right",
-	"home.lead": "Open jobs, straight from organizations' own job boards. Keep the places you would like to work, here in your browser.",
+	"site.description": "Open jobs at organizations and projects, read from their own job boards.",
+	"home.heading": "Explore projects and jobs",
 
 	"search.companies": "Search organizations, tags, places",
 	"search.none": "Nothing matches.",

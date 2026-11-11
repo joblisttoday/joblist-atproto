@@ -115,8 +115,8 @@
 	"anywhere.agents.title": "Para asistentes de IA",
 	"anywhere.agents.text": "En navegadores con WebMCP, un asistente de IA puede buscar aquí organizaciones y ofertas, y completar el formulario para que tú lo revises y lo guardes.",
 
-	"home.heading": "Encuentra un trabajo que te encaje",
-	"home.lead": "Ofertas abiertas, leídas directamente de las bolsas de empleo de las organizaciones. Guarda los lugares donde te gustaría trabajar, aquí en tu navegador.",
+	"site.description": "Ofertas abiertas de organizaciones y proyectos, leídas de sus propias bolsas de empleo.",
+	"home.heading": "Explora proyectos y empleos",
 
 	"search.companies": "Buscar organizaciones, etiquetas, lugares",
 	"search.none": "No hay coincidencias.",
