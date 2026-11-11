@@ -99,6 +99,10 @@ poster. Until that exists, nothing private is written.
 
 ## How it runs
 
+The pieces, the contracts between them, how they fit atproto, and the simpler target:
+[docs/architecture.md](docs/architecture.md).
+
+
 A static SvelteKit app (it runs in the browser), served by Cloudflare, and a
 snapshot of the network rebuilt every 6 hours by the indexer ([`indexer/`](indexer),
 `.github/workflows/snapshot.yml`) and published to

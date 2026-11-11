@@ -4,7 +4,7 @@ Open jobs at organizations that hire, read straight from their own job boards, a
 
 Objectives: people find work that feels right for them and for society; projects find great contributors; both on a phone, in a few taps.
 Never: a tracker, an ad network, a middleman for applications, a central database, a paid service, or a tool that contacts anyone on its own.
-People: [docs/personas.md](docs/personas.md). Stage: alpha, not announced to anyone yet; usage is public on Umami (`analytics` in config).
+People: [docs/personas.md](docs/personas.md). Pieces, contracts and where they go: [docs/architecture.md](docs/architecture.md). Stage: alpha, not announced to anyone yet; usage is public on Umami (`analytics` in config).
 
 Choices, on purpose:
 - The app runs in the browser (`ssr = false`); `indexer/prerender.js` writes each company, list and job page's HTML after the build, from the snapshot.
