@@ -211,3 +211,9 @@ describe('jobs others post for a company that speaks for itself', () => {
 		expect(mergeJobs([fake], [board]).map((j) => j.title)).toEqual(['C', 'B']);
 	});
 });
+
+describe('a new offer', () => {
+	it('takes applications by a message on Bluesky, unless the poster says otherwise', () => {
+		expect(toForm(null, 'acme.org').bluesky).toBe(true);
+	});
+});

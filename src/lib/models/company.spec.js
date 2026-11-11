@@ -148,3 +148,11 @@ describe('kind of organization', () => {
 		expect(toRecord({ ...form, kind: 'bank' }, '2026-11-07T00:00:00.000Z').kind).toBe(undefined);
 	});
 });
+
+describe('posting on atproto', () => {
+	it('says so in the record, with no board to read', () => {
+		const form = { ...toForm(null), name: 'joblist', url: 'joblist.today', provider: 'atproto', boardId: 'leftover' };
+		expect(toRecord(form, 'x', 'x').jobBoard).toEqual({ provider: 'atproto' });
+		expect(boardUrl({ provider: 'atproto' })).toBe('');
+	});
+});

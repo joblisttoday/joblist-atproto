@@ -277,6 +277,13 @@ export function searchCompanies(companies, query, limit) {
  */
 
 /**
+ * The provider of an organization that posts its jobs as atproto records from its own
+ * account (today.joblist.job, on joblist and any app that reads them): no board to read,
+ * no id (the account is the organization's, its handle its domain).
+ */
+export const ATPROTO = 'atproto';
+
+/**
  * A company record from form values.
  * @param {CompanyForm} form
  * @param {string} [createdAt] when this person first described the company
@@ -297,7 +304,9 @@ export function toRecord(form, createdAt, now = new Date().toISOString()) {
 	if (tags.length) record.tags = tags;
 	const locations = form.locations.filter((l) => Object.values(l).some((x) => String(x || '').trim()));
 	if (locations.length) record.locations = locations;
-	if (form.provider && form.boardId.trim()) {
+	if (form.provider === ATPROTO) {
+		record.jobBoard = { provider: ATPROTO };
+	} else if (form.provider && form.boardId.trim()) {
 		record.jobBoard = { provider: form.provider, id: form.boardId.trim() };
 	} else if (form.careersUrl.trim()) {
 		record.jobBoard = { url: withScheme(form.careersUrl) };

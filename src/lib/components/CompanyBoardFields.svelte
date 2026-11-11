@@ -4,20 +4,21 @@
 	import config from '#lib/data/config.json';
 	import providers from '#lib/data/providers.json';
 	import { checkBoard } from '#lib/ats/board-check.js';
-	import { boardUrl } from '#lib/models/company.js';
+	import { ATPROTO, boardUrl } from '#lib/models/company.js';
 	import { readBoardInput } from '#lib/models/company-form.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
 	 * Where the company posts its jobs: a job board (its provider in a tap, then its
-	 * id, checked live for open jobs), or any careers page. A board link pasted in
-	 * either field is read as the board.
+	 * id, checked live for open jobs), on atproto from its own account (offers posted on
+	 * joblist), or any careers page. A board link pasted in either field is read as the board.
 	 * @type {{provider: string, boardId: string, careersUrl: string, params: Record<string, string>}}
 	 */
 	let { provider = $bindable(), boardId = $bindable(), careersUrl = $bindable(), params } = $props();
 
 	const options = $derived([
 		...providers.map((p) => ({ value: p.id, label: p.name })),
+		{ value: ATPROTO, label: t('form.provider.atproto') },
 		{ value: '', label: t('form.provider.none') }
 	]);
 	const providerName = $derived(providers.find((p) => p.id === provider)?.name || '');
@@ -62,7 +63,9 @@
 		<small>{t('form.section.jobs.help')}</small>
 		<ChoiceChips name="provider" legend={t('form.provider')} {options} bind:value={provider} tool={params.provider} />
 
-		{#if provider}
+		{#if provider === ATPROTO}
+			<small>{t('form.provider.atproto.help')}</small>
+		{:else if provider}
 			<label for="board">{t('form.boardId', { provider: providerName })}</label>
 			<input
 				id="board"

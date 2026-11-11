@@ -1,7 +1,7 @@
 import config from '#lib/data/config.json' with { type: 'json' };
 import { detectBoard } from '#lib/ats/detect.js';
 import { safeUrl } from './url.js';
-import { pickVersion, toDomain, toRecord, withScheme } from './company.js';
+import { ATPROTO, pickVersion, toDomain, toRecord, withScheme } from './company.js';
 import { boardFromCareers } from './paste.js';
 
 /**
@@ -130,7 +130,7 @@ export const INVITED = /** @type {const} */ (['description', 'jobBoard', 'locati
 export function missingFields(company) {
 	const has = {
 		description: Boolean(company.description?.trim()),
-		jobBoard: Boolean(company.jobBoard?.id || company.jobBoard?.url),
+		jobBoard: Boolean(company.jobBoard?.id || company.jobBoard?.url || company.jobBoard?.provider === ATPROTO),
 		locations: company.locations.length > 0,
 		tags: company.tags.length > 0
 	};

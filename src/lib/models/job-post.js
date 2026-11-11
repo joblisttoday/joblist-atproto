@@ -180,7 +180,8 @@ export function toForm(post, company = '', now = Date.now()) {
 		employment: post?.employment || '',
 		offerUrl: own,
 		applyTo: apply.replace(/^mailto:/i, ''),
-		bluesky: Boolean(post?.apply.bluesky),
+		// A new offer: by a message on Bluesky, at once (the poster's own account); a link can be added.
+		bluesky: post ? Boolean(post.apply.bluesky) : true,
 		days: post ? daysLeft(post.expiresAt, now) || DEFAULT_DAYS : DEFAULT_DAYS,
 		salaryMin: post?.salary?.min ? String(post.salary.min) : '',
 		salaryMax: post?.salary?.max ? String(post.salary.max) : '',

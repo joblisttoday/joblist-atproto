@@ -347,6 +347,8 @@
 	"form.tags.suggested": "Tags suggérés",
 	"form.provider": "Outil de recrutement",
 	"form.provider.none": "Autre site",
+	"form.provider.atproto": "Sur joblist (atproto)",
+	"form.provider.atproto.help": "Elle publie ses offres sur joblist, depuis son propre compte (son pseudo Bluesky est son domaine) : ce sont des enregistrements dans son compte, affichés sur joblist et dans toute app qui les lit.",
 	"form.boardId": "Son identifiant sur {provider}",
 	"form.boardId.help": "Le nom de l'organisation chez l'outil, par ex. « acme » dans jobs.lever.co/acme.",
 	"form.board.checking": "Recherche des offres ouvertes…",
@@ -650,6 +652,7 @@
 	"post.daysLeft": "{count} jours restants",
 	"post.daysLeft.one": "1 jour restant",
 	"company.post.own": "Vous recrutez ? Publiez une offre — gratuit",
+	"company.atproto": "Publie ses offres sur joblist, depuis son propre compte @{handle} : sur atproto, lisibles par toute app.",
 
 	"outbox.offline": "Hors ligne : vous voyez ce qui a été lu ici en dernier.",
 	"outbox.waiting": "{count} changements seront envoyés quand votre serveur sera joignable.",

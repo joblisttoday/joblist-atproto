@@ -347,6 +347,8 @@
 	"form.tags.suggested": "Suggested tags",
 	"form.provider": "Job board provider",
 	"form.provider.none": "Another site",
+	"form.provider.atproto": "On joblist (atproto)",
+	"form.provider.atproto.help": "It posts its offers on joblist, from its own account (its Bluesky handle is its domain): they are records in its account, shown on joblist and in any app that reads them.",
 	"form.boardId": "Its id on {provider}",
 	"form.boardId.help": "The organization's name at the provider, e.g. 'acme' in jobs.lever.co/acme.",
 	"form.board.checking": "Looking for open jobs…",
@@ -650,6 +652,7 @@
 	"post.daysLeft": "{count} days left",
 	"post.daysLeft.one": "1 day left",
 	"company.post.own": "Hiring? Post a job — free",
+	"company.atproto": "Posts its jobs on joblist, from its own account @{handle}: on atproto, readable by any app.",
 
 	"outbox.offline": "Offline: you see what was last read here.",
 	"outbox.waiting": "{count} changes will be sent when your server can be reached.",

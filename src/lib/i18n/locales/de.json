@@ -347,6 +347,8 @@
 	"form.tags.suggested": "Vorgeschlagene Tags",
 	"form.provider": "Anbieter der Jobbörse",
 	"form.provider.none": "Andere Website",
+	"form.provider.atproto": "Auf joblist (atproto)",
+	"form.provider.atproto.help": "Sie veröffentlicht ihre Stellen auf joblist, von ihrem eigenen Konto (ihr Bluesky-Handle ist ihre Domain): Es sind Einträge in ihrem Konto, gezeigt auf joblist und in jeder App, die sie liest.",
 	"form.boardId": "Ihre ID bei {provider}",
 	"form.boardId.help": "Der Name der Organisation beim Anbieter, z. B. 'acme' in jobs.lever.co/acme.",
 	"form.board.checking": "Offene Stellen werden gesucht…",
@@ -650,6 +652,7 @@
 	"post.daysLeft": "Noch {count} Tage",
 	"post.daysLeft.one": "Noch 1 Tag",
 	"company.post.own": "Du stellst ein? Veröffentliche einen Job — kostenlos",
+	"company.atproto": "Veröffentlicht ihre Jobs auf joblist, von ihrem eigenen Konto @{handle}: auf atproto, lesbar für jede App.",
 
 	"outbox.offline": "Offline: Sie sehen, was hier zuletzt geladen wurde.",
 	"outbox.waiting": "{count} Änderungen werden gesendet, sobald Ihr Server erreichbar ist.",

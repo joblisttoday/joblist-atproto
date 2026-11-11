@@ -9,7 +9,7 @@
 	import CompanyJobs from './CompanyJobs.svelte';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { data } from '#lib/network/network.svelte.js';
-	import { boardUrl, mapPoints } from '#lib/models/company.js';
+	import { ATPROTO, boardUrl, mapPoints } from '#lib/models/company.js';
 	import { placeCounts } from '#lib/models/job.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
@@ -27,7 +27,7 @@
 	const key = $derived(company.key);
 	const manager = $derived(!local && session.handle === company.key);
 	// Jobs come from its job board, or were posted here (by the company or anyone).
-	const hasJobs = $derived(Boolean(boardUrl(company.jobBoard) || (!local && data.postedJobs.has(key))));
+	const hasJobs = $derived(Boolean(boardUrl(company.jobBoard) || company.jobBoard?.provider === ATPROTO || (!local && data.postedJobs.has(key))));
 	/** @type {import('#lib/ats/job.js').Job[]} */
 	let jobs = $state.raw([]);
 	const places = $derived(
