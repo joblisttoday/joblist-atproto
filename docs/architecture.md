@@ -48,6 +48,8 @@ service (index, labeler, feeds) is optional and replaceable.
 
 Two repositories, four workflows, two hosts, six secrets. The couplings: the app's build reads
 the index (2), the index rebuilds the app (6), the Worker reads the index (3).
+Steps 1 and 2 removed 2 and 6: the site is built from no index (`indexer/site.js`), and
+organization and job pages are one page each, served for any of them by a rewrite.
 
 ## Target: 3 pieces
 
@@ -73,10 +75,10 @@ only); the crawler's weekly repairs stop unless run by hand; no weekly post on B
 Each step is a commit, checked (types, unit tests, the built site's tests, 390px and 1440px),
 and reversible on its own.
 
-1. **The app's build reads no index.** Remove the prerender (2) from `build:site`; organization,
+1. **Done (2026-11-11).** **The app's build reads no index.** Remove the prerender (2) from `build:site`; organization,
    job and list pages are the app's (`404.html` already starts the app on any address). The
    home's and `/stats`' titles say no numbers. Check: the build runs offline.
-2. **No deploy after an index.** Remove the deploy hook step (6) and its secret: an index never
+2. **Done (2026-11-11).** **No deploy after an index.** Remove the deploy hook step (6) and its secret: an index never
    rebuilds the app. Check: the snapshot workflow succeeds.
 3. **The index format, written down.** `docs/index.md`: each file (`records.json`, `jobs.json`,
    `counts.json`, `first.json`, `companies/{domain}.json`, `landing/`, `places.json`…), its fields,

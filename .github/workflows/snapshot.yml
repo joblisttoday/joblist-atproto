@@ -3,10 +3,8 @@
 # which the app reads. Free, and needs no Cloudflare credentials.
 # Secrets: SNAPSHOT_DEPLOY_KEY (write deploy key of joblist-snapshot);
 # optional BOT_HANDLE and BOT_APP_PASSWORD: the account that posts the week's trends (bot/);
-# optional SITE_DEPLOY_HOOK: the Worker's deploy hook (Workers & Pages > the Worker > Settings >
-# Builds > Deploy Hooks, branch main), so its prerendered pages follow each snapshot.
-# The site itself (prerendered pages) is built and deployed by Cloudflare Workers Builds on push,
-# and after each snapshot when SITE_DEPLOY_HOOK is set.
+# The site is built and deployed by Cloudflare Workers Builds on push only: it reads no snapshot
+# at build time, and a snapshot never rebuilds it (docs/architecture.md).
 # Also publishes the last crawl (branch `crawl`) under crawl/.
 #
 # Two jobs: `build` runs the dependencies and the indexer with no secret and a
@@ -111,33 +109,3 @@ jobs:
           BOT_APP_PASSWORD: ${{ secrets.BOT_APP_PASSWORD }}
         run: |
           if [ -n "$BOT_HANDLE" ] && [ -n "$BOT_APP_PASSWORD" ]; then node bot/index.js snapshot --write; else node bot/index.js snapshot; fi
-
-  # The site's prerendered pages (companies, jobs, sitemap) from this snapshot, not the one of
-  # the last push. The build downloads the snapshot as GitHub serves it, cached for minutes:
-  # first wait until it serves this one (a check every 30 s, 10 minutes at most). Skipped
-  # without SITE_DEPLOY_HOOK. No npm, no code from the repo: only the hook's URL, a secret.
-  rebuild:
-    needs: publish
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    permissions: {}
-    steps:
-      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
-        with:
-          name: snapshot
-          path: snapshot
-      - name: Build the site again
-        env:
-          SITE_DEPLOY_HOOK: ${{ secrets.SITE_DEPLOY_HOOK }}
-          SNAPSHOT_URL: https://raw.githubusercontent.com/joblisttoday/joblist-snapshot/gh-pages/meta.json
-        run: |
-          if [ -z "$SITE_DEPLOY_HOOK" ]; then echo "No SITE_DEPLOY_HOOK: the site is built on the next push."; exit 0; fi
-          want=$(jq -r .generatedAt snapshot/meta.json)
-          for i in $(seq 1 20); do
-            served=$(curl -fsS "$SNAPSHOT_URL" | jq -r .generatedAt || true)
-            [ "$served" = "$want" ] && break
-            sleep 30
-          done
-          if [ "$served" != "$want" ]; then echo "GitHub still serves $served, not $want: the next snapshot will build the site."; exit 0; fi
-          curl -fsS -X POST "$SITE_DEPLOY_HOOK" -o /dev/null
-          echo "Site build asked for snapshot $want."

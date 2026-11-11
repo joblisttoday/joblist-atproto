@@ -70,13 +70,11 @@ Anyone signed in can post a job at `/jobs/new` (or "Post a job" on a company
 page). When the poster's handle is the company's domain, the offer is shown
 as **posted by the company** (✓); otherwise as **shared by @handle**. Offers
 show up in every job list with that company, merged with its job board's
-jobs (one per link), and get their own page at `/job/{did}/{rkey}`,
-prerendered with schema.org `JobPosting` data for search engines.
+jobs (one per link), and get their own page at `/job/{did}/{rkey}`.
 
 Once a company speaks for itself (its own account's version is shown, or it
 posted a job itself), offers others post for it are no longer shown as its
-jobs: not in job lists, feeds, embeds or the snapshot, and their page is not
-prerendered. Opened by its link, such an offer says in red that it is not from
+jobs: not in job lists, feeds, embeds or the snapshot. Opened by its link, such an offer says in red that it is not from
 the company, with no link to apply or to the offer: anyone can post, and a fake
 offer in a real company's name is how phishing collects applications.
 
@@ -183,7 +181,7 @@ npx wrangler dev --port 8802 --ip 127.0.0.1   # then /in/berlin, /feed/new.xml
 Cloudflare Workers Builds deploys `main` on every push (connected to this
 GitHub repository in the dashboard, no token):
 
-- Build command: `npm run build:site` (downloads the published snapshot, builds the app, prerenders pages; `npm run index` builds a snapshot locally)
+- Build command: `npm run build:site` (builds the add-on and the app, then the site's own pages: no snapshot; `npm run index` builds a snapshot locally)
 - Deploy command: `npx wrangler deploy`
 
 By hand:
@@ -199,7 +197,7 @@ Workflows ([`.github/workflows/`](.github/workflows)):
 
 | Workflow | When | What |
 |---|---|---|
-| `snapshot` | every 6 hours | the snapshot, published; then the site rebuilt (`SITE_DEPLOY_HOOK`) and the weekly post (`bot/`) |
+| `snapshot` | every 6 hours | the snapshot, published; then the weekly post (`bot/`). The site is not rebuilt: it reads the snapshot in the browser |
 | `crawl` | Mondays | the crawler ([docs/crawler.md](docs/crawler.md)) |
 | `lexicons` | by hand, by the owner | publishes the changed schemas ([docs/lexicons.md](docs/lexicons.md)) |
 | `gate` | each push, Mondays | the quality gate on the built site |

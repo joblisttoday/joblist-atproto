@@ -7,7 +7,7 @@ Never: a tracker, an ad network, a middleman for applications, a central databas
 People: [docs/personas.md](docs/personas.md). Pieces, contracts and where they go: [docs/architecture.md](docs/architecture.md). Stage: alpha, not announced to anyone yet; usage is public on Umami (`analytics` in config).
 
 Choices, on purpose:
-- The app runs in the browser (`ssr = false`); `indexer/prerender.js` writes each company, list and job page's HTML after the build, from the snapshot.
+- The app runs in the browser (`ssr = false`); `indexer/site.js` writes the site's own pages after the build, from no snapshot: organization and job pages are one page each, served for `/company/*` and `/job/*` by a rewrite (`_redirects`). The build never reads the snapshot, and a snapshot never rebuilds the site ([docs/architecture.md](docs/architecture.md)).
 - Unknown addresses get `404.html` with status 404, on which the app still starts, because records written since the last build have no page yet.
 - npm, not bun, because Cloudflare Workers Builds and the GitHub workflows use it.
 
@@ -15,7 +15,7 @@ Choices, on purpose:
 
 - The source of truth is the network: `today.joblist.*` records in their authors' own accounts ([lexicons/](lexicons)).
 - The indexer ([indexer/](indexer)) rebuilds a static snapshot every 6 hours (`.github/workflows/snapshot.yml`, schedule only) and publishes it to `joblisttoday/joblist-snapshot`. The app reads it; only the signed-in person's own records are read live.
-- The site is static files on Cloudflare, built on each push (and after each snapshot, with the `SITE_DEPLOY_HOOK` secret). Only `/in`, `/field`, `/feed` and the places sitemap run code ([worker/](worker)).
+- The site is static files on Cloudflare, built on each push only. Only `/in`, `/field`, `/feed` and the places sitemap run code ([worker/](worker)).
 - Local-first: a service worker (`src/service-worker.js`) keeps the app and the snapshot files it read, so it opens and searches offline; the network copy and the outbox live in IndexedDB (`src/lib/local/store.js`, idb-keyval). A write that can't reach the person's server waits in the outbox (`src/lib/network/outbox.svelte.js`) and is sent in order later; a refused one is shown in the menu (`/menu/outbox`).
 - Settings, limits, phrases and fields are data in [src/lib/data/](src/lib/data), interface text in [src/lib/i18n/locales/](src/lib/i18n/locales) (en, fr, de, es: every key in each).
 

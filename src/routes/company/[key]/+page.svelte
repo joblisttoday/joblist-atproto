@@ -21,7 +21,11 @@
 	});
 </script>
 
-<svelte:head><title>{company?.name || key} · {config.name}</title></svelte:head>
+<!-- Its own address: the page served for every organization has none (indexer/site.js). -->
+<svelte:head>
+	<title>{company?.name || key} · {config.name}</title>
+	<link rel="canonical" href="{config.url}/company/{company?.key || key}" />
+</svelte:head>
 
 {#if company}
 	<CompanyPage {company} />

@@ -50,7 +50,7 @@ function preview(image) {
 /**
  * The app's HTML shell with page-specific head tags and a no-JavaScript body.
  * @param {string} template build/index.html
- * @param {{title: string, description: string, url: string, body: string, type?: string, head?: string, noindex?: boolean, image?: string, preload?: string[]}} meta
+ * @param {{title: string, description: string, url?: string, body: string, type?: string, head?: string, noindex?: boolean, image?: string, preload?: string[]}} meta
  *   type: the og:type (default website); head: more tags, like jsonLd(); noindex: a page for people, not search results;
  *   image: the page's picture for link previews (default: the site's);
  *   preload: the snapshot files the page starts from (config snapshot.preload), fetched while the app loads
@@ -61,12 +61,13 @@ export function page(template, { title, description, url, body, type = 'website'
 		`<title>${escape(title)}</title>`,
 		noindex ? `<meta name="robots" content="noindex">` : '',
 		`<meta name="description" content="${escape(text)}">`,
-		`<link rel="canonical" href="${escape(url)}">`,
+		// No address: a page shared by many (an organization's, a job's), whose own the app knows.
+		url ? `<link rel="canonical" href="${escape(url)}">` : '',
 		`<meta property="og:type" content="${escape(type)}">`,
 		`<meta property="og:site_name" content="${escape(config.name)}">`,
 		`<meta property="og:title" content="${escape(title)}">`,
 		`<meta property="og:description" content="${escape(text)}">`,
-		`<meta property="og:url" content="${escape(url)}">`,
+		url ? `<meta property="og:url" content="${escape(url)}">` : '',
 		...preview(image),
 		// The data the page starts from: fetched while the app itself loads, not after.
 		// Only what it shows: all the jobs are large, and a phone reads them for seconds.
