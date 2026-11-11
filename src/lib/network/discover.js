@@ -1,7 +1,7 @@
-import config from '#lib/data/config.json';
 import { boardName } from '#lib/ats/board-check.js';
 import { detectBoard } from '#lib/ats/detect.js';
 import { keyOf } from '#lib/models/kept.js';
+import { bluesky } from './bluesky-account.js';
 
 /**
  * What a browser can learn of an organization from a link, by itself, asking only
@@ -10,7 +10,7 @@ import { keyOf } from '#lib/models/kept.js';
  * are read by the page, from the board. Websites do not answer browsers: their own
  * name and links are left to whoever adds the organization (or the bookmarklet).
  * Each link is asked once a visit.
- * @typedef {{did: string, handle: string, name: string, avatar: string, description: string, followers: number}} BlueskyFound
+ * @typedef {import('./bluesky-account.js').BlueskyFound} BlueskyFound
  * @typedef {{key: string, board: {provider: string, id: string} | null, boardName: string, bluesky: BlueskyFound | null}} Found
  */
 
@@ -27,32 +27,6 @@ function handleOf(link, key) {
 		// not a link: nothing to ask
 	}
 	return key;
-}
-
-/** @param {string} handle @returns {Promise<BlueskyFound | null>} */
-async function bluesky(handle) {
-	if (!handle || !handle.includes('.')) return null;
-	try {
-		const base = config.services.appview;
-		const resolved = await fetch(`${base}/xrpc/com.atproto.identity.resolveHandle?handle=${encodeURIComponent(handle)}`);
-		if (!resolved.ok) return null;
-		const { did } = await resolved.json();
-		const res = await fetch(`${base}/xrpc/app.bsky.actor.getProfile?actor=${encodeURIComponent(did)}`);
-		if (!res.ok) return null;
-		const p = await res.json();
-		// The handle the AppView verified (the domain names the account, and back).
-		if (p.handle !== handle.toLowerCase()) return null;
-		return {
-			did,
-			handle: p.handle,
-			name: String(p.displayName || '').trim(),
-			avatar: String(p.avatar || ''),
-			description: String(p.description || '').trim(),
-			followers: Number(p.followersCount) || 0
-		};
-	} catch {
-		return null;
-	}
 }
 
 /**

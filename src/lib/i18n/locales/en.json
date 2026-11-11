@@ -865,6 +865,7 @@
 	"apps.firefox.links": "the job board it links to, and its social profiles;",
 	"apps.firefox.save": "and lets you save and tag it, in your browser only (with your organizations here), or suggest it to joblist.",
 	"apps.firefox.download": "Download the add-on",
+	"apps.firefox.unbuilt": "This copy of joblist was built without the add-on. To build it:",
 	"apps.firefox.version": "Version {version}, built with this site. Not on addons.mozilla.org yet.",
 	"apps.firefox.try": "Try it in Firefox",
 	"apps.firefox.step1": "Download the add-on (a .zip file).",

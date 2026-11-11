@@ -865,6 +865,7 @@
 	"apps.firefox.links": "la page carrières vers laquelle il pointe, et ses profils sociaux ;",
 	"apps.firefox.save": "et permet de la garder et l’étiqueter, dans votre navigateur seulement (avec vos organisations ici), ou de la proposer à joblist.",
 	"apps.firefox.download": "Télécharger le module",
+	"apps.firefox.unbuilt": "Cette copie de joblist a été construite sans le module. Pour le construire :",
 	"apps.firefox.version": "Version {version}, construite avec ce site. Pas encore sur addons.mozilla.org.",
 	"apps.firefox.try": "L’essayer dans Firefox",
 	"apps.firefox.step1": "Téléchargez le module (un fichier .zip).",

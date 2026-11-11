@@ -44,6 +44,7 @@ describe('readPage', () => {
 	it("prefers the site's own name, else names it from its domain", () => {
 		expect(readPage(collected({ title: 'Home', metas: { 'og:site_name': 'ACME' } }))?.name).toBe('ACME');
 		expect(readPage(collected({ title: 'Welcome to our site' }))?.name).toBe('Acme');
+		expect(readPage(collected({ title: 'Acme: The design studio for modern coops' }))?.name).toBe('Acme');
 	});
 	it('reads a board page as one, and keeps a platform page as it is', () => {
 		expect(readPage(collected({ url: 'https://jobs.ashbyhq.com/posthog' }))?.boards).toEqual([{ provider: 'ashby', id: 'posthog', url: 'https://jobs.ashbyhq.com/posthog' }]);

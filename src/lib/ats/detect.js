@@ -7,10 +7,18 @@
 const RESERVED = new Set(['', 'api', 'app', 'www', 'embed', 'v0', 'v1', 'jobs', 'job', 'static', 'assets', 'careers', 'login', 'signup', 'help']);
 
 /**
- * One pattern per provider: a host test and where the id sits.
- * @type {{provider: string, host: RegExp, from: 'path' | 'subdomain'}[]}
+ * One pattern per provider: a host test and where the id sits (the path's first part, the
+ * subdomain, or what a path pattern captures). The public APIs' addresses too: a careers page
+ * that shows its jobs itself fetches them from there (the add-on sees what a page fetched).
+ * @type {{provider: string, host: RegExp, from: 'path' | 'subdomain' | RegExp}[]}
  */
 const PATTERNS = [
+	{ provider: 'greenhouse', host: /^boards-api\.greenhouse\.io$/, from: /^\/v1\/boards\/([^/?#]+)/ },
+	{ provider: 'ashby', host: /^api\.ashbyhq\.com$/, from: /^\/posting-api\/job-board\/([^/?#]+)/ },
+	{ provider: 'lever', host: /^api\.(eu\.)?lever\.co$/, from: /^\/v0\/postings\/([^/?#]+)/ },
+	{ provider: 'workable', host: /^apply\.workable\.com$/, from: /^\/api\/v\d+\/(?:widget\/)?accounts\/([^/?#]+)/ },
+	{ provider: 'smartrecruiters', host: /^api\.smartrecruiters\.com$/, from: /^\/v1\/companies\/([^/?#]+)/ },
+	{ provider: 'rippling', host: /^api\.rippling\.com$/, from: /^\/platform\/api\/ats\/v\d+\/board\/([^/?#]+)/ },
 	{ provider: 'greenhouse', host: /^(job-)?boards(\.eu)?\.greenhouse\.io$/, from: 'path' },
 	{ provider: 'lever', host: /^jobs\.lever\.co$/, from: 'path' },
 	{ provider: 'ashby', host: /^jobs\.ashbyhq\.com$/, from: 'path' },
@@ -38,15 +46,17 @@ export function detectBoard(input) {
 		return null;
 	}
 	const host = url.hostname.toLowerCase();
-	const pattern = PATTERNS.find((p) => p.host.test(host));
+	const pattern = PATTERNS.find((p) => p.host.test(host) && (!(p.from instanceof RegExp) || p.from.test(url.pathname)));
 	if (!pattern) return null;
 	// Greenhouse embeds name the board in a query: /embed/job_board?for=acme
 	const embedded = url.searchParams.get('for');
 	if (pattern.provider === 'greenhouse' && embedded) return { provider: 'greenhouse', id: embedded };
 	const id =
-		pattern.from === 'subdomain'
-			? host.split('.')[0]
-			: decodeURIComponent(url.pathname.split('/').filter(Boolean)[0] || '');
+		pattern.from instanceof RegExp
+			? decodeURIComponent(url.pathname.match(pattern.from)?.[1] || '')
+			: pattern.from === 'subdomain'
+				? host.split('.')[0]
+				: decodeURIComponent(url.pathname.split('/').filter(Boolean)[0] || '');
 	if (RESERVED.has(id.toLowerCase())) return null;
 	return { provider: pattern.provider, id };
 }

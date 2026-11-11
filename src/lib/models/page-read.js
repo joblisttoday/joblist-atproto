@@ -15,7 +15,7 @@ import { guessName } from './paste.js';
  * @typedef {{link: string, key: string, name: string, description: string, boards: Board[], socials: Social[]}} Read
  */
 
-const SEPARATORS = /\s+[|–—·:\-]\s+/;
+const SEPARATORS = /\s+[|–—·\-]\s+|:\s+/;
 const MAX_TEXT = 1000;
 
 /** Its own name: the site's name, else the part of its title its domain names, else from its domain. @param {Collected} page @param {string} key */

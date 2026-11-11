@@ -2,6 +2,16 @@ import { describe, expect, it } from 'vitest';
 import { detectBoard, findBoards, isProviderUrl } from './detect.js';
 
 describe('detectBoard', () => {
+	it('reads a board from its public API, which a careers page fetches its jobs from', () => {
+		expect(detectBoard('https://boards-api.greenhouse.io/v1/boards/twilio/jobs?content=true')).toEqual({ provider: 'greenhouse', id: 'twilio' });
+		expect(detectBoard('https://api.ashbyhq.com/posting-api/job-board/sentry?includeCompensation=true')).toEqual({ provider: 'ashby', id: 'sentry' });
+		expect(detectBoard('https://api.lever.co/v0/postings/acme?mode=json')).toEqual({ provider: 'lever', id: 'acme' });
+		expect(detectBoard('https://apply.workable.com/api/v3/accounts/acme/jobs')).toEqual({ provider: 'workable', id: 'acme' });
+		expect(detectBoard('https://apply.workable.com/acme/')).toEqual({ provider: 'workable', id: 'acme' });
+		expect(detectBoard('https://api.smartrecruiters.com/v1/companies/Acme/postings')).toEqual({ provider: 'smartrecruiters', id: 'Acme' });
+		expect(detectBoard('https://api.rippling.com/platform/api/ats/v2/board/acme/jobs')).toEqual({ provider: 'rippling', id: 'acme' });
+		expect(detectBoard('https://boards-api.greenhouse.io/v1/other')).toBeNull();
+	});
 	it('reads the id from the path or the subdomain', () => {
 		expect(detectBoard('https://boards.greenhouse.io/acme/jobs/123')).toEqual({ provider: 'greenhouse', id: 'acme' });
 		expect(detectBoard('https://job-boards.eu.greenhouse.io/acme')).toEqual({ provider: 'greenhouse', id: 'acme' });

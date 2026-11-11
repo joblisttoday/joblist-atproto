@@ -2,6 +2,7 @@ import config from '../../src/lib/data/config.json' with { type: 'json' };
 import providers from '../../src/lib/data/providers.json' with { type: 'json' };
 import { keyOf } from '../../src/lib/models/kept.js';
 import { readPage } from '../../src/lib/models/page-read.js';
+import { bluesky } from '../../src/lib/network/bluesky-account.js';
 import { api } from './api.js';
 import { collectPage } from './collect.js';
 import { change, keptNow } from './store.js';
@@ -204,7 +205,10 @@ async function start() {
 	}
 
 	render();
-	found = await known(read);
+	// Asked only now that the popup is open: does joblist know it, is its domain a Bluesky handle.
+	const [answer, account] = await Promise.all([known(read), read.key ? bluesky(read.key) : Promise.resolve(null)]);
+	found = answer;
+	if (account && !read.socials.some((s) => s.id === 'bluesky')) read.socials.unshift({ id: 'bluesky', name: 'Bluesky', url: `https://bsky.app/profile/${account.handle}` });
 	render();
 }
 

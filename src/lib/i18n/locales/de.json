@@ -865,6 +865,7 @@
 	"apps.firefox.links": "die Karriereseite, auf die sie verlinkt, und ihre Social-Profile;",
 	"apps.firefox.save": "und lässt dich sie merken und verschlagworten, nur in deinem Browser (mit deinen Organisationen hier), oder joblist vorschlagen.",
 	"apps.firefox.download": "Add-on herunterladen",
+	"apps.firefox.unbuilt": "Diese Kopie von joblist wurde ohne das Add-on gebaut. Zum Bauen:",
 	"apps.firefox.version": "Version {version}, mit dieser Seite gebaut. Noch nicht auf addons.mozilla.org.",
 	"apps.firefox.try": "In Firefox ausprobieren",
 	"apps.firefox.step1": "Lade das Add-on herunter (eine .zip-Datei).",

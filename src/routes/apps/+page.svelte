@@ -12,6 +12,12 @@
 	 * and the ways to send a page to joblist from anywhere (share, bookmarklet, assistants).
 	 */
 	const file = '/apps/joblist-firefox.zip';
+	// Built with the site (npm run build:extension); a copy of the app not built so has none:
+	// the address would answer with a page, which Firefox cannot load as an add-on.
+	let packed = $state(true);
+	fetch(file, { method: 'HEAD' })
+		.then((res) => (packed = res.ok && !(res.headers.get('content-type') || '').includes('text/html')))
+		.catch(() => {});
 	const debugging = 'about:debugging#/runtime/this-firefox';
 	let copied = $state(false);
 
@@ -39,7 +45,11 @@
 			<li>{t('apps.firefox.links')}</li>
 			<li>{t('apps.firefox.save')}</li>
 		</ul>
-		<menu><a href={file} download data-primary><Icon name="down" /> {t('apps.firefox.download')}</a></menu>
+		{#if packed}
+			<menu><a href={file} download data-primary><Icon name="down" /> {t('apps.firefox.download')}</a></menu>
+		{:else}
+			<p role="status"><small>{t('apps.firefox.unbuilt')}</small> <code>npm run build:extension</code></p>
+		{/if}
 		<p><small>{t('apps.firefox.version', { version: manifest.version })}</small></p>
 
 		<h3>{t('apps.firefox.try')}</h3>

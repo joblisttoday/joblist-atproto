@@ -865,6 +865,7 @@
 	"apps.firefox.links": "la página de empleo a la que enlaza y sus perfiles sociales;",
 	"apps.firefox.save": "y te deja guardarla y etiquetarla, solo en tu navegador (con tus organizaciones aquí), o proponerla a joblist.",
 	"apps.firefox.download": "Descargar el complemento",
+	"apps.firefox.unbuilt": "Esta copia de joblist se construyó sin el complemento. Para construirlo:",
 	"apps.firefox.version": "Versión {version}, construida con este sitio. Aún no está en addons.mozilla.org.",
 	"apps.firefox.try": "Probarlo en Firefox",
 	"apps.firefox.step1": "Descarga el complemento (un archivo .zip).",
