@@ -4,7 +4,6 @@ node_modules
 .output
 .vercel
 .netlify
-.wrangler
 /.svelte-kit
 /build
 
@@ -22,11 +21,7 @@ Thumbs.db
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
-# AppView snapshot (built by indexer/)
-/static/snapshot
 
-# Local Worker settings (wrangler dev)
-.dev.vars
 
 # Playwright
 /test-results/

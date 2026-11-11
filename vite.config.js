@@ -3,7 +3,7 @@ import adapter from '@sveltejs/adapter-static';
 import { sveltekit } from '@sveltejs/kit/vite';
 
 /**
- * In development, the files the build writes next to the site (indexer/site.js): llms.txt,
+ * In development, the files the build writes next to the site (site/site.js): llms.txt,
  * robots.txt and the sitemap, made by the same functions, so /llms.txt answers here too.
  * @returns {import('vite').Plugin}
  */
@@ -18,11 +18,11 @@ function siteFiles() {
 				const load = (/** @type {string} */ file) => server.ssrLoadModule(file);
 				const { default: config } = await load('/src/lib/data/config.json');
 				let body = '';
-				if (path === '/llms.txt') body = (await load('/indexer/llms.js')).llmsTxt();
-				else if (path === '/robots.txt') body = (await load('/indexer/sitemap.js')).robots(config.url);
+				if (path === '/llms.txt') body = (await load('/site/llms.js')).llmsTxt();
+				else if (path === '/robots.txt') body = (await load('/site/sitemap.js')).robots(config.url);
 				else {
-					const pages = (await load('/indexer/site-pages.js')).sitePages();
-					body = (await load('/indexer/sitemap.js')).sitemap(
+					const pages = (await load('/site/site-pages.js')).sitePages();
+					body = (await load('/site/sitemap.js')).sitemap(
 						config.url,
 						pages.filter((/** @type {any} */ p) => p.listed).map((/** @type {any} */ p) => p.path)
 					);

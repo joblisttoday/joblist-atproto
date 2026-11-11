@@ -1,30 +1,14 @@
-import { getSnapshotAccounts } from './snapshot.js';
+import { data } from './network.svelte.js';
 
 /**
- * The companies on Bluesky (their domain is their handle), read once, when first asked.
- * @typedef {import('./snapshot.js').BlueskyAccount} BlueskyAccount
+ * An organization's own Bluesky account (its handle is its domain), when this browser has
+ * read it: the organizations looked up (network.svelte.js lookup), the signed-in person.
+ * @param {string} key its domain
+ * @returns {{handle: string, avatar?: string, followers?: number} | undefined}
  */
-
-/** @type {Map<string, BlueskyAccount>} */
-let accounts = $state.raw(new Map());
-let asked = false;
-
-function read() {
-	if (asked) return;
-	asked = true;
-	getSnapshotAccounts().then((found) => (accounts = found));
-}
-
-/** A company's own Bluesky account. @param {string} key its domain */
 export function accountOf(key) {
-	read();
-	return accounts.get(key);
-}
-
-/** Every company on Bluesky. */
-export function allAccounts() {
-	read();
-	return accounts;
+	for (const profile of data.profiles.values()) if (profile.handle === key) return { handle: profile.handle, avatar: profile.avatar, followers: profile.followers };
+	return undefined;
 }
 
 /**

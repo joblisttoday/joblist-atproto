@@ -3,21 +3,19 @@
 	import config from '#lib/data/config.json';
 	import { afterNavigate, goto } from '$app/navigation';
 	import { quickResults } from '#lib/models/quick-search.js';
-	import { landingPath } from '#lib/models/landing.js';
 	import { searchState } from '#lib/models/saved-search.js';
 	import { addressOf } from '#lib/navigation/address.js';
-	import { readSources, sources } from '#lib/network/quick-search.svelte.js';
+	import { sources } from '#lib/network/quick-search.svelte.js';
 	import { knownBy, organizationPage } from '#lib/models/kept.js';
 	import { data } from '#lib/network/network.svelte.js';
-	import { accountOf, thumbnail } from '#lib/network/accounts.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * The search box of every page, for jobs and organizations both: Enter searches jobs in
-	 * the explorer; as one types, it also offers the places, organizations and tags that
-	 * match. A link or a domain (acme.coop, jobs.lever.co/acme, instagram.com/acme) offers
-	 * its organization's page first, and Enter opens it: there joblist says what it finds of
-	 * it, to save in this browser or suggest to everyone.
+	 * The search box, for jobs and organizations both: a link or a domain (acme.coop,
+	 * jobs.lever.co/acme, instagram.com/acme) offers its organization's page first, and Enter
+	 * opens it: there joblist reads its job board and Bluesky account, to save it in this
+	 * browser. Words offer the saved organizations they name, and Enter searches the jobs of
+	 * the saved organizations (/jobs).
 	 * In the header, on phones, it is a button that opens the box over the header;
 	 * inline (a page's own, the home's), always a box.
 	 * @type {{inline?: boolean}}
@@ -51,7 +49,6 @@
 
 	function show() {
 		open = true;
-		readSources();
 		queueMicrotask(() => input?.focus());
 	}
 
@@ -91,7 +88,7 @@
 			enterkeyhint="search"
 			autocomplete="off"
 			onkeydown={keys}
-			onfocus={() => ((open = true), readSources())}
+			onfocus={() => (open = true)}
 		/>
 		<button type="button" onclick={() => (open = false)}><Icon name="close" label={t('quick.close')} /></button>
 	</form>
@@ -105,41 +102,9 @@
 				</li>
 			{/if}
 			<li><a onkeydown={keys} href={jobsPath({ query: text.trim() })}><Icon name="search" /> {t('quick.jobs', { text: text.trim() })}</a></li>
-			{#each found.fields as field (field.slug)}
-				<li>
-					<a onkeydown={keys} href={landingPath({ field: field.slug })}>
-						<Icon name="jobs" /> {t('landing.field', { field: field.name })} <small>{t('landing.count', { count: field.count })}</small>
-					</a>
-				</li>
-			{/each}
-			{#each found.cities as city (city.slug)}
-				<li>
-					<a onkeydown={keys} href={landingPath({ city: city.slug })}>
-						<Icon name="place" /> {t('landing.city', { city: city.name })} <small>{t('landing.count', { count: city.count })}</small>
-					</a>
-				</li>
-			{/each}
-			{#each found.places as place (place)}
-				<li><a onkeydown={keys} href={jobsPath({ where: place })}><Icon name="place" /> {t('quick.place', { place })}</a></li>
-			{/each}
 			{#each found.companies as company (company.key)}
-				{@const avatar = accountOf(company.key)?.avatar}
-				{@const jobs = sources.counts.get(company.key)}
 				<li>
-					<a onkeydown={keys} href="/{company.key}">
-						{#if avatar}<img src={thumbnail(avatar)} alt="" />{:else}<Icon name="companies" />{/if}
-						{company.name}
-						{#if jobs}<small>{t('jobs.count', { count: jobs })}</small>{/if}
-					</a>
-				</li>
-			{/each}
-			{#each found.tags as [tag, count] (tag)}
-				<li>
-					<a onkeydown={keys} href="/companies#q={encodeURIComponent(tag)}">
-						<Icon name="companies" />
-						{tag}
-						<small>{t('list.companies', { count })}</small>
-					</a>
+					<a onkeydown={keys} href={company.href}><Icon name="savedOn" /> {company.name}</a>
 				</li>
 			{/each}
 		</ul>
@@ -231,16 +196,6 @@
 	ul a:hover,
 	ul a:focus {
 		background: var(--color-soft);
-	}
-	ul small {
-		margin-inline-start: auto;
-		color: var(--color-muted);
-	}
-	img {
-		width: var(--icon-avatar);
-		height: var(--icon-avatar);
-		border-radius: var(--radius);
-		object-fit: cover;
 	}
 
 	/* A page's own: always a box, as tall as a field, its offers under it. */

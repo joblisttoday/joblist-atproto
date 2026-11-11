@@ -5,6 +5,7 @@
 	import { discover } from '#lib/network/discover.js';
 	import { suggestAddress } from '#lib/models/suggest.js';
 	import { kept } from '#lib/network/kept.svelte.js';
+	import { boardOfKept, keyOf } from '#lib/models/kept.js';
 
 	/**
 	 * An organization joblist does not know yet: the same page as one it knows (CompanyPage),
@@ -22,9 +23,10 @@
 		discover(asked).then((f) => asked === link && (found = f));
 	});
 
-	const item = $derived(kept.list.find((k) => k.url === link));
+	// Saved by its link, or by its domain (the board found when it was saved: a website does not answer browsers).
+	const item = $derived(kept.list.find((k) => k.url === link) || kept.list.find((k) => keyOf(k.url) && keyOf(k.url) === keyOf(link)));
 	const short = $derived(link.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, ''));
-	const board = $derived(found?.board || null);
+	const board = $derived(found?.board || (item ? boardOfKept(item) : undefined) || null);
 	const boardHref = $derived(board ? providers.find((p) => p.id === board.provider)?.board.replace('{id}', board.id) || link : '');
 	// Its own name first, then what was found; a board's id as a name, else its link.
 	const name = $derived(item?.name || found?.bluesky?.name || found?.boardName || (board ? prettyId(board.id) : '') || found?.key || short);

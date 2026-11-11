@@ -1,33 +1,22 @@
 import { allNewCount } from '#lib/models/saved-search.js';
+import { mergeJobs } from '#lib/models/job-post.js';
 import { data } from './network.svelte.js';
+import { keptJobs } from './kept-jobs.svelte.js';
 import { searches } from './saved-searches.svelte.js';
-import { getSnapshotJobs } from './snapshot.js';
 
 /**
- * The jobs saved searches are counted on, outside the explorer: those of the
- * snapshot (read only with saved searches: they are large) and those posted here.
+ * The jobs saved searches are counted on: those of the saved organizations (read live from
+ * their boards, kept-jobs.svelte.js), and the offers posted on atproto this browser has read.
  * @typedef {import('#lib/ats/job.js').Job} Job
  */
 
-/** @type {Job[]} */
-let board = $state.raw([]);
-let asked = false;
-function read() {
-	if (asked) return;
-	asked = true;
-	getSnapshotJobs().then((snapshot) => {
-		if (snapshot) board = snapshot.all;
-	});
-}
-
-const names = $derived(new Map([...data.companies.values()].map((c) => [c.key, c.name])));
-const jobs = $derived(board.length ? [...[...data.postedJobs.values()].flat(), ...board] : []);
+const names = $derived(new Map(keptJobs.companies.map((c) => [c.key, c.name])));
+const jobs = $derived(mergeJobs([...data.postedJobs.values()].flat(), keptJobs.all));
 const fresh = $derived(jobs.length && searches.list.length ? allNewCount(searches.list, jobs, names) : 0);
 
 export const savedJobs = {
 	/** Every job known; empty while they are read. */
 	get jobs() {
-		read();
 		return jobs;
 	},
 	get names() {
@@ -35,7 +24,6 @@ export const savedJobs = {
 	},
 	/** The new jobs of all saved searches, each once. */
 	get fresh() {
-		if (searches.list.length) read();
-		return fresh;
+		return searches.list.length ? fresh : 0;
 	}
 };

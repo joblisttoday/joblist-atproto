@@ -72,12 +72,13 @@ export function tagKept(url, tags) {
  * Keeps a link (or renames it, kept already). False when it is not a link, or there are too many.
  * @param {string} input
  * @param {string} [name]
+ * @param {unknown} [board] its job board, when found (kept with it: its link may be its website)
  */
-export function keep(input, name = '') {
+export function keep(input, name = '', board = undefined) {
 	const url = keptUrl(input);
 	if (!url) return false;
 	if (!kept.list.some((k) => k.url === url) && kept.list.length >= config.kept.max) return false;
-	kept.list = withKept(kept.list, url, name, new Date().toISOString());
+	kept.list = withKept(kept.list, url, name, new Date().toISOString(), board);
 	write();
 	return true;
 }
@@ -96,12 +97,12 @@ export const isKept = (key) => kept.list.some((k) => keyOf(k.url) === key);
 
 /**
  * The Save of an organization's page or card: kept by its domain, or forgotten.
- * @param {{key: string, name: string}} company
+ * @param {{key: string, name: string, jobBoard?: unknown}} company
  */
-export function toggleKept({ key, name }) {
+export function toggleKept({ key, name, jobBoard }) {
 	const found = kept.list.filter((k) => keyOf(k.url) === key);
 	if (found.length) {
 		kept.list = kept.list.filter((k) => !found.includes(k));
 		write();
-	} else keep(`https://${key}`, name);
+	} else keep(`https://${key}`, name, jobBoard);
 }

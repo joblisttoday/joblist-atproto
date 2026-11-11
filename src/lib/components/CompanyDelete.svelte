@@ -32,7 +32,7 @@
 		try {
 			await deleteRecord(config.collections.company, company.key);
 			removeLocal('company', own.uri);
-			if (outcome === 'gone') await goto('/companies');
+			if (outcome === 'gone') await goto('/');
 		} catch (err) {
 			error = err instanceof Error ? err.message : String(err);
 		} finally {

@@ -1,24 +1,25 @@
 import { expect, test } from '@playwright/test';
 
 /**
- * Every page that lists jobs opens one in a dialog over the list, with its link in the
- * address; back closes it, and a link to it opens it again.
+ * A page that lists jobs opens one in a dialog over the list, with its link in the address;
+ * back closes it, and a link to it opens it again. Here the jobs of a saved organization,
+ * read live from its board.
  */
-test('a city page opens a job in a dialog, back closes it, its link opens it', async ({ page }) => {
-	await page.goto('/in');
-	await page.locator('main a[href^="/in/"]').first().click();
-	await page.locator('jl-landing-page li button').first().click();
+test('the jobs page opens a job in a dialog, back closes it, its link opens it', async ({ page }) => {
+	await page.addInitScript(() => localStorage.setItem('joblist.kept.v1', JSON.stringify([{ url: 'https://gitlab.com', name: 'GitLab', at: '2026-11-01T00:00:00Z', board: { provider: 'greenhouse', id: 'gitlab' } }])));
+	await page.goto('/jobs#view=list');
+	await page.locator('jl-job button').first().click({ timeout: 20_000 });
 	const dialog = page.locator('dialog[open]');
 	await expect(dialog).toBeVisible();
-	expect(page.url()).toContain('#job=');
+	expect(page.url()).toMatch(/[#&]job=/);
 	const link = page.url();
 	await page.goBack();
 	await expect(dialog).toHaveCount(0);
 	// A link someone shared: opened fresh.
 	await page.goto('about:blank');
 	await page.goto(link);
-	await expect(dialog).toBeVisible();
+	await expect(dialog).toBeVisible({ timeout: 20_000 });
 	await page.keyboard.press('Escape');
 	await expect(dialog).toHaveCount(0);
-	expect(page.url()).not.toContain('#job=');
+	expect(page.url()).not.toMatch(/[#&]job=/);
 });

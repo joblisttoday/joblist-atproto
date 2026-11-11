@@ -1,20 +1,19 @@
 # joblist
 
-Open jobs at organizations that hire, read straight from their own job boards,
-and organizations described by people on [atproto](https://atproto.com).
-For people looking for work, and for projects looking for people to work with.
+A tool for a job hunt, in the browser: paste an organization's link, and joblist
+reads its open jobs straight from its own job board and its Bluesky account; save
+the ones you like, tagged, in your own browser, and search their jobs together.
+An organization describes itself and posts its jobs on [atproto](https://atproto.com),
+from its own account. For people looking for work, and for projects looking for
+people to work with.
 
-Anyone with a Bluesky (or any atproto) account can describe an organization
-or post a job; anyone, signed in or not, keeps the organizations they like,
-tagged, in their own browser. Every record lives in its author's own
-account: nobody can take it down, rank it or sell it, and any other app can
-read it. For organizations with a supported job board, open jobs are read
-from that board.
+joblist keeps no list of organizations or jobs, and nothing of anyone's: it is
+static files, and everything is read by each person's browser, from the source.
+Every record lives in its author's own account: nobody can take it down, rank it
+or sell it, and any other app can read it.
 
-It started as a hand-made spreadsheet of Berlin companies (joblistberlin), and
-grew into joblist.today. This version keeps the part that worked, the
-crowd-curated list of companies, with no database and no server of its own:
-a static snapshot rebuilt every 6 hours, and a static site.
+It started as a hand-made spreadsheet of Berlin companies (joblistberlin), and grew
+into joblist.today, then a crowd-curated list; it is a tool now.
 
 ## Records
 
@@ -23,18 +22,9 @@ Two record types joblist reads, defined in [`lexicons/`](lexicons/today/joblist)
 - **`today.joblist.company`**: one company, keyed by its domain
   (`at://did:…/today.joblist.company/example.org`). Name, website,
   description, tags, locations, and where it hires (a job board provider and
-  id, or a careers page). An organization writes its own page; the app shows:
-  1. the company's own record, if the author's handle is that domain (verified:
-     the indexer checks it both ways, the domain's DNS `_atproto` record or
-     `/.well-known/atproto-did` naming the account and the account's DID
-     document naming the domain; without the snapshot, the AppView's word),
-  2. otherwise joblist's starter record, written by an account in `bots`
-     (config: joblist.today, the import and the crawler),
-  3. otherwise, for an organization neither has described yet, the most recent
-     suggestion by anyone (how a new organization comes in).
-
-  Anyone else's version of an organization joblist or the organization already
-  describes is not shown: no wiki, no history (docs/architecture.md, "Direction").
+  id, or a careers page). An organization writes its own page: joblist reads it
+  from the account whose handle is that domain (verified both ways by the Bluesky
+  AppView), when its page (`/{domain}`) opens. No one else's version is shown.
 - **`today.joblist.job`**: a job offer posted on joblist, in the poster's
   own account: title, company key, description, places, remote, contract,
   `url` (the full offer, or its joblist page), `apply` (a link, an email,
@@ -43,8 +33,7 @@ Two record types joblist reads, defined in [`lexicons/`](lexicons/today/joblist)
 
 `today.joblist.list` and `today.joblist.suggestion` (lists of organizations, and
 organizations suggested for them) were published before, and joblist no longer reads
-them: organizations' tags and places say the same (`/companies#q=music`, `/in/berlin`),
-and lists kept in a browser became saved organizations, tagged with the list's name.
+them: lists kept in a browser became saved organizations, tagged with the list's name.
 
 Every field added later is optional; how keys are normalised and how to
 publish the lexicons: [docs/lexicons.md](docs/lexicons.md).
@@ -59,12 +48,12 @@ jobs (one per link), and get their own page at `/job/{did}/{rkey}`.
 
 Once a company speaks for itself (its own account's version is shown, or it
 posted a job itself), offers others post for it are no longer shown as its
-jobs: not in job lists, feeds, embeds or the snapshot. Opened by its link, such an offer says in red that it is not from
+jobs. Opened by its link, such an offer says in red that it is not from
 the company, with no link to apply or to the offer: anyone can post, and a fake
 offer in a real company's name is how phishing collects applications.
 
 Offers are shown for 30 days by default (120 at most, see `jobPost` in
-config); expired ones are hidden everywhere, in the app and the snapshot.
+config); expired ones are hidden everywhere.
 Their poster can edit, renew or delete them from the offer, the company
 page or their profile.
 
@@ -82,45 +71,25 @@ poster. Until that exists, nothing private is written.
 
 ## How it runs
 
-The pieces, the contracts between them, how they fit atproto, and the simpler target:
-[docs/architecture.md](docs/architecture.md).
+Static files on GitHub Pages ([`.github/workflows/pages.yml`](.github/workflows/pages.yml),
+on each push to `main`): a SvelteKit app that runs in the browser, and the site's own
+pages written after the build ([`site/site.js`](site/site.js)). Any other address
+(`/{domain}`, `/job/…`) gets `404.html`, on which the app starts and shows it.
+More: [docs/architecture.md](docs/architecture.md).
 
-
-A static SvelteKit app (it runs in the browser), served by Cloudflare, and a
-snapshot of the network rebuilt every 6 hours by the indexer ([`indexer/`](indexer),
-`.github/workflows/snapshot.yml`) and published to
-[joblisttoday/joblist-snapshot](https://github.com/joblisttoday/joblist-snapshot):
-every record, every open job, one small file per organization.
-The app reads the snapshot; only the signed-in person's own records are read
-live, from their own server.
-
-| What | How |
+| What | How, from the browser |
 |---|---|
-| Find all records (indexer) | the relay's `com.atproto.sync.listReposByCollection`, then `com.atproto.repo.listRecords` on each author's PDS |
-| Names and verified handles | the public Bluesky AppView (`app.bsky.actor.getProfiles`); handles that make an account a company's own are checked again both ways by the indexer ([`indexer/handles.js`](indexer/handles.js)) |
-| Open jobs | each job board's public API (Ashby, Greenhouse, Lever, Personio, Recruitee, Rippling, SmartRecruiters, Workable) |
+| An organization | its own atproto account (its handle is its domain): its record and job offers from its server; else what is found of the domain (its Bluesky account, a job board in its link) |
+| Names and handles | the public Bluesky AppView (`app.bsky.actor.getProfiles`, handles verified both ways) |
+| Open jobs | each job board's public API (Ashby, Greenhouse, Lever, Personio, Recruitee, Rippling, SmartRecruiters, Workable), a few boards at a time |
+| Saved organizations, searches, jobs | this browser only (localStorage, IndexedDB); moved with a file (Menu) |
 | Sign in and write | atproto OAuth (`@atproto/oauth-client-browser`), asking only for the app's record types |
 | Map | MapLibre with OpenFreeMap tiles |
 
-It works offline on what it read last: a service worker
-([`src/service-worker.js`](src/service-worker.js)) keeps the app and the
-snapshot files it read, and IndexedDB keeps the network copy and the outbox,
-where a write that cannot reach its author's server waits to be sent, in
-order ([`src/lib/network/outbox.svelte.js`](src/lib/network/outbox.svelte.js)).
-
-Pages per city and per field (`/in/berlin`, `/field/design`,
-`/in/berlin/design`, indexes at `/in` and `/field`), their Atom feeds
-(`/feed/new.xml`, `/feed/in/<city>.xml`, `/feed/field/<field>.xml`,
-`/feed/company/<key>.xml`) and their sitemap (`/sitemap-places.xml`) are the
-only addresses served by code: a small Worker ([`worker/`](worker)) renders
-them from the latest snapshot, so they are as fresh as the data, not as the
-last deploy. The indexer writes one small file per page into the snapshot
-(`landing/`, see [`indexer/landing.js`](indexer/landing.js)); the Worker reads
-only that file and keeps its answer in the cache for half an hour. Only these
-addresses run it (`assets.run_worker_first` in `wrangler.jsonc`): every other
-file is served without it. Fields and their words are in
-[`src/lib/data/fields.json`](src/lib/data/fields.json), cities' other
-spellings in `landing.cityAliases` (config).
+It opens offline: a service worker ([`src/service-worker.js`](src/service-worker.js))
+keeps the app, IndexedDB what was read and the outbox, where a write that cannot
+reach its author's server waits to be sent, in order
+([`src/lib/network/outbox.svelte.js`](src/lib/network/outbox.svelte.js)).
 
 Cost: €0/month.
 
@@ -134,6 +103,7 @@ npm run dev -- --host 127.0.0.1   # sign-in works on 127.0.0.1, not localhost
 npm test
 npm run check
 npm run test:e2e                  # quality gate on the built site (Playwright)
+npm run build:site                # what GitHub Pages serves, in build/
 ```
 
 Configuration lives in data files, not code:
@@ -144,94 +114,32 @@ Configuration lives in data files, not code:
 
 The embed (`<joblist-jobs board="greenhouse:acme">`, [`embed/src/`](embed/src/JoblistJobs.svelte)):
 an organization's open jobs on its own site, read live from its job board by the visitor's
-browser, with no joblist and no index (`company="acme.org"` asks an index for its board).
-Built to `embed/dist`, kept in the repository, so jsDelivr serves it from GitHub:
-`https://cdn.jsdelivr.net/gh/joblisttoday/joblist-atproto@<tag>/embed/dist/joblist-jobs.js`;
+browser. Built to `embed/dist`, kept in the repository, so jsDelivr serves it from GitHub:
+`https://cdn.jsdelivr.net/gh/joblisttoday/joblisttoday@<tag>/embed/dist/joblist-jobs.js`;
 the site serves a copy at `/embed/joblist-jobs.js`. `npm run build:embed` after changing it
 (a test says when it is out of date).
 
-The Firefox add-on ([`extension/`](extension/README.md)): on any website, whether the
-organization is on joblist and hires, its job board and social profiles; save and tag it
-in the browser (the same as "Your organizations" here), or suggest it.
+The Firefox add-on ([`extension/`](extension/README.md)): on any website, its job board and
+open jobs, its social profiles; save and tag it in the browser (the same as "Your
+organizations" here).
 
 ```sh
 npm run build:extension           # extension/dist: load its manifest.json in about:debugging
 ```
 
-The Worker locally, on a built site (`npm run build:site`), reading a
-snapshot from `static/snapshot` served by any static server (set
-`SNAPSHOT=http://127.0.0.1:<port>` in `.dev.vars`; without it, the published
-snapshot):
-
-```sh
-npx wrangler dev --port 8802 --ip 127.0.0.1   # then /in/berlin, /feed/new.xml
-```
-
 ## Deploy
 
-Cloudflare Workers Builds deploys `main` on every push (connected to this
-GitHub repository in the dashboard, no token):
+GitHub Pages, from the `pages` workflow on each push to `main` (Settings → Pages →
+Source: GitHub Actions). The domain is the build's `CNAME` (joblist.today): its DNS
+points to GitHub Pages. [`static/client-metadata.json`](static/client-metadata.json)
+must match the deployed origin.
 
-- Build command: `npm run build:site` (builds the add-on and the app, then the site's own pages: no snapshot; `npm run index` builds a snapshot locally)
-- Deploy command: `npx wrangler deploy`
+Only the site's own scripts may run (`kit.csp` in `vite.config.js`). The page view
+counter (Umami) is a pinned copy served from the site,
+[`static/vendor/umami.js`](static/vendor/umami.js).
 
-By hand:
-
-```sh
-npm run deploy   # build:site && wrangler deploy → https://joblist.today
-```
-
-[`static/client-metadata.json`](static/client-metadata.json) must match the
-deployed origin.
-
-Workflows ([`.github/workflows/`](.github/workflows)):
-
-| Workflow | When | What |
-|---|---|---|
-| `snapshot` | every 6 hours | the snapshot, published; then the weekly post (`bot/`). The site is not rebuilt: it reads the snapshot in the browser |
-| `crawl` | Mondays | the crawler ([docs/crawler.md](docs/crawler.md)) |
-| `lexicons` | by hand, by the owner | publishes the changed schemas ([docs/lexicons.md](docs/lexicons.md)) |
-| `gate` | each push, Mondays | the quality gate on the built site |
-
-Only the site's own scripts may run (`kit.csp` in `vite.config.js`). The page
-view counter (Umami) is a pinned copy served from the site,
-[`static/vendor/umami.js`](static/vendor/umami.js), sending to Umami Cloud's
-collector (`analytics.hostUrl`): a third party cannot change code that runs
-next to people's sessions. Cloudflare's Web Analytics would inject its own
-beacon (`static.cloudflareinsights.com`), which the policy refuses: keep
-Web Analytics turned off for joblist.today in the Cloudflare dashboard.
-
-## Import joblist's companies
-
-The historical joblist data (CC0, [joblisttoday/data](https://github.com/joblisttoday/data))
-can be published as records from one account:
-
-```sh
-node scripts/import-joblist.js <companies-dir>              # dry run
-JOBLIST_HANDLE=joblist.today JOBLIST_APP_PASSWORD=… \
-  node scripts/import-joblist.js <companies-dir> --write    # publish
-```
-
-Re-running updates the records instead of duplicating them.
-
-The old site's company pages (`/<slug>`) redirect to `/<key>` (an organization's page is its domain) through
-[`static/_redirects`](static/_redirects), generated from the same folders:
-
-```sh
-node scripts/legacy-redirects.js <companies-dir>
-```
-
-## Check and repair companies
-
-Job boards and websites change; these scripts find what broke
-(see [docs/growing-the-list.md](docs/growing-the-list.md)):
-
-```sh
-node scripts/check-companies.js health.json            # read-only health report
-node scripts/repair-companies.js health.json            # proposed fixes, dry run
-JOBLIST_HANDLE=joblist.today JOBLIST_APP_PASSWORD=… \
-  node scripts/repair-companies.js health.json --write  # apply high-confidence fixes
-```
+The `lexicons` workflow publishes the changed schemas, by hand, by the owner
+([docs/lexicons.md](docs/lexicons.md)).
 
 ## License
 

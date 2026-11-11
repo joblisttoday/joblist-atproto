@@ -44,7 +44,6 @@
 		<jl-company-title>
 			<h1>{#if account?.avatar}<img src={account.avatar} alt="" />{/if}{company.name}</h1>
 			<PageMenu
-				feed={!local && isCompanyKey(company.key) ? { company: company.key } : null}
 				own={local
 					? []
 					: [
@@ -76,14 +75,14 @@
 		{#if !local}<CompanyInvite {company} field="description" />{/if}
 		{#if company.tags.length || company.kind}
 			<ul aria-label={t('form.tags')}>
-				{#if company.kind}<li><a href="/companies#q={company.kind}" data-kind>{t(`kind.${company.kind}`)}</a></li>{/if}
-				{#each company.tags as tag (tag)}<li><a href="/companies#q={encodeURIComponent(tag)}">{tag}</a></li>{/each}
+				{#if company.kind}<li><span data-kind>{t(`kind.${company.kind}`)}</span></li>{/if}
+				{#each company.tags as tag (tag)}<li><span>{tag}</span></li>{/each}
 			</ul>
 		{/if}
 		{#if local}
 			<menu>
 				<a href={local.suggest} data-primary><Icon name="add" /> {t('org.suggest')}</a>
-				<button type="button" aria-pressed={kept ? 'true' : 'false'} onclick={() => (kept ? forget(local.link) : keep(local.link, company.name))} title={t('collections.private')}>
+				<button type="button" aria-pressed={kept ? 'true' : 'false'} onclick={() => (kept ? forget(local.link) : keep(local.link, company.name, company.jobBoard))} title={t('collections.private')}>
 					<Icon name={kept ? 'savedOn' : 'save'} /> {t(kept ? 'collections.saved' : 'collections.save')}
 				</button>
 				{#if board}<a href={board} target="_blank" rel="noopener noreferrer">{t('company.jobBoard')} <Icon name="external" /></a>{/if}
@@ -150,10 +149,10 @@
 		gap: var(--space-xs);
 		margin-bottom: var(--space-m);
 	}
-	ul a {
+	ul span {
 		display: inline-flex;
 		align-items: center;
-		min-height: var(--tap-size);
+		min-height: var(--chip-height);
 		padding: 0 var(--space-s);
 		border-radius: var(--radius-round);
 		background: var(--color-soft);

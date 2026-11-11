@@ -9,13 +9,12 @@
 	 * <joblist-jobs board="greenhouse:acme" query="legal" where="Berlin" remote="remote" search lang="en" limit="20">
 	 * An organization's open jobs on any website, as joblist shows them: the same cards
 	 * (JobCard), search (filterJobs) and offers (sameOffers), read live from its own board
-	 * (find.js). board: provider:id or its address; company: its domain, when an index
-	 * (joblist's, or index="…") says its board. Its look follows the page's colors; set
+	 * (find.js). board: provider:id or its address. Its look follows the page's colors; set
 	 * --joblist-font, --joblist-fg, --joblist-muted, --joblist-line, --joblist-soft and
 	 * --joblist-accent on it to change them.
 	 */
-	/** @type {{board?: string, company?: string, index?: string, lang?: string, limit?: number | string, query?: string, where?: string, remote?: string, search?: boolean}} */
-	let { board = '', company = '', index = '', lang = '', limit = 0, query = '', where = '', remote = '', search = false } = $props();
+	/** @type {{board?: string, lang?: string, limit?: number | string, query?: string, where?: string, remote?: string, search?: boolean}} */
+	let { board = '', lang = '', limit = 0, query = '', where = '', remote = '', search = false } = $props();
 	const settings = __EMBED__;
 	const id = `jl-${Math.random().toString(36).slice(2, 8)}`;
 
@@ -25,12 +24,7 @@
 		i18n.locale = asked in settings.strings ? asked : 'en';
 	});
 
-	const asked = $derived({
-		board: boardOf(board || ''),
-		company: (company || '').trim().toLowerCase(),
-		index: (index || settings.snapshot).replace(/\/$/, ''),
-		dir: settings.dir
-	});
+	const asked = $derived(boardOf(board || ''));
 	/** undefined while read, null when nothing could be */
 	let found = $state(/** @type {import('./find.js').Found | undefined} */ (undefined));
 	$effect(() => {
@@ -47,21 +41,15 @@
 	);
 	const shown = $derived(offers.slice(0, Math.max(1, Number(limit) || settings.shown)));
 	const count = $derived(t('embed.count', { count: offers.length }));
-	// All of them: on joblist when it knows the organization, else on its board.
-	const whole = $derived(
-		asked.company
-			? `${settings.site}/${asked.company}`
-			: asked.board
-				? `${settings.site}/me/organization#${new URLSearchParams({ url: board || '' })}`
-				: settings.site
-	);
+	// All of them, on joblist: the page of its board.
+	const whole = $derived(asked ? `${settings.site}/me/organization#${new URLSearchParams({ url: board || '' })}` : settings.site);
 </script>
 
 <jl-embed>
 	{#if found === null}
 		<p>{t('embed.error')}</p>
 	{:else}
-		<h2><a href={whole} target="_blank" rel="noopener">{t('embed.title', { name: found?.name || asked.board?.id || asked.company })}</a></h2>
+		<h2><a href={whole} target="_blank" rel="noopener">{t('embed.title', { name: found?.name || asked?.id || '' })}</a></h2>
 		{#if search}
 			<label for="{id}-search">{t('embed.search')}</label>
 			<input id="{id}-search" type="search" bind:value={typed} placeholder={t('embed.search')} />

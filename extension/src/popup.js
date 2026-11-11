@@ -1,26 +1,24 @@
 import config from '../../src/lib/data/config.json' with { type: 'json' };
 import providers from '../../src/lib/data/providers.json' with { type: 'json' };
-import { glanceOf } from '../../src/lib/models/glance.js';
 import { keyOf } from '../../src/lib/models/kept.js';
 import { readPage } from '../../src/lib/models/page-read.js';
 import { bluesky } from '../../src/lib/network/bluesky-account.js';
 import { api } from './api.js';
 import { collectPage } from './collect.js';
-import { counts } from './counts.js';
+import { getJobs } from '../../src/lib/ats/index.js';
+import { newestFirst } from '../../src/lib/models/job.js';
 import { change, keptNow } from './store.js';
 import { locale, t } from './texts.js';
 
 /**
- * The add-on's popup, on the website open: what it is (read in the page), whether joblist
- * knows it and its open jobs (at once from joblist's counts, then its newest jobs from its
- * small file, asked only now), its job board and social profiles; save and tag it (in this
- * browser), open it on joblist or suggest it. It shows something at once, and says what went
- * wrong rather than staying empty.
+ * The add-on's popup, on the website open: what it is (read in the page), its job board and
+ * its open jobs (read live from the board, asked only now), its social profiles; save and tag
+ * it (in this browser, with its board), open its page on joblist. joblist keeps no list of
+ * organizations: nothing is asked about the site but its own board and its Bluesky handle.
+ * It shows something at once, and says what went wrong rather than staying empty.
  * @typedef {import('../../src/lib/models/page-read.js').Read} Read
  * @typedef {{title: string, url: string, place: string}} Offer
- * @typedef {{provider?: string, id?: string, url?: string}} Board
- * @typedef {{state: 'asking'} | {state: 'in', name: string, jobs: number, offers: Offer[], gone: boolean, key: string, board?: Board, posted?: number} | {state: 'out'} | {state: 'offline'}} Known
- *   board, posted: where joblist knows it hires (its job board, offers it posted on Bluesky)
+ * @typedef {{state: 'none'} | {state: 'asking'} | {state: 'read', jobs: number, offers: Offer[]} | {state: 'offline'}} Jobs
  */
 
 const NEWEST = 5;
@@ -61,39 +59,30 @@ const site = (path) => `${config.url}${path}`;
 /** Gives up waiting after a while. @template T @param {Promise<T>} promise @param {T} fallback @returns {Promise<T>} */
 const within = (promise, fallback) => Promise.race([promise, new Promise((done) => setTimeout(() => done(fallback), WAIT))]);
 
-/** Its small file: its name and newest jobs. @param {string} key @returns {Promise<Known>} */
-async function companyFile(key) {
+/**
+ * Its board's open jobs, read now: how many offers, the newest few (one offer posted for
+ * several places is one line, with its places, as joblist counts it).
+ * @param {{provider: string, id: string}} board @param {string} key
+ * @returns {Promise<Jobs>}
+ */
+async function boardJobs(board, key) {
 	try {
-		const res = await fetch(`${config.snapshot.path}/${config.embed.dir}/${encodeURIComponent(key)}.json`);
-		if (res.status === 404) return { state: 'out' };
-		if (!res.ok) return { state: 'offline' };
-		const file = await res.json();
-		const jobs = Array.isArray(file.jobs) ? file.jobs : [];
-		// One offer posted for several places is one line, with its places (as joblist counts it).
+		const jobs = await getJobs(/** @type {any} */ ({ key, jobBoard: board }));
+		newestFirst(jobs);
 		/** @type {Map<string, Offer>} */
 		const offers = new Map();
 		for (const job of jobs) {
-			const title = String(job.t || '').trim();
-			const place = String(job.l || '').trim();
+			const title = String(job.title || '').trim();
+			const place = String(job.location || '').trim();
 			const same = offers.get(title.toLowerCase());
 			if (same) {
 				if (place && !same.place.includes(place)) same.place = same.place ? `${same.place} · ${place}` : place;
-			} else offers.set(title.toLowerCase(), { title, url: String(job.u || ''), place });
+			} else offers.set(title.toLowerCase(), { title, url: job.url, place });
 		}
-		const board = file.board && typeof file.board === 'object' ? file.board : undefined;
-		return { state: 'in', key, name: String(file.name || ''), jobs: offers.size, gone: Boolean(file.gone), offers: [...offers.values()].slice(0, NEWEST), board, posted: Number(file.posted) || 0 };
+		return { state: 'read', jobs: offers.size, offers: [...offers.values()].slice(0, NEWEST) };
 	} catch {
 		return { state: 'offline' };
 	}
-}
-
-/** The add form, filled in with what the page says. @param {Read} read */
-function suggestUrl(read) {
-	const params = new URLSearchParams({ url: read.link, name: read.name });
-	if (read.boards[0]) params.set('board', read.boards[0].url);
-	if (read.description) params.set('description', read.description);
-	for (const social of read.socials) params.append('link', social.url);
-	return site(`/add?${params}`);
 }
 
 /** The tab the popup is for: the active one (or ?tab=… to try it in a tab). */
@@ -128,46 +117,26 @@ async function start() {
 	const read = readPage(await collect(tab));
 	if (!read) return say(t('notPage'));
 	let list = await keptNow();
-	// At once, from joblist's counts (as the button): known, and how many jobs.
-	const glance = glanceOf(tab.url || read.link, await within(counts(), { offers: {}, known: [] }), list);
-	/** @type {Known} */
-	let found = glance?.known ? { state: 'in', key: glance.key, name: '', jobs: glance.jobs, offers: [], gone: false } : { state: 'asking' };
+	const board = read.boards[0];
+	/** @type {Jobs} */
+	let found = board ? { state: 'asking' } : { state: 'none' };
 
-	// Kept by the domain joblist knows it by (gitlab.com for about.gitlab.com), else its link.
-	const keptLink = () => (found.state === 'in' ? `https://${found.key}` : read.link);
-	const item = () => list.find((k) => k.url === read.link || k.url === keptLink() || (read.key && keyOf(k.url) === read.key));
+	const item = () => list.find((k) => k.url === read.link || (read.key && keyOf(k.url) === read.key));
 
 	function render() {
 		if (!read) return;
 		const kept = item();
 		const tags = kept?.tags || [];
-		const name = found.state === 'in' && found.name ? found.name : read.name;
-		const page = found.state === 'in' ? site(`/${found.key}`) : '';
-		const status =
-			found.state === 'in'
-				? link(page, { class: 'status', 'data-in': true }, h('span', {}, t('in')), h('b', {}, found.gone ? t('gone') : found.jobs ? t('jobs', { count: found.jobs }) : t('noJobs')))
-				: h('p', { class: 'status' }, h('span', {}, t(found.state === 'asking' ? 'asking' : found.state === 'offline' ? 'offline' : 'out')));
+		const boardName = board ? `${providers.find((p) => p.id === board.provider)?.name || board.provider} · ${board.id}` : '';
+		const status = h(
+			'p',
+			{ class: 'status', 'data-in': found.state === 'read' || undefined },
+			h('span', {}, found.state === 'read' ? (found.jobs ? t('jobs', { count: found.jobs }) : t('noJobs')) : t(found.state === 'asking' ? 'asking' : found.state === 'offline' ? 'offline' : 'noBoard'))
+		);
 		const offers =
-			found.state === 'in' && found.offers.length
-				? h(
-						'ul',
-						{ class: 'offers' },
-						...found.offers.map((o) => h('li', {}, link(`${page}#${new URLSearchParams({ [config.jobs.jobParam]: o.url })}`, {}, o.title), o.place ? h('small', {}, o.place) : null)),
-						found.jobs > found.offers.length ? h('li', {}, link(page, { class: 'more' }, t('allJobs', { count: found.jobs }))) : null
-					)
+			found.state === 'read' && found.offers.length
+				? h('ul', { class: 'offers' }, ...found.offers.map((o) => h('li', {}, link(o.url, {}, o.title), o.place ? h('small', {}, o.place) : null)))
 				: null;
-		// Where it hires: the board this page links to, else the one joblist knows, else its own posts.
-		const board = read.boards[0];
-		const known = found.state === 'in' ? found.board : undefined;
-		const knownUrl = known?.provider && known.id ? providers.find((p) => p.id === known.provider)?.board.replace('{id}', known.id) || '' : known?.url || '';
-		const knownName = known?.provider && known.id ? `${providers.find((p) => p.id === known.provider)?.name || known.provider} · ${known.id}` : knownUrl.replace(/^https?:\/\/(www\.)?/, '');
-		const hires = board
-			? link(board.url, {}, `${providers.find((p) => p.id === board.provider)?.name || board.provider} · ${board.id}`)
-			: knownUrl
-				? h('span', {}, link(knownUrl, {}, knownName), ' ', h('small', {}, t('onJoblist')))
-				: found.state === 'in' && found.posted
-					? link(page, {}, t('posted', { count: found.posted }))
-					: h('span', { class: 'muted' }, t('noBoard'));
 		const tagInput = h('input', {
 			type: 'text',
 			placeholder: t('addTag'),
@@ -180,20 +149,17 @@ async function start() {
 				await save([...tags, input.value]);
 			}
 		});
-		// Where to go from here: its careers page, its job board, its page on joblist (one a domain
-		// joblist does not know has too: what a browser finds of it), those that exist.
-		const boardUrl = board?.url || knownUrl;
-		const joblistPage = found.state === 'in' ? page : read.key ? site(`/${read.key}`) : '';
+		// Where to go from here: its careers page, its job board, its page on joblist (its domain's).
+		const joblistPage = read.key ? site(`/${read.key}`) : site(`/me/organization#${new URLSearchParams({ url: read.link })}`);
 		/** @type {[string, string][]} */
 		const ways = [
-			[read.careers && read.careers !== boardUrl ? read.careers : '', t('careersPage')],
-			[boardUrl, t('board')],
-			[joblistPage, t('joblistPage')]
+			[read.careers && read.careers !== board?.url ? read.careers : '', t('careersPage')],
+			[board?.url || '', t('board')]
 		];
 		const go = ways.filter(([url]) => url);
 		/** @type {(Node | null)[]} */
 		const parts = [
-			h('header', {}, h('h1', {}, name), h('small', {}, read.link.replace(/^https?:\/\/(www\.)?/, ''))),
+			h('header', {}, h('h1', {}, read.name), h('small', {}, read.link.replace(/^https?:\/\/(www\.)?/, ''))),
 			read.description ? h('p', { class: 'about' }, read.description) : null,
 			status,
 			go.length ? h('nav', { class: 'go', 'aria-label': t('go') }, ...go.map(([url, label]) => link(url, {}, `${label} ↗`))) : null,
@@ -202,7 +168,7 @@ async function start() {
 				'dl',
 				{},
 				h('dt', {}, t('board')),
-				h('dd', {}, hires),
+				h('dd', {}, board ? link(board.url, {}, boardName) : h('span', { class: 'muted' }, t('noBoard'))),
 				h('dt', {}, t('links')),
 				h('dd', {}, read.socials.length ? h('span', {}, ...read.socials.flatMap((s, i) => [i ? ' · ' : '', link(s.url, {}, s.name)])) : h('span', { class: 'muted' }, t('noLinks')))
 			),
@@ -216,12 +182,11 @@ async function start() {
 				'div',
 				{ class: 'actions' },
 				h('button', { type: 'button', 'aria-pressed': kept ? 'true' : 'false', onclick: () => (kept ? forget() : save(tags)) }, kept ? t('saved') : t('save')),
-				found.state === 'in' ? link(page, { class: 'primary' }, t('open')) : link(suggestUrl(read), { class: 'primary' }, t('suggest'))
+				link(joblistPage, { class: 'primary' }, t('open'))
 			),
-			found.state === 'in' ? h('p', { class: 'more-actions' }, link(site(`/add?key=${encodeURIComponent(found.key)}`), {}, t('edit'))) : null,
 			h('footer', {}, h('small', {}, t('private')), link(site('/me/organizations'), {}, t('yours')))
 		];
-		// Drawn again when joblist answers: what is being typed in the tag field stays.
+		// Drawn again when the board answers: what is being typed in the tag field stays.
 		const typing = /** @type {HTMLInputElement | null} */ (app.querySelector('.tags input'));
 		const typed = typing?.value || '';
 		const focused = typing !== null && document.activeElement === typing;
@@ -230,11 +195,12 @@ async function start() {
 		if (focused) tagInput.focus();
 	}
 
-	/** Keeps it, its tags kept or changed. @param {string[]} tags */
+	/** Keeps it (with its board), its tags kept or changed. @param {string[]} tags */
 	async function save(tags) {
 		const at = new Date().toISOString();
 		const kept = item();
-		await change(kept ? { op: 'tags', url: kept.url, tags, at } : { op: 'keep', url: keptLink(), name: found.state === 'in' && found.name ? found.name : read?.name || '', tags, at });
+		const url = read?.key ? `https://${read.key}` : read?.link || '';
+		await change(kept ? { op: 'tags', url: kept.url, tags, at } : { op: 'keep', url, name: read?.name || '', tags, at, ...(board ? { board: { provider: board.provider, id: board.id } } : {}) });
 		list = await keptNow();
 		render();
 		/** @type {HTMLInputElement | null} */ (app.querySelector('.tags input'))?.focus();
@@ -248,13 +214,12 @@ async function start() {
 	}
 
 	render();
-	// Asked only now that the popup is open: its newest jobs, and whether its domain is a Bluesky handle.
-	const keys = read.key ? [...new Set([found.state === 'in' ? found.key : '', read.key, read.key.split('.').slice(1).join('.')])].filter((k) => k.includes('.')) : [];
-	const [answers, account] = await Promise.all([Promise.all(keys.map(companyFile)), read.key ? bluesky(read.key) : Promise.resolve(null)]);
-	const counted = found.state === 'in' ? found.jobs : 0;
-	found = answers.find((a) => a.state === 'in') || answers.find((a) => a.state === 'offline') || { state: 'out' };
-	// The number joblist shows (each offer once), as the button says.
-	if (found.state === 'in' && counted) found.jobs = counted;
+	// Asked only now that the popup is open: its board's jobs, and whether its domain is a Bluesky handle.
+	const [jobs, account] = await Promise.all([
+		board ? within(boardJobs(board, read.key || board.id), /** @type {Jobs} */ ({ state: 'offline' })) : Promise.resolve(found),
+		read.key ? bluesky(read.key) : Promise.resolve(null)
+	]);
+	found = jobs;
 	if (account && !read.socials.some((s) => s.id === 'bluesky')) read.socials.unshift({ id: 'bluesky', name: 'Bluesky', url: `https://bsky.app/profile/${account.handle}` });
 	render();
 }

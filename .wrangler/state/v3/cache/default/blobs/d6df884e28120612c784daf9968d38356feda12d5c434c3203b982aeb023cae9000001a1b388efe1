@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="text-scale" content="scale" />
+		<link rel="manifest" href="/manifest.webmanifest" />
+		<link rel="apple-touch-icon" href="/icon-192.png" />
+		<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+		<meta name="theme-color" content="#111111" media="(prefers-color-scheme: dark)" />
+		<meta http-equiv="content-security-policy" content="default-src 'self'; worker-src 'self' blob:; connect-src 'self' https:; font-src 'self' data:; img-src 'self' data: blob: https:; object-src 'none'; script-src 'self' https://cloud.umami.is 'sha256-ZcmzOsVKO5KCdHxlz59lQzCJCJUPYGuDUA9HI7t7co8='; style-src 'self' 'unsafe-inline'; base-uri 'self'">
+		<link href="/_app/immutable/entry/start.Brat8uxj.js" rel="modulepreload">
+		<link href="/_app/immutable/entry/payload.DSmR2FwN.js" rel="modulepreload">
+		<link href="/_app/immutable/chunks/CRzLMJPS.js" rel="modulepreload">
+		<link href="/_app/immutable/chunks/CGuvwLCO.js" rel="modulepreload">
+		<link href="/_app/immutable/chunks/BkPeTRdF.js" rel="modulepreload">
+		<link href="/_app/immutable/chunks/CgI4rzve.js" rel="modulepreload">
+		<link href="/_app/immutable/chunks/Cg3pm-K7.js" rel="modulepreload">
+		<link href="/_app/immutable/chunks/Dek69VGa.js" rel="modulepreload">
+		<link href="/_app/immutable/chunks/1NcmdTj5.js" rel="modulepreload">
+		<link href="/_app/immutable/entry/app.4mFVqkUq.js" rel="modulepreload">
+		<link href="/_app/immutable/nodes/0.Boy2k5Ea.js" rel="modulepreload">
+		<link href="/_app/immutable/chunks/XKyaHtl9.js" rel="modulepreload">
+		<link href="/_app/immutable/chunks/Ihm563LQ.js" rel="modulepreload">
+		<link href="/_app/immutable/chunks/CYlEMQV1.js" rel="modulepreload">
+		<link href="/_app/immutable/chunks/aTFCE6wN.js" rel="modulepreload">
+		<link href="/_app/immutable/chunks/D136TTpD.js" rel="modulepreload">
+		<link href="/_app/immutable/chunks/CcQoc--0.js" rel="modulepreload">
+		<link href="/_app/immutable/chunks/kGgPENNb.js" rel="modulepreload">
+		<link href="/_app/immutable/chunks/CjBchwp0.js" rel="modulepreload">
+		<link href="/_app/immutable/chunks/_mdqN4-P.js" rel="modulepreload">
+		<link href="/_app/immutable/chunks/C2DIJI5s.js" rel="modulepreload">
+		<link href="/_app/immutable/chunks/CGTiIPJQ.js" rel="modulepreload">
+		<link href="/_app/immutable/chunks/DSonbmrZ.js" rel="modulepreload">
+		<link href="/_app/immutable/chunks/Csbic2HS.js" rel="modulepreload">
+		
+		<link href="/_app/immutable/assets/Icon.BzY4XBTB.css" rel="stylesheet">
+		<link href="/_app/immutable/assets/0.DAFZCiCI.css" rel="stylesheet">
+		<!-- jl:head -->
+		<title>Design jobs in Berlin · joblist</title>
+		<meta name="description" content="Design jobs in Berlin: 10 open jobs, the newest first, straight from the companies' own job boards.">
+		<link rel="canonical" href="https://joblist.today/in/berlin/design">
+		<meta property="og:type" content="website">
+		<meta property="og:site_name" content="joblist">
+		<meta property="og:title" content="Design jobs in Berlin · joblist">
+		<meta property="og:description" content="Design jobs in Berlin: 10 open jobs, the newest first, straight from the companies' own job boards.">
+		<meta property="og:url" content="https://joblist.today/in/berlin/design">
+		<meta name="twitter:card" content="summary">
+		<link rel="preload" as="fetch" crossorigin="anonymous" href="https://raw.githubusercontent.com/joblisttoday/joblist-snapshot/gh-pages/first.json">
+		<link rel="preload" as="fetch" crossorigin="anonymous" href="https://raw.githubusercontent.com/joblisttoday/joblist-snapshot/gh-pages/records.json">
+		<link rel="preload" as="fetch" crossorigin="anonymous" href="https://raw.githubusercontent.com/joblisttoday/joblist-snapshot/gh-pages/jobs.json">
+		<link rel="alternate" type="application/atom+xml" title="Design jobs in Berlin" href="https://joblist.today/feed/in/berlin/design.xml">
+		<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"joblist","item":"https://joblist.today/"},{"@type":"ListItem","position":2,"name":"Jobs by city","item":"https://joblist.today/in"},{"@type":"ListItem","position":3,"name":"Jobs in Berlin","item":"https://joblist.today/in/berlin"},{"@type":"ListItem","position":4,"name":"Design jobs in Berlin","item":"https://joblist.today/in/berlin/design"}]}</script>
+		<!-- /jl:head -->
+	</head>
+	<body data-sveltekit-preload-data="hover">
+		<!-- jl:body --><noscript><nav><a href="/in">Jobs by city</a> · <a href="/field">Jobs by field</a></nav><h1>Design jobs in Berlin</h1><p>10 open jobs, the newest first, straight from the companies' own job boards.</p><p><a href="/?q=design&amp;where=Berlin">Search them on the map</a> · <a href="/feed/in/berlin/design.xml" type="application/atom+xml">Follow these jobs</a></p><ol><li><a href="https://jobs.ashbyhq.com/oviva/a44c8276-a468-402f-9afd-c433ca52228b">Art Director Brand Design (a)</a> · <a href="/company/oviva">Oviva</a> · Berlin · Hybrid · <time datetime="2026-11-05T13:00:00Z">2026-11-05</time></li><li><a href="https://jobs.ashbyhq.com/oviva/7cc4d76d-3c43-47dd-a888-835e48a6cb01">Performance Designer &amp; Video Editor (a)</a> · <a href="/company/oviva">Oviva</a> · Berlin · Hybrid · <time datetime="2026-11-05T13:00:00Z">2026-11-05</time></li><li><a href="https://databricks.com/company/careers/open-positions/job?gh_jid=8923866002">Sr. Product Designer</a> · <a href="/company/databricks.com">Databricks</a> · Amsterdam, Netherlands; Berlin, Germany; London, United Kingdom · <time datetime="2026-11-04T18:32:00Z">2026-11-04</time></li><li><a href="https://boards.greenhouse.io/figma/jobs/6203089004?gh_jid=6203089004">Designer Advocate (Berlin, Germany)</a> · <a href="/company/figma.com">Figma</a> · Berlin, Germany · <time datetime="2026-09-24T17:48:00Z">2026-09-24</time></li><li><a href="https://up42gmbh.recruitee.com/o/product-designer-mfx-6">Product Designer (m/f/x)</a> · <a href="/company/up42.com">UP42</a> · Berlin, Berlin, Germany · Hybrid · <time datetime="2026-09-23T07:46:00Z">2026-09-23</time></li><li><a href="https://jobs.ashbyhq.com/kayak/28686d98-f30e-422a-a5d9-c8680eff24b6">Senior Product Designer, K4B</a> · <a href="/company/kayak.de">Kayak</a> · Berlin Office · Hybrid · <time datetime="2026-09-04T16:47:00Z">2026-09-04</time></li><li><a href="https://www.akqa.com/jobs/8119332/?gh_jid=8119332">Senior UI Designer</a> · <a href="/company/akqa.com">AKQA</a> · Berlin · <time datetime="2026-08-20T16:43:00Z">2026-08-20</time></li><li><a href="https://sumup.com/careers/positions/8644926002?gh_jid=8644926002">Senior Product Designer - Sell Online</a> · <a href="/company/sumup.com">SumUp</a> · Berlin, Germany · <time datetime="2026-08-04T10:12:00Z">2026-08-04</time></li><li><a href="https://sumup.com/careers/positions/8426778002?gh_jid=8426778002">iOS Engineer - Design System</a> · <a href="/company/sumup.com">SumUp</a> · Berlin, Germany · <time datetime="2026-02-18T13:09:00Z">2026-02-18</time></li><li><a href="https://jobs.lever.co/kolibrigames/72d04588-5bdd-4be8-ad28-a5c0d3adecb6">Game Economy Designer (f/m/d)</a> · <a href="/company/kolibri">Kolibri </a> · Berlin, Germany · Remote · <time datetime="2025-12-04T16:24:00Z">2025-12-04</time></li></ol></noscript><!-- /jl:body -->
+		<div style="display: contents">
+			<script>
+				{
+					__sveltekit_1iwj13p = {
+						base: "",
+						version: "1794013413492"
+					};
+
+					const element = document.currentScript.parentElement;
+
+					import("/_app/immutable/entry/start.Brat8uxj.js").then(async (kit) => {
+						kit.init(__sveltekit_1iwj13p);
+						const app = await import("/_app/immutable/entry/app.4mFVqkUq.js");
+						kit.start(app, element);
+					});
+				}
+			</script>
+		</div>
+	</body>
+</html>

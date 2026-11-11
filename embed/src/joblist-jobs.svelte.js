@@ -2,13 +2,12 @@ import { mount } from 'svelte';
 import JoblistJobs from './JoblistJobs.svelte';
 
 /**
- * <joblist-jobs board="greenhouse:acme" company="acme.org" index="…" query="" where=""
- *   remote="remote" search lang="en" limit="20">: an organization's open jobs on any website,
+ * <joblist-jobs board="greenhouse:acme" query="" where="" remote="remote" search lang="en" limit="20">: an organization's open jobs on any website,
  * as joblist shows them (JoblistJobs.svelte), in its own shadow root (the page's styles
  * never reach it, its styles never leave it). Its attributes are its properties, followed.
  * Built by scripts/build-embed.js into embed/dist/joblist-jobs.js.
  */
-const NAMES = ['board', 'company', 'index', 'lang', 'limit', 'query', 'where', 'remote', 'search'];
+const NAMES = ['board', 'lang', 'limit', 'query', 'where', 'remote', 'search'];
 
 class Element extends HTMLElement {
 	static observedAttributes = NAMES;

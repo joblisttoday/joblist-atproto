@@ -27,7 +27,6 @@
 	 * @type {{company: import('#lib/models/company.js').Company, jobs?: import('#lib/ats/job.js').Job[], address?: Record<string, string>, local?: boolean}}
 	 */
 	let { company, jobs = $bindable([]), address = {}, local = false } = $props();
-	const noSnapshot = () => Promise.resolve(null);
 
 	// Its search, its view and the job open are in the address (after the "#").
 	const params = readAddress(['q', 'where', 'remote', 'pay', 'team', 'view', config.jobs.jobParam]);
@@ -81,7 +80,6 @@
 		<Jobs
 			companies={[company]}
 			search={false}
-			source={local ? noSnapshot : undefined}
 			{filters}
 			bind:jobs
 			bind:results

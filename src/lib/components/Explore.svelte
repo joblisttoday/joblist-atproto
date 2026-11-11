@@ -2,16 +2,14 @@
 	import Icon from './Icon.svelte';
 	import config from '#lib/data/config.json';
 	import ExploreFields from './ExploreFields.svelte';
-	import DataState from './DataState.svelte';
+	import Empty from './Empty.svelte';
 	import ExploreSearch from './ExploreSearch.svelte';
-	import ExploreSwitch from './ExploreSwitch.svelte';
 	import Jobs from './Jobs.svelte';
 	import JobDialog from './JobDialog.svelte';
 	import JobItem from './JobItem.svelte';
 	import JobsMap from './JobsMap.svelte';
 	import SaveSearch from './SaveSearch.svelte';
 	import ViewSwitch from './ViewSwitch.svelte';
-	import SearchMenu from './SearchMenu.svelte';
 	import { readView } from '#lib/navigation/explore-view.js';
 	import { tick, untrack } from 'svelte';
 	import { afterNavigate, pushState, replaceState } from '$app/navigation';
@@ -21,7 +19,7 @@
 	import { markSeen, searches } from '#lib/network/saved-searches.svelte.js';
 	import { data } from '#lib/network/network.svelte.js';
 	import { session } from '#lib/auth/session.svelte.js';
-	import { getSnapshotFirst } from '#lib/network/snapshot.js';
+	import { keptJobs } from '#lib/network/kept-jobs.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
@@ -33,11 +31,8 @@
 	 */
 	let { path } = $props();
 
-	const companies = $derived([...data.companies.values()]);
-	// The newest offers, shown at once: reading every company and job takes a phone a few seconds.
-	/** @type {{jobs: import('#lib/ats/job.js').Job[], names: Map<string, string>} | null} */
-	let first = $state.raw(null);
-	getSnapshotFirst().then((loaded) => (first = loaded));
+	// The organizations saved in this browser: their jobs, read live from their boards.
+	const companies = $derived(keptJobs.companies);
 	const names = $derived(new Map(companies.map((c) => [c.key, c.name])));
 	// The search, the view and the job open live in the page address (after the "#", see
 	// address.js), so any of them is a link to keep or share.
@@ -275,9 +270,8 @@
 <jl-explore {view}>
 	<!-- Jobs, organizations or lists; the search, and how the jobs are shown, at the same place in every view. -->
 	<jl-explore-bar>
-		<ExploreSwitch bar />
 		<ExploreSearch bind:filters {places}>
-			{#snippet tools()}<ViewSwitch bind:view {mapless} /><SearchMenu {filters} />{/snippet}
+			{#snippet tools()}<ViewSwitch bind:view {mapless} />{/snippet}
 		</ExploreSearch>
 	</jl-explore-bar>
 	<jl-explore-stage>
@@ -326,20 +320,8 @@
 		{/if}
 		<!-- Kept while a job is open, so its search and its place in the list are still there after. -->
 		<jl-explore-results id="explore-results" hidden={pickedJobs ? true : undefined}>
-			{#if data.status !== 'known'}<DataState />{/if}
 			<!-- The fields jobs are in: one tap shows a field's jobs, searched or not. -->
 			<ExploreFields bind:field={filters.field} {jobs} />
-			<!-- The newest jobs at once, until the list has jobs of its own to show (it needs the companies first). -->
-			{#if !jobs.length && first?.jobs.length && !searching}
-				<jl-explore-first aria-busy="true">
-					<p><small>{t('explore.newest')}</small></p>
-					<ul>
-						{#each first.jobs as job (job.url)}
-							<li><JobItem {job} company={first.names.get(job.company)} onselect={() => select(job)} /></li>
-						{/each}
-					</ul>
-				</jl-explore-first>
-			{/if}
 			{#if companies.length}
 				<Jobs
 					{companies}
@@ -357,6 +339,9 @@
 				>
 					{#snippet actions()}<SaveSearch {filters} />{/snippet}
 				</Jobs>
+			{:else}
+				<!-- joblist lists no organizations: these are the jobs of the ones saved here. -->
+				<Empty text={t('explore.none')}><a href="/"><Icon name="search" /> {t('explore.none.find')}</a></Empty>
 			{/if}
 			{#if empty}
 				<menu aria-label={t('explore.widen')}>
@@ -480,22 +465,6 @@
 	}
 	jl-explore-results {
 		display: block;
-	}
-	jl-explore-first {
-		display: block;
-	}
-	/* Like the list that replaces it: no jump when it does. */
-	jl-explore-first > p {
-		display: flex;
-		align-items: center;
-		min-height: var(--chip-height);
-		margin: var(--space-s) 0 0;
-		color: var(--color-muted);
-	}
-	jl-explore-first > ul {
-		margin: var(--space-s) 0;
-		padding: 0;
-		list-style: none;
 	}
 	jl-explore-place > button {
 		min-height: var(--chip-height);

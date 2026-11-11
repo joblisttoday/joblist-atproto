@@ -1,23 +1,21 @@
 # joblist for Firefox
 
-On any website, its button says at a glance: the organization's open jobs on joblist (a
-number, green), a green ✓ when joblist knows it but it is not hiring now, ★ when you only saved it. Its popup says:
+On any website, its button shows ★ when you saved the organization. Its popup says:
 
-- whether this organization is on joblist, its open jobs and the newest of them;
-- the job board it links to, and its social profiles (Bluesky, LinkedIn, Instagram…);
+- the job board the page links to, its open jobs and the newest of them (read from the board);
+- its social profiles (Bluesky, LinkedIn, Instagram…);
 
-and lets you **save** it and **tag** it, in your browser only, or **suggest** it to joblist
-(the add form, filled in with what the page says).
+and lets you **save** it (with its job board) and **tag** it, in your browser only, and open
+its page on joblist.
 
 What you save is one list with joblist.today's "Your organizations": the add-on keeps its
 changes and makes them on joblist.today the next time it is open in this browser (and copies
 the site's list back). Nothing is sent anywhere.
 
-The button decides from joblist's counts (`counts.json` of the snapshot: every domain joblist
-knows and its open jobs), read at most every 6 hours: the sites you visit are never looked up
-(the `tabs` permission is for reading the open tab's address, here). Opening the popup asks
-for that organization's small file (`companies/{domain}.json`: its newest jobs) and whether its
-domain is a Bluesky handle.
+The button shows ★ on the website of an organization you saved, decided in the browser: the
+sites you visit are never looked up (the `tabs` permission is for reading the open tab's
+address, here). Opening the popup reads the page, then asks its job board for its open jobs
+and Bluesky whether its domain is a handle.
 
 ## Build and try
 

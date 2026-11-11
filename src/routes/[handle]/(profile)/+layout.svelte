@@ -7,13 +7,10 @@
 	import OrganizationProfile from '#lib/components/OrganizationProfile.svelte';
 	import { isDomain, keptUrl, keyOf } from '#lib/models/kept.js';
 	import NotFound from '#lib/components/NotFound.svelte';
-	import DataState from '#lib/components/DataState.svelte';
 	import Pending from '#lib/components/Pending.svelte';
-	import { refused } from '#lib/atproto/xrpc.js';
-	import { data } from '#lib/network/network.svelte.js';
+	import { data, lookup } from '#lib/network/network.svelte.js';
 	import ProfileHeader from '#lib/components/ProfileHeader.svelte';
 	import PageMenu from '#lib/components/PageMenu.svelte';
-	import { resolveDid } from '#lib/atproto/identity.js';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { setProfile } from '#lib/network/profile.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
@@ -43,29 +40,21 @@
 		const link = isDomain(handle) ? keptUrl(handle) : null;
 		return link && keyOf(link) === handle ? link : '';
 	});
-	/** undefined while it is resolved, null when it is not an account. @type {string | null | undefined} */
+	/** undefined while it is looked up, null when it is no account. @type {string | null | undefined} */
 	let did = $state();
-	// The server that resolves handles did not answer: nothing can be said of the account.
-	let unreachable = $state(false);
-	// An account the snapshot knows needs no request (and is shown offline).
-	const known = $derived([...data.profiles.values()].find((p) => p.handle === handle)?.did);
+	// Its own account, its organization record and its job offers, read from its server (lookup).
 	$effect(() => {
 		const asked = handle;
-		unreachable = false;
-		if (known) {
-			did = known;
-			return;
-		}
 		// Not a domain, not a DID: no account's handle, nothing to ask.
 		if (!isDomain(asked) && !asked.startsWith('did:')) {
 			did = null;
 			return;
 		}
 		did = undefined;
-		resolveDid(asked)
-			.then((found) => asked === handle && (did = found))
-			.catch((err) => asked === handle && (refused(err) ? (did = null) : (unreachable = true)));
+		lookup(asked).then((found) => asked === handle && (did = found));
 	});
+	// An account that posted job offers: its page lists them; a domain that did not, what a browser finds of it.
+	const posted = $derived(Boolean(did) && data.posts.some((p) => p.did === did));
 	const self = $derived(Boolean(did) && session.did === did);
 
 	setProfile({
@@ -81,7 +70,7 @@
 	});
 </script>
 
-<!-- Its own address: the page served for every domain and handle has none (indexer/site.js). -->
+<!-- Its own address: the page served for every domain and handle has none (site/site.js). -->
 <svelte:head>
 	{#if company}
 		<title>{company.name} · {config.name}</title>
@@ -93,13 +82,11 @@
 
 {#if company}
 	<CompanyPage {company} {tab} />
-{:else if data.status !== 'known'}
-	<DataState />
-{:else if unreachable}
-	<DataState state="unreachable" />
+{:else if did === undefined}
+	<Pending />
 {:else if companyOnly}
 	<NotFound title={t('notFound.title')} text={t('notFound.path', { path: page.url.pathname })} />
-{:else if did === null && domain}
+{:else if domain && !posted}
 	<OrganizationProfile link={domain} />
 {:else if did === null}
 	<!-- Not an account: most often a mistyped page address. -->
@@ -113,12 +100,7 @@
 				<PageMenu />
 			</menu>
 		</ProfileHeader>
-		{#if did}
-			<!-- Its jobs are known once the data is: until then, it says why. -->
-			<DataState>{@render children()}</DataState>
-		{:else}
-			<Pending />
-		{/if}
+		{@render children()}
 	</jl-profile>
 {/if}
 

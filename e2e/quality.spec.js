@@ -9,34 +9,22 @@ const touch = 44;
 qualityTests([
 	{ name: 'home', path: '/', touch },
 	{ name: 'jobs', path: '/jobs', touch },
-	{ name: 'organizations', path: '/companies', touch },
-	{ name: 'organization', path: '/ableton.com', touch },
-	{ name: 'organization places', path: '/ableton.com/places', touch },
-	{ name: 'profile', path: '/joblist.today', touch },
+	{ name: 'organization', path: '/joblist.today', touch },
+	{ name: 'organization places', path: '/joblist.today/places', touch },
 	{ name: 'me', path: '/me', touch },
 	{ name: 'my lists', path: '/me/lists', touch },
 	{ name: 'menu', path: '/menu', touch },
 	{ name: 'language', path: '/menu/language', touch },
-	{ name: 'trends', path: '/stats', touch },
 	{ name: 'add an organization', path: '/add', touch },
 	{ name: 'post a job', path: '/jobs/new', touch },
 	{ name: 'my organizations', path: '/me/organizations', touch },
 	{
-		// Nothing read (offline, the snapshot down): the page says why, not that it is empty.
-		name: 'data unreachable',
-		touch,
-		open: async (page) => {
-			await page.route((url) => url.hostname !== '127.0.0.1', (route) => route.abort());
-			await page.goto('/companies');
-			await page.locator('jl-data-state[state="unreachable"]').waitFor();
-		}
-	},
-	{
 		name: 'job dialog',
 		touch,
 		open: async (page) => {
+			await page.addInitScript(() => localStorage.setItem('joblist.kept.v1', JSON.stringify([{ url: 'https://gitlab.com', name: 'GitLab', at: '2026-11-01T00:00:00Z', board: { provider: 'greenhouse', id: 'gitlab' } }])));
 			await page.goto('/jobs#view=list');
-			await page.locator('jl-job button').first().click();
+			await page.locator('jl-job button').first().click({ timeout: 20_000 });
 			await page.locator('dialog[open]').waitFor();
 		}
 	},

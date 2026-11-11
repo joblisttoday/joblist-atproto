@@ -1,6 +1,7 @@
 import config from '#lib/data/config.json';
 import { getProfiles } from '#lib/atproto/identity.js';
-import { listRecords, listRepos } from '#lib/atproto/records.js';
+import { listRecords } from '#lib/atproto/records.js';
+import { resolveDid } from '#lib/atproto/identity.js';
 import { mapLimit } from '#lib/atproto/xrpc.js';
 import { session } from '#lib/auth/session.svelte.js';
 import { toCompany } from '#lib/models/company.js';
@@ -11,7 +12,6 @@ import { Companies } from '#lib/models/companies.js';
 import { readCache, writeCache } from './cache.js';
 import { loadOutbox, onSent, outbox } from './outbox.svelte.js';
 import { overlay } from '#lib/models/outbox.js';
-import { getSnapshotJobs, getSnapshotRecords } from './snapshot.js';
 
 /**
  * @typedef {import('#lib/atproto/records.js').RepoRecord} RepoRecord
@@ -26,14 +26,14 @@ const TYPES = /** @type {const} */ ({
 /** @typedef {keyof typeof TYPES} RecordType */
 
 /**
- * Everything the app knows about the network, loaded in the browser.
- * status: what the app can say about it. "reading": nothing known yet (a first visit);
- * "known": from the snapshot or this browser's copy, so an empty result is really empty;
- * "unreachable": no snapshot could be read and this browser has no copy.
+ * What the app has read of the network, in the browser: no list of every organization,
+ * only the signed-in person's own records, and the organizations looked up when their page
+ * opens (lookup: the domain's own account, its organization record and its job offers).
+ * status: "known" at once (nothing global to wait for).
  */
 export const network = $state({
 	/** @type {'reading' | 'known' | 'unreachable'} */
-	status: 'reading',
+	status: 'known',
 	loading: false,
 	/** @type {string | null} */
 	loadedAt: null,
@@ -119,47 +119,52 @@ export function handleOf(did) {
 let started = false;
 
 /**
- * Show what is known at once (local cache), then the snapshot when it is newer.
- * The snapshot is the network as everyone sees it, and only the signed-in person's
- * own records are read live (what they just wrote).
+ * What this browser kept (the records it read before, the outbox), then, signed in (now
+ * or later), the person's own records as their server has them.
  */
 export async function startNetwork() {
 	if (started) return;
 	started = true;
-	// Only the pages showing jobs read them (they are large): the others count them from a small file.
-	// Both at once: the copy kept here shows first, the snapshot (from the network, or the
-	// service worker's last copy offline) replaces it when newer.
-	const reading = getSnapshotRecords();
 	const [cached] = await Promise.all([readCache(), loadOutbox()]);
-	if (cached && !network.loadedAt) Object.assign(network, cached);
-	if (network.loadedAt) network.status = 'known';
-	const snapshot = await reading;
-	if (snapshot && (!network.loadedAt || snapshot.loadedAt > network.loadedAt)) {
-		network.companyRecords = snapshot.companyRecords;
-		network.jobRecords = snapshot.jobRecords || [];
-		network.profiles = snapshot.profiles;
-		network.loadedAt = snapshot.loadedAt;
-		if (session.did) showWaiting(session.did);
+	if (cached && !network.loadedAt) {
+		network.companyRecords = cached.companyRecords || [];
+		network.jobRecords = cached.jobRecords || [];
+		network.profiles = cached.profiles || {};
+		network.loadedAt = cached.loadedAt;
 	}
-	if (snapshot) network.status = 'known';
-	// Neither: nothing to show yet, said so (the network is still read below, and may answer).
-	else if (!network.loadedAt) network.status = 'unreachable';
-	// An old snapshot is still the network (it says when it is from): every visitor reading
-	// every account would be thousands of requests to other people's servers. Only without
-	// any snapshot (a copy of the app with none) is every repository read.
-	if (snapshot) {
-		// Signed in (now or later): their own records, as they are now.
-		$effect.root(() => {
-			$effect(() => {
-				if (session.did) refreshOwn(session.did);
-			});
+	$effect.root(() => {
+		$effect(() => {
+			if (session.did) refreshOwn(session.did);
 		});
-		// Sent or given up: their records as their server has them now.
-		onSent(() => session.did && refreshOwn(session.did));
-		return;
+	});
+	// Sent or given up: their records as their server has them now.
+	onSent(() => session.did && refreshOwn(session.did));
+}
+
+/** @type {Map<string, Promise<string | null>>} */
+const looked = new Map();
+
+/**
+ * An organization by its domain, from its own account (its handle is its domain): its
+ * organization record and its job offers, read from its server, once a session.
+ * @param {string} domain
+ * @returns {Promise<string | null>} its account's DID, or null when the domain is no account
+ */
+export function lookup(domain) {
+	if (!looked.has(domain)) {
+		looked.set(
+			domain,
+			resolveDid(domain)
+				.then(async (did) => {
+					const [profiles] = await Promise.all([getProfiles([did]), refreshOwn(did)]);
+					const profile = profiles.get(did);
+					if (profile) network.profiles[did] = profile;
+					return did;
+				})
+				.catch(() => null)
+		);
 	}
-	// Reading the whole network is slow on a phone: once the jobs are shown, not while.
-	getSnapshotJobs().finally(() => setTimeout(refresh, config.snapshot.refreshDelayMs));
+	return /** @type {Promise<string | null>} */ (looked.get(domain));
 }
 
 /**
@@ -179,7 +184,7 @@ async function refreshOwn(did) {
 		if (versions(known) === versions(own)) return;
 		network[key] = [...network[key].filter((r) => r.did !== did), ...own];
 	});
-	if (session.handle && !network.profiles[did]) network.profiles[did] = { did, handle: session.handle };
+	if (did === session.did && session.handle && !network.profiles[did]) network.profiles[did] = { did, handle: session.handle };
 	showWaiting(did);
 	keepNetwork();
 }
@@ -202,41 +207,6 @@ function showWaiting(did) {
 /** Keep the network in this browser (IndexedDB, cache.js), as plain data. */
 function keepNetwork() {
 	writeCache($state.snapshot(network));
-}
-
-/** Read every record the app uses from every repository that has some. */
-export async function refresh() {
-	if (network.loading) return;
-	network.loading = true;
-	try {
-		const types = /** @type {RecordType[]} */ (Object.keys(TYPES));
-		const reposByType = await Promise.all(types.map((type) => listRepos(config.collections[type])));
-		const dids = [...new Set(reposByType.flat())];
-		network.progress = { accounts: 0, total: dids.length, records: 0 };
-		/** @param {number} count */
-		const onPage = (count) => (network.progress.records += count);
-		const perRepo = await mapLimit(dids, config.limits.concurrency, async (did) => {
-			const records = await Promise.all(
-				types.map((type, i) =>
-					reposByType[i].includes(did) ? listRecords(did, config.collections[type], onPage).catch(() => []) : []
-				)
-			);
-			network.progress.accounts++;
-			return records;
-		});
-		const profiles = await getProfiles(dids);
-		types.forEach((type, i) => (network[TYPES[type]] = perRepo.flatMap((r) => r[i])));
-		network.profiles = Object.fromEntries(profiles);
-		network.loadedAt = new Date().toISOString();
-		network.error = null;
-		network.status = 'known';
-		keepNetwork();
-	} catch (err) {
-		// keep what was loaded before; the network can be retried
-		network.error = err instanceof Error ? err.message : String(err);
-	} finally {
-		network.loading = false;
-	}
 }
 
 /**

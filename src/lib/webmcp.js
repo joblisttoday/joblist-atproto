@@ -1,5 +1,5 @@
 import webmcp from '#lib/data/webmcp.json';
-import { getSnapshotJobs } from '#lib/network/snapshot.js';
+import { keptJobs } from '#lib/network/kept-jobs.svelte.js';
 import { mergeJobs } from '#lib/models/job-post.js';
 import { data } from '#lib/network/network.svelte.js';
 import { searchCompanies, searchJobs } from './webmcp-tools.js';
@@ -12,13 +12,11 @@ import { searchCompanies, searchJobs } from './webmcp-tools.js';
 
 /** @type {Record<string, (args: any) => Promise<unknown>>} */
 const handlers = {
-	search_companies: async (args) => searchCompanies(data.companies, args, location.origin),
+	// The organizations saved in this browser, and their jobs read live from their boards.
+	search_companies: async (args) => searchCompanies(new Map(keptJobs.companies.map((c) => [c.key, c])), args, location.origin),
 	search_jobs: async (args) => {
-		const snapshot = await getSnapshotJobs();
-		if (!snapshot) return { error: 'The jobs snapshot is not available right now; open /jobs to read job boards live.' };
-		// Offers posted on joblist are read from their records, not the snapshot.
-		const posted = [...data.postedJobs.values()].flat();
-		return searchJobs(mergeJobs(posted, snapshot.all), data.companies, args);
+		const companies = new Map(keptJobs.companies.map((c) => [c.key, c]));
+		return searchJobs(mergeJobs([...data.postedJobs.values()].flat(), keptJobs.all), companies, args);
 	}
 };
 

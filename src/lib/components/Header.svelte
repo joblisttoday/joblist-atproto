@@ -1,26 +1,20 @@
 <script>
 	import Logo from './Logo.svelte';
-	import ExploreSwitch from './ExploreSwitch.svelte';
 	import { page } from '$app/state';
 	import config from '#lib/data/config.json';
 	import Nav from './Nav.svelte';
-	import NetworkStatus from './NetworkStatus.svelte';
 
 	// The app name is always there; the way back is the browser's.
 	// Phones: these pages take the whole screen, their own bar at the top (config.layout.bare).
 	const bare = $derived(config.layout.bare.includes(page.route.id || ''));
-	// Jobs, organizations: each has its own search, so the header has the way between them.
-	const explore = $derived(config.layout.explore.includes(page.route.id || ''));
 </script>
 
 <jl-header bare={bare || undefined}>
 	<header>
 		<a href="/" aria-current={page.url.pathname === '/' ? 'page' : undefined}><Logo /><b>{config.name}</b></a>
-		<!-- No search here: the home has it, and the explore pages their own. -->
-		{#if explore}<ExploreSwitch />{:else}<jl-header-space></jl-header-space>{/if}
+		<jl-header-space></jl-header-space>
 		<Nav />
 	</header>
-	<NetworkStatus />
 </jl-header>
 
 <style>

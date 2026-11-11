@@ -10,7 +10,7 @@ import { copyFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { build } from 'vite';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
-import { embedSettings } from '../indexer/embed-settings.js';
+import { embedSettings } from '../site/embed-settings.js';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const out = process.argv[2] || `${root}embed/dist`;

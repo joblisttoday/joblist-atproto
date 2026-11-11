@@ -1,7 +1,6 @@
 <script>
 	import { page } from '$app/state';
 	import config from '#lib/data/config.json';
-	import ExploreSwitch from './ExploreSwitch.svelte';
 
 	/**
 	 * A page given the whole screen, under the header and above the navigation (phones):
@@ -13,11 +12,10 @@
 	// Phones: no header above it (config.layout.bare), the bar goes to the top of the screen.
 	const bare = $derived(config.layout.bare.includes(page.route.id || ''));
 	// Every job, organization and list: one tap from each other (Explore).
-	const explore = $derived(config.layout.explore.includes(page.route.id || ''));
 </script>
 
 <jl-full-screen {view} bare={bare || undefined}>
-	<jl-full-screen-bar>{#if explore}<ExploreSwitch bar />{/if}{@render bar()}</jl-full-screen-bar>
+	<jl-full-screen-bar>{@render bar()}</jl-full-screen-bar>
 	<jl-full-screen-stage>{@render children()}</jl-full-screen-stage>
 </jl-full-screen>
 

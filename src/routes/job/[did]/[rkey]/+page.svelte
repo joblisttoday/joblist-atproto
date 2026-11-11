@@ -16,7 +16,7 @@
 
 <svelte:head>
 	<title>{post ? t('job.at', { title: post.title, company }) : t('job.notFoundTitle')} · {config.name}</title>
-	<!-- Its own address: the page served for every job has none (indexer/site.js). -->
+	<!-- Its own address: the page served for every job has none (site/site.js). -->
 	<link rel="canonical" href="{config.url}{page.url.pathname}" />
 </svelte:head>
 

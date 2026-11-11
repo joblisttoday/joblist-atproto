@@ -40,7 +40,7 @@ if (!write) {
 	process.exit(0);
 }
 
-const agent = new AtpAgent({ service: process.env.JOBLIST_SERVICE || config.crawler.service });
+const agent = new AtpAgent({ service: process.env.JOBLIST_SERVICE || 'https://bsky.social' });
 await agent.login({
 	identifier: /** @type {string} */ (process.env.JOBLIST_HANDLE),
 	password: /** @type {string} */ (process.env.JOBLIST_APP_PASSWORD)

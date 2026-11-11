@@ -10,17 +10,15 @@
 	let { company, open = false } = $props();
 </script>
 
-<jl-company-embed>
-	<details id="company-embed" {open}>
-		<summary>{t('embed.section')}</summary>
-		<!-- Its board: read live, no index between it and the site; else its domain. -->
-		{#if company.jobBoard?.provider && company.jobBoard.id}
+<!-- Only with a job board: the embed reads it live, nothing between it and the website. -->
+{#if company.jobBoard?.provider && company.jobBoard.id}
+	<jl-company-embed>
+		<details id="company-embed" {open}>
+			<summary>{t('embed.section')}</summary>
 			<Embed attribute="board" value="{company.jobBoard.provider}:{company.jobBoard.id}" title={t('embed.title', { name: company.name })} />
-		{:else}
-			<Embed attribute="company" value={company.key} title={t('embed.title', { name: company.name })} />
-		{/if}
-	</details>
-</jl-company-embed>
+		</details>
+	</jl-company-embed>
+{/if}
 
 <style>
 	jl-company-embed {

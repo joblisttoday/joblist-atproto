@@ -1,5 +1,5 @@
 {
-	"name": "joblist-atproto",
+	"name": "joblisttoday",
 	"private": true,
 	"version": "0.0.1",
 	"type": "module",
@@ -12,12 +12,9 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
 		"test:unit": "vitest",
-		"test": "npm run test:unit -- --run && node --test 'scripts/**/*.test.js' 'indexer/**/*.test.js' 'worker/**/*.test.js' 'bot/**/*.test.js'",
-		"build:site": "npm run build:extension && npm run build:embed && vite build && node indexer/site.js build",
+		"test": "npm run test:unit -- --run && node --test 'scripts/**/*.test.js' 'site/**/*.test.js'",
+		"build:site": "npm run build:extension && npm run build:embed && vite build && node site/site.js build",
 		"build:embed": "node scripts/build-embed.js",
-		"deploy": "npm run build:site && wrangler deploy",
-		"import": "node scripts/import-joblist.js",
-		"index": "node indexer/index.js static/snapshot",
 		"test:e2e": "npm run build:extension && playwright test",
 		"build:extension": "node scripts/build-extension.js --zip static/apps/joblist-firefox.zip"
 	},
@@ -32,8 +29,7 @@
 		"svelte-check": "^4.6.0",
 		"typescript": "^6.0.3",
 		"vite": "^8.3.0",
-		"vitest": "^4.1.8",
-		"wrangler": "^4.151.2"
+		"vitest": "^4.1.8"
 	},
 	"imports": {
 		"#lib": "./src/lib/index.js",

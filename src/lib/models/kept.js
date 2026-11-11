@@ -1,13 +1,16 @@
 import platforms from '#lib/data/platforms.json' with { type: 'json' };
 import { tlds } from '#lib/data/tlds.json' with { type: 'json' };
 import { detectBoard } from '#lib/ats/detect.js';
+import providers from '#lib/data/providers.json' with { type: 'json' };
 
 /**
  * Organizations someone keeps to watch, private in their browser: any link (a website,
  * a job board, a social profile, a group), with a name if they gave one. joblist shows
  * an organization it knows (by the link's domain, or its job board), else the link.
- * @typedef {{url: string, name: string, at: string, tags?: string[]}} Kept
- *   tags: private words to sort them (design, coop, berlin), never published
+ * @typedef {{provider: string, id: string}} Board
+ * @typedef {{url: string, name: string, at: string, tags?: string[], board?: Board}} Kept
+ *   tags: private words to sort them (design, coop, berlin), never published;
+ *   board: its job board, as found when it was saved (its link may be its website)
  * @typedef {{key: string, name: string, jobBoard?: import('./company.js').JobBoard}} Known an organization joblist knows
  * @typedef {{link: string, suggest: string, account?: {handle: string, avatar?: string, followers?: number}}} Local
  *   one only a browser knows, on its page: the link it is kept by, the add form filled in, its Bluesky account
@@ -134,6 +137,26 @@ export function organizationPage(input, known) {
 }
 
 /**
+ * A job board as kept: a provider joblist reads, and an id; else none.
+ * @param {unknown} board
+ * @returns {Board | undefined}
+ */
+export function cleanBoard(board) {
+	const b = /** @type {any} */ (board);
+	if (!b || typeof b.provider !== 'string' || typeof b.id !== 'string' || !b.id || b.id.length > 256) return undefined;
+	return providers.some((p) => p.id === b.provider) ? { provider: b.provider, id: b.id } : undefined;
+}
+
+/**
+ * A kept organization's job board: the one found when it was saved, else its link's own.
+ * @param {Kept} item
+ * @returns {Board | undefined}
+ */
+export function boardOfKept(item) {
+	return item.board || detectBoard(item.url) || undefined;
+}
+
+/**
  * The kept organizations read back, checked (they come from storage), each link once.
  * @param {unknown} data
  * @returns {Kept[]}
@@ -146,11 +169,13 @@ export function readKept(data) {
 		const url = typeof item?.url === 'string' ? keptUrl(item.url) : null;
 		if (!url || list.some((k) => k.url === url)) continue;
 		const tags = cleanTags(item.tags);
+		const board = cleanBoard(item.board);
 		list.push({
 			url,
 			name: typeof item.name === 'string' ? item.name.trim().slice(0, MAX_NAME) : '',
 			at: typeof item.at === 'string' ? item.at : '',
-			...(tags.length ? { tags } : {})
+			...(tags.length ? { tags } : {}),
+			...(board ? { board } : {})
 		});
 	}
 	return list;
@@ -162,12 +187,14 @@ export function readKept(data) {
  * @param {string} url checked (keptUrl)
  * @param {string} name
  * @param {string} at
+ * @param {unknown} [board] its job board, when found
  * @returns {Kept[]}
  */
-export function withKept(list, url, name, at) {
+export function withKept(list, url, name, at, board) {
+	const clean = cleanBoard(board);
 	const found = list.find((k) => k.url === url);
-	if (found) return list.map((k) => (k === found ? { ...k, name: name.trim().slice(0, MAX_NAME) || k.name } : k));
-	return [{ url, name: name.trim().slice(0, MAX_NAME), at }, ...list];
+	if (found) return list.map((k) => (k === found ? { ...k, name: name.trim().slice(0, MAX_NAME) || k.name, ...(clean ? { board: clean } : {}) } : k));
+	return [{ url, name: name.trim().slice(0, MAX_NAME), at, ...(clean ? { board: clean } : {}) }, ...list];
 }
 
 /**
@@ -189,7 +216,7 @@ export function withTags(list, url, tags) {
 /**
  * Changes made away from the list (the browser add-on, while joblist.today is not open),
  * in the order they were made: keep (with a name and tags), forget, or tag.
- * @typedef {{op: 'keep', url: string, name?: string, tags?: string[], at: string} | {op: 'forget', url: string, at: string} | {op: 'tags', url: string, tags: string[], at: string}} Change
+ * @typedef {{op: 'keep', url: string, name?: string, tags?: string[], board?: Board, at: string} | {op: 'forget', url: string, at: string} | {op: 'tags', url: string, tags: string[], at: string}} Change
  */
 
 /**
@@ -205,7 +232,7 @@ export function applyChanges(list, changes) {
 		if (!url) continue;
 		const at = typeof change.at === 'string' ? change.at : '';
 		if (change.op === 'keep') {
-			next = withKept(next, url, typeof change.name === 'string' ? change.name : '', at);
+			next = withKept(next, url, typeof change.name === 'string' ? change.name : '', at, change.board);
 			if (Array.isArray(change.tags)) next = withTags(next, url, change.tags);
 		} else if (change.op === 'forget') next = next.filter((k) => k.url !== url);
 		else if (change.op === 'tags') next = withTags(next, url, change.tags);

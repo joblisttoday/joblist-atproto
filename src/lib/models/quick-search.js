@@ -4,7 +4,7 @@
  * tag (/companies#q=music), another place or words in job titles. Jobs are always one Enter away; the rest is
  * offered as they type.
  *
- * @typedef {{key: string, name: string, tags?: string[]}} QuickCompany
+ * @typedef {{key: string, name: string, tags?: string[], href?: string}} QuickCompany
  * @typedef {{slug: string, name: string, count: number}} QuickPage a city's or a field's page; name: as shown (a field's, in the reader's language)
  * @typedef {{fields: QuickPage[], cities: QuickPage[], companies: QuickCompany[], tags: [string, number][], places: string[]}} QuickResults
  */

@@ -1,35 +1,17 @@
 {
-	"about": "What /llms.txt says to agents and other programs, written at each build by indexer/llms.js. {url}, {snapshot}, {source}, {userAgent} and {hours} are filled from config; the record types, the docs and the counts are added from the lexicons, docs/ and the snapshot.",
-	"intro": "{name} ({url}) lists open jobs at organizations that hire, read straight from each one's own job board (Ashby, Greenhouse, Lever, Personio, Recruitee, Rippling, SmartRecruiters, Workable), and organizations described by people on atproto (the Bluesky protocol): every record lives in its author's own account. Open source (GPL-3.0), no ads, no tracking, no accounts of its own.",
-	"lead": "All the data is public and free to read. Prefer the snapshot files below over crawling the pages: they hold everything the pages show, in a few requests. Jobs from job boards link to the organization's own posting: apply there. Jobs posted on joblist have their own page.",
+	"about": "What /llms.txt says to agents and other programs, written at each build by site/llms.js. {name}, {url}, {source} are filled from config; the record types and the docs are added from the lexicons and docs/.",
+	"intro": "{name} ({url}) is a tool for a job hunt, in the browser: it reads an organization's open jobs straight from its own job board (Ashby, Greenhouse, Lever, Personio, Recruitee, Rippling, SmartRecruiters, Workable) and its Bluesky account, keeps the organizations, searches and jobs someone saves in their own browser, and lets an organization describe itself and post its jobs on atproto (the Bluesky protocol), from its own account. It keeps no list of organizations or jobs, and nothing of anyone's. Open source (GPL-3.0), no ads, no tracking, no accounts of its own.",
+	"lead": "There is no index to read: an organization's jobs are on its own job board, and what organizations publish is in their own atproto accounts (the records below). Jobs link to the organization's own posting: apply there. Jobs posted on atproto have their own page here.",
 	"pages": [
-		{ "title": "Home", "path": "/", "about": "what joblist is, a job search and the ways in" },
-		{ "title": "Job search", "path": "/jobs", "about": "every open job, searchable by job, city and on a map (`/jobs#q=design&where=Berlin`)" },
-		{ "title": "Jobs by city", "path": "/in", "about": "one page per city with enough jobs, e.g. `/in/berlin`, `/in/berlin/design`, older jobs at `?page=2`" },
-		{ "title": "Jobs by field", "path": "/field", "about": "e.g. `/field/engineering`, `/field/design`" },
-		{ "title": "Organizations", "path": "/companies", "about": "one page per organization at its domain, `/{domain}`, e.g. `/ableton.com` (its jobs; its places at `/{domain}/places`; an account's handle the same way); by tag at `/companies#q={tag}`" },
-		{ "title": "Jobs posted on joblist", "about": "`/job/{did}/{rkey}`, with schema.org JobPosting data" },
-		{ "title": "Sitemap", "path": "/sitemap.xml", "about": "the pages; the pages per city and field in `/sitemap-places.xml`" }
-	],
-	"feeds": [
-		{ "title": "New jobs everywhere", "path": "/feed/new.xml" },
-		{ "title": "Per city, field or both", "about": "`/feed/in/berlin.xml`, `/feed/field/design.xml`, `/feed/in/berlin/design.xml`" },
-		{ "title": "Per organization", "about": "`/feed/company/{domain}.xml`" },
-		{ "title": "Any search", "about": "`/feed/search.xml?q=design&where=Berlin` (the explorer's search, words after the `#`, as a query)" }
-	],
-	"snapshot": [
-		{ "file": "jobs.json", "about": "every open job (large: prefer the smaller files). Compact keys: `t` title, `u` link, `c` organization key (its domain), `l` location, `d` department, `p` first seen (ISO date), `i` id at its board, `r` onsite/hybrid/remote (said by its board, or clearly by its text), `g` [longitude, latitude], `m` pay [min, max, currency, period], `s` atproto record of a job posted on joblist, `v` posted by the organization itself" },
-		{ "file": "companies/{domain}.json", "about": "one organization's open jobs, small, with the same keys; `checked`: its board was read, `gone`: its board closed" },
-		{ "file": "records.json", "about": "every organization and job record, with their authors' handles" },
-		{ "file": "first.json", "about": "the newest jobs, small" },
-		{ "file": "counts.json", "about": "open jobs per organization, the places named most, and every organization's domain (`known`)" },
-		{ "file": "landing/index.json", "about": "the cities and fields with a page, and their job counts; `landing/in/{city}.json`, `landing/field/{field}.json`: their newest jobs" },
-		{ "file": "meta.json", "about": "when the snapshot was made, and counts" }
+		{ "title": "Home", "path": "/", "about": "a search: a link or a domain opens its organization" },
+		{ "title": "An organization", "about": "`/{domain}`, e.g. `/gitlab.com`: its open jobs read live from its board, its Bluesky account; its places at `/{domain}/places`" },
+		{ "title": "Jobs", "path": "/jobs", "about": "the open jobs of the organizations saved in this browser (`/jobs#q=design&where=Berlin`)" },
+		{ "title": "Jobs posted on atproto", "about": "`/job/{did}/{rkey}`, with schema.org JobPosting data" },
+		{ "title": "Embed", "path": "/embed", "about": "an organization's open jobs on any website: `<joblist-jobs board=\"greenhouse:acme\">`" }
 	],
 	"etiquette": [
-		"The snapshot is rebuilt every {hours} hours: reading it more often gives nothing new.",
-		"joblist's own requests to job boards and other services say `{userAgent}`; each job's description is read once, not at every run.",
+		"joblist's requests come from each person's browser, a few job boards at a time; it never crawls.",
 		"Link to an organization's page here, or to its job's own posting; never copy applications through joblist, it has none.",
-		"An organization that wants its jobs left out, or a fix: describe it on joblist with its own account (its handle is its domain), or open an issue at {source}/issues."
+		"An organization that wants a fix: describe it on joblist with its own account (its handle is its domain), or open an issue at {source}/issues."
 	]
 }

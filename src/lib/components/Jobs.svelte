@@ -7,8 +7,6 @@
 	import JobItem from './JobItem.svelte';
 	import { getJobs } from '#lib/ats/index.js';
 	import { mapLimit } from '#lib/atproto/xrpc.js';
-	import { getCompaniesJobs, getSnapshotCounts, getSnapshotFirst, getSnapshotJobs } from '#lib/network/snapshot.js';
-	import { afterPaint } from '#lib/navigation/after-paint.js';
 	import { prepareSearch } from '#lib/network/prepare-search.js';
 	import { boardUrl, hasJobsApi } from '#lib/models/company.js';
 	import { byCompany, commonPlaces, filterJobs, newestFirst, offerCount, placeNewest, sameOffers, spread, time } from '#lib/models/job.js';
@@ -44,10 +42,9 @@
 	 *   onselect?: (job: import('#lib/ats/job.js').Job) => void,
 	 *   selected?: string,
 	 *   places?: string[],
-	 *   quick?: boolean,
-	 *   source?: () => Promise<import('#lib/network/snapshot.js').SnapshotJobs | null>
+	 *   quick?: boolean
 	 * }}
-	 * source: where its snapshot jobs come from (a list's own file), instead of the companies' files or every job.
+	 * quick: the explorer's (its jobs are prepared for searching while the page is idle).
 	 */
 	let {
 		companies,
@@ -63,8 +60,7 @@
 		onselect: pageSelect,
 		selected: pageSelected = '',
 		places: suggested = $bindable([]),
-		quick = false,
-		source
+		quick = false
 	} = $props();
 	const PAGE = config.jobs.pageSize;
 	// The page opens a job itself (the explorer), or it opens in the dialog over the list.
@@ -86,20 +82,12 @@
 	const single = $derived(companies.length === 1);
 	const names = $derived(new Map(companies.map((c) => [c.key, c.name])));
 	// Offers posted on joblist, for every company here (with a job board or not).
-	/** Where posted jobs are, as the snapshot found. @type {Map<string, [number, number]>} */
-	let points = $state.raw(new Map());
-	const posted = $derived(withPoints(companies.flatMap((c) => data.postedJobs.get(c.key) || []), points));
-	// quick: the newest offers shown at once, until every job is read (the explorer, with all companies).
-	/** @type {import('#lib/ats/job.js').Job[]} */
-	let early = $state.raw([]);
-	// Read once, when the list is made: it is how the page starts.
-	if (untrack(() => quick)) getSnapshotFirst().then((first) => (early = first.jobs));
-	/** Jobs read live from boards are among them (not in the snapshot's order). */
+	const posted = $derived(withPoints(companies.flatMap((c) => data.postedJobs.get(c.key) || []), new Map()));
+	/** Jobs read live from boards are among them. */
 	let live = $state(false);
-	// Newest first, sorted once here: every search keeps this order. The snapshot's jobs are
-	// in that order already: only the jobs posted here or read live need it.
+	// Newest first, sorted once here: every search keeps this order.
 	const jobs = $derived.by(() => {
-		const merged = mergeJobs(posted, boardJobs.length ? boardJobs : early);
+		const merged = mergeJobs(posted, boardJobs);
 		if (live) newestFirst(merged);
 		else if (posted.length) return placeNewest(merged.filter((j) => !j.posted), merged.filter((j) => j.posted));
 		return merged;
@@ -135,10 +123,7 @@
 	const groups = $derived(grouped ? byCompany(filtered) : []);
 	// Suggestions are computed once all boards answered, not on every answer;
 	// in the explorer (every company) the snapshot counted them already.
-	/** @type {string[]} */
-	let counted = $state.raw([]);
-	if (untrack(() => quick)) getSnapshotCounts().then((counts) => (counted = (counts?.places || []).slice(0, config.jobs.placesSuggested).map(([place]) => place)));
-	const places = $derived(loading ? [] : counted.length ? counted : commonPlaces(jobs));
+	const places = $derived(loading ? [] : commonPlaces(jobs));
 	// Every job read in the explorer: they are read for searches while the page is idle.
 	$effect(() => {
 		if (quick && !loading && jobs.length) prepareSearch(jobs, names);
@@ -172,35 +157,15 @@
 			boardJobs = boardJobs.concat(fresh);
 			live = true;
 		};
-		// Boards in the snapshot answer at once; only newer ones are asked live.
-		// The explorer first shows the newest jobs: reading all of them takes a phone seconds.
-		const ready = untrack(() => quick) ? getSnapshotFirst().then(afterPaint) : Promise.resolve();
-		// A company's page, a small list: their own small files, not every job.
-		const few = !untrack(() => quick) && list.length <= config.snapshot.companyFiles;
-		const read = untrack(() => source) || (few ? () => getCompaniesJobs(list.map((c) => c.key)) : getSnapshotJobs);
-		ready.then(read).then((snapshot) => {
+		// Live, from each board (kept for the browser session, ats/index.js): at most
+		// config.kept.boardsPerVisit of them, never every board at once.
+		const asked = list.slice(0, config.kept.boardsPerVisit);
+		answered = list.length - asked.length;
+		mapLimit(asked, config.limits.jobsConcurrency, async (company) => {
+			const found = await getJobs(company);
 			if (cancelled) return;
-			const unread = snapshot ? list.filter((c) => !snapshot.checked.has(c.key)) : list;
-			if (snapshot) {
-				gone = snapshot.gone;
-				points = snapshot.points;
-				// In the snapshot's order (newest first), so they need no sorting.
-				const keys = new Set(list.map((c) => c.key));
-				boardJobs = list.length === 1 ? snapshot.jobs.get(list[0].key) || [] : snapshot.all.filter((j) => keys.has(j.company));
-				answered = list.length - unread.length;
-			}
-			// Live, only a few boards: those of a company's page, a small list, organizations added
-			// since the snapshot. Never every board: each visitor would ask hundreds of them.
-			if (unread.length > config.limits.liveBoards) {
-				answered = list.length;
-				return;
-			}
-			mapLimit(unread, config.limits.jobsConcurrency, async (company) => {
-				const found = await getJobs(company);
-				if (cancelled) return;
-				add(found);
-				answered++;
-			});
+			add(found);
+			answered++;
 		});
 		return () => (cancelled = true);
 	});

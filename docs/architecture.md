@@ -1,146 +1,50 @@
 # Architecture
 
-joblist is a few pieces that talk to each other only through public formats: each can be
-deployed, replaced or left out on its own. This page says what they are today, what they
-should become (fewer, decoupled), and the steps there, each one reversible.
+joblist is a tool that runs in each person's browser. It keeps nothing of its own: no list
+of organizations, no index of jobs, no server. What it shows is read from the source, by
+the browser, when it is asked for.
 
-## Direction: organizations describe themselves
+## The pieces
 
-joblist.today becomes the place where an organization describes itself and posts its jobs,
-from its own atproto account (its handle is its domain): a `today.joblist.company` record and
-`today.joblist.job` records in its own repository, readable by any app. The indexer reads those,
-and the job boards of the organizations that name one.
+| Piece | Where it runs | What it reads |
+|---|---|---|
+| The app (SvelteKit, `ssr = false`) | GitHub Pages, static files (`pages` workflow, on each push) | job boards' public APIs, organizations' own atproto accounts, the Bluesky AppView |
+| The site's own pages (`site/site.js`) | written after the build | nothing: what joblist is, never numbers |
+| The browser add-on (`extension/`) | the person's browser, on any website | the page open, its job board, its Bluesky handle |
+| The embed (`embed/`, `<joblist-jobs board="…">`) | organizations' own websites; jsDelivr and the site serve it | its job board, live |
+| Lexicon publishing (`lexicons` workflow) | by hand, by the owner | the schemas in `lexicons/` |
 
-Where it starts from (2026-11-11 snapshot): 969 organization records, all written by the
-joblist.today account (the import of the old data, then the crawler); 1 organization described
-by itself (joblist.today); 1 job posted on atproto; 100 organizations with their own Bluesky
-account, 53 of them hiring through a job board (2,383 of 28,293 jobs).
-
-So joblist's own records are a starter, replaced organization by organization:
-
-1. **Done (2026-11-11).** The organization is the author: "Is this your organization?" is the main call on its page;
-   its own record replaces joblist's (already: the own version is the one shown).
-2. **Done (2026-11-11).** No wiki: only the organization, or joblist's starter account, writes an organization's
-   record. People keep organizations privately (saved, tagged, in their browser) and point
-   joblist at one (a suggestion, shown only while neither has written one); they do not
-   write its page. Versions and history went with it.
-3. The indexer keeps its mechanism (records, their boards, posted jobs); only its source moves,
-   from joblist's starter records to organizations' own.
-4. Later, measured: whether starter records of organizations that never hire or never claim
-   their page fade out.
-
-joblist never contacts an organization by itself: inviting one is a person's post.
+One repository, two workflows, one host, no secret but the lexicon account's password.
 
 ## The contracts
 
-Pieces never share code paths at run time or at build time; they share these:
+Pieces share no code path at run time; they share these:
 
 | Contract | What | Where it is written |
 |---|---|---|
-| Lexicons | the `today.joblist.*` records people write in their own accounts | [lexicons/](../lexicons), published by hand ([lexicons.md](lexicons.md)) |
-| Index format | the static files an indexer writes and clients read, with a `version` | `docs/index.md` (to write, step 3) |
-| Addresses | pages (`/{domain}`, `/in/{city}`) and their state after the `#` (`#q=…&where=…`) | [src/lib/navigation/address.js](../src/lib/navigation/address.js) |
-| Private data | what a person keeps in their browser (searches, organizations, tags) | `src/lib/local/`, `src/lib/network/kept.svelte.js`; the add-on syncs it ([extension/](../extension/README.md)) |
+| Records | `today.joblist.company` (an organization, keyed by its domain), `today.joblist.job` (a job offer), in their authors' own accounts | [lexicons/](../lexicons), [docs/lexicons.md](lexicons.md) |
+| Job boards | each provider's public API, read the same way everywhere | [src/lib/ats/](../src/lib/ats), [providers.json](../src/lib/data/providers.json) |
+| Saved organizations | `joblist.kept.v1` in the browser: link, name, tags, job board; the add-on keeps the same list | [src/lib/models/kept.js](../src/lib/models/kept.js) |
+| The move file | what a browser keeps, as a file to import in another one (Menu) | [src/lib/models/job-collection.js](../src/lib/models/job-collection.js) |
 
 ## In atproto
 
-| atproto role | joblist |
-|---|---|
-| PDS (each person's server) | the source of truth: organizations, jobs written by their authors; the app writes there (local-first, an outbox when offline) |
-| Lexicons | the contract every piece reads |
-| Identity | an organization signed in with its domain as handle is verified |
-| Relay, Jetstream | not used yet; the indexer reads accounts every 6 hours (later: follow Jetstream for `today.joblist.*` only) |
-| AppView (an index) | the indexer and its static index: one index among others, which anyone can run |
-| Labeler | not used yet; later: read moderation labelers people trust (instead of `blocklist.json`), maybe publish "hiring" on organizations' accounts |
-| Clients | the app, the add-on, and any other app reading the same records |
+- An organization is its own account: its handle is its domain, and its page here
+  (`/{domain}`) reads its `today.joblist.company` record and its `today.joblist.job` offers
+  from its own server when the page opens. No one else's version is shown.
+- People sign in with any atproto account (OAuth, asking only for the app's record types)
+  to post jobs or describe their own organization; what they write is in their account.
+- Any other app can read the same records.
 
-Private data never leaves the browser; public data lives in its author's PDS; every shared
-service (index, labeler, feeds) is optional and replaceable.
+## Politeness
 
-## Today: 11 pieces
+Each browser reads a few job boards at a time (`config.kept.boardsPerVisit`), keeps what it
+read for a while (`config.kept.refreshHours`), and asks nothing about a site someone only
+visits: the add-on's button is decided from what is saved, in the browser.
 
-| # | Piece | Runs | Needs |
-|---|---|---|---|
-| 1 | App (static, offline cache, embeds) | Cloudflare, on push | — |
-| 2 | Prerender (organization pages' HTML) | in 1's build | the index at build time |
-| 3 | Worker (`/in`, `/field`, feeds, sitemap) | Cloudflare, with 1 | the index at each request |
-| 4 | Indexer | GitHub workflow, every 6 h | — |
-| 5 | Index host (`joblisttoday/joblist-snapshot`) | GitHub Pages | `SNAPSHOT_DEPLOY_KEY` |
-| 6 | Deploy hook (index → rebuild 1) | end of 4 | `SITE_DEPLOY_HOOK` (failing since 2026-11-08) |
-| 7 | Bot (the week's trends on Bluesky) | end of 4 | `BOT_HANDLE`, `BOT_APP_PASSWORD` |
-| 8 | Crawler (repairs and adds organizations) | GitHub workflow, weekly | the crawler account's password |
-| 9 | List curation | removed (2026-11-11), with lists | — |
-| 10 | Lexicon publishing | GitHub workflow, by hand | an account's password |
-| 11 | Browser add-on | built with 1, served at `/apps` | — |
-| 12 | Embed (`<joblist-jobs>`) | on organizations' own sites; served by jsDelivr from this repository, and by 1 | nothing: reads the board live (an index only for `company="…"`) |
+## What was removed (2026-11-11), and why
 
-Two repositories, three workflows, two hosts, six secrets. The couplings: the app's build reads
-the index (2), the index rebuilds the app (6), the Worker reads the index (3).
-Steps 1 and 2 removed 2 and 6: the site is built from no index (`indexer/site.js`), and
-organization and job pages are one page each, served for any of them by a rewrite.
-
-## Target: 3 pieces, and the embed
-
-| Piece | Runs | Needs |
-|---|---|---|
-| App, with the add-on | any static host (Cloudflare today), on push | nothing; an index if one is set |
-| Embed | organizations' sites, from jsDelivr (this repository) | nothing: the board, read live |
-| Indexer | one scheduled job, publishing the index to this repository's GitHub Pages, with static feeds | GitHub's own token |
-| Lexicons | by hand, rarely | an account's password, when used |
-
-One deploy on push, one scheduled job, no secret on a schedule: nothing writes to atproto on
-its own, nothing breaks between two systems, and anyone can run the same on any static host.
-
-The app without an index is a notebook: the organizations a person keeps, and the ones read
-straight from the accounts that publish them (the joblist.today account: about 10 requests),
-their jobs read live from their boards (a few dozen at most), kept in the browser, offline.
-With an index, it searches every job, and shows counts, fields and places.
-
-What it costs: search engines see less (organization and city pages exist inside the app
-only); the crawler's weekly repairs stop unless run by hand; no weekly post on Bluesky.
-
-## Steps
-
-Each step is a commit, checked (types, unit tests, the built site's tests, 390px and 1440px),
-and reversible on its own.
-
-1. **Done (2026-11-11).** **The app's build reads no index.** Remove the prerender (2) from `build:site`; organization
-   and job pages are the app's (`404.html` already starts the app on any address). The
-   home's and `/stats`' titles say no numbers. Check: the build runs offline.
-2. **Done (2026-11-11).** **No deploy after an index.** Remove the deploy hook step (6) and its secret: an index never
-   rebuilds the app. Check: the snapshot workflow succeeds.
-3. **The index format, written down.** `docs/index.md`: each file (`records.json`, `jobs.json`,
-   `counts.json`, `first.json`, `companies/{domain}.json`, `landing/`, `places.json`…), its fields,
-   a `version` in each. The app and the add-on read only what it says.
-4. **The index's address is a setting.** `config.snapshot.path` by default; Menu lets a person
-   point to another index, or none. Check: with none, the app works as a notebook (offline too).
-5. **The index on this repository's Pages.** The indexer publishes with GitHub's token, not a
-   deploy key to a second repository (5); the old address redirects or stays a while.
-6. **Feeds as static files.** The indexer writes the feeds per city, field and organization into
-   the index; feeds of any free-text search go away.
-7. **No Worker.** `/in`, `/field` and the sitemap become the app's pages and a static sitemap
-   (3). Check: old addresses still open their page.
-8. **Optional jobs by hand.** The bot (7) and the crawler (8) run only when started by hand
-   (`workflow_dispatch`), or not at all; list curation (9) went with lists.
-9. **Optional: GitHub Pages instead of Cloudflare.** Once there is no Worker (step 7), the site
-   is static files, and this repository's Pages can serve them with the index: one host, no
-   Cloudflare account, the build a GitHub workflow. What it costs:
-   - no `_headers`: the security headers (HSTS, `nosniff`, `frame-ancestors`, the embed's own
-     policy) go, except what a page's `<meta http-equiv>` can say (its content policy);
-   - no `_redirects`: old addresses (`/company/…`, the old site's 935) redirect in the app
-     (the router, as `/company/[key]` already does), not with a 301 a search engine follows;
-   - `404.html` the same way: the app starts on it (a domain's page answers 404, as now).
-
-## Hosting rules: few, and tried where they run
-
-Hosts differ from their local emulators. On 2026-11-11, a catch-all rewrite for one-part
-addresses (`/:name`, so that `/{domain}` answers 200), after a rewrite of each of the site's
-own names to itself, worked in `wrangler dev` and not in production: Cloudflare skips a
-rewrite to the same path, so `/robots.txt`, `/service-worker.js` and `/embed/joblist-jobs.js`
-got the app's page for ten minutes. Since then a domain's page is served by `404.html`, on
-which the app starts. The fewer rules joblist depends on, the more hosts can serve it: check
-any new one on the host itself (curl its files and their types) right after it is live.
-
-Later, each independent of the rest: the indexer follows Jetstream (changes in minutes);
-the app reads moderation labelers instead of the blocklist; a joblist labeler publishes
-"hiring" on organizations' Bluesky accounts.
+The indexer, the snapshot (a copy of every organization and job, every 6 hours), the
+Worker (pages per city and field, feeds), the crawler, the weekly bot, and Cloudflare: a
+list of organizations and jobs kept by joblist is what joblist is not anymore. Their code
+is in the repository's history.

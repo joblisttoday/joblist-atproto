@@ -2,7 +2,7 @@
 	"userAgent": "joblist.today (+https://joblist.today/llms.txt)",
 	"name": "joblist",
 	"url": "https://joblist.today",
-	"source": "https://github.com/joblisttoday/joblist-atproto",
+	"source": "https://github.com/joblisttoday/joblisttoday",
 	"shareImage": { "path": "/og.png", "width": 1200, "height": 630 },
 	"collections": {
 		"company": "today.joblist.company",
@@ -31,8 +31,7 @@
 		"sheetPeekBelow": 0.3,
 		"sheetFullAbove": 0.72,
 		"copiedMs": 3000,
-		"bare": ["/jobs", "/companies"],
-		"explore": ["/jobs", "/companies"]
+		"bare": ["/jobs"]
 	},
 	"map": {
 		"style": "https://tiles.openfreemap.org/styles/positron",
@@ -92,7 +91,6 @@
 	},
 	"hostedHandles": [".bsky.social"],
 	"embed": {
-		"dir": "companies",
 		"page": "/embed",
 		"scripts": "/embed/",
 		"shown": 20
@@ -100,28 +98,6 @@
 	"quickSearch": {
 		"places": 2000,
 		"shown": { "fields": 2, "cities": 2, "companies": 4, "tags": 2, "places": 3 }
-	},
-	"bluesky": {
-		"file": "bluesky.json",
-		"concurrency": 12
-	},
-	"handles": {
-		"dns": "https://cloudflare-dns.com/dns-query",
-		"timeoutMs": 8000,
-		"concurrency": 12
-	},
-	"workplaces": {
-		"file": "workplaces.json",
-		"perRun": 1500,
-		"concurrency": 2
-	},
-	"ledger": {
-		"file": "offers.json",
-		"keepDays": 30
-	},
-	"versions": {
-		"file": "versions.json",
-		"newAccountDays": 7
 	},
 	"jobs": {
 		"pageSize": 50,
@@ -152,9 +128,6 @@
 		"hybridWords": ["hybrid", "hybride"],
 		"onsiteWords": ["on-site", "onsite", "on site", "in-office", "in office", "office-based", "office based", "in-person", "in person", "sur site", "vor ort"]
 	},
-	"companies": {
-		"pageSize": 100
-	},
 	"companyForm": {
 		"kinds": ["company", "cooperative", "nonprofit", "collective", "project", "public"],
 		"foldAt": 320,
@@ -170,7 +143,7 @@
 		"returnMinutes": 30
 	},
 	"me": { "glance": 3 },
-	"kept": { "max": 500, "namesShown": 5 },
+	"kept": { "max": 500, "namesShown": 5, "boardsPerVisit": 40, "refreshHours": 6 },
 	"jobCollections": {
 		"file": "joblist-collections.json",
 		"fileMaxBytes": 5000000,
@@ -183,52 +156,6 @@
 		"urlMax": 2000,
 		"keyMax": 2500
 	},
-	"landing": {
-		"dir": "landing",
-		"shown": 50,
-		"linked": 20,
-		"pages": 10,
-		"minJobs": { "city": 20, "field": 20, "cityField": 10 },
-		"cityAliases": {
-			"nyc": "new-york",
-			"new-york-city": "new-york",
-			"bangalore": "bengaluru",
-			"munchen": "munich",
-			"koln": "cologne",
-			"wien": "vienna",
-			"ho-chi-minh-city": "ho-chi-minh",
-			"sf": "san-francisco",
-			"washington-dc": "washington",
-			"washington-d-c": "washington",
-			"gurgaon": "gurugram",
-			"bombay": "mumbai"
-		},
-		"slugMax": 60,
-		"cacheSeconds": 1800,
-		"snapshotCacheSeconds": 900,
-		"missingCacheSeconds": 300,
-		"sitemap": "/sitemap-places.xml"
-	},
-	"searchFeed": {
-		"path": "/feed/search.xml",
-		"file": "landing/recent.json",
-		"hours": 24,
-		"rows": 1000,
-		"maxLength": 100
-	},
-	"stats": {
-		"file": "stats.json",
-		"weeks": 104,
-		"cities": 20,
-		"weekCityMin": 3,
-		"minSample": 20,
-		"shownWeeks": 26
-	},
-	"bot": {
-		"minHours": 160,
-		"tag": "joblistweekly",
-		"shown": 3
-	},
 	"links": {
 		"signup": "https://bsky.app",
 		"profile": "https://bsky.app/profile/{handle}",
@@ -239,22 +166,6 @@
 		"hostUrl": "https://gateway.umami.is",
 		"websiteId": "479fa5c4-e9c9-4d8d-85c6-9a88c886dd24",
 		"domains": "joblist.today"
-	},
-	"geocode": {
-		"service": "https://nominatim.openstreetmap.org/search",
-		"delayMs": 1100,
-		"officeBudget": 300,
-		"officeCategories": ["office"],
-		"officeMaxKm": 50,
-		"budget": 1100,
-		"tooWide": ["continent", "country", "state", "region", "province", "state_district", "county"],
-		"cityCountries": ["singapore", "hong kong", "luxembourg", "monaco", "macao", "vatican city", "gibraltar"],
-		"countryWords": ["usa", "us", "uk", "uae", "united states of america", "europe", "asia", "africa", "north america", "south america", "latin america"],
-		"cityRegions": ["JP-13", "CN-SH", "CN-BJ", "CN-TJ", "CN-CQ"],
-		"countryAliases": { "uk": "gb", "usa": "us", "united states": "us", "uae": "ae" },
-		"placesFile": "places-2.json",
-		"officesFile": "offices.json",
-		"ignoreWords": ["hybrid", "on-site", "onsite", "on site", "office", "headquarters", "hq", "multiple locations", "various locations", "flexible", "friendly", "travel required", "jobs?", "global", "worldwide", "international", "distributed", "emea", "apac", "latam", "americas", "amer", "namer", "nordics", "dach", "benelux"]
 	},
 	"travel": {
 		"kmPerHour": { "walk": 5, "bike": 15 },
@@ -268,57 +179,6 @@
 	},
 	"outbox": {
 		"retryMs": 30000
-	},
-	"serviceWorker": {
-		"snapshotWaitMs": 4000,
-		"snapshotFilesKept": 400
-	},
-	"snapshot": {
-		"path": "https://raw.githubusercontent.com/joblisttoday/joblist-snapshot/gh-pages",
-		"everyHours": 6,
-		"companyFiles": 40,
-		"maxAgeHours": 48,
-		"prerenderFiles": ["records.json", "jobs.json", "meta.json", "bluesky.json", "landing/index.json"],
-		"preload": {
-			"page": ["records.json"],
-			"counts": ["records.json", "counts.json"],
-			"company": ["records.json"],
-			"explore": ["first.json", "records.json", "jobs.json"]
-		},
-		"refreshDelayMs": 15000
-	},
-	"crawler": {
-		"service": "https://bsky.social",
-		"maxWritesPerRun": 200,
-		"maxNewCompaniesPerRun": 25,
-		"batchSize": 50,
-		"pauseSeconds": 10,
-		"concurrency": 8,
-		"out": "static/snapshot/crawl",
-		"openJobs": "https://raw.githubusercontent.com/elliottdehn/open-jobs/a6bb3ab9a96d87d02e4369cb97f55a8399e2d965/slugs.json",
-		"search": {
-			"service": "https://api.bsky.app",
-			"queries": [
-				"we're hiring",
-				"we are hiring",
-				"#hiring",
-				"join our team",
-				"open roles",
-				"now hiring",
-				"job opening",
-				"come work with us"
-			],
-			"pages": 5
-		},
-		"bluesky": {
-			"queries": ["careers", "jobs", "hiring", "join our team", "open roles"],
-			"pages": 1,
-			"followersOf": ["joblist.today"],
-			"followerPages": 3,
-			"maxAccounts": 40,
-			"maxConnect": 30,
-			"concurrency": 4
-		}
 	},
 	"jobPost": {
 		"days": 30,

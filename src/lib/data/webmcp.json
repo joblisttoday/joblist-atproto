@@ -34,28 +34,50 @@
 	"tools": [
 		{
 			"name": "search_companies",
-			"description": "Search the companies described on joblist by name, domain, tag or place. Returns up to 20 companies with their website, tags, locations, job board and joblist page.",
+			"description": "Search the organizations the person saved in this browser, by name, domain or tag. Returns up to 20, with their website, tags, job board and joblist page.",
 			"inputSchema": {
 				"type": "object",
 				"properties": {
-					"query": { "type": "string", "description": "Words to match, e.g. 'berlin climate' or 'ableton'." }
+					"query": {
+						"type": "string",
+						"description": "Words to match, e.g. 'berlin climate' or 'ableton'."
+					}
 				},
-				"required": ["query"]
+				"required": [
+					"query"
+				]
 			}
 		},
 		{
 			"name": "search_jobs",
-			"description": "Search open jobs at companies on joblist (job boards as of the last snapshot, refreshed every few hours, and offers posted on joblist). Returns up to 20 jobs, newest first, with title, company, location, pay when known and link to apply.",
+			"description": "Search the open jobs of the organizations the person saved in this browser (read live from their own job boards) and the offers posted on atproto. Returns up to 20 jobs, newest first, with title, organization, location, pay when known and link to apply.",
 			"inputSchema": {
 				"type": "object",
 				"properties": {
-					"query": { "type": "string", "description": "Words in the job title, department or company name, e.g. 'frontend engineer'." },
-					"place": { "type": "string", "description": "A city or country the job location must mention, e.g. 'Berlin'." },
-					"remote": { "type": "boolean", "description": "Only jobs done remotely. With a place: remote jobs open to that place, or naming no limit." },
-					"anywhere": { "type": "boolean", "description": "Only remote jobs that name no country or region they are limited to." },
-					"pay": { "type": "boolean", "description": "Only jobs whose job board says what they pay (salary: min, max, currency, period)." }
+					"query": {
+						"type": "string",
+						"description": "Words in the job title, department or company name, e.g. 'frontend engineer'."
+					},
+					"place": {
+						"type": "string",
+						"description": "A city or country the job location must mention, e.g. 'Berlin'."
+					},
+					"remote": {
+						"type": "boolean",
+						"description": "Only jobs done remotely. With a place: remote jobs open to that place, or naming no limit."
+					},
+					"anywhere": {
+						"type": "boolean",
+						"description": "Only remote jobs that name no country or region they are limited to."
+					},
+					"pay": {
+						"type": "boolean",
+						"description": "Only jobs whose job board says what they pay (salary: min, max, currency, period)."
+					}
 				},
-				"required": ["query"]
+				"required": [
+					"query"
+				]
 			}
 		}
 	]

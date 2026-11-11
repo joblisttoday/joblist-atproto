@@ -1,24 +1,23 @@
 <script>
 	import Icon from './Icon.svelte';
 	import providers from '#lib/data/providers.json';
-	import { detectBoard } from '#lib/ats/detect.js';
-	import { knownBy } from '#lib/models/kept.js';
+	import { boardOfKept, keyOf } from '#lib/models/kept.js';
+	import { offerCount } from '#lib/models/job.js';
 	import { forget, kept } from '#lib/network/kept.svelte.js';
-	import { jobCounts } from '#lib/network/job-counts.svelte.js';
-	import { data } from '#lib/network/network.svelte.js';
+	import { keptJobs } from '#lib/network/kept-jobs.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * The organizations kept in this browser, newest first. One joblist knows leads to its
-	 * page, with its open jobs; another to what this browser finds of it (/me/organization),
-	 * from where it can be suggested to joblist.
-	 * max: only the first ones (at a glance, on /me); tag: only those with this tag.
+	 * The organizations kept in this browser, newest first, each with its open jobs (read
+	 * live from its board, kept-jobs.svelte.js): its page is its domain's (/{domain}), or
+	 * the link's own (/me/organization#url=…) for a board or a profile.
+	 * max: only the first ones; tag: only those with this tag.
 	 * @type {{max?: number, tag?: string}}
 	 */
 	let { max = Infinity, tag = '' } = $props();
 	const shown = $derived(kept.list.filter((k) => !tag || k.tags?.includes(tag)).slice(0, max));
-	const known = $derived(knownBy(data.companies));
-	const counts = $derived(jobCounts());
+	const companies = $derived(new Map(kept.list.map((k, i) => [k.url, keptJobs.companies[i]])));
+	const counts = $derived(new Map([...keptJobs.jobs].map(([key, list]) => [key, offerCount(list)])));
 
 	/** The link, short: its host and path. @param {string} url */
 	function short(url) {
@@ -27,27 +26,28 @@
 	}
 	/** @param {string} id */
 	const provider = (id) => providers.find((p) => p.id === id)?.name || id;
+	/** @param {import('#lib/models/kept.js').Kept} item */
+	const pageOf = (item) => (keyOf(item.url) ? `/${keyOf(item.url)}` : `/me/organization#${new URLSearchParams({ url: item.url })}`);
 </script>
 
 <jl-kept-organizations>
 	<ul>
 		{#each shown as item (item.url)}
-			{@const company = known(item.url)}
-			{@const board = company ? null : detectBoard(item.url)}
-			{@const count = company ? counts.get(company.key) || 0 : 0}
+			{@const company = companies.get(item.url)}
+			{@const board = boardOfKept(item)}
+			{@const count = company ? counts.get(company.key) : undefined}
+			{@const name = item.name || company?.name || short(item.url)}
 			<li>
-				{#if company}
-					<a href="/{company.key}">
-						<span>{item.name || company.name}</span>
-						<small>{count ? t('kept.jobs', { count }) : t('kept.noJobs')}{#if item.tags?.length}{' · '}{item.tags.join(', ')}{/if}</small>
-					</a>
-				{:else}
-					<a href="/me/organization#{new URLSearchParams({ url: item.url })}">
-						<span>{item.name || short(item.url)}</span>
-						<small>{board ? t('kept.board', { provider: provider(board.provider) }) : short(item.url)}{#if item.tags?.length}{' · '}{item.tags.join(', ')}{/if}</small>
-					</a>
-				{/if}
-				<button type="button" onclick={() => forget(item.url)}><Icon name="close" label={t('kept.forget', { name: item.name || company?.name || short(item.url) })} /></button>
+				<a href={pageOf(item)}>
+					<span>{name}</span>
+					<small>
+						{#if count !== undefined}{count ? t('kept.jobs', { count }) : t('kept.noJobs')}
+						{:else if board}{t('kept.board', { provider: provider(board.provider) })}
+						{:else}{short(item.url)}{/if}
+						{#if item.tags?.length}{' · '}{item.tags.join(', ')}{/if}
+					</small>
+				</a>
+				<button type="button" onclick={() => forget(item.url)}><Icon name="close" label={t('kept.forget', { name })} /></button>
 			</li>
 		{/each}
 	</ul>

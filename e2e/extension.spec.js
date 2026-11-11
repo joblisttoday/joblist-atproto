@@ -4,7 +4,7 @@ import { pathToFileURL } from 'node:url';
 /**
  * The add-on's popup (extension/dist, built by test:e2e), on a website, with the browser's
  * add-on API standing in: it reads the page, saves and tags the organization as changes for
- * joblist.today. Whether joblist knows it is asked of the published snapshot.
+ * joblist.today, with its job board; its jobs are read from that board.
  */
 const popup = pathToFileURL(`${process.cwd()}/extension/dist/popup.html`).href;
 const coop = {
@@ -35,18 +35,17 @@ test('the popup reads a website, saves and tags it in this browser', async ({ pa
 	await page.setViewportSize({ width: 400, height: 700 });
 	await expect(page.locator('dl')).toContainText('Lever · acme-design');
 	await expect(page.locator('dl')).toContainText('Instagram · Bluesky');
-	await expect(page.getByRole('link', { name: 'Suggest to joblist' })).toHaveAttribute('href', /\/add\?url=https%3A%2F%2Fwww\.acme-design\.coop/);
-	// joblist answered (the popup is drawn again then): not on joblist.
-	await expect(page.locator('.status')).toContainText('Not on joblist yet');
+	await expect(page.getByRole('link', { name: 'Open on joblist' })).toHaveAttribute('href', 'https://joblist.today/acme-design.coop');
 	await page.getByRole('button', { name: 'Save' }).click();
 	await page.getByLabel('Add a tag').fill('Design');
 	await page.getByLabel('Add a tag').press('Enter');
 	await expect(page.getByRole('button', { name: 'Saved' })).toBeVisible();
 	const changes = await page.evaluate(() => /** @type {any} */ (window).store.changes);
 	expect(changes.map((/** @type {any} */ c) => [c.op, c.url, c.tags])).toEqual([
-		['keep', 'https://www.acme-design.coop', []],
-		['tags', 'https://www.acme-design.coop', ['Design']]
+		['keep', 'https://acme-design.coop', []],
+		['tags', 'https://acme-design.coop', ['Design']]
 	]);
+	expect(changes[0].board).toEqual({ provider: 'lever', id: 'acme-design' });
 });
 
 test('/apps offers the add-on, packed with the site, and how to try it', async ({ page, request }) => {

@@ -41,8 +41,8 @@ export async function resolveDid(actor) {
 }
 
 /**
- * @typedef {{did: string, handle: string, displayName?: string, avatar?: string, verified?: boolean}} Profile
- *   verified: set by the indexer in the snapshot (indexer/handles.js), never by the AppView.
+ * @typedef {{did: string, handle: string, displayName?: string, avatar?: string, followers?: number, verified?: boolean}} Profile
+ *   handle: as the AppView verified it both ways ('handle.invalid' otherwise); verified: false when known not to be.
  */
 
 /** @type {Map<string, Profile>} */
@@ -68,7 +68,8 @@ export async function getProfiles(dids) {
 					did: p.did,
 					handle: p.handle,
 					displayName: p.displayName,
-					avatar: p.avatar
+					avatar: p.avatar,
+					followers: p.followersCount
 				});
 			}
 		} catch {

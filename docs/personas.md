@@ -11,11 +11,11 @@ from where they hire. What people publish (organizations, jobs, on their own
 atproto accounts) is a head start everyone can search, never a requirement:
 the app works with none of it, offline, on any domain.
 
-1. **Search** what joblist knows: jobs, organizations, cities, fields.
+1. **Look up** any organization by its link: its open jobs, from its own board.
 2. **Keep** organizations to watch, any link (a website, a job board, a social
    profile, a group): joblist shows their jobs when it can read them, else it is
    a bookmark to look at. And keep searches, with their new jobs.
-3. **Share**, if they want: publish an organization they kept, so others find it.
+3. **Publish**, an organization itself: its own page and jobs, from its own account.
 
 ## Looking for work
 
@@ -63,11 +63,9 @@ and nothing else.
 ### Company first
 Knows where they want to work, or wants to find out who hires in a city or
 field.
-- **Today:** company pages with their jobs, organizations by tag
-  (`/companies#q=music`), the companies index, a page per city and per field (`/in/berlin`,
-  `/field/design`), which is how search engines bring them here.
-- **Missing:** knowing when an organization they follow opens a job,
-  without a feed reader.
+- **Today:** an organization's page from any link (`/{domain}`), its jobs read live; saved
+  organizations with tags; `/jobs` searches the saved ones' jobs together.
+- **Missing:** knowing when a saved organization opens a job, without opening joblist.
 
 ## Making joblist
 
@@ -104,14 +102,12 @@ Posts jobs for a company, or several.
 
 ### Another app, an AI assistant
 Reads or writes the same records.
-- **Today:** the `today.joblist.*` lexicons, published; the snapshot
-  files, with one small JSON file per organization (linked from its page); Atom feeds for any search; `/llms.txt`, written at each build from
-  `src/lib/data/agents.json`, the lexicons and docs/, with etiquette;
-  WebMCP tools on the site.
+- **Today:** the `today.joblist.*` lexicons, published, and the records in their authors'
+  accounts; `/llms.txt`, written at each build from `src/lib/data/agents.json`, the lexicons
+  and docs/, with etiquette; WebMCP tools on the site (the saved organizations and their jobs).
 - **Missing:** nothing asked for yet.
 
 ### Maintainer
-Keeps the data healthy.
-- **Today:** the crawler, the snapshot's health of each board, a blocklist.
-- **Missing:** a public status page (boards that answer, closed or moved,
-  jobs per board, last run), as vinyl-finder's `/status/`.
+Keeps the tool working.
+- **Today:** the quality gate (Playwright, on live boards), a blocklist of records.
+- **Missing:** knowing when a job board provider changes its API.

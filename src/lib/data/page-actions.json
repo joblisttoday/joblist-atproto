@@ -1,4 +1,3 @@
 {
-	"/jobs": [{"href": "/jobs/new", "label": "nav.post", "icon": "post"}],
-	"/companies": [{"href": "/add", "label": "form.company.title", "icon": "add"}]
+	"/jobs": [{"href": "/jobs/new", "label": "nav.post", "icon": "post"}]
 }

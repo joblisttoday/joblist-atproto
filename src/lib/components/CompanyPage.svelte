@@ -7,7 +7,6 @@
 	import CompanyMap from './CompanyMap.svelte';
 	import CompanyJobs from './CompanyJobs.svelte';
 	import Tabs from './Tabs.svelte';
-	import { jobCounts } from '#lib/network/job-counts.svelte.js';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { data } from '#lib/network/network.svelte.js';
 	import { ATPROTO, boardUrl, mapPoints } from '#lib/models/company.js';
@@ -38,7 +37,7 @@
 			: (company.locations || []).map((l) => [l.name, l.address, l.country].filter(Boolean).join(', ')).filter(Boolean)
 	);
 	const tabs = $derived([
-		{ path: '', icon: /** @type {const} */ ('jobs'), label: t('list.tab.jobs'), count: jobCounts().get(key) ?? (data.postedJobs.get(key)?.length || 0) },
+		{ path: '', icon: /** @type {const} */ ('jobs'), label: t('list.tab.jobs'), count: jobs.length || undefined },
 		{ path: '/places', icon: /** @type {const} */ ('place'), label: t('form.locations'), count: places.length }
 	]);
 	const showJobs = $derived(Boolean(local) || tab === 'jobs');
