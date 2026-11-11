@@ -11,7 +11,7 @@ describe('glanceOf and badgeOf', () => {
 		expect(badgeOf(glanceOf('https://big.com', counts, [])).text).toBe('999+');
 	});
 	it('marks one it knows that is not hiring, and one only kept', () => {
-		expect(badgeOf(glanceOf('https://quiet.org/', counts, [])).text).toBe('✓');
+		expect(badgeOf(glanceOf('https://quiet.org/', counts, []))).toEqual({ text: '✓', color: '#1a7f37' });
 		const kept = [{ url: 'https://coop.example' }, { url: 'https://www.instagram.com/some.coop/' }];
 		expect(badgeOf(glanceOf('https://coop.example/team', counts, kept)).text).toBe('★');
 		expect(badgeOf(glanceOf('https://www.instagram.com/some.coop/', counts, kept)).text).toBe('★');

@@ -1,7 +1,7 @@
 # joblist for Firefox
 
 On any website, its button says at a glance: the organization's open jobs on joblist (a
-number), ✓ when joblist knows it but it is not hiring, ★ when you saved it. Its popup says:
+number, green), a green ✓ when joblist knows it but it is not hiring now, ★ when you only saved it. Its popup says:
 
 - whether this organization is on joblist, its open jobs and the newest of them;
 - the job board it links to, and its social profiles (Bluesky, LinkedIn, Instagram…);

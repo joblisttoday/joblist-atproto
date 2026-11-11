@@ -42,14 +42,15 @@ export function glanceOf(url, counts, kept) {
 }
 
 /**
- * The button's badge: open jobs (hiring), ✓ (joblist knows it), ★ (only kept), or nothing.
+ * The button's badge, green when joblist knows the organization: its open jobs, else ✓;
+ * ★ when only kept here; nothing else.
  * @param {Glance | null} glance
  * @returns {{text: string, color: string}}
  */
 export function badgeOf(glance) {
 	if (!glance) return { text: '', color: '' };
 	if (glance.jobs) return { text: glance.jobs > 999 ? '999+' : String(glance.jobs), color: '#1a7f37' };
-	if (glance.known) return { text: '✓', color: '#666666' };
+	if (glance.known) return { text: '✓', color: '#1a7f37' };
 	if (glance.saved) return { text: '★', color: '#111111' };
 	return { text: '', color: '' };
 }
