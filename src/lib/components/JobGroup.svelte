@@ -4,9 +4,10 @@
 
 	/**
 	 * A group of jobs: an organization's (key: a link to its page), or a team's on an organization's page.
-	 * @type {{key?: string, name: string, jobs: import('#lib/ats/job.js').Job[]}}
+	 * onselect: a job opens in the page (a dialog).
+	 * @type {{key?: string, name: string, jobs: import('#lib/ats/job.js').Job[], onselect?: (job: import('#lib/ats/job.js').Job) => void}}
 	 */
-	let { key, name, jobs } = $props();
+	let { key, name, jobs, onselect } = $props();
 	// Jobs are rendered only once opened: a group can hold hundreds.
 	let open = $state(false);
 </script>
@@ -15,7 +16,7 @@
 	<details bind:open>
 		<summary>{name} <small>{formatNumber(jobs.length)}</small></summary>
 		{#if open}
-			<ul>{#each jobs as job (job.url)}<li><JobItem {job} /></li>{/each}</ul>
+			<ul>{#each jobs as job (job.url)}<li><JobItem {job} onselect={onselect && (() => onselect(job))} /></li>{/each}</ul>
 			{#if key}<p><a href="/company/{key}">{t('jobs.aboutCompany', { name })}</a></p>{/if}
 		{/if}
 	</details>

@@ -1,6 +1,8 @@
 <script>
 	import Icon from './Icon.svelte';
 	import JobItem from './JobItem.svelte';
+	import JobsDialog from './JobsDialog.svelte';
+	import { openJob, showJob } from '#lib/navigation/job-open.svelte.js';
 	import JobsMap from './JobsMap.svelte';
 	import ViewSwitch from './ViewSwitch.svelte';
 	import { pageView } from '#lib/navigation/page-view.svelte.js';
@@ -66,7 +68,7 @@
 			{:else}
 				<ul>
 					{#each page.jobs as job (job.url)}
-						<li><JobItem {job} company={page.names[job.company] || job.company} /></li>
+						<li><JobItem {job} company={page.names[job.company] || job.company} onselect={() => showJob(job)} selected={openJob()?.url === job.url} /></li>
 					{/each}
 				</ul>
 			{/if}
@@ -96,6 +98,7 @@
 					</ul>
 				</section>
 			{/if}
+			<JobsDialog jobs={page.jobs} {names} />
 		</jl-landing-page>
 {:else}
 	<!-- No page here (too few jobs): what it would be, why not, and where its jobs still are. -->

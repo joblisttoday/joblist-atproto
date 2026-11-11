@@ -9,6 +9,8 @@ declare global {
 		interface PageState {
 			job?: import('#lib/ats/job.js').Job;
 			picked?: string[];
+			/** The job open came from a link to it: closing it stays on the page. */
+			linked?: boolean;
 		}
 		// interface Platform {}
 	}

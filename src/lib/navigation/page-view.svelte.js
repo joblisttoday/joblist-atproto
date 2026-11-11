@@ -1,4 +1,7 @@
 import { replaceState } from '$app/navigation';
+import { page as route } from '$app/state';
+import { untrack } from 'svelte';
+import config from '#lib/data/config.json';
 import { keepAddress, readAddress } from './address.js';
 import { readView, viewParam } from './explore-view.js';
 
@@ -16,6 +19,10 @@ export function pageView(page, views = ['list', 'grid', 'map']) {
 		return v && views.includes(v) ? v : null;
 	};
 	const state = $state({ view: allowed(readAddress(['view']).get('view')) || allowed(readView(page, 'grid')) || 'grid' });
-	$effect(() => keepAddress({ view: state.view === 'grid' ? '' : state.view }, (url) => replaceState(url, {})));
+	// The job open over the page (job-open.svelte.js) stays open, and in the address.
+	$effect(() => {
+		const view = state.view === 'grid' ? '' : state.view;
+		untrack(() => keepAddress({ view, [config.jobs.jobParam]: route.state.job?.url || readAddress([config.jobs.jobParam]).get(config.jobs.jobParam) }, (url) => replaceState(url, route.state)));
+	});
 	return state;
 }

@@ -2,6 +2,8 @@
 	import config from '#lib/data/config.json';
 	import JobFilters from './JobFilters.svelte';
 	import JobGroup from './JobGroup.svelte';
+	import JobsDialog from './JobsDialog.svelte';
+	import { openJob, showJob } from '#lib/navigation/job-open.svelte.js';
 	import { byTeam } from '#lib/models/team.js';
 	import JobItem from './JobItem.svelte';
 	import { getJobs } from '#lib/ats/index.js';
@@ -27,7 +29,8 @@
 	 * actions: shown under the filters.
 	 * search: show the filters (false when the page has its own search).
 	 * grouped: by organization, or by team on one organization's page.
-	 * onselect, selected: open a job in the page (the explorer), and which one is open.
+	 * onselect, selected: open a job in the page (the explorer), and which one is open;
+	 *   by default, a job opens in a dialog over the list (JobsDialog).
 	 * @type {{
 	 *   companies: import('#lib/models/company.js').Company[],
 	 *   careers?: boolean,
@@ -58,13 +61,18 @@
 		actions,
 		search = true,
 		grouped = $bindable(false),
-		onselect,
-		selected = '',
+		onselect: pageSelect,
+		selected: pageSelected = '',
 		places: suggested = $bindable([]),
 		quick = false,
 		source
 	} = $props();
 	const PAGE = config.jobs.pageSize;
+	// The page opens a job itself (the explorer), or it opens in the dialog over the list.
+	const own = $derived(!pageSelect);
+	/** @param {import('#lib/ats/job.js').Job} job */
+	const onselect = (job) => (pageSelect || showJob)(job);
+	const selected = $derived(own ? openJob()?.url || '' : pageSelected);
 
 	/** Jobs read from job boards (or their snapshot). */
 	/** @type {import('#lib/ats/job.js').Job[]} */
@@ -226,7 +234,7 @@
 		<ul>
 			{#each groups as [key, list] (key)}
 				<li>
-					{#if single}<JobGroup name={key || t('jobs.team.none')} jobs={list} />{:else}<JobGroup {key} name={names.get(key) || key} jobs={list} />{/if}
+					{#if single}<JobGroup name={key || t('jobs.team.none')} jobs={list} {onselect} />{:else}<JobGroup {key} name={names.get(key) || key} jobs={list} {onselect} />{/if}
 				</li>
 			{/each}
 		</ul>
@@ -238,7 +246,7 @@
 						{job}
 						company={single ? undefined : names.get(job.company)}
 						fresh={sinceTime > 0 && time(job.published) > sinceTime}
-						onselect={onselect && (() => onselect(job))}
+						onselect={() => onselect(job)}
 						selected={selected === job.url}
 					/>
 				</li>
@@ -281,6 +289,7 @@
 			</details>
 		{/if}
 	{/if}
+	{#if own}<JobsDialog jobs={filtered} all={jobs} {names} done={!loading} />{/if}
 </jl-jobs>
 
 <style>

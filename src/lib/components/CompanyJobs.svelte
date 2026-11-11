@@ -1,15 +1,15 @@
 <script>
 	import ExploreSearch from './ExploreSearch.svelte';
-	import JobDialog from './JobDialog.svelte';
 	import Jobs from './Jobs.svelte';
 	import JobsMap from './JobsMap.svelte';
 	import ViewSwitch from './ViewSwitch.svelte';
 	import { untrack } from 'svelte';
 	import config from '#lib/data/config.json';
 	import { page } from '$app/state';
-	import { pushState, replaceState } from '$app/navigation';
+	import { replaceState } from '$app/navigation';
+	import { openJob } from '#lib/navigation/job-open.svelte.js';
 	import { readView, viewParam } from '#lib/navigation/explore-view.js';
-	import { addressOf, keepAddress, readAddress } from '#lib/navigation/address.js';
+	import { keepAddress, readAddress } from '#lib/navigation/address.js';
 	import { fromParams, searchState } from '#lib/models/saved-search.js';
 	import { session } from '#lib/auth/session.svelte.js';
 
@@ -44,26 +44,8 @@
 	// Nothing found has a place: no map to show (once the jobs are read).
 	const mapless = $derived(!busy && jobs.length > 0 && !results.some((job) => job.point));
 
-	const selected = $derived(page.state.job ?? null);
-
-	/** @param {import('#lib/ats/job.js').Job} job */
-	function select(job) {
-		pushState(addressOf(stateOf(job.url)), { job: $state.snapshot(job) });
-	}
-
-	function back() {
-		history.back();
-	}
-
-	// Opened from a link to one of its jobs: open it once the jobs are read.
-	let linked = params.get(config.jobs.jobParam);
-	$effect(() => {
-		if (!linked || !session.ready) return;
-		const job = jobs.find((j) => j.url === linked);
-		if (!job && (busy || !jobs.length)) return;
-		linked = null;
-		if (job) replaceState(location.href, { job: $state.snapshot(job) });
-	});
+	// A job opens in a dialog over them (Jobs, job-open.svelte.js).
+	const selected = $derived(openJob());
 
 	// The search and the view stay in the address, with the job open (once the session is ready:
 	// a sign-in comes back with its own answer).
@@ -95,14 +77,9 @@
 			bind:results
 			bind:places
 			bind:busy
-			onselect={select}
-			selected={selected?.url}
 		>
 		</Jobs>
 	</jl-company-jobs-list>
-	{#if selected}
-		<JobDialog job={selected} jobs={results} all={jobs} {names} onback={back} onselect={select} />
-	{/if}
 </jl-company-jobs>
 
 <style>
