@@ -28,10 +28,12 @@ they heard of, a studio's Instagram, a lab's website.
   is its handle, its job board's name and open jobs (read live, one board), where
   they are; "Suggest to joblist" opens the add form filled in with all of it.
   A Save on each organization's page and card.
-- **Missing:** the new jobs of kept organizations counted like a search's; a
-  browser extension that tells, on any site, whether joblist knows it and its
-  jobs, and keeps it in one tap; a website's own name, links and board (websites
-  do not answer browsers: the bookmarklet or an extension reads them in the page).
+  The Firefox add-on (extension/), on any website: whether joblist knows it and
+  its open jobs, its job board and social profiles read in the page; save and tag
+  it (one list with "Your organizations", synced when joblist.today is open) or
+  suggest it to joblist, filled in.
+- **Missing:** the new jobs of kept organizations counted like a search's; editing
+  tags on the site (the add-on does); the add-on on addons.mozilla.org and in Chrome.
 
 ### Near home
 Wants a job they can reach by bike or on foot.

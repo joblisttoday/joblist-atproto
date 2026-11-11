@@ -1,12 +1,15 @@
 import config from '#lib/data/config.json';
 import { localKey } from '#lib/local/space.js';
-import { keptUrl, keyOf, readKept, withKept } from '#lib/models/kept.js';
+import { keptUrl, keyOf, readKept, savedToKept, withKept, withTags } from '#lib/models/kept.js';
 import { SAVED, localLists, removeLocalList } from './local-lists.svelte.js';
 
 /**
  * The organizations kept in this browser (models/kept.js): private, never sent anywhere.
  * They began as a private list, "Saved organizations": its organizations are kept here,
  * once, and the list is gone.
+ * The joblist browser add-on (extension/) keeps them too, on any website: when this site
+ * is open, it makes its changes here and tells ("joblist:kept"), and is told of each change
+ * made here ("joblist:kept-written"), so both are one list.
  * @typedef {import('#lib/models/kept.js').Kept} Kept
  */
 
@@ -21,11 +24,7 @@ function read() {
 		return [];
 	}
 	// The first time: the organizations saved before, as links to their domains.
-	const saved = localLists.records.find((r) => r.rkey === SAVED);
-	/** @type {string[]} */
-	const keys = saved?.value.companies || [];
-	const at = saved?.value.createdAt || '';
-	return readKept(keys.map((key) => ({ url: `https://${key}`, name: '', at })));
+	return savedToKept(localLists.records);
 }
 
 export const kept = $state({ list: read() });
@@ -41,6 +40,20 @@ function write() {
 	} catch {
 		// storage full or blocked: kept until the page closes
 	}
+	if (typeof dispatchEvent === 'function') dispatchEvent(new CustomEvent('joblist:kept-written'));
+}
+
+// The add-on made its changes: read them back.
+if (typeof addEventListener === 'function') addEventListener('joblist:kept', () => (kept.list = read()));
+
+/**
+ * A kept organization's tags, replaced.
+ * @param {string} url
+ * @param {string[]} tags
+ */
+export function tagKept(url, tags) {
+	kept.list = withTags(kept.list, url, tags);
+	write();
 }
 
 /**

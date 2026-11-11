@@ -31,3 +31,6 @@ vite.config.ts.timestamp-*
 # Playwright
 /test-results/
 /playwright-report/
+
+# Browser add-on (scripts/build-extension.js)
+/extension/dist

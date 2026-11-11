@@ -157,6 +157,14 @@ Configuration lives in data files, not code:
 - [`src/lib/data/need-lists.json`](src/lib/data/need-lists.json): lists by need, from the commons map (`scripts/curate-lists.js`)
 - [`scripts/starter-lists.json`](scripts/starter-lists.json): lists created by the import
 
+The Firefox add-on ([`extension/`](extension/README.md)): on any website, whether the
+organization is on joblist and hires, its job board and social profiles; save and tag it
+in the browser (one list with "Your organizations"), or suggest it.
+
+```sh
+npm run build:extension           # extension/dist: load its manifest.json in about:debugging
+```
+
 The Worker locally, on a built site (`npm run build:site`), reading a
 snapshot from `static/snapshot` served by any static server (set
 `SNAPSHOT=http://127.0.0.1:<port>` in `.dev.vars`; without it, the published

@@ -12,11 +12,11 @@
 	 * The organizations kept in this browser, newest first. One joblist knows leads to its
 	 * page, with its open jobs; another to what this browser finds of it (/me/organization),
 	 * from where it can be suggested to joblist.
-	 * max: only the first ones (at a glance, on /me).
-	 * @type {{max?: number}}
+	 * max: only the first ones (at a glance, on /me); tag: only those with this tag.
+	 * @type {{max?: number, tag?: string}}
 	 */
-	let { max = Infinity } = $props();
-	const shown = $derived(kept.list.slice(0, max));
+	let { max = Infinity, tag = '' } = $props();
+	const shown = $derived(kept.list.filter((k) => !tag || k.tags?.includes(tag)).slice(0, max));
 	const known = $derived(knownBy(data.companies));
 	const counts = $derived(jobCounts());
 
@@ -39,12 +39,12 @@
 				{#if company}
 					<a href="/company/{company.key}">
 						<span>{item.name || company.name}</span>
-						<small>{count ? t('kept.jobs', { count }) : t('kept.noJobs')}</small>
+						<small>{count ? t('kept.jobs', { count }) : t('kept.noJobs')}{#if item.tags?.length}{' · '}{item.tags.join(', ')}{/if}</small>
 					</a>
 				{:else}
 					<a href="/me/organization#{new URLSearchParams({ url: item.url })}">
 						<span>{item.name || short(item.url)}</span>
-						<small>{board ? t('kept.board', { provider: provider(board.provider) }) : short(item.url)}</small>
+						<small>{board ? t('kept.board', { provider: provider(board.provider) }) : short(item.url)}{#if item.tags?.length}{' · '}{item.tags.join(', ')}{/if}</small>
 					</a>
 				{/if}
 				<button type="button" onclick={() => forget(item.url)}><Icon name="close" label={t('kept.forget', { name: item.name || company?.name || short(item.url) })} /></button>

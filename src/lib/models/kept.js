@@ -5,7 +5,8 @@ import { detectBoard } from '#lib/ats/detect.js';
  * Organizations someone keeps to watch, private in their browser: any link (a website,
  * a job board, a social profile, a group), with a name if they gave one. joblist shows
  * an organization it knows (by the link's domain, or its job board), else the link.
- * @typedef {{url: string, name: string, at: string}} Kept
+ * @typedef {{url: string, name: string, at: string, tags?: string[]}} Kept
+ *   tags: private words to sort them (design, coop, berlin), never published
  * @typedef {{key: string, name: string, jobBoard?: import('./company.js').JobBoard}} Known an organization joblist knows
  * @typedef {{link: string, suggest: string, account?: {handle: string, avatar?: string, followers?: number}}} Local
  *   one only a browser knows, on its page: the link it is kept by, the add form filled in, its Bluesky account
@@ -14,6 +15,22 @@ import { detectBoard } from '#lib/ats/detect.js';
 const PLATFORMS = new Set(platforms.hosts);
 const MAX_URL = 2048;
 const MAX_NAME = 200;
+const MAX_TAGS = 20;
+const MAX_TAG = 40;
+
+/**
+ * Tags as kept: lowercase words (inner spaces as "-"), each once, at most 20.
+ * @param {unknown} tags
+ * @returns {string[]}
+ */
+export function cleanTags(tags) {
+	if (!Array.isArray(tags)) return [];
+	const words = tags
+		.filter((t) => typeof t === 'string')
+		.map((t) => t.trim().toLowerCase().replace(/^#/, '').replace(/\s+/g, '-').slice(0, MAX_TAG))
+		.filter(Boolean);
+	return [...new Set(words)].slice(0, MAX_TAGS);
+}
 
 /** A link's host, without "www.". @param {URL} url */
 const hostOf = (url) => url.hostname.toLowerCase().replace(/^www\./, '');
@@ -90,7 +107,13 @@ export function readKept(data) {
 	for (const item of data) {
 		const url = typeof item?.url === 'string' ? keptUrl(item.url) : null;
 		if (!url || list.some((k) => k.url === url)) continue;
-		list.push({ url, name: typeof item.name === 'string' ? item.name.trim().slice(0, MAX_NAME) : '', at: typeof item.at === 'string' ? item.at : '' });
+		const tags = cleanTags(item.tags);
+		list.push({
+			url,
+			name: typeof item.name === 'string' ? item.name.trim().slice(0, MAX_NAME) : '',
+			at: typeof item.at === 'string' ? item.at : '',
+			...(tags.length ? { tags } : {})
+		});
 	}
 	return list;
 }
@@ -107,4 +130,68 @@ export function withKept(list, url, name, at) {
 	const found = list.find((k) => k.url === url);
 	if (found) return list.map((k) => (k === found ? { ...k, name: name.trim().slice(0, MAX_NAME) || k.name } : k));
 	return [{ url, name: name.trim().slice(0, MAX_NAME), at }, ...list];
+}
+
+/**
+ * A kept organization's tags, replaced (none: no tags).
+ * @param {Kept[]} list
+ * @param {string} url
+ * @param {string[]} tags
+ * @returns {Kept[]}
+ */
+export function withTags(list, url, tags) {
+	const clean = cleanTags(tags);
+	return list.map((k) => {
+		if (k.url !== url) return k;
+		const { tags: _, ...rest } = k;
+		return clean.length ? { ...rest, tags: clean } : rest;
+	});
+}
+
+/**
+ * Changes made away from the list (the browser add-on, while joblist.today is not open),
+ * in the order they were made: keep (with a name and tags), forget, or tag.
+ * @typedef {{op: 'keep', url: string, name?: string, tags?: string[], at: string} | {op: 'forget', url: string, at: string} | {op: 'tags', url: string, tags: string[], at: string}} Change
+ */
+
+/**
+ * The list once the changes are made, in order; a change that is not one is left out.
+ * @param {Kept[]} list
+ * @param {unknown} changes
+ * @returns {Kept[]}
+ */
+export function applyChanges(list, changes) {
+	let next = list;
+	for (const change of Array.isArray(changes) ? changes : []) {
+		const url = typeof change?.url === 'string' ? keptUrl(change.url) : null;
+		if (!url) continue;
+		const at = typeof change.at === 'string' ? change.at : '';
+		if (change.op === 'keep') {
+			next = withKept(next, url, typeof change.name === 'string' ? change.name : '', at);
+			if (Array.isArray(change.tags)) next = withTags(next, url, change.tags);
+		} else if (change.op === 'forget') next = next.filter((k) => k.url !== url);
+		else if (change.op === 'tags') next = withTags(next, url, change.tags);
+	}
+	return next;
+}
+
+/** Every tag of the kept organizations, the most used first. @param {Kept[]} list */
+export function keptTags(list) {
+	/** @type {Map<string, number>} */
+	const counts = new Map();
+	for (const k of list) for (const tag of k.tags || []) counts.set(tag, (counts.get(tag) || 0) + 1);
+	return [...counts].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([tag]) => tag);
+}
+
+/**
+ * The organizations saved before (a private list, "Saved organizations", rkey "lsaved"),
+ * as kept ones: links to their domains.
+ * @param {unknown} lists the private lists as stored (joblist.lists.v1)
+ * @returns {Kept[]}
+ */
+export function savedToKept(lists) {
+	const saved = Array.isArray(lists) ? lists.find((r) => r?.rkey === 'lsaved') : null;
+	const keys = Array.isArray(saved?.value?.companies) ? saved.value.companies : [];
+	const at = typeof saved?.value?.createdAt === 'string' ? saved.value.createdAt : '';
+	return readKept(keys.map((/** @type {unknown} */ key) => ({ url: `https://${key}`, name: '', at })));
 }

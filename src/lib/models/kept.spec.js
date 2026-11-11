@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { keptUrl, keyOf, knownBy, readKept, withKept } from './kept.js';
+import { applyChanges, savedToKept, cleanTags, keptTags, keptUrl, keyOf, knownBy, readKept, withKept, withTags } from './kept.js';
 
 describe('keptUrl', () => {
 	it('reads a link, a bare domain too; a home is its domain', () => {
@@ -46,5 +46,38 @@ describe('readKept and withKept', () => {
 		expect(more.map((k) => k.url)).toEqual(['https://beta.io', 'https://acme.org']);
 		expect(withKept(more, 'https://acme.org', 'Acme Co', 't')[1].name).toBe('Acme Co');
 		expect(withKept(more, 'https://acme.org', '', 't')[1].name).toBe('Acme');
+	});
+});
+
+describe('tags', () => {
+	it('are lowercase words, each once', () => {
+		expect(cleanTags([' Design ', '#coop', 'design', 'Open Source', 3, ''])).toEqual(['design', 'coop', 'open-source']);
+		const list = readKept([{ url: 'acme.org', tags: ['Coop'] }, { url: 'beta.io', tags: ['coop', 'design'] }]);
+		expect(list[0].tags).toEqual(['coop']);
+		expect(keptTags(list)).toEqual(['coop', 'design']);
+		expect(withTags(list, 'https://acme.org', [])[0]).toEqual({ url: 'https://acme.org', name: '', at: '' });
+	});
+});
+
+describe('applyChanges', () => {
+	it('makes the add-on changes in order, leaving out what is not one', () => {
+		const list = readKept([{ url: 'acme.org', name: 'Acme' }]);
+		const next = applyChanges(list, [
+			{ op: 'keep', url: 'beta.io', name: 'Beta', tags: ['Design'], at: 't1' },
+			{ op: 'tags', url: 'https://acme.org', tags: ['coop'], at: 't2' },
+			{ op: 'forget', url: 'https://beta.io', at: 't3' },
+			{ op: 'keep', url: 'nope', at: 't4' },
+			{ op: 'what', url: 'https://acme.org' }
+		]);
+		expect(next).toEqual([{ url: 'https://acme.org', name: 'Acme', at: '', tags: ['coop'] }]);
+		expect(applyChanges(list, 'nonsense')).toBe(list);
+	});
+});
+
+describe('savedToKept', () => {
+	it('keeps the organizations saved before, by their domains', () => {
+		const lists = [{ rkey: 'lother', value: { companies: ['x.org'] } }, { rkey: 'lsaved', value: { companies: ['acme.org', 'acme.org'], createdAt: 't' } }];
+		expect(savedToKept(lists)).toEqual([{ url: 'https://acme.org', name: '', at: 't' }]);
+		expect(savedToKept(null)).toEqual([]);
 	});
 });
