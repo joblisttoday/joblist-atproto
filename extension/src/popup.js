@@ -209,7 +209,13 @@ async function start() {
 			found.state === 'in' ? h('p', { class: 'more-actions' }, link(site(`/add?key=${encodeURIComponent(found.key)}`), {}, t('edit'))) : null,
 			h('footer', {}, h('small', {}, t('private')), link(site('/me/organizations'), {}, t('yours')))
 		];
+		// Drawn again when joblist answers: what is being typed in the tag field stays.
+		const typing = /** @type {HTMLInputElement | null} */ (app.querySelector('.tags input'));
+		const typed = typing?.value || '';
+		const focused = typing !== null && document.activeElement === typing;
 		app.replaceChildren(...parts.filter((part) => part !== null));
+		/** @type {HTMLInputElement} */ (tagInput).value = typed;
+		if (focused) tagInput.focus();
 	}
 
 	/** Keeps it, its tags kept or changed. @param {string[]} tags */

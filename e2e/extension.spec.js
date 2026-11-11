@@ -36,6 +36,8 @@ test('the popup reads a website, saves and tags it in this browser', async ({ pa
 	await expect(page.locator('dl')).toContainText('Lever · acme-design');
 	await expect(page.locator('dl')).toContainText('Instagram · Bluesky');
 	await expect(page.getByRole('link', { name: 'Suggest to joblist' })).toHaveAttribute('href', /\/add\?url=https%3A%2F%2Fwww\.acme-design\.coop/);
+	// joblist answered (the popup is drawn again then): not on joblist.
+	await expect(page.locator('.status')).toContainText('Not on joblist yet');
 	await page.getByRole('button', { name: 'Save' }).click();
 	await page.getByLabel('Add a tag').fill('Design');
 	await page.getByLabel('Add a tag').press('Enter');
