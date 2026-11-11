@@ -1,6 +1,5 @@
 <script>
 	import '../app.css';
-	import { afterNavigate } from '$app/navigation';
 	import favicon from '#lib/assets/favicon.svg';
 	import config from '#lib/data/config.json';
 	import Header from '#lib/components/Header.svelte';
@@ -9,7 +8,6 @@
 	import { startOutbox } from '#lib/network/outbox.svelte.js';
 	import { initSession } from '#lib/auth/session.svelte.js';
 	import { startNetwork } from '#lib/network/network.svelte.js';
-	import { history } from '#lib/navigation/history.svelte.js';
 	import { i18n, t } from '#lib/i18n/index.svelte.js';
 	import { registerTools } from '#lib/webmcp.js';
 
@@ -20,10 +18,6 @@
 	startOutbox();
 	startNetwork();
 	registerTools();
-
-	afterNavigate(({ from }) => {
-		if (from) history.inApp = true;
-	});
 
 	$effect(() => {
 		document.documentElement.lang = i18n.locale;
