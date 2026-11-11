@@ -24,10 +24,15 @@
 * {
 	box-sizing: border-box;
 }
+/* A popup takes the size of its content: a fixed width (never one from the viewport,
+   which is nothing while the browser measures it, and leaves a thin empty popup). */
+html,
+body {
+	width: 22rem;
+	min-width: 22rem;
+}
 body {
 	margin: 0;
-	width: 22rem;
-	max-width: 100vw;
 	background: var(--bg);
 	color: var(--fg);
 	font: 14px/1.45 system-ui, sans-serif;

@@ -1,7 +1,7 @@
 {
 	"manifest_version": 3,
 	"name": "joblist",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"description": "On any website: is this organization on joblist, how many jobs it has open, where it is on social networks. Save it and tag it, in your browser only.",
 	"homepage_url": "https://joblist.today",
 	"icons": {

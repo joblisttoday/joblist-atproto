@@ -27,8 +27,12 @@ test('the popup reads a website, saves and tags it in this browser', async ({ pa
 			}
 		});
 	}, coop);
+	// As a browser measures a popup: almost no room. It keeps its own width, never the viewport's.
+	await page.setViewportSize({ width: 20, height: 600 });
 	await page.goto(popup);
 	await expect(page.getByRole('heading', { level: 1 })).toHaveText('Acme Design Coop');
+	expect(await page.evaluate(() => document.body.getBoundingClientRect().width)).toBeGreaterThan(300);
+	await page.setViewportSize({ width: 400, height: 700 });
 	await expect(page.locator('dl')).toContainText('Lever · acme-design');
 	await expect(page.locator('dl')).toContainText('Instagram · Bluesky');
 	await expect(page.getByRole('link', { name: 'Suggest to joblist' })).toHaveAttribute('href', /\/add\?url=https%3A%2F%2Fwww\.acme-design\.coop/);
