@@ -21,7 +21,7 @@
 	/**
 	 * A domain's page, joblist.today/{domain}: a handle is a domain, and an organization is known
 	 * by its domain. An organization joblist knows: its page (with its Bluesky account when the
-	 * domain is its handle), in tabs (/{domain}, /{domain}/places, /{domain}/history). Else an account:
+	 * domain is its handle), in tabs (/{domain}, /{domain}/places). Else an account:
 	 * who it is, then the jobs it posted (/{handle}): its own things, not its edits of others'.
 	 * Else a domain: what this browser finds of it (its local profile). Else not found.
 	 * @type {{children: import('svelte').Snippet}}
@@ -29,8 +29,8 @@
 	let { children } = $props();
 	const handle = $derived(page.params.handle || '');
 	const company = $derived(data.companies.get(handle));
-	// An organization's tab, from its address: /{domain}, /{domain}/places, /{domain}/history.
-	const tab = $derived(/** @type {'jobs' | 'places' | 'history'} */ (page.route.id?.endsWith('/places') ? 'places' : page.route.id?.endsWith('/history') ? 'history' : 'jobs'));
+	// An organization's tab, from its address: /{domain}, /{domain}/places.
+	const tab = $derived(/** @type {'jobs' | 'places'} */ (page.route.id?.endsWith('/places') ? 'places' : 'jobs'));
 	// Tabs only an organization has: an account's page is not found there.
 	const companyOnly = $derived(tab !== 'jobs');
 	// The same organization added twice: its page is the kept one's.

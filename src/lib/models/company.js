@@ -90,13 +90,27 @@ export function byRecent(versions) {
 }
 
 /**
- * Pick the version shown for a company, like a wiki page:
- * the organization's own record, otherwise the most recent edit by anyone.
+ * The versions that count for a company: the organization's own record, else joblist's
+ * starter records (config.bots); someone else's only while neither exists (a suggestion,
+ * how a new organization comes in). Nobody else rewrites an organization's page.
+ * @param {RepoRecord[]} versions
+ * @param {Map<string, Handle>} profiles
+ * @returns {RepoRecord[]} the most recent first
+ */
+export function countingVersions(versions, profiles) {
+	const own = versions.filter((v) => isOwnRecord(v, profiles));
+	if (own.length) return byRecent(own);
+	const starter = versions.filter((v) => config.bots.includes(v.did));
+	return byRecent(starter.length ? starter : versions);
+}
+
+/**
+ * The version shown for a company: its own record, else joblist's, else a suggestion.
  * @param {RepoRecord[]} versions
  * @param {Map<string, Handle>} profiles
  */
 export function pickVersion(versions, profiles) {
-	return versions.find((v) => isOwnRecord(v, profiles)) || byRecent(versions)[0];
+	return countingVersions(versions, profiles)[0];
 }
 
 /**
@@ -129,40 +143,6 @@ export function kindOf(kind) {
 	return typeof kind === 'string' && config.companyForm.kinds.includes(kind) ? kind : '';
 }
 
-/** Fields of a company record compared between versions, with their form label. */
-export const FIELDS = /** @type {const} */ ([
-	['name', 'form.name'],
-	['url', 'form.website'],
-	['description', 'form.description'],
-	['kind', 'form.kind'],
-	['tags', 'form.tags'],
-	['locations', 'form.locations'],
-	['jobBoard', 'form.section.jobs'],
-	['links', 'form.links']
-]);
-
-/**
- * Which fields differ between two versions (as form label keys).
- * @param {RepoRecord} a
- * @param {RepoRecord} b
- */
-export function changedFields(a, b) {
-	return FIELDS.filter(([field]) => JSON.stringify(a.value[field]) !== JSON.stringify(b.value[field])).map(
-		([, label]) => label
-	);
-}
-
-/**
- * A version's content saved again as the signed-in person's own version
- * (restore an older version, or confirm a bot's one).
- * @param {Record<string, any>} value the content to save
- * @param {string} [createdAt] when this person first described the company
- * @param {string} [now]
- */
-export function copyRecord(value, createdAt, now = new Date().toISOString()) {
-	return { ...value, $type: 'today.joblist.company', createdAt: createdAt || now, updatedAt: now };
-}
-
 /**
  * @param {RepoRecord[]} versions all records sharing one key
  * @param {Map<string, Handle>} profiles
@@ -187,7 +167,7 @@ export function toCompany(versions, profiles) {
 		unchecked: !isOwnRecord(record, profiles) && isUnchecked(record, versions),
 		editedAt: editedAt(record),
 		record,
-		versions: byRecent(versions)
+		versions: countingVersions(versions, profiles)
 	};
 }
 

@@ -12,7 +12,6 @@ qualityTests([
 	{ name: 'organizations', path: '/companies', touch },
 	{ name: 'organization', path: '/ableton.com', touch },
 	{ name: 'organization places', path: '/ableton.com/places', touch },
-	{ name: 'organization history', path: '/ableton.com/history', touch },
 	{ name: 'profile', path: '/joblist.today', touch },
 	{ name: 'me', path: '/me', touch },
 	{ name: 'my lists', path: '/me/lists', touch },

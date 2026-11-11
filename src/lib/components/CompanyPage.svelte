@@ -5,7 +5,6 @@
 	import CompanyHiring from './CompanyHiring.svelte';
 	import CompanyInvite from './CompanyInvite.svelte';
 	import CompanyMap from './CompanyMap.svelte';
-	import CompanyVersions from './CompanyVersions.svelte';
 	import CompanyJobs from './CompanyJobs.svelte';
 	import Tabs from './Tabs.svelte';
 	import { jobCounts } from '#lib/network/job-counts.svelte.js';
@@ -20,11 +19,11 @@
 	 * this browser does (local: /me/organization#url=…, or a domain joblist does not know):
 	 * its header, then its tabs, each its own address: its jobs (/{domain}: searched, by team,
 	 * on a map, opened in a dialog; then "Is this your organization?" and its jobs on your
-	 * site), its places (/{domain}/places, on a map) and its versions (/{domain}/history).
+	 * site), and its places (/{domain}/places, on a map).
 	 * A local one has no tabs: its jobs, then where they are (from its jobs); it is kept and
 	 * suggested to joblist instead of edited.
 	 * tab: the one shown. address: what its address keeps besides its jobs' search (a local one's #url=…).
-	 * @type {{company: import('#lib/models/company.js').Company, local?: import('#lib/models/kept.js').Local, address?: Record<string, string>, tab?: 'jobs' | 'places' | 'history'}}
+	 * @type {{company: import('#lib/models/company.js').Company, local?: import('#lib/models/kept.js').Local, address?: Record<string, string>, tab?: 'jobs' | 'places'}}
 	 */
 	let { company, local, address = {}, tab = 'jobs' } = $props();
 	const key = $derived(company.key);
@@ -40,8 +39,7 @@
 	);
 	const tabs = $derived([
 		{ path: '', icon: /** @type {const} */ ('jobs'), label: t('list.tab.jobs'), count: jobCounts().get(key) ?? (data.postedJobs.get(key)?.length || 0) },
-		{ path: '/places', icon: /** @type {const} */ ('place'), label: t('form.locations'), count: places.length },
-		{ path: '/history', icon: /** @type {const} */ ('history'), label: t('company.history'), count: company.versions.length }
+		{ path: '/places', icon: /** @type {const} */ ('place'), label: t('form.locations'), count: places.length }
 	]);
 	const showJobs = $derived(Boolean(local) || tab === 'jobs');
 	const showPlaces = $derived(Boolean(local) || tab === 'places');
@@ -84,11 +82,7 @@
 		</section>
 	{/if}
 
-	{#if local}
-		<p><small>{t('org.how')}</small></p>
-	{:else if tab === 'history'}
-		<CompanyVersions {company} open />
-	{/if}
+	{#if local}<p><small>{t('org.how')}</small></p>{/if}
 </jl-company-page>
 
 <style>

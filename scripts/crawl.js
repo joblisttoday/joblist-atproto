@@ -57,7 +57,7 @@ const { records, profiles } = await crawlRecords();
 /** @type {Map<string, any[]>} */
 const versionsByKey = new Map();
 for (const r of records.company) if (r.value?.name) versionsByKey.set(r.rkey, [...(versionsByKey.get(r.rkey) || []), r]);
-const shown = [...versionsByKey.values()].map((versions) => displayedVersion(versions, profiles)).slice(0, limit);
+const shown = [...versionsByKey.values()].map((versions) => displayedVersion(versions, profiles, bots)).slice(0, limit);
 step(`${versionsByKey.size} companies (${records.company.length} versions) from ${profiles.size} accounts; crawler ${did}; User-Agent ${USER_AGENT}`);
 
 // (a) Health check of the version people see.

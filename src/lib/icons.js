@@ -42,7 +42,6 @@ import Pencil from '@lucide/svelte/icons/pencil';
 import Share2 from '@lucide/svelte/icons/share-2';
 import Trash2 from '@lucide/svelte/icons/trash-2';
 import MapPin from '@lucide/svelte/icons/map-pin';
-import History from '@lucide/svelte/icons/history';
 import MapIcon from '@lucide/svelte/icons/map';
 import LayoutGrid from '@lucide/svelte/icons/layout-grid';
 import Rows3 from '@lucide/svelte/icons/rows-3';
@@ -57,7 +56,6 @@ export const icons = {
 	savedOn: BookmarkCheck,
 	companies: Building2,
 	lists: List,
-	history: History,
 	post: Plus,
 	add: Plus,
 	added: Check,

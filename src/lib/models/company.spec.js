@@ -1,6 +1,6 @@
 import config from '#lib/data/config.json';
 import { describe, expect, it } from 'vitest';
-import { boardUrl, changedFields, copyRecord, editedAt, isUnchecked, pickVersion, toCompany, toDomain, toForm, toRecord, uncheckedLabel } from './company.js';
+import { boardUrl, editedAt, isUnchecked, pickVersion, toCompany, toDomain, toForm, toRecord, uncheckedLabel } from './company.js';
 
 /** @param {string} did @param {string} createdAt */
 const version = (did, createdAt) => ({ did, rkey: 'acme.org', uri: `at://${did}/x/acme.org`, cid: '', value: { name: did, createdAt } });
@@ -99,23 +99,6 @@ describe('toCompany', () => {
 	});
 });
 
-describe('changedFields', () => {
-	it('names the fields that differ', () => {
-		const a = version('did:a', '2026-01-01');
-		const b = { ...a, value: { ...a.value, name: 'other', tags: ['x'] } };
-		expect(changedFields(a, b)).toEqual(['form.name', 'form.tags']);
-		expect(changedFields(a, a)).toEqual([]);
-	});
-});
-
-describe('copyRecord', () => {
-	it('keeps the first creation and sets a new edit time', () => {
-		const record = copyRecord({ name: 'Acme', createdAt: 'old', updatedAt: 'old' }, '2026-01-01', '2026-05-01');
-		expect(record).toMatchObject({ name: 'Acme', createdAt: '2026-01-01', updatedAt: '2026-05-01' });
-		expect(copyRecord({ name: 'Acme' }, undefined, 'now').createdAt).toBe('now');
-	});
-});
-
 describe('toRecord', () => {
 	it('round-trips through the form', () => {
 		const form = { ...toForm(null), name: ' Acme ', url: 'acme.org', tags: ['Food', 'coop', 'food'], provider: 'lever', boardId: 'acme' };
@@ -165,5 +148,19 @@ describe('mayDescribe', () => {
 		expect(mayDescribe({ key: 'acme.org' }, { handle: 'someone.bsky.social', did: config.bots[0] })).toBe(true);
 		expect(mayDescribe({ key: 'acme.org' }, { handle: 'someone.bsky.social', did: 'did:plc:y' })).toBe(false);
 		expect(mayDescribe({ key: 'acme.org' }, {})).toBe(false);
+	});
+});
+
+describe('countingVersions', () => {
+	it("counts the organization's own, else joblist's starter, else a suggestion", async () => {
+		const { countingVersions } = await import('./company.js');
+		const config = (await import('#lib/data/config.json')).default;
+		const bot = config.bots[0];
+		/** @param {string} did @param {string} at */
+		const v = (did, at) => /** @type {any} */ ({ did, rkey: 'acme.org', uri: `at://${did}/c/acme.org`, cid: '', value: { name: did, createdAt: at } });
+		const profiles = new Map([['did:org', { handle: 'acme.org' }]]);
+		expect(countingVersions([v('did:a', '2026-03'), v('did:org', '2026-01'), v(bot, '2026-02')], profiles).map((x) => x.did)).toEqual(['did:org']);
+		expect(countingVersions([v('did:a', '2026-03'), v(bot, '2026-02')], new Map()).map((x) => x.did)).toEqual([bot]);
+		expect(countingVersions([v('did:a', '2026-01'), v('did:b', '2026-02')], new Map()).map((x) => x.did)).toEqual(['did:b', 'did:a']);
 	});
 });

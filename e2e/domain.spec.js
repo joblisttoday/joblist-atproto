@@ -35,9 +35,9 @@ test("an organization's page has tabs, each its own address", async ({ page }) =
 	await expect(page).toHaveURL(/\/ableton\.com\/places$/);
 	await expect(page.locator('main')).toContainText('Schönhauser Allee');
 	await expect(page.locator('link[rel=canonical]').last()).toHaveAttribute('href', 'https://joblist.today/ableton.com/places');
-	await tabs.getByRole('link', { name: /History/ }).click();
-	await expect(page).toHaveURL(/\/ableton\.com\/history$/);
-	await expect(page.locator('jl-company-versions details')).toHaveAttribute('open', '');
+	// No history: an old link opens the page.
+	await page.goto('/ableton.com/history');
+	await expect(page).toHaveURL(/\/ableton\.com$/);
 	// Its jobs are its page itself.
 	await page.goto('/ableton.com/jobs');
 	await expect(page).toHaveURL(/\/ableton\.com$/);

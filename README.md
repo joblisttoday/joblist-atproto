@@ -23,26 +23,18 @@ Two record types joblist reads, defined in [`lexicons/`](lexicons/today/joblist)
 - **`today.joblist.company`**: one company, keyed by its domain
   (`at://did:…/today.joblist.company/example.org`). Name, website,
   description, tags, locations, and where it hires (a job board provider and
-  id, or a careers page). Companies work like wiki pages: anyone can edit one,
-  and each person's edit is a record in their own account (with `updatedAt`).
-  The app shows:
+  id, or a careers page). An organization writes its own page; the app shows:
   1. the company's own record, if the author's handle is that domain (verified:
      the indexer checks it both ways, the domain's DNS `_atproto` record or
      `/.well-known/atproto-did` naming the account and the account's DID
      document naming the domain; without the snapshot, the AppView's word),
-  2. otherwise the most recently edited version, by anyone: "edited" is when
-     the indexer first saw that version (`versions.json` in the snapshot, see
-     [`indexer/seen.js`](indexer/seen.js)), not the `updatedAt` its author
-     writes, which anyone can set; without a snapshot, `updatedAt` (never in
-     the future).
+  2. otherwise joblist's starter record, written by an account in `bots`
+     (config: joblist.today, the import and the crawler),
+  3. otherwise, for an organization neither has described yet, the most recent
+     suggestion by anyone (how a new organization comes in).
 
-  The company page shows the history (every author's version); anyone can
-  restore an older one, which saves its content as their own new version.
-  Accounts listed in `bots` (config) are crawlers: their versions say "Added by
-  the crawler" until a person edits it (nothing to confirm: an edit is a correction).
-  So are versions from an account the indexer first saw less than
-  `versions.newAccountDays` (config) before, written over someone else's
-  version: a brand-new account cannot silently replace a long-standing page.
+  Anyone else's version of an organization joblist or the organization already
+  describes is not shown: no wiki, no history (docs/architecture.md, "Direction").
 - **`today.joblist.job`**: a job offer posted on joblist, in the poster's
   own account: title, company key, description, places, remote, contract,
   `url` (the full offer, or its joblist page), `apply` (a link, an email,

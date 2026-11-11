@@ -14,7 +14,11 @@ describe('displayedVersion', () => {
 		const versions = [version('did:a', '2026-03-01'), version('did:org', '2026-01-01')];
 		assert.equal(displayedVersion(versions, profiles).did, 'did:org');
 	});
-	it('otherwise the most recently edited, by updatedAt then createdAt', () => {
+	it("otherwise joblist's starter version, even older than someone else's", () => {
+		const versions = [version('did:a', '2026-03-01'), version(BOT, '2026-01-01')];
+		assert.equal(displayedVersion(versions, new Map(), [BOT]).did, BOT);
+	});
+	it('otherwise the most recent suggestion, by updatedAt then createdAt', () => {
 		const versions = [version('did:a', '2026-03-01'), version('did:b', '2026-01-01', { updatedAt: '2026-04-01' })];
 		assert.equal(displayedVersion(versions, new Map()).did, 'did:b');
 	});
@@ -26,17 +30,18 @@ describe('decide', () => {
 		const result = decide([version('did:org', '2026-01-01')], profiles, ctx);
 		assert.ok('skip' in result);
 	});
-	it('skips when a person edited after the health check', () => {
+	it('skips when a person suggested it after the health check', () => {
 		const result = decide([version('did:a', '2026-10-12T00:00:00Z')], new Map(), ctx);
-		assert.deepEqual(result, { skip: 'a person edited it after the health check' });
+		assert.deepEqual(result, { skip: 'a person suggested it after the health check' });
 	});
 	it('builds on an older human version', () => {
 		const result = decide([version('did:a', '2026-01-01')], new Map(), ctx);
 		assert.ok('base' in result && result.base.did === 'did:a' && !result.mine);
 	});
-	it('backs off for good once a person edits after the crawler', () => {
+	it("keeps its own version when someone else edits after it: theirs does not count", () => {
 		const versions = [version(BOT, '2026-02-01'), version('did:a', '2026-01-01', { updatedAt: '2026-03-01' })];
-		assert.deepEqual(decide(versions, new Map(), ctx), { skip: 'a person edited it after the crawler' });
+		const result = decide(versions, new Map(), ctx);
+		assert.ok('mine' in result && result.base.did === BOT);
 	});
 	it('updates its own version when it is the newest', () => {
 		const versions = [version(BOT, '2026-02-01'), version('did:a', '2026-01-01')];

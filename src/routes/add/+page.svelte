@@ -14,6 +14,9 @@
 	import { checkBoard } from '#lib/ats/board-check.js';
 	import { findCompany, hasInput, parsePaste, readExtras, readParams, toPrefill } from '#lib/models/paste.js';
 	import { data } from '#lib/network/network.svelte.js';
+	import CompanyClaim from '#lib/components/CompanyClaim.svelte';
+	import { mayDescribe } from '#lib/models/company.js';
+	import { session } from '#lib/auth/session.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	// /add?key=… edits a company (&field=… starts on one part); /add?url=…&name=…&board=…
@@ -28,6 +31,8 @@
 		key ? data.companies.get(key) || null : started ? findCompany(data.companies, pasted) : null
 	);
 	const board = $derived(key ? null : pasted.board);
+	// One joblist has is written by itself (or joblist's starter account) only: anyone else is shown how to claim it.
+	const closed = $derived(Boolean(company) && !mayDescribe(/** @type {{key: string}} */ (company), session));
 	const check = $derived(board ? checkBoard(board) : Promise.resolve(null));
 	const title = $derived(company ? t('form.company.edit') : t('form.company.title'));
 	// Described from "suggest a company" on a list (?list=/handle/rkey): go back there with it.
@@ -77,6 +82,10 @@
 				<p aria-live="polite"><small>{t('add.checking')}</small></p>
 			{:then found}
 				{#if !key}<AddFound {board} count={found?.count} existing={company} />{/if}
+				{#if closed && company}
+					<CompanyClaim {company} />
+					<p><a href="/{company.key}">{company.name}</a></p>
+				{:else}
 				{#key `${company?.key}:${page.url.search}`}
 					<CompanyForm
 						{company}
@@ -86,6 +95,7 @@
 						oncancel={() => history.back()}
 					/>
 				{/key}
+				{/if}
 			{/await}
 		{:else}
 			<p><small><a href="/add?name=">{t('add.manual')}</a></small></p>

@@ -26,12 +26,19 @@ export const isOwn = (record, profiles) => profiles.get(record.did)?.handle === 
 export const isBot = (did, ctx) => did === ctx.botDid || (ctx.bots || []).includes(did);
 
 /**
- * The version shown to everyone: the company's own, otherwise the most recently edited.
+ * The version shown to everyone, as the app picks it (src/lib/models/company.js
+ * countingVersions): the company's own, else joblist's starter (a bot's), else the most
+ * recent suggestion by anyone.
  * @param {RepoRecord[]} versions
  * @param {Profiles} profiles
+ * @param {string[]} [bots]
  */
-export function displayedVersion(versions, profiles) {
-	return versions.find((v) => isOwn(v, profiles)) || [...versions].sort((a, b) => editedAt(b).localeCompare(editedAt(a)))[0];
+export function displayedVersion(versions, profiles, bots = []) {
+	const recent = (/** @type {RepoRecord[]} */ list) => [...list].sort((a, b) => editedAt(b).localeCompare(editedAt(a)))[0];
+	const own = versions.filter((v) => isOwn(v, profiles));
+	if (own.length) return recent(own);
+	const starter = versions.filter((v) => bots.includes(v.did));
+	return recent(starter.length ? starter : versions);
 }
 
 /**
@@ -43,11 +50,10 @@ export function displayedVersion(versions, profiles) {
  */
 export function decide(versions, profiles, ctx) {
 	if (versions.some((v) => isOwn(v, profiles))) return { skip: 'the company wrote its own record' };
-	const base = displayedVersion(versions, profiles);
+	const base = displayedVersion(versions, profiles, [ctx.botDid, ...(ctx.bots || [])]);
 	const mine = versions.find((v) => v.did === ctx.botDid);
-	const humans = versions.filter((v) => !isBot(v.did, ctx));
-	if (!isBot(base.did, ctx) && editedAt(base) > ctx.checkedAt) return { skip: 'a person edited it after the health check' };
-	if (mine && humans.some((v) => editedAt(v) > editedAt(mine))) return { skip: 'a person edited it after the crawler' };
+	// Someone else's version counts only as a suggestion, while joblist has none: a newer one waits for the next check.
+	if (!isBot(base.did, ctx) && editedAt(base) > ctx.checkedAt) return { skip: 'a person suggested it after the health check' };
 	return mine ? { base, mine } : { base };
 }
 
