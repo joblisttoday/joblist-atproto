@@ -1,6 +1,6 @@
 # joblist
 
-Open jobs at organizations that hire, read straight from their own job boards, and organizations described by people on atproto (https://joblist.today); each person keeps the ones they like, tagged, in their browser. For people looking for work, and for projects looking for people to work with.
+Open jobs at organizations that hire, read straight from their own job boards, and organizations describing themselves and posting their jobs on atproto, from their own accounts (https://joblist.today; joblist's own records are a starter they replace); each person keeps the ones they like, tagged, in their browser. For people looking for work, and for projects looking for people to work with.
 
 Objectives: people find work that feels right for them and for society; projects find great contributors; both on a phone, in a few taps.
 Never: a tracker, an ad network, a middleman for applications, a central database, a paid service, or a tool that contacts anyone on its own.

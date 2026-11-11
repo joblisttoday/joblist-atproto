@@ -4,6 +4,32 @@ joblist is a few pieces that talk to each other only through public formats: eac
 deployed, replaced or left out on its own. This page says what they are today, what they
 should become (fewer, decoupled), and the steps there, each one reversible.
 
+## Direction: organizations describe themselves
+
+joblist.today becomes the place where an organization describes itself and posts its jobs,
+from its own atproto account (its handle is its domain): a `today.joblist.company` record and
+`today.joblist.job` records in its own repository, readable by any app. The indexer reads those,
+and the job boards of the organizations that name one.
+
+Where it starts from (2026-11-11 snapshot): 969 organization records, all written by the
+joblist.today account (the import of the old data, then the crawler); 1 organization described
+by itself (joblist.today); 1 job posted on atproto; 100 organizations with their own Bluesky
+account, 53 of them hiring through a job board (2,383 of 28,293 jobs).
+
+So joblist's own records are a starter, replaced organization by organization:
+
+1. The organization is the author: "Is this your organization?" is the main call on its page;
+   its own record replaces joblist's (already: the own version is the one shown).
+2. No wiki: only the organization, or joblist's starter account, writes an organization's
+   record. People keep organizations privately (saved, tagged, in their browser) and point
+   joblist at one; they do not write its page. Versions and history go with it.
+3. The indexer keeps its mechanism (records, their boards, posted jobs); only its source moves,
+   from joblist's starter records to organizations' own.
+4. Later, measured: whether starter records of organizations that never hire or never claim
+   their page fade out.
+
+joblist never contacts an organization by itself: inviting one is a person's post.
+
 ## The contracts
 
 Pieces never share code paths at run time or at build time; they share these:
