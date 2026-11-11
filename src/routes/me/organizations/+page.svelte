@@ -1,14 +1,14 @@
 <script>
 	import config from '#lib/data/config.json';
 	import Empty from '#lib/components/Empty.svelte';
-	import Collect from '#lib/components/Collect.svelte';
+	import QuickSearch from '#lib/components/QuickSearch.svelte';
 	import KeptOrganizations from '#lib/components/KeptOrganizations.svelte';
 	import PageHeader from '#lib/components/PageHeader.svelte';
 	import { keptTags } from '#lib/models/kept.js';
 	import { kept } from '#lib/network/kept.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
-	/** Every organization kept in this browser, by tag if chosen, and a link to keep another. */
+	/** Every organization kept in this browser, by tag if chosen, and the search to find another (a link opens its page, to keep it). */
 	const tags = $derived(keptTags(kept.list));
 	let tag = $state('');
 </script>
@@ -17,7 +17,7 @@
 
 <jl-me-organizations>
 	<PageHeader title={t('kept.title')} intro={t('kept.intro')} />
-	<Collect />
+	<jl-me-search><QuickSearch inline /></jl-me-search>
 	{#if tags.length}
 		<menu aria-label={t('kept.tags')}>
 			{#each tags as each (each)}
@@ -55,7 +55,7 @@
 		color: var(--color-accent-fg);
 		border-color: var(--color-accent);
 	}
-	jl-me-organizations > :global(jl-collect) {
+	jl-me-search {
 		display: block;
 		margin-bottom: var(--space-m);
 	}

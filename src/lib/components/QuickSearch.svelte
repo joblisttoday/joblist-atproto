@@ -7,14 +7,22 @@
 	import { searchState } from '#lib/models/saved-search.js';
 	import { addressOf } from '#lib/navigation/address.js';
 	import { readSources, sources } from '#lib/network/quick-search.svelte.js';
+	import { knownBy, organizationPage } from '#lib/models/kept.js';
+	import { data } from '#lib/network/network.svelte.js';
 	import { accountOf, thumbnail } from '#lib/network/accounts.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * The search box of every page: Enter searches jobs in the explorer; as one
-	 * types, it also offers the places, organizations and tags that match.
-	 * On phones it is a button that opens the box over the header.
+	 * The search box of every page, for jobs and organizations both: Enter searches jobs in
+	 * the explorer; as one types, it also offers the places, organizations and tags that
+	 * match. A link or a domain (acme.coop, jobs.lever.co/acme, instagram.com/acme) offers
+	 * its organization's page first, and Enter opens it: there joblist says what it finds of
+	 * it, to save in this browser or suggest to everyone.
+	 * In the header, on phones, it is a button that opens the box over the header;
+	 * inline (a page's own, the home's), always a box.
+	 * @type {{inline?: boolean}}
 	 */
+	let { inline = false } = $props();
 	let text = $state('');
 	let open = $state(false);
 	/** @type {HTMLInputElement | undefined} */
@@ -24,6 +32,8 @@
 
 	const found = $derived(quickResults(text, sources, config.quickSearch.shown));
 	const typed = $derived(text.trim().length >= 2);
+	const knows = $derived(knownBy(data.companies));
+	const organization = $derived(organizationPage(text, knows));
 	/** @param {Partial<import('#lib/models/job.js').JobFilters>} filters */
 	const jobsPath = (filters) => addressOf(searchState({ query: '', where: '', remote: '', ...filters }), '/jobs');
 
@@ -35,7 +45,8 @@
 	/** @param {SubmitEvent} event */
 	function submit(event) {
 		event.preventDefault();
-		if (text.trim()) goto(jobsPath({ query: text.trim() }));
+		if (organization?.sure) goto(organization.href);
+		else if (text.trim()) goto(jobsPath({ query: text.trim() }));
 	}
 
 	function show() {
@@ -67,7 +78,7 @@
 	}
 </script>
 
-<jl-search bind:this={box} open={open || undefined} onfocusout={leave}>
+<jl-search bind:this={box} open={open || undefined} inline={inline || undefined} onfocusout={leave}>
 	<button type="button" aria-expanded={open} onclick={show}><Icon name="search" label={t('quick.label')} /></button>
 	<form role="search" onsubmit={submit}>
 		<Icon name="search" />
@@ -86,6 +97,13 @@
 	</form>
 	{#if open && typed}
 		<ul>
+			{#if organization?.sure}
+				<li>
+					<a onkeydown={keys} href={organization.href}>
+						<Icon name="companies" /> {t(organization.known ? 'quick.open' : 'quick.find', { name: organization.name })}
+					</a>
+				</li>
+			{/if}
 			<li><a onkeydown={keys} href={jobsPath({ query: text.trim() })}><Icon name="search" /> {t('quick.jobs', { text: text.trim() })}</a></li>
 			{#each found.fields as field (field.slug)}
 				<li>
@@ -225,6 +243,33 @@
 		object-fit: cover;
 	}
 
+	/* A page's own: always a box, as tall as a field, its offers under it. */
+	jl-search[inline],
+	jl-search[inline][open] {
+		position: relative;
+		inset: auto;
+		z-index: 2;
+		padding: 0;
+		justify-content: stretch;
+	}
+	jl-search[inline] > button,
+	jl-search[inline] form button {
+		display: none;
+	}
+	jl-search[inline] form {
+		display: flex;
+		min-height: var(--tap-size);
+		padding-inline: var(--space-m);
+	}
+	jl-search[inline] ul {
+		border: var(--border);
+		border-radius: var(--radius);
+		margin-top: var(--space-xs);
+	}
+	jl-search[inline] ul a {
+		padding: 0 var(--space-m);
+	}
+
 	/* Wide screens: always a box in the header, its offers under it. */
 	@media (min-width: 64rem) {
 		jl-search,
@@ -233,6 +278,9 @@
 			inset: auto;
 			padding: 0;
 			max-width: var(--search-width);
+		}
+		jl-search[inline] {
+			max-width: none;
 		}
 		jl-search > button,
 		form button {

@@ -96,6 +96,28 @@ export function knownBy(companies) {
 }
 
 /**
+ * Where an organization typed or pasted as a link opens: joblist's page of one it knows,
+ * else its domain's page (/{domain}: what a browser finds of it), else the page of the link
+ * itself (a job board, a social profile). sure: it is plainly a link or a domain, not words.
+ * @param {string} input
+ * @param {(link: string) => Known | undefined} known see knownBy
+ * @returns {{href: string, name: string, known: boolean, sure: boolean} | null}
+ */
+export function organizationPage(input, known) {
+	const text = input.trim();
+	const link = keptUrl(text);
+	if (!link) return null;
+	const sure = /^[a-z][a-z0-9+.-]*:\/\//i.test(text) || text.includes('/') || /\.[a-z]{2,}$/i.test(text);
+	const found = known(link);
+	if (found) return { href: `/${found.key}`, name: found.name, known: true, sure };
+	const key = keyOf(link);
+	const home = new URL(link).pathname === '/' && !new URL(link).search;
+	const name = link.replace(/^https?:\/\/(www\.)?/, '');
+	if (key && home) return { href: `/${key}`, name, known: false, sure };
+	return { href: `/me/organization#${new URLSearchParams({ url: link })}`, name, known: false, sure };
+}
+
+/**
  * The kept organizations read back, checked (they come from storage), each link once.
  * @param {unknown} data
  * @returns {Kept[]}

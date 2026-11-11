@@ -21,6 +21,8 @@
 	const bare = $derived(config.layout.bare.includes(page.route.id || ''));
 	// Jobs, organizations: each has its own search, so the header has the way between them.
 	const explore = $derived(config.layout.explore.includes(page.route.id || ''));
+	// The home and Me show the search in the page: not a second one here.
+	const inPage = $derived(config.layout.searchInPage.includes(page.route.id || ''));
 
 	/** @param {MouseEvent} event */
 	function back(event) {
@@ -35,13 +37,17 @@
 		<a href="/" aria-current={page.url.pathname === '/' ? 'page' : undefined}><Logo /><b>{config.name}</b></a>
 		{#if !topLevel}<a href="/" onclick={back}><Icon name="back" /> {t('nav.back')}</a>{/if}
 		<!-- The home and the explore pages have their own search. -->
-		{#if explore}<ExploreSwitch />{:else}<QuickSearch />{/if}
+		{#if explore}<ExploreSwitch />{:else if inPage}<jl-header-space></jl-header-space>{:else}<QuickSearch />{/if}
 		<Nav />
 	</header>
 	<NetworkStatus />
 </jl-header>
 
 <style>
+	/* The room the search takes elsewhere: the navigation stays at the end. */
+	jl-header-space {
+		flex: 1;
+	}
 	/* Phones: pages using the whole screen keep only the navigation (fixed at the bottom). */
 	@media not (min-width: 64rem) {
 		jl-header[bare] {

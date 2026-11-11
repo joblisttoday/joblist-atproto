@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applyChanges, cleanTags, listsToKept, mergeKept, keptTags, keptUrl, keyOf, knownBy, readKept, withKept, withTags } from './kept.js';
+import { applyChanges, cleanTags, listsToKept, mergeKept, organizationPage, keptTags, keptUrl, keyOf, knownBy, readKept, withKept, withTags } from './kept.js';
 
 describe('keptUrl', () => {
 	it('reads a link, a bare domain too; a home is its domain', () => {
@@ -97,5 +97,22 @@ describe('mergeKept', () => {
 		];
 		expect(mergeKept(a, b, 10)).toEqual([{ url: 'https://a.org', name: 'A', at: '1', tags: ['x', 'y'] }, b[1]]);
 		expect(mergeKept(a, b, 1)).toHaveLength(1);
+	});
+});
+
+describe('organizationPage', () => {
+	const companies = new Map([['gitlab.com', { key: 'gitlab.com', name: 'GitLab', jobBoard: { provider: 'greenhouse', id: 'gitlab' } }]]);
+	const known = knownBy(companies);
+	it('opens joblist page of one it knows, by its domain or its board', () => {
+		expect(organizationPage('gitlab.com', known)).toEqual({ href: '/gitlab.com', name: 'GitLab', known: true, sure: true });
+		expect(organizationPage('https://boards.greenhouse.io/gitlab', known)?.href).toBe('/gitlab.com');
+	});
+	it("else its domain's page, else the link's", () => {
+		expect(organizationPage('www.acme.coop', known)).toEqual({ href: '/acme.coop', name: 'acme.coop', known: false, sure: true });
+		expect(organizationPage('instagram.com/some.coop', known)?.href).toBe('/me/organization#url=https%3A%2F%2Finstagram.com%2Fsome.coop');
+	});
+	it('words are no link', () => {
+		expect(organizationPage('product designer', known)).toBeNull();
+		expect(organizationPage('design', known)).toBeNull();
 	});
 });

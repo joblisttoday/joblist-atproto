@@ -2,8 +2,7 @@
 	import { goto } from '$app/navigation';
 	import config from '#lib/data/config.json';
 	import Icon from '#lib/components/Icon.svelte';
-	import Collect from '#lib/components/Collect.svelte';
-	import MenuLinks from '#lib/components/MenuLinks.svelte';
+	import QuickSearch from '#lib/components/QuickSearch.svelte';
 	import PageHeader from '#lib/components/PageHeader.svelte';
 	import SavedSearches from '#lib/components/SavedSearches.svelte';
 	import { searchKeys } from '#lib/models/saved-search.js';
@@ -13,9 +12,10 @@
 	import { formatNumber, t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * The home: what joblist is, your searches (kept in this browser) with their new jobs,
-	 * and the ways in; the search is the header's, as on every page (jobs, organizations, places). The explorer is /jobs; an older link
-	 * to a search here (/#q=design) goes on to it.
+	 * The home, short: what joblist is, the one search (jobs, organizations, or a link to
+	 * keep one), and your searches (kept in this browser) with their new jobs. The ways to
+	 * browse are the Explore tab and the footer. The explorer is /jobs; an older
+	 * link to a search here (/#q=design) goes on to it.
 	 */
 	const explorer = [...searchKeys, 'view', config.jobs.jobParam];
 	$effect(() => {
@@ -26,13 +26,6 @@
 	});
 
 	const max = config.me.glance;
-
-	/** @type {import('#lib/navigation/nav.js').MenuLink[]} */
-	const ways = $derived([
-		{ href: '/in', icon: 'place', label: t('landing.cities') },
-		{ href: '/field', icon: 'jobs', label: t('landing.fields') },
-		{ href: '/companies', icon: 'companies', label: t('nav.companies') }
-	]);
 </script>
 
 <svelte:head><title>{config.name}</title></svelte:head>
@@ -40,13 +33,7 @@
 <jl-home>
 	<PageHeader title={t('home.heading')} intro={t('home.lead')} />
 
-	<!-- The book of jobs: collect organizations, joblist finds what it can. -->
-	<section aria-labelledby="home-collect">
-		<h2 id="home-collect">{t('home.collect')}</h2>
-		<p><small>{t('home.collect.intro')}</small></p>
-		<Collect />
-	</section>
-
+	<QuickSearch inline />
 
 	{#if searches.list.length}
 		<section aria-labelledby="home-searches">
@@ -55,33 +42,16 @@
 			{#if searches.list.length > max}<p><a href="/me/searches">{t('me.all', { count: formatNumber(searches.list.length) })} <Icon name="next" /></a></p>{/if}
 		</section>
 	{/if}
-
-	<jl-home-ways><MenuLinks label={t('menu.explore')} items={ways} /></jl-home-ways>
 </jl-home>
 
 <style>
+	/* One column, as wide as reading: the field is not stretched across a desktop. */
 	jl-home {
 		display: block;
+		max-width: var(--reading-width);
 		padding-bottom: var(--space-xl);
 	}
 	section {
 		margin-top: var(--space-l);
-	}
-	jl-home-ways {
-		display: block;
-		margin-top: var(--space-l);
-	}
-	/* Wide screens: the ways in side by side, each its own box. */
-	@media (min-width: 48rem) {
-		jl-home-ways :global(menu) {
-			display: grid;
-			grid-template-columns: repeat(3, 1fr);
-			gap: var(--space-s);
-			border: 0;
-		}
-		jl-home-ways :global(li) {
-			border: var(--border);
-			border-radius: var(--radius);
-		}
 	}
 </style>

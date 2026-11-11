@@ -1,6 +1,6 @@
 /**
  * The add form, filled in with what was found of an organization (/add?url=…&name=…&board=…
- * &description=…&link=…): from its local profile, the collector, the add-on.
+ * &description=…&link=…): from its local profile, the add-on.
  * @param {{link: string, website?: string, name?: string, board?: string, description?: string, others?: string[]}} found
  *   link: what it was kept by; website: its own, when known; board: its job board's address;
  *   others: its other links (a Bluesky profile…)
