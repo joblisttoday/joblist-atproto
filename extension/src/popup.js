@@ -180,11 +180,23 @@ async function start() {
 				await save([...tags, input.value]);
 			}
 		});
+		// Where to go from here: its careers page, its job board, its page on joblist (one a domain
+		// joblist does not know has too: what a browser finds of it), those that exist.
+		const boardUrl = board?.url || knownUrl;
+		const joblistPage = found.state === 'in' ? page : read.key ? site(`/company/${read.key}`) : '';
+		/** @type {[string, string][]} */
+		const ways = [
+			[read.careers && read.careers !== boardUrl ? read.careers : '', t('careersPage')],
+			[boardUrl, t('board')],
+			[joblistPage, t('joblistPage')]
+		];
+		const go = ways.filter(([url]) => url);
 		/** @type {(Node | null)[]} */
 		const parts = [
 			h('header', {}, h('h1', {}, name), h('small', {}, read.link.replace(/^https?:\/\/(www\.)?/, ''))),
 			read.description ? h('p', { class: 'about' }, read.description) : null,
 			status,
+			go.length ? h('nav', { class: 'go', 'aria-label': t('go') }, ...go.map(([url, label]) => link(url, {}, `${label} ↗`))) : null,
 			offers,
 			h(
 				'dl',

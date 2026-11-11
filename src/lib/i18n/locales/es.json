@@ -884,5 +884,8 @@
 	"extension.glance.none": "joblist: aún no está en joblist",
 	"extension.onJoblist": "(en joblist)",
 	"extension.posted": "{count} ofertas publicadas en Bluesky",
-	"extension.posted.one": "1 oferta publicada en Bluesky"
+	"extension.posted.one": "1 oferta publicada en Bluesky",
+	"extension.careersPage": "Página de empleo",
+	"extension.joblistPage": "En joblist",
+	"extension.go": "Ir a"
 }

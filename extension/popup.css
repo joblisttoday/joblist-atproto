@@ -104,6 +104,21 @@ a {
 .status span {
 	flex: 1;
 }
+.go {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.4rem;
+}
+.go a {
+	padding: 0.25rem 0.7rem;
+	border: 1px solid var(--line);
+	border-radius: 999px;
+	font-size: 0.9em;
+	text-decoration: none;
+}
+.go a:hover {
+	background: var(--soft);
+}
 .offers {
 	display: grid;
 	gap: 0.4rem;

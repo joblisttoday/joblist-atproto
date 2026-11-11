@@ -30,5 +30,26 @@ export function collectPage() {
 	const boards = /(?:https?:)?\/\/[a-z0-9.-]+\.(?:greenhouse\.io|lever\.co|ashbyhq\.com|workable\.com|personio\.(?:de|com)|recruitee\.com|smartrecruiters\.com|rippling\.com)(?:\/[^\s"'<>\\)&]*)?/gi;
 	const html = document.documentElement.outerHTML.slice(0, 5_000_000);
 	links.push(...new Set((html.match(boards) || []).slice(0, 200).map((url) => (url.startsWith('//') ? `https:${url}` : url))));
-	return { url: location.href, title: document.title.slice(0, 500), metas, links };
+	// Its own careers page: a link whose address says so (/careers, /jobs…), else one whose
+	// words are just that ("Careers", "We're hiring"…), in several languages: never a sentence
+	// that happens to say "jobs".
+	const careerPath = /^\/([a-z]{2}(-[a-z]{2})?\/)?(company\/)?(careers?|jobs|join(-us)?|work-with-us|hiring|karriere|stellen|emplois|carrieres?|recrutement|empleos?|vacatures)(\/|$)/i;
+	const careerLabel = /^(careers?|jobs|open (jobs|positions|roles)|join (us|our team|the team)|work (with|at) us|we.?re hiring|karriere|jobs (&|und) karriere|stellenangebote|emplois|carri[eè]res?|recrutement|nous rejoindre|empleos?|trabaja con nosotros|únete|vacatures|lavora con noi)$/i;
+	/** @type {string[]} */
+	const byPath = [];
+	/** @type {string[]} */
+	const byLabel = [];
+	for (const a of document.querySelectorAll('a[href]')) {
+		const text = (a.textContent || '').replace(/\s+/g, ' ').trim();
+		try {
+			const url = new URL(a.getAttribute('href') || '', location.href);
+			if (!/^https?:$/.test(url.protocol)) continue;
+			if (careerPath.test(url.pathname)) byPath.push(url.href);
+			else if (text.length <= 40 && careerLabel.test(text)) byLabel.push(url.href);
+		} catch {
+			// not a link
+		}
+	}
+	const careers = [...new Set([...byPath, ...byLabel])].slice(0, 10);
+	return { url: location.href, title: document.title.slice(0, 500), metas, links, careers };
 }

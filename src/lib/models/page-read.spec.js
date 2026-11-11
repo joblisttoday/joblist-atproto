@@ -27,6 +27,7 @@ describe('readPage', () => {
 		expect(read).toEqual({
 			link: 'https://www.acme.coop',
 			key: 'acme.coop',
+			careers: '',
 			name: 'Acme Coop',
 			description: 'A worker-owned design studio.',
 			boards: [
@@ -55,5 +56,15 @@ describe('readPage', () => {
 	it('reads nothing of a page not on the web', () => {
 		expect(readPage(collected({ url: 'about:blank' }))).toBeNull();
 		expect(readPage(collected({ url: 'moz-extension://x/popup.html' }))).toBeNull();
+	});
+});
+
+describe('careers', () => {
+	it("is the site's own careers page, else a job board's, never another site's", () => {
+		const page = (/** @type {string[]} */ careers) => readPage(collected({ careers }))?.careers;
+		expect(page(['https://other.org/careers', 'https://www.acme.coop/join-us'])).toBe('https://www.acme.coop/join-us');
+		expect(page(['https://jobs.acme.coop/'])).toBe('https://jobs.acme.coop/');
+		expect(page(['https://other.org/jobs', 'https://jobs.lever.co/acme'])).toBe('https://jobs.lever.co/acme');
+		expect(page(['https://other.org/jobs'])).toBe('');
 	});
 });

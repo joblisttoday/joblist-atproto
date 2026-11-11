@@ -7,12 +7,13 @@ import { guessName } from './paste.js';
 /**
  * What an organization's website says of it, read in the page itself (the browser add-on:
  * websites do not answer other sites, but a page can be read by an add-on the person runs).
- * @typedef {{url: string, title: string, metas: Record<string, string>, links: string[]}} Collected
+ * @typedef {{url: string, title: string, metas: Record<string, string>, links: string[], careers?: string[]}} Collected
  *   what the page has, as collectPage gathers it: its meta tags by name or property, and every link,
- *   frame and script it points to.
+ *   frame and script it points to; careers: links whose address or words say careers, jobs…
  * @typedef {{id: string, name: string, url: string}} Social
  * @typedef {{provider: string, id: string, url: string}} Board
- * @typedef {{link: string, key: string, name: string, description: string, boards: Board[], socials: Social[]}} Read
+ * @typedef {{link: string, key: string, name: string, description: string, careers: string, boards: Board[], socials: Social[]}} Read
+ *   careers: its own careers page, when it links to one
  */
 
 const SEPARATORS = /\s+[|–—·\-]\s+|:\s+/;
@@ -70,6 +71,24 @@ function socialsOf(links) {
 }
 
 /**
+ * Its careers page: on its own site (or a careers subdomain), else a job board's page; never
+ * another organization's site.
+ * @param {string[]} links
+ * @param {string} key its domain
+ */
+function careersOf(links, key) {
+	const own = (/** @type {string} */ link) => {
+		try {
+			const host = new URL(link).hostname.replace(/^www\./, '');
+			return Boolean(key) && (host === key || host.endsWith(`.${key}`));
+		} catch {
+			return false;
+		}
+	};
+	return links.find(own) || links.find((l) => detectBoard(l)) || '';
+}
+
+/**
  * @param {Collected} page
  * @returns {Read | null} null for a page that is not on the web (about:, a file…)
  */
@@ -92,6 +111,7 @@ export function readPage(page) {
 	return {
 		link: kept,
 		key,
+		careers: careersOf(page.careers || [], key),
 		name: nameOf({ ...page, title: String(page.title || ''), metas }, key),
 		description: (metas['og:description'] || metas.description || '').trim().slice(0, MAX_TEXT),
 		boards: boardsOf([page.url, ...links]),
