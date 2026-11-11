@@ -2080,11 +2080,7 @@ var X = {
 		copiedMs: 3e3,
 		bare: ["/jobs", "/companies"],
 		explore: ["/jobs", "/companies"],
-		searchInPage: [
-			"/",
-			"/me",
-			"/me/organizations"
-		]
+		searchInPage: ["/", "/me/organizations"]
 	},
 	map: {
 		style: "https://tiles.openfreemap.org/styles/positron",
