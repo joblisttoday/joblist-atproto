@@ -18,7 +18,9 @@ import { locale, t } from './texts.js';
  * wrong rather than staying empty.
  * @typedef {import('../../src/lib/models/page-read.js').Read} Read
  * @typedef {{title: string, url: string, place: string}} Offer
- * @typedef {{state: 'asking'} | {state: 'in', name: string, jobs: number, offers: Offer[], gone: boolean, key: string} | {state: 'out'} | {state: 'offline'}} Known
+ * @typedef {{provider?: string, id?: string, url?: string}} Board
+ * @typedef {{state: 'asking'} | {state: 'in', name: string, jobs: number, offers: Offer[], gone: boolean, key: string, board?: Board, posted?: number} | {state: 'out'} | {state: 'offline'}} Known
+ *   board, posted: where joblist knows it hires (its job board, offers it posted on Bluesky)
  */
 
 const NEWEST = 5;
@@ -78,7 +80,8 @@ async function companyFile(key) {
 				if (place && !same.place.includes(place)) same.place = same.place ? `${same.place} · ${place}` : place;
 			} else offers.set(title.toLowerCase(), { title, url: String(job.u || ''), place });
 		}
-		return { state: 'in', key, name: String(file.name || ''), jobs: offers.size, gone: Boolean(file.gone), offers: [...offers.values()].slice(0, NEWEST) };
+		const board = file.board && typeof file.board === 'object' ? file.board : undefined;
+		return { state: 'in', key, name: String(file.name || ''), jobs: offers.size, gone: Boolean(file.gone), offers: [...offers.values()].slice(0, NEWEST), board, posted: Number(file.posted) || 0 };
 	} catch {
 		return { state: 'offline' };
 	}
@@ -153,7 +156,18 @@ async function start() {
 						found.jobs > found.offers.length ? h('li', {}, link(page, { class: 'more' }, t('allJobs', { count: found.jobs }))) : null
 					)
 				: null;
+		// Where it hires: the board this page links to, else the one joblist knows, else its own posts.
 		const board = read.boards[0];
+		const known = found.state === 'in' ? found.board : undefined;
+		const knownUrl = known?.provider && known.id ? providers.find((p) => p.id === known.provider)?.board.replace('{id}', known.id) || '' : known?.url || '';
+		const knownName = known?.provider && known.id ? `${providers.find((p) => p.id === known.provider)?.name || known.provider} · ${known.id}` : knownUrl.replace(/^https?:\/\/(www\.)?/, '');
+		const hires = board
+			? link(board.url, {}, `${providers.find((p) => p.id === board.provider)?.name || board.provider} · ${board.id}`)
+			: knownUrl
+				? h('span', {}, link(knownUrl, {}, knownName), ' ', h('small', {}, t('onJoblist')))
+				: found.state === 'in' && found.posted
+					? link(page, {}, t('posted', { count: found.posted }))
+					: h('span', { class: 'muted' }, t('noBoard'));
 		const tagInput = h('input', {
 			type: 'text',
 			placeholder: t('addTag'),
@@ -176,7 +190,7 @@ async function start() {
 				'dl',
 				{},
 				h('dt', {}, t('board')),
-				h('dd', {}, board ? link(board.url, {}, `${providers.find((p) => p.id === board.provider)?.name || board.provider} · ${board.id}`) : h('span', { class: 'muted' }, t('noBoard'))),
+				h('dd', {}, hires),
 				h('dt', {}, t('links')),
 				h('dd', {}, read.socials.length ? h('span', {}, ...read.socials.flatMap((s, i) => [i ? ' · ' : '', link(s.url, {}, s.name)])) : h('span', { class: 'muted' }, t('noLinks')))
 			),

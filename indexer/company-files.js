@@ -11,12 +11,14 @@ import { postPath } from '../src/lib/models/job-post.js';
  * of the snapshot serves them, and there is one more per company, never a bigger one.
  *
  * @typedef {import('./jobs.js').IndexedJob} IndexedJob
- * @typedef {{generatedAt: string, name: string, checked: boolean, gone: boolean, jobs: IndexedJob[], points: [string, [number, number]][]}} CompanyFile
- *   checked: its board was read (an empty list is real); gone: its board closed (the last crawl).
+ * @typedef {{generatedAt: string, name: string, checked: boolean, gone: boolean, board?: {provider?: string, id?: string, url?: string}, posted: number, jobs: IndexedJob[], points: [string, [number, number]][]}} CompanyFile
+ *   checked: its board was read (an empty list is real); gone: its board closed (the last crawl);
+ *   board: where it hires (its job board), posted: the offers it posted itself on atproto (the
+ *   browser add-on shows both, whatever page of its website is open).
  */
 
 /**
- * @param {{key: string, name: string}[]} companies
+ * @param {{key: string, name: string, jobBoard?: {provider?: string, id?: string, url?: string}}[]} companies
  * @param {IndexedJob[]} jobs
  * @param {{generatedAt: string, checked: Iterable<string>, gone: Iterable<string>}} snapshot
  * @returns {[string, CompanyFile][]}
@@ -40,11 +42,18 @@ export function companyFiles(companies, jobs, { generatedAt, checked, gone }) {
 				name: c.name,
 				checked: read.has(c.key),
 				gone: closed.has(c.key),
+				...(c.jobBoard?.provider || c.jobBoard?.url ? { board: boardOf(c.jobBoard) } : {}),
+				posted: all.filter((j) => j.s && j.v).length,
 				jobs: publicJobs(all),
 				points: postPoints(all)
 			};
 			return /** @type {[string, CompanyFile]} */ ([c.key, file]);
 		});
+}
+
+/** Its job board, as the company record has it. @param {{provider?: string, id?: string, url?: string}} board */
+function boardOf({ provider, id, url }) {
+	return provider && id ? { provider, id } : { url: String(url || '') };
 }
 
 /**

@@ -883,5 +883,8 @@
 	"extension.glance.jobs.one": "joblist: 1 offene Stelle hier",
 	"extension.glance.known": "joblist kennt diese Organisation: gerade keine offenen Stellen",
 	"extension.glance.saved": "joblist: von dir gemerkt",
-	"extension.glance.none": "joblist: noch nicht auf joblist"
+	"extension.glance.none": "joblist: noch nicht auf joblist",
+	"extension.onJoblist": "(auf joblist)",
+	"extension.posted": "{count} Stellen auf Bluesky veröffentlicht",
+	"extension.posted.one": "1 Stelle auf Bluesky veröffentlicht"
 }

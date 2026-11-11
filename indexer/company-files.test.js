@@ -9,11 +9,14 @@ const jobs = [
 	{ t: 'By someone', u: 'https://y', c: 'acme.org', s: 'at://did:plc:b/today.joblist.job/r2', g: /** @type {[number, number]} */ ([5, 6]) },
 	{ t: 'Elsewhere', u: 'https://z', c: 'other.org' }
 ];
-const files = new Map(companyFiles([{ key: 'acme.org', name: 'Acme' }, { key: 'quiet.org', name: 'Quiet' }, { key: 'bad key', name: 'Bad' }], jobs, { generatedAt: 'now', checked: ['acme.org', 'quiet.org'], gone: ['quiet.org'] }));
+const files = new Map(companyFiles([{ key: 'acme.org', name: 'Acme', jobBoard: { provider: 'lever', id: 'acme' } }, { key: 'quiet.org', name: 'Quiet' }, { key: 'bad key', name: 'Bad' }], jobs, { generatedAt: 'now', checked: ['acme.org', 'quiet.org'], gone: ['quiet.org'] }));
 
 test("a company's file: its board's jobs and its own posts, newest first, with what its page needs", () => {
 	const acme = files.get('acme.org');
 	assert.deepEqual(acme?.jobs.map((j) => j.t), ['By acme', 'New', 'Old']);
+	assert.deepEqual(acme?.board, { provider: 'lever', id: 'acme' });
+	assert.equal(acme?.posted, 1);
+	assert.equal(files.get('quiet.org')?.board, undefined);
 	assert.equal(acme?.jobs[0].u, 'https://joblist.today/job/did%3Aplc%3Aa/r1');
 	assert.deepEqual(acme?.jobs[1].m, [1, 2, 'EUR', 'year']);
 	assert.equal(acme?.jobs[2].d, 'Ops');
