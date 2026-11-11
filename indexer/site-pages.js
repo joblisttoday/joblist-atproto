@@ -98,7 +98,7 @@ export function sitePages() {
 export function thingPages() {
 	return [
 		{ path: '/_page/job', rules: ['/job/*'], meta: { title: config.name, description: en['home.lead'], body: '' } },
-		{ path: '/_page/domain', rules: ['/:name', '/:name/:tab', '/:name/:rkey/:edit'], meta: { title: config.name, description: en['companies.intro'], body: '', preload: config.snapshot.preload.company } }
+		{ path: '/_page/domain', rules: [], meta: { title: config.name, description: en['companies.intro'], body: '', preload: config.snapshot.preload.company } }
 	];
 }
 

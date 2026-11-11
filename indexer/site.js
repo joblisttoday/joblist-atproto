@@ -7,7 +7,7 @@
  *
  *   node indexer/site.js [build-dir]
  */
-import { appendFileSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve, sep } from 'node:path';
 import config from '../src/lib/data/config.json' with { type: 'json' };
 import { page } from './html.js';
@@ -40,15 +40,10 @@ writeFileSync(join(build, 'llms.txt'), llmsTxt());
 const rules = ['# An organization\'s page is its domain (indexer/site.js).', '/company/:key  /:key  301'];
 const things = thingPages();
 for (const { path, meta } of things) write(path, page(template, meta));
-// The site's own names first, each served as it is: a rewrite wins over a file, and the
-// catch-alls below would hide them (/jobs, /me/…, /_app/…, robots.txt).
-const own = readdirSync(build, { withFileTypes: true }).filter((entry) => !['index.html', '404.html', '_redirects', '_headers', '_page'].includes(entry.name));
-rules.push('# The site\'s own pages and files, as they are.');
-for (const entry of own) {
-	rules.push(`/${entry.name}  /${entry.name}  200`);
-	if (entry.isDirectory()) rules.push(`/${entry.name}/*  /${entry.name}/:splat  200`);
-}
-rules.push('# One page for every job, every domain and handle: the app shows each.');
+// Cloudflare skips a rewrite to the same path (it worked in wrangler dev, not in production:
+// /robots.txt got the catch-all's page): no catch-all for one-part addresses then. A domain's
+// page is served by 404.html (wrangler.jsonc), on which the app starts and shows it.
+rules.push('# One page for every job: the app shows each.');
 for (const { path, rules: patterns } of things) for (const pattern of patterns) rules.push(`${pattern}  ${path}  200`);
 const redirects = join(build, '_redirects');
 appendFileSync(redirects, `${existsSync(redirects) ? '\n' : ''}${rules.join('\n')}\n`);

@@ -17,7 +17,7 @@ test('one page for every job, and every domain and handle, by rewrites, with no 
 		thingPages().map((p) => [p.path, p.rules, p.meta.url]),
 		[
 			['/_page/job', ['/job/*'], undefined],
-			['/_page/domain', ['/:name', '/:name/:tab', '/:name/:rkey/:edit'], undefined]
+			['/_page/domain', [], undefined]
 		]
 	);
 });
