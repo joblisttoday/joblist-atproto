@@ -85,10 +85,13 @@ export function boardOf(text) {
 	return value ? detectBoard(value) : null;
 }
 
-/** @param {{provider: string, id: string}} board @param {string} key @returns {Promise<Shown[]>} */
+/** Its board's jobs, read now, the newest first (as joblist shows them). @param {{provider: string, id: string}} board @param {string} key @returns {Promise<Shown[]>} */
 async function live(board, key) {
 	const jobs = await getJobs(/** @type {any} */ ({ key, jobBoard: board }));
-	return jobs.map((j) => ({ title: j.title, url: j.url, location: j.location, remote: j.remote, published: j.published }));
+	const time = (/** @type {string | undefined} */ date) => Date.parse(date || '') || 0;
+	return jobs
+		.map((j) => ({ title: j.title, url: j.url, location: j.location, remote: j.remote, published: j.published }))
+		.sort((a, b) => time(b.published) - time(a.published));
 }
 
 /**

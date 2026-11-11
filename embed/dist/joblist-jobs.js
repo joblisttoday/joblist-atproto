@@ -1578,16 +1578,17 @@ function X(e) {
 	} : t ? a(t) : null;
 }
 async function Z(e, t) {
-	return (await fe({
+	let n = await fe({
 		key: t,
 		jobBoard: e
-	})).map((e) => ({
+	}), r = (e) => Date.parse(e || "") || 0;
+	return n.map((e) => ({
 		title: e.title,
 		url: e.url,
 		location: e.location,
 		remote: e.remote,
 		published: e.published
-	}));
+	})).sort((e, t) => r(t.published) - r(e.published));
 }
 async function be({ board: e, company: t, index: n }) {
 	if (e) {
