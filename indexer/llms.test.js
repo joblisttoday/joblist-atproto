@@ -14,7 +14,7 @@ test('llms.txt names every record type, every doc, and the counts', () => {
 
 test('every value from config is filled in; only address patterns keep their braces', () => {
 	assert.doesNotMatch(text, /\{(name|url|source|snapshot|userAgent|hours)\}/);
-	assert.match(text, /`\/company\/\{domain\}`/);
+	assert.match(text, /`\/\{domain\}`/);
 });
 
 test('without a snapshot, it says no counts', () => {
