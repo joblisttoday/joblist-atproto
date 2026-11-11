@@ -13,7 +13,12 @@
 <jl-company-embed>
 	<details id="company-embed" {open}>
 		<summary>{t('embed.section')}</summary>
-		<Embed attribute="company" value={company.key} title={t('embed.title', { name: company.name })} />
+		<!-- Its board: read live, no index between it and the site; else its domain. -->
+		{#if company.jobBoard?.provider && company.jobBoard.id}
+			<Embed attribute="board" value="{company.jobBoard.provider}:{company.jobBoard.id}" title={t('embed.title', { name: company.name })} />
+		{:else}
+			<Embed attribute="company" value={company.key} title={t('embed.title', { name: company.name })} />
+		{/if}
 	</details>
 </jl-company-embed>
 

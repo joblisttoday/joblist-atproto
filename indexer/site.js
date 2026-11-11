@@ -2,18 +2,17 @@
  * The site's own files, after the app's build, from no index: its pages with a real title,
  * description and link-preview tags (indexer/site-pages.js), the page shared by every
  * organization and job (served for /company/* and /job/* by a rewrite: _redirects), the
- * 404 page, the sitemap and robots.txt, llms.txt, the embeds' settings. The app reads the
+ * 404 page, the sitemap and robots.txt, llms.txt, the embed (embed/dist). The app reads the
  * index itself, in the browser: an index never rebuilds the site (docs/architecture.md).
  *
  *   node indexer/site.js [build-dir]
  */
-import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { appendFileSync, copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve, sep } from 'node:path';
 import config from '../src/lib/data/config.json' with { type: 'json' };
 import { page } from './html.js';
 import { robots, sitemap } from './sitemap.js';
 import { notFoundPage, sitePages, thingPages } from './site-pages.js';
-import { embedSettings } from './embed-settings.js';
 import { llmsTxt } from './llms.js';
 
 const [build = 'build'] = process.argv.slice(2);
@@ -46,7 +45,8 @@ writeFileSync(join(build, 'sitemap.xml'), sitemap(config.url, pages.filter((p) =
 writeFileSync(join(build, 'robots.txt'), robots(config.url));
 writeFileSync(join(build, 'llms.txt'), llmsTxt());
 mkdirSync(join(build, 'embed'), { recursive: true });
-writeFileSync(join(build, 'embed', 'settings.json'), JSON.stringify(embedSettings()));
+// The embed, as built (scripts/build-embed.js): at the address embeds have used from the start.
+copyFileSync('embed/dist/joblist-jobs.js', join(build, 'embed', 'joblist-jobs.js'));
 const home = pages.find((p) => p.path === '/');
 if (home) writeFileSync(join(build, 'index.html'), page(template, home.meta));
 console.log(`site: ${pages.length} pages, ${rules.length} shared ones, sitemap of ${pages.filter((p) => p.listed).length}`);

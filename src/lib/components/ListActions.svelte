@@ -1,6 +1,4 @@
 <script>
-	import Embed from './Embed.svelte';
-	import Sheet from './Sheet.svelte';
 	import config from '#lib/data/config.json';
 	import Icon from './Icon.svelte';
 	import ListDelete from './ListDelete.svelte';
@@ -61,12 +59,6 @@
 		deleting?.ask();
 	}
 
-	// How to show this list's jobs on another website, in a sheet over the list.
-	let embedding = $state(false);
-	function embed() {
-		document.getElementById(`${id}-more`)?.hidePopover();
-		embedding = true;
-	}
 </script>
 
 <svelte:head>{#if feed}<link rel="alternate" type="application/atom+xml" title={t('landing.follow')} href={config.url + feed} />{/if}</svelte:head>
@@ -108,17 +100,11 @@
 			<menu popover id="{id}-more" aria-label={t('list.more')}>
 				{#if list.did !== SHARED}<li><a href="/lists/new?copy={encodeURIComponent(list.uri)}"><Icon name="copy" /> {t('list.copy')}</a></li>{/if}
 				{#if feed}<li><a href={feed} type="application/atom+xml" data-sveltekit-reload title={t('landing.follow.help')}><Icon name="feed" /> {t('landing.follow')}</a></li>{/if}
-				{#if !carried}<li><button type="button" onclick={embed}><Icon name="embed" /> {t('embed.section')}</button></li>{/if}
 				{#if mine}<li><button type="button" onclick={remove}><Icon name="delete" /> {t('list.delete')}</button></li>{/if}
 			</menu>
 		</li>
 	</menu>
 	{#if mine}<ListDelete bind:this={deleting} {list} />{/if}
-	{#if !carried}
-		<Sheet bind:open={embedding} label={t('embed.section')}>
-			<Embed attribute="list" value="{list.did}/{list.rkey}" title={t('embed.list.title', { name: list.name })} />
-		</Sheet>
-	{/if}
 </jl-list-actions>
 
 <style>

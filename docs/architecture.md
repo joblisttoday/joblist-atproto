@@ -45,17 +45,19 @@ service (index, labeler, feeds) is optional and replaceable.
 | 9 | List curation | GitHub workflow, by hand | an account's password |
 | 10 | Lexicon publishing | GitHub workflow, by hand | an account's password |
 | 11 | Browser add-on | built with 1, served at `/apps` | — |
+| 12 | Embed (`<joblist-jobs>`) | on organizations' own sites; served by jsDelivr from this repository, and by 1 | nothing: reads the board live (an index only for `company="…"`) |
 
 Two repositories, four workflows, two hosts, six secrets. The couplings: the app's build reads
 the index (2), the index rebuilds the app (6), the Worker reads the index (3).
 Steps 1 and 2 removed 2 and 6: the site is built from no index (`indexer/site.js`), and
 organization and job pages are one page each, served for any of them by a rewrite.
 
-## Target: 3 pieces
+## Target: 3 pieces, and the embed
 
 | Piece | Runs | Needs |
 |---|---|---|
 | App, with the add-on | any static host (Cloudflare today), on push | nothing; an index if one is set |
+| Embed | organizations' sites, from jsDelivr (this repository) | nothing: the board, read live |
 | Indexer | one scheduled job, publishing the index to this repository's GitHub Pages, with static feeds | GitHub's own token |
 | Lexicons | by hand, rarely | an account's password, when used |
 

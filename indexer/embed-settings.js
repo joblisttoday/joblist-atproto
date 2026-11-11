@@ -1,7 +1,7 @@
 /**
- * What the embeds on other sites need (static/embed/joblist-jobs.js), written
- * next to them at build time: where the company files are, and their words in
- * each language, from the app's own translations.
+ * What the embed on other sites needs (embed/src/joblist-jobs.js), built into it by
+ * scripts/build-embed.js: where an index keeps the organizations' files, joblist's
+ * address, and its words in each language, from the app's own translations.
  */
 import config from '../src/lib/data/config.json' with { type: 'json' };
 import en from '../src/lib/i18n/locales/en.json' with { type: 'json' };
@@ -29,8 +29,6 @@ export function embedSettings() {
 	return {
 		snapshot: config.snapshot.path,
 		dir: config.embed.dir,
-		lists: config.snapshot.listsDir,
-		spread: config.jobs.spread,
 		site: config.url,
 		shown: config.embed.shown,
 		strings: { en: words(en), fr: words(fr), de: words(de), es: words(es) }

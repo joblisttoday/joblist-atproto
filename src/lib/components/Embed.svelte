@@ -3,11 +3,12 @@
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * How to show jobs on another website, an organization's or a list's: a frame for any site,
-	 * an element styled by the site, or a whole page of its own (jobs.your-domain). All read the
-	 * jobs from joblist and stay up to date by themselves (static/embed/joblist-jobs.js).
-	 * attribute and value: what the element shows (company="example.org", list="did:…/rkey").
-	 * @type {{attribute: 'company' | 'list', value: string, title: string}}
+	 * How to show an organization's jobs on another website: a frame for any site, an element
+	 * styled by the site, or a whole page of its own (jobs.your-domain). All stay up to date by
+	 * themselves (embed/src/joblist-jobs.js): with its board (board="greenhouse:acme"), the
+	 * visitor's browser reads it live, with no joblist and no index; with its domain only
+	 * (company="acme.org"), an index says which board it has.
+	 * @type {{attribute: 'board' | 'company', value: string, title: string}}
 	 */
 	let { attribute, value, title } = $props();
 	const page = `${config.url}${config.embed.page}`;

@@ -48,7 +48,7 @@ Four record types, defined in [`lexicons/`](lexicons/today/joblist):
   be shared as a link that carries it after the `#`
   (`/lists/shared#name=…&orgs=a.org+b.org`, up to `lists.shareMax`
   organizations): nothing is published or stored, and whoever opens it can
-  keep a copy. Embedding a list on a website needs it published.
+  keep a copy.
   An `open` list takes contributions: companies others suggest appear in it
   at once, credited to them, and its author can hide any (`hidden`). For
   other lists, the author accepts or dismisses each suggestion.
@@ -158,6 +158,14 @@ Configuration lives in data files, not code:
 - [`src/lib/i18n/locales/`](src/lib/i18n/locales): interface text (English, French, German, Spanish: every key in each)
 - [`src/lib/data/need-lists.json`](src/lib/data/need-lists.json): lists by need, from the commons map (`scripts/curate-lists.js`)
 - [`scripts/starter-lists.json`](scripts/starter-lists.json): lists created by the import
+
+The embed (`<joblist-jobs board="greenhouse:acme">`, [`embed/src/joblist-jobs.js`](embed/src/joblist-jobs.js)):
+an organization's open jobs on its own site, read live from its job board by the visitor's
+browser, with no joblist and no index (`company="acme.org"` asks an index for its board).
+Built to `embed/dist`, kept in the repository, so jsDelivr serves it from GitHub:
+`https://cdn.jsdelivr.net/gh/joblisttoday/joblist-atproto@<tag>/embed/dist/joblist-jobs.js`;
+the site serves a copy at `/embed/joblist-jobs.js`. `npm run build:embed` after changing it
+(a test says when it is out of date).
 
 The Firefox add-on ([`extension/`](extension/README.md)): on any website, whether the
 organization is on joblist and hires, its job board and social profiles; save and tag it
