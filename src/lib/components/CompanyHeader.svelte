@@ -2,7 +2,6 @@
 	import Icon from './Icon.svelte';
 	import config from '#lib/data/config.json';
 	import CompanyDelete from './CompanyDelete.svelte';
-	import CompanyEdited from './CompanyEdited.svelte';
 	import CompanyInvite from './CompanyInvite.svelte';
 	import CompanySave from './CompanySave.svelte';
 	import PageMenu from './PageMenu.svelte';
@@ -62,7 +61,7 @@
 				{/if}
 			</small>
 		</p>
-		{#if local}<p data-local><small>{t('org.intro')}</small></p>{:else}<CompanyEdited {company} />{/if}
+		{#if local}<p data-local><small>{t('org.intro')}</small></p>{/if}
 		{#if company.description}
 			<!-- Long, it folds: the jobs come right after the company, on a phone too. -->
 			{@const long = company.description.length > config.companyForm.foldAt}
