@@ -10,8 +10,8 @@
 
 	/**
 	 * The organizations kept in this browser, newest first. One joblist knows leads to its
-	 * page, with its open jobs; a job board joblist does not know yet, or any other link,
-	 * opens where it leads, with a way to add it to joblist for everyone.
+	 * page, with its open jobs; another to what this browser finds of it (/me/organization),
+	 * from where it can be suggested to joblist.
 	 * max: only the first ones (at a glance, on /me).
 	 * @type {{max?: number}}
 	 */
@@ -27,8 +27,6 @@
 	}
 	/** @param {string} id */
 	const provider = (id) => providers.find((p) => p.id === id)?.name || id;
-	/** @param {string} url */
-	const addHref = (url) => `/add?${new URLSearchParams({ url })}`;
 </script>
 
 <jl-kept-organizations>
@@ -44,11 +42,10 @@
 						<small>{count ? t('kept.jobs', { count }) : t('kept.noJobs')}</small>
 					</a>
 				{:else}
-					<a href={item.url} target="_blank" rel="noopener noreferrer">
-						<span>{item.name || short(item.url)} <Icon name="external" /></span>
+					<a href="/me/organization#{new URLSearchParams({ url: item.url })}">
+						<span>{item.name || short(item.url)}</span>
 						<small>{board ? t('kept.board', { provider: provider(board.provider) }) : short(item.url)}</small>
 					</a>
-					<a href={addHref(item.url)} data-add>{t('kept.add')}</a>
 				{/if}
 				<button type="button" onclick={() => forget(item.url)}><Icon name="close" label={t('kept.forget', { name: item.name || company?.name || short(item.url) })} /></button>
 			</li>
@@ -93,10 +90,6 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
-	}
-	a[data-add] {
-		flex: none;
-		font-size: var(--font-size-small);
 	}
 	button {
 		flex: none;

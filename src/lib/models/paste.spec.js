@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { findCompany, firstUrl, guessName, hasInput, parsePaste, prettyId, readParams, toPrefill, withPrefill, boardFromCareers } from './paste.js';
+import { findCompany, firstUrl, guessName, hasInput, parsePaste, prettyId, readExtras, readParams, toPrefill, withPrefill, boardFromCareers } from './paste.js';
 
 /** @param {Record<string, string>} query */
 const params = (query) => new URLSearchParams(query);
@@ -135,5 +135,16 @@ describe('boardFromCareers', () => {
 		expect(boardFromCareers(form)).toEqual({ provider: 'greenhouse', boardId: 'acme', careersUrl: '' });
 		const own = { provider: '', boardId: '', careersUrl: 'https://acme.org/jobs' };
 		expect(boardFromCareers(own)).toBe(own);
+	});
+});
+
+describe('readExtras and withPrefill', () => {
+	it('fills an empty description and links, never what is there', () => {
+		const extras = readExtras(new URLSearchParams('description=+A+coop+&link=https://bsky.app/profile/acme.coop&link=nope'));
+		expect(extras).toEqual({ description: 'A coop', links: ['https://bsky.app/profile/acme.coop'] });
+		const empty = { url: '', name: '', provider: '', boardId: '', careersUrl: '', description: '', links: [] };
+		expect(withPrefill(empty, extras)).toMatchObject(extras);
+		const filled = { ...empty, description: 'Mine', links: ['https://acme.coop/blog'] };
+		expect(withPrefill(filled, extras)).toMatchObject({ description: 'Mine', links: ['https://acme.coop/blog'] });
 	});
 });

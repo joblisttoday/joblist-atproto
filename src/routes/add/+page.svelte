@@ -12,12 +12,13 @@
 	import AddSaved from '#lib/components/AddSaved.svelte';
 	import CompanyForm from '#lib/components/CompanyForm.svelte';
 	import { checkBoard } from '#lib/ats/board-check.js';
-	import { findCompany, hasInput, parsePaste, readParams, toPrefill } from '#lib/models/paste.js';
+	import { findCompany, hasInput, parsePaste, readExtras, readParams, toPrefill } from '#lib/models/paste.js';
 	import { data } from '#lib/network/network.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	// /add?key=… edits a company (&field=… starts on one part); /add?url=…&name=…&board=…
-	// (links, bookmarklet) and /add?title=…&text=…&url=… (share target) start from a pasted link.
+	// (links, bookmarklet) and /add?title=…&text=…&url=… (share target) start from a pasted link;
+	// &description=…&link=… (a kept organization's profile) fill more of it.
 	const params = $derived(page.url.searchParams);
 	const key = $derived(params.get('key'));
 	const input = $derived(readParams(params));
@@ -79,7 +80,7 @@
 				{#key `${company?.key}:${page.url.search}`}
 					<CompanyForm
 						{company}
-						prefill={toPrefill(pasted, found?.name)}
+						prefill={{ ...toPrefill(pasted, found?.name), ...readExtras(params) }}
 						focus={params.get('field') || ''}
 						{onsaved}
 						oncancel={() => history.back()}

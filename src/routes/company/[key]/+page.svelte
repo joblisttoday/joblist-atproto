@@ -11,6 +11,8 @@
 	import CompanyVersions from '#lib/components/CompanyVersions.svelte';
 	import CompanyJobs from '#lib/components/CompanyJobs.svelte';
 	import DataState from '#lib/components/DataState.svelte';
+	import OrganizationProfile from '#lib/components/OrganizationProfile.svelte';
+	import { keptUrl, keyOf } from '#lib/models/kept.js';
 	import ListItem from '#lib/components/ListItem.svelte';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { data, listsWith } from '#lib/network/network.svelte.js';
@@ -77,15 +79,25 @@
 {:else if data.status !== 'known'}
 	<DataState />
 {:else}
-	<h1>{key}</h1>
-	<p>{t('company.notFound', { key })}</p>
-	<menu><a href="/add?url={encodeURIComponent(key)}">{t('company.describe')}</a></menu>
+	{@const link = keptUrl(key)}
+	{#if link && keyOf(link) === key}
+		<!-- A domain joblist does not know: what this browser finds of it, to keep or suggest. -->
+		<jl-company-unknown><OrganizationProfile {link} /></jl-company-unknown>
+	{:else}
+		<h1>{key}</h1>
+		<p>{t('company.notFound', { key })}</p>
+		<menu><a href="/add?url={encodeURIComponent(key)}">{t('company.describe')}</a></menu>
+	{/if}
 {/if}
 
 <style>
 	jl-company-page,
 	jl-company-main {
 		display: block;
+	}
+	jl-company-unknown {
+		display: block;
+		max-width: var(--reading-width);
 	}
 	section {
 		margin-top: var(--space-xl);

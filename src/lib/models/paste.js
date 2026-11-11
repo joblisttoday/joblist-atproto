@@ -61,6 +61,18 @@ export function readParams(params) {
 }
 
 /**
+ * More of an organization, from a page that found it (a kept organization's profile):
+ * its description and its other links (&link=… for each).
+ * @param {{get: (name: string) => string | null, getAll: (name: string) => string[]}} params
+ */
+export function readExtras(params) {
+	return {
+		description: (params.get('description') || '').trim(),
+		links: params.getAll('link').map((l) => firstUrl(l)).filter(Boolean)
+	};
+}
+
+/**
  * Whether the add page was given something to start from.
  * @param {{has: (name: string) => boolean}} params
  */
@@ -166,9 +178,9 @@ export function toPrefill(pasted, boardName = '') {
 
 /**
  * Fill the empty fields of a company form; never overwrite what is there.
- * @template {{url: string, name: string, provider: string, boardId: string, careersUrl: string}} F
+ * @template {{url: string, name: string, provider: string, boardId: string, careersUrl: string, description?: string, links?: string[]}} F
  * @param {F} form
- * @param {Partial<ReturnType<typeof toPrefill>>} prefill
+ * @param {Partial<ReturnType<typeof toPrefill> & ReturnType<typeof readExtras>>} prefill
  * @returns {F}
  */
 export function withPrefill(form, prefill) {
@@ -182,6 +194,8 @@ export function withPrefill(form, prefill) {
 	} else if (!hasBoard && prefill.careersUrl) {
 		out.careersUrl = prefill.careersUrl;
 	}
+	if ('description' in out && !out.description?.trim() && prefill.description) out.description = prefill.description;
+	if ('links' in out && !out.links?.length && prefill.links?.length) out.links = [...prefill.links];
 	return out;
 }
 
