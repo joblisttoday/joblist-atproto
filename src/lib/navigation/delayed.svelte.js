@@ -26,12 +26,6 @@ export function delayed(read, write, ms) {
 		}
 	});
 	return {
-		/** What was typed, to the source now (the search is sent). */
-		flush() {
-			if (value === pushed) return;
-			pushed = value;
-			write(value);
-		},
 		get value() {
 			return value;
 		},

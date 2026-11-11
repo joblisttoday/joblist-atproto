@@ -2,20 +2,18 @@
 	import { goto } from '$app/navigation';
 	import config from '#lib/data/config.json';
 	import Icon from '#lib/components/Icon.svelte';
-	import ExploreSearch from '#lib/components/ExploreSearch.svelte';
 	import MenuLinks from '#lib/components/MenuLinks.svelte';
 	import PageHeader from '#lib/components/PageHeader.svelte';
 	import SavedSearches from '#lib/components/SavedSearches.svelte';
-	import { getSnapshotCounts } from '#lib/network/snapshot.js';
-	import { searchKeys, searchState } from '#lib/models/saved-search.js';
-	import { addressOf, signingIn } from '#lib/navigation/address.js';
+	import { searchKeys } from '#lib/models/saved-search.js';
+	import { signingIn } from '#lib/navigation/address.js';
 	import { savedJobs } from '#lib/network/saved-jobs.svelte.js';
 	import { searches } from '#lib/network/saved-searches.svelte.js';
 	import { formatNumber, t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * The home: what joblist is, the search every page has, your searches (kept in this
-	 * browser) with their new jobs, and the ways in. The explorer is /jobs; an older link
+	 * The home: what joblist is, your searches (kept in this browser) with their new jobs,
+	 * and the ways in; the search is the header's, as on every page (jobs, organizations, places). The explorer is /jobs; an older link
 	 * to a search here (/#q=design) goes on to it.
 	 */
 	const explorer = [...searchKeys, 'view', config.jobs.jobParam];
@@ -26,18 +24,7 @@
 		if (explorer.some((key) => hash.has(key) || query.has(key))) goto(`/jobs${location.search}${location.hash}`, { replace: true });
 	});
 
-	/** @type {import('#lib/models/job.js').JobFilters} */
-	let filters = $state({ query: '', where: '', remote: '', pay: false, near: null, within: 0 });
-	/** The places hiring the most, offered as the place is typed (a small file). @type {string[]} */
-	let places = $state.raw([]);
-	getSnapshotCounts().then((counts) => (places = (counts?.places || []).slice(0, config.jobs.placesSuggested).map(([place]) => place)));
 	const max = config.me.glance;
-
-	// The explorer, with the search as it was typed and chosen (near someone stays in this page's memory).
-	function search() {
-		if (filters.near) searches.opening = { ...$state.snapshot(filters), seen: '' };
-		goto(addressOf(searchState(filters), '/jobs'));
-	}
 
 	/** @type {import('#lib/navigation/nav.js').MenuLink[]} */
 	const ways = $derived([
@@ -52,10 +39,6 @@
 <jl-home>
 	<PageHeader title={t('home.heading')} intro={t('home.lead')} />
 
-	<!-- The same search as every page's: what, where, the quick choices; sent to the explorer. -->
-	<ExploreSearch bind:filters {places} onsubmit={search}>
-		{#snippet tools()}<button type="submit" data-go><Icon name="search" /> {t('saved.explore')}</button>{/snippet}
-	</ExploreSearch>
 
 	{#if searches.list.length}
 		<section aria-labelledby="home-searches">
@@ -76,24 +59,9 @@
 	section {
 		margin-top: var(--space-l);
 	}
-	button[data-go] {
-		flex: none;
-		min-height: var(--chip-height);
-		padding: 0 var(--space-m);
-		border-radius: var(--radius-round);
-		background: var(--color-accent);
-		color: var(--color-accent-fg);
-		border-color: var(--color-accent);
-		font-size: var(--font-size-small);
-	}
 	jl-home-ways {
 		display: block;
 		margin-top: var(--space-l);
-	}
-	/* The search, a little apart from what joblist is. */
-	jl-home > :global(jl-explore-search) {
-		display: block;
-		margin-top: var(--space-m);
 	}
 	/* Wide screens: the ways in side by side, each its own box. */
 	@media (min-width: 48rem) {

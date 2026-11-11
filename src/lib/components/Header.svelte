@@ -35,7 +35,7 @@
 		<a href="/" aria-current={page.url.pathname === '/' ? 'page' : undefined}><Logo /><b>{config.name}</b></a>
 		{#if !topLevel}<a href="/" onclick={back}><Icon name="back" /> {t('nav.back')}</a>{/if}
 		<!-- The home and the explore pages have their own search. -->
-		{#if explore}<ExploreSwitch />{:else if page.url.pathname !== '/'}<QuickSearch />{/if}
+		{#if explore}<ExploreSwitch />{:else}<QuickSearch />{/if}
 		<Nav />
 	</header>
 	<NetworkStatus />

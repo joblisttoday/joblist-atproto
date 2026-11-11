@@ -7,11 +7,10 @@
 
 	/**
 	 * The explorer's search: what and where, then quick choices as chips.
-	 * tools: shown at the end of the chips' row (how the jobs are shown, or a search button).
-	 * onsubmit: the search is sent (home: to the explorer), with what was just typed.
-	 * @type {{filters: import('#lib/models/job.js').JobFilters, places: string[], tools?: import('svelte').Snippet, onsubmit?: () => void}}
+	 * tools: shown at the end of the chips' row (how the jobs are shown).
+	 * @type {{filters: import('#lib/models/job.js').JobFilters, places: string[], tools?: import('svelte').Snippet}}
 	 */
-	let { filters = $bindable(), places, tools, onsubmit } = $props();
+	let { filters = $bindable(), places, tools } = $props();
 	const id = $props.id();
 	const mode = config.travel.mode;
 	// Searching tens of thousands of jobs waits for a pause in typing.
@@ -40,15 +39,7 @@
 </script>
 
 <jl-explore-search>
-	<form
-		role="search"
-		onsubmit={(e) => {
-			e.preventDefault();
-			query.flush();
-			where.flush();
-			onsubmit?.();
-		}}
-	>
+	<form role="search" onsubmit={(e) => e.preventDefault()}>
 		<!-- Each field keeps its name in sight, small on its edge: the placeholder is only an example. -->
 		<jl-search-field>
 			<label for="{id}-what">{t('explore.what')}</label>
