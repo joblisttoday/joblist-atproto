@@ -1,15 +1,18 @@
 /**
  * How someone likes to see a page of things (jobs, companies): on the map, as a
- * list, or as a grid of cards (wide screens). Kept in this browser, per page;
- * the page's own default until they choose.
- * @typedef {'map' | 'list' | 'grid'} ExploreView
+ * list, as a grid of cards (wide screens), or (an organization's jobs) by team.
+ * Kept in this browser, per page; the page's own default until they choose.
+ * @typedef {'map' | 'list' | 'grid' | 'teams'} ExploreView
  */
 
-/** @param {string} page @param {ExploreView} fallback @returns {ExploreView} */
-export function readView(page = 'jobs', fallback = 'map') {
+/** The views most pages have; teams only an organization's jobs. @type {ExploreView[]} */
+const VIEWS = ['list', 'grid', 'map'];
+
+/** @param {string} page @param {ExploreView} fallback @param {ExploreView[]} [views] the page's @returns {ExploreView} */
+export function readView(page = 'jobs', fallback = 'map', views = VIEWS) {
 	try {
-		const view = localStorage.getItem(key(page));
-		return view === 'list' || view === 'grid' || view === 'map' ? view : fallback;
+		const view = /** @type {ExploreView} */ (localStorage.getItem(key(page)));
+		return views.includes(view) ? view : fallback;
 	} catch {
 		return fallback;
 	}
@@ -18,10 +21,11 @@ export function readView(page = 'jobs', fallback = 'map') {
 /**
  * A view an address asks for: null when it is none.
  * @param {string | null} text
+ * @param {ExploreView[]} [views] the page's
  * @returns {ExploreView | null}
  */
-export function viewParam(text) {
-	return text === 'list' || text === 'grid' || text === 'map' ? text : null;
+export function viewParam(text, views = VIEWS) {
+	return views.includes(/** @type {ExploreView} */ (text)) ? /** @type {ExploreView} */ (text) : null;
 }
 
 /** @param {ExploreView} view @param {string} page */

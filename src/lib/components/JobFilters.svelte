@@ -8,11 +8,12 @@
 	 * @type {{
 	 *   filters: import('#lib/models/job.js').JobFilters,
 	 *   grouped: boolean,
+ *   groupLabel?: string,
 	 *   places: string[],
 	 *   onchange: () => void
 	 * }}
 	 */
-	let { filters = $bindable(), grouped = $bindable(), places, onchange } = $props();
+	let { filters = $bindable(), grouped = $bindable(), groupLabel = t('jobs.filter.grouped'), places, onchange } = $props();
 	const id = $props.id();
 	const mode = config.travel.mode;
 	/** @type {'' | 'locating' | 'denied'} */
@@ -74,7 +75,7 @@
 					{/each}
 				</select>
 			{/if}
-			<button type="button" aria-pressed={grouped ? 'true' : 'false'} onclick={() => (grouped = !grouped)}>{t('jobs.filter.grouped')}</button>
+			<button type="button" aria-pressed={grouped ? 'true' : 'false'} onclick={() => (grouped = !grouped)}>{groupLabel}</button>
 		</fieldset>
 		{#if locating === 'locating'}<small aria-live="polite">{t('near.locating')}</small>{/if}
 		{#if locating === 'denied'}<small role="alert">{t('near.denied')}</small>{/if}

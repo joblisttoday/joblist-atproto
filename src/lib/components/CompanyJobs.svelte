@@ -15,7 +15,7 @@
 
 	/**
 	 * A company's jobs, searched like the explorer's (what, where, near, remote, pay),
-	 * as a list, a grid of cards (wide screens) or on a map. A job opens in a dialog
+	 * as a list, by team, a grid of cards (wide screens) or on a map. A job opens in a dialog
 	 * over them: a history entry (back closes it), in the address to share.
 	 * @type {{company: import('#lib/models/company.js').Company}}
 	 */
@@ -25,7 +25,9 @@
 	const params = readAddress(['q', 'where', 'remote', 'pay', 'view', config.jobs.jobParam]);
 	/** @type {import('#lib/models/job.js').JobFilters} */
 	let filters = $state({ ...fromParams(params), near: null, within: 0 });
-	let view = $state(viewParam(params.get('view')) || readView('company', 'list'));
+	/** @type {import('#lib/navigation/explore-view.js').ExploreView[]} */
+	const views = ['list', 'teams', 'grid', 'map'];
+	let view = $state(viewParam(params.get('view'), views) || readView('company', 'list', views));
 	/** @param {string} [job] */
 	const stateOf = (job) => ({ ...searchState(filters), area: '', view: view === 'list' ? '' : view, [config.jobs.jobParam]: job });
 	/** @type {import('#lib/ats/job.js').Job[]} */
@@ -76,7 +78,7 @@
 	{#if searchable}
 		<jl-company-jobs-bar>
 			<ExploreSearch bind:filters {places}>
-				{#snippet tools()}<ViewSwitch bind:view page="company" {mapless} />{/snippet}
+				{#snippet tools()}<ViewSwitch bind:view page="company" {views} {mapless} />{/snippet}
 			</ExploreSearch>
 		</jl-company-jobs-bar>
 	{/if}
@@ -87,6 +89,7 @@
 		<Jobs
 			companies={[company]}
 			search={false}
+			grouped={view === 'teams'}
 			{filters}
 			bind:jobs
 			bind:results

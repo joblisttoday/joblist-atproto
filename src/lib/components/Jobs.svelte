@@ -2,6 +2,7 @@
 	import config from '#lib/data/config.json';
 	import JobFilters from './JobFilters.svelte';
 	import JobGroup from './JobGroup.svelte';
+	import { byTeam } from '#lib/models/team.js';
 	import JobItem from './JobItem.svelte';
 	import { getJobs } from '#lib/ats/index.js';
 	import { mapLimit } from '#lib/atproto/xrpc.js';
@@ -25,6 +26,7 @@
 	 * results: the jobs matching the filters, for the page (a map of them). busy: still reading job boards.
 	 * actions: shown under the filters.
 	 * search: show the filters (false when the page has its own search).
+	 * grouped: by organization, or by team on one organization's page.
 	 * onselect, selected: open a job in the page (the explorer), and which one is open.
 	 * @type {{
 	 *   companies: import('#lib/models/company.js').Company[],
@@ -36,6 +38,7 @@
 	 *   busy?: boolean,
 	 *   actions?: import('svelte').Snippet,
 	 *   search?: boolean,
+	 *   grouped?: boolean,
 	 *   onselect?: (job: import('#lib/ats/job.js').Job) => void,
 	 *   selected?: string,
 	 *   places?: string[],
@@ -54,6 +57,7 @@
 		busy = $bindable(false),
 		actions,
 		search = true,
+		grouped = $bindable(false),
 		onselect,
 		selected = '',
 		places: suggested = $bindable([]),
@@ -68,7 +72,6 @@
 	let answered = $state(0);
 	/** Companies whose job board closed. @type {Set<string>} */
 	let gone = $state.raw(new Set());
-	let grouped = $state(false);
 	let shown = $state(PAGE);
 
 	const targets = $derived(companies.filter(hasJobsApi));
@@ -119,7 +122,8 @@
 		if (visible === jobs) unfiltered = { jobs, count: matching.length };
 		return unfiltered.jobs === jobs ? unfiltered.count : allOffers;
 	});
-	const groups = $derived(grouped ? byCompany(filtered) : []);
+	// One organization: its jobs by team; many: by organization.
+	const groups = $derived(!grouped ? [] : single ? byTeam(filtered, (field) => t(`field.${field}`)) : byCompany(filtered));
 	// Suggestions are computed once all boards answered, not on every answer;
 	// in the explorer (every company) the snapshot counted them already.
 	/** @type {string[]} */
@@ -198,7 +202,7 @@
 		<progress value={answered} max={targets.length} aria-label={t('jobs.loading')}></progress>
 	{/if}
 	{#if search && (jobs.length > 10 || actions)}
-		<JobFilters bind:filters bind:grouped {places} onchange={() => (shown = PAGE)} />
+		<JobFilters bind:filters bind:grouped groupLabel={single ? t('jobs.filter.teams') : undefined} {places} onchange={() => (shown = PAGE)} />
 	{/if}
 	<!-- How many, and what to do with them, on one line. -->
 	<jl-jobs-bar>
@@ -221,7 +225,9 @@
 	{#if grouped}
 		<ul>
 			{#each groups as [key, list] (key)}
-				<li><JobGroup {key} name={names.get(key) || key} jobs={list} /></li>
+				<li>
+					{#if single}<JobGroup name={key || t('jobs.team.none')} jobs={list} />{:else}<JobGroup {key} name={names.get(key) || key} jobs={list} />{/if}
+				</li>
 			{/each}
 		</ul>
 	{:else}
