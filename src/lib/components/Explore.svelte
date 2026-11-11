@@ -326,15 +326,7 @@
 		{/if}
 		<!-- Kept while a job is open, so its search and its place in the list are still there after. -->
 		<jl-explore-results id="explore-results" hidden={pickedJobs ? true : undefined}>
-			<!-- How many organizations, only once they are known: never "0" while they are read. -->
-			{#if data.status !== 'known'}
-				<DataState />
-			{:else if !searching}
-				<p>
-					{t('explore.welcome', { companies: companies.length })}
-					<a href="/jobs/new">{t('explore.publish')}</a>
-				</p>
-			{/if}
+			{#if data.status !== 'known'}<DataState />{/if}
 			<!-- The fields jobs are in: one tap shows a field's jobs, searched or not. -->
 			<ExploreFields bind:field={filters.field} {jobs} />
 			<!-- The newest jobs at once, until the list has jobs of its own to show (it needs the companies first). -->
@@ -517,11 +509,6 @@
 		min-height: var(--chip-height);
 		padding: 0 var(--space-m);
 		border-radius: var(--radius-round);
-		font-size: var(--font-size-small);
-	}
-	jl-explore-results > p {
-		margin: var(--space-s) 0 0;
-		color: var(--color-muted);
 		font-size: var(--font-size-small);
 	}
 

@@ -62,7 +62,9 @@ const url = (path) => config.url + (path === '/' ? '' : path);
 export function sitePages({ companies, lists, profiles, jobCounts, jobTotal, updated, places = { cities: [], fields: [] } }) {
 	/** @param {{updated?: string}[]} items */
 	const newest = (items) => items.map((i) => i.updated || '').reduce((a, b) => (b > a ? b : a), '');
-	const welcome = en['explore.welcome'].replace('{companies}', companies.length.toLocaleString('en'));
+	// What joblist is, in numbers: "28,294 open jobs at 361 organizations. Open jobs read straight from…"
+	const hiringNow = companies.filter((c) => (jobCounts.get(c.key) || 0) > 0).length;
+	const welcome = `${t('jobs.countAt', { count: jobTotal, companies: hiringNow })}. ${en['home.lead']}`;
 	const hiring = [...companies].sort((a, b) => (jobCounts.get(b.key) || 0) - (jobCounts.get(a.key) || 0));
 	/** @type {SitePage[]} */
 	const pages = [

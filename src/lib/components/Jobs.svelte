@@ -131,6 +131,8 @@
 		return unfiltered.jobs === jobs ? unfiltered.count : allOffers;
 	});
 	// One organization: its jobs by team; many: by organization.
+	// The organizations with open jobs (not every one listed): "28,294 open jobs at 361 organizations".
+	const hiring = $derived(single ? 1 : new Set(jobs.map((j) => j.company)).size);
 	const groups = $derived(!grouped ? [] : single ? byTeam(filtered, (field) => t(`field.${field}`)) : byCompany(filtered));
 	// Suggestions are computed once all boards answered, not on every answer;
 	// in the explorer (every company) the snapshot counted them already.
@@ -220,6 +222,8 @@
 					{t('jobs.reading')}
 				{:else if loading}
 					{t('jobs.progress', { answered, total: targets.length, count: jobs.length })}
+				{:else if filtered.length === offers && !single}
+					{t('jobs.countAt', { count: offers, companies: hiring })}
 				{:else if filtered.length === offers}
 					{t('jobs.count', { count: offers })}
 				{:else}
