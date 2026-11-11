@@ -42,3 +42,11 @@ test("an organization's page has tabs, each its own address", async ({ page }) =
 	await page.goto('/ableton.com/jobs');
 	await expect(page).toHaveURL(/\/ableton\.com$/);
 });
+
+test('a name that is no domain is no organization: not found', async ({ page }) => {
+	for (const path of ['/test.env', '/fake-fomaine.no-tld']) {
+		await page.goto(path);
+		await expect(page.locator('h1')).toContainText('Page not found');
+		await expect(page.getByRole('link', { name: 'Suggest to joblist' })).toHaveCount(0);
+	}
+});

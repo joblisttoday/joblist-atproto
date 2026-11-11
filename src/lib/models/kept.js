@@ -1,4 +1,5 @@
 import platforms from '#lib/data/platforms.json' with { type: 'json' };
+import { tlds } from '#lib/data/tlds.json' with { type: 'json' };
 import { detectBoard } from '#lib/ats/detect.js';
 
 /**
@@ -13,6 +14,7 @@ import { detectBoard } from '#lib/ats/detect.js';
  */
 
 const PLATFORMS = new Set(platforms.hosts);
+const TLDS = new Set(tlds);
 const MAX_URL = 2048;
 const MAX_NAME = 200;
 const MAX_TAGS = 20;
@@ -34,6 +36,19 @@ export function cleanTags(tags) {
 
 /** A link's host, without "www.". @param {URL} url */
 const hostOf = (url) => url.hostname.toLowerCase().replace(/^www\./, '');
+
+/**
+ * Whether a name is a domain: labels of letters, digits and inner hyphens, ending with a
+ * top-level domain that exists (src/lib/data/tlds.json, IANA's): gitlab.com, not test.env,
+ * llms.txt or fake.no-tld.
+ * @param {string} host
+ */
+export function isDomain(host) {
+	const labels = host.toLowerCase().replace(/\.$/, '').split('.');
+	if (labels.length < 2 || host.length > 253) return false;
+	if (!labels.every((l) => /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(l))) return false;
+	return TLDS.has(/** @type {string} */ (labels.at(-1)));
+}
 
 /**
  * What was typed or pasted as a link (a bare domain too), or null when it is none.
@@ -106,7 +121,8 @@ export function knownBy(companies) {
 export function organizationPage(input, known) {
 	const text = input.trim();
 	const link = keptUrl(text);
-	if (!link) return null;
+	// A link's host is a domain that exists (not test.env, not llms.txt).
+	if (!link || !isDomain(new URL(link).hostname)) return null;
 	const sure = /^[a-z][a-z0-9+.-]*:\/\//i.test(text) || text.includes('/') || /\.[a-z]{2,}$/i.test(text);
 	const found = known(link);
 	if (found) return { href: `/${found.key}`, name: found.name, known: true, sure };

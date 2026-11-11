@@ -5,7 +5,7 @@
 	import config from '#lib/data/config.json';
 	import CompanyPage from '#lib/components/CompanyPage.svelte';
 	import OrganizationProfile from '#lib/components/OrganizationProfile.svelte';
-	import { keptUrl, keyOf } from '#lib/models/kept.js';
+	import { isDomain, keptUrl, keyOf } from '#lib/models/kept.js';
 	import NotFound from '#lib/components/NotFound.svelte';
 	import DataState from '#lib/components/DataState.svelte';
 	import Pending from '#lib/components/Pending.svelte';
@@ -41,8 +41,9 @@
 		else if (company && page.route.id?.endsWith('/jobs')) goto(`/${company.key}${location.hash}`, { replace: true });
 	});
 	// A domain (acme.org): its local profile when it is neither an organization nor an account.
+	// Only a real one: test.env, llms.txt or fake.no-tld are no organization's (isDomain).
 	const domain = $derived.by(() => {
-		const link = keptUrl(handle);
+		const link = isDomain(handle) ? keptUrl(handle) : null;
 		return link && keyOf(link) === handle ? link : '';
 	});
 	/** undefined while it is resolved, null when it is not an account. @type {string | null | undefined} */
@@ -56,6 +57,11 @@
 		unreachable = false;
 		if (known) {
 			did = known;
+			return;
+		}
+		// Not a domain, not a DID: no account's handle, nothing to ask.
+		if (!isDomain(asked) && !asked.startsWith('did:')) {
+			did = null;
 			return;
 		}
 		did = undefined;

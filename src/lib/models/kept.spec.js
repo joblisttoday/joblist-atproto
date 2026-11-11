@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applyChanges, cleanTags, listsToKept, mergeKept, organizationPage, keptTags, keptUrl, keyOf, knownBy, readKept, withKept, withTags } from './kept.js';
+import { applyChanges, cleanTags, isDomain, listsToKept, mergeKept, organizationPage, keptTags, keptUrl, keyOf, knownBy, readKept, withKept, withTags } from './kept.js';
 
 describe('keptUrl', () => {
 	it('reads a link, a bare domain too; a home is its domain', () => {
@@ -114,5 +114,16 @@ describe('organizationPage', () => {
 	it('words are no link', () => {
 		expect(organizationPage('product designer', known)).toBeNull();
 		expect(organizationPage('design', known)).toBeNull();
+	});
+});
+
+describe('isDomain', () => {
+	it('knows a domain by a top-level domain that exists', () => {
+		for (const host of ['gitlab.com', 'joblist.today', 'some.bsky.social', 'acme.coop', 'xn--bcher-kva.de']) expect(isDomain(host)).toBe(true);
+		for (const host of ['test.env', 'llm.txt', 'fake-fomaine.no-tld', 'node.js', 'localhost', 'a..com', '-a.com', 'camunda']) expect(isDomain(host)).toBe(false);
+	});
+	it('offers no organization for a name that is no domain', () => {
+		expect(organizationPage('test.env', () => undefined)).toBeNull();
+		expect(organizationPage('node.js', () => undefined)).toBeNull();
 	});
 });
