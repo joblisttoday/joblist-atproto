@@ -1,32 +1,17 @@
 /**
- * The "Add to joblist" bookmarklet. It runs on any page, in the page itself:
- * it must stay self-contained (no imports, no outside names) because its source
- * text becomes the bookmark.
- *
- * It sends the page, its site name and the first job board it links to
- * (same hosts as #lib/ats/detect.js) to joblist's add page, in a new tab.
+ * The "joblist" bookmarklet: on any page, it opens joblist on it, in a new tab
+ * (/me/organization#url=…): an organization joblist knows goes to its page; a job board or a
+ * website gets what joblist finds of it, to save or suggest. It sends the page's address
+ * only, after the "#" (no server sees it). It runs in the page itself: it must stay
+ * self-contained (no imports, no outside names), its source text being the bookmark.
+ * The browser add-on (extension/) reads the page itself (its name, links, careers page).
  *
  * @param {string} origin joblist's origin
- * @param {Document} [doc]
+ * @param {Pick<Document, 'location'>} [doc]
  * @param {Pick<Window, 'open'>} [win]
  */
 export function addToJoblist(origin, doc = document, win = window) {
-	const hosts = /(^|\.)(greenhouse\.io|lever\.co|ashbyhq\.com|workable\.com|personio\.(de|com)|recruitee\.com|smartrecruiters\.com|rippling\.com)$/i;
-	const meta = doc.querySelector('meta[property="og:site_name"],meta[name="application-name"]');
-	const title = doc.title.trim();
-	const name = meta?.getAttribute('content') || (/^[^|:\-–—·]{1,40}$/.test(title) ? title : '');
-	let board = '';
-	for (const el of doc.querySelectorAll('a[href],iframe[src],script[src]')) {
-		try {
-			const url = new URL(el.getAttribute('href') || el.getAttribute('src') || '', doc.location.href);
-			if (hosts.test(url.hostname)) {
-				board = url.href;
-				break;
-			}
-		} catch {}
-	}
-	const query = new URLSearchParams({ url: doc.location.href, name, board });
-	win.open(`${origin}/add?${query}`, '_blank');
+	win.open(`${origin}/me/organization#url=${encodeURIComponent(doc.location.href)}`, '_blank');
 }
 
 /**

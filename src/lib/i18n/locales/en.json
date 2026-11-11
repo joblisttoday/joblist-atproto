@@ -108,7 +108,7 @@
 	"anywhere.share.title": "From your phone",
 	"anywhere.share.text": "Install joblist: in your browser's menu, choose Install app or Add to Home screen. Then on an organization website, a job board or a job ad, tap Share and choose joblist.",
 	"anywhere.bookmarklet.title": "From your computer",
-	"anywhere.bookmarklet.text": "Drag this button to your bookmarks bar. On an organization website or a job page, click the bookmark: joblist opens in a new tab with the organization and the job board it links to.",
+	"anywhere.bookmarklet.text": "Drag this button to your bookmarks bar. On an organization website, a job board or a job page, click the bookmark: joblist opens on it, to see what it knows, save it or suggest it.",
 	"anywhere.bookmarklet.link": "Add to joblist",
 	"anywhere.bookmarklet.help": "Drag it to your bookmarks bar; clicking it here does nothing.",
 	"anywhere.bookmarklet.code": "Bookmarklet code",

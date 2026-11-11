@@ -108,7 +108,7 @@
 	"anywhere.share.title": "Depuis votre téléphone",
 	"anywhere.share.text": "Installez joblist : dans le menu du navigateur, choisissez Installer l'application ou Ajouter à l'écran d'accueil. Ensuite, sur le site d'une organisation, une page d'offres ou une offre d'emploi, touchez Partager et choisissez joblist.",
 	"anywhere.bookmarklet.title": "Depuis votre ordinateur",
-	"anywhere.bookmarklet.text": "Glissez ce bouton dans votre barre de favoris. Sur le site d'une organisation ou une page d'offres, cliquez sur le favori : joblist s'ouvre dans un nouvel onglet avec l'organisation et la page d'offres vers laquelle elle renvoie.",
+	"anywhere.bookmarklet.text": "Faites glisser ce bouton dans votre barre de favoris. Sur le site d’une organisation, une page carrières ou une offre, cliquez le favori : joblist s’ouvre dessus, pour voir ce qu’il en sait, la garder ou la proposer.",
 	"anywhere.bookmarklet.link": "Ajouter à joblist",
 	"anywhere.bookmarklet.help": "Glissez-le dans votre barre de favoris ; un clic ici ne fait rien.",
 	"anywhere.bookmarklet.code": "Code du favori",

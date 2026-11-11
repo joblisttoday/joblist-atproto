@@ -108,7 +108,7 @@
 	"anywhere.share.title": "Desde tu teléfono",
 	"anywhere.share.text": "Instala joblist: en el menú de tu navegador, elige Instalar app o Añadir a pantalla de inicio. Luego, en el sitio web de una organización, un portal de empleo o una oferta, toca Compartir y elige joblist.",
 	"anywhere.bookmarklet.title": "Desde tu computadora",
-	"anywhere.bookmarklet.text": "Arrastra este botón a tu barra de marcadores. En el sitio web de una organización o en una página de empleo, haz clic en el marcador: joblist se abre en una pestaña nueva con la organización y el portal de empleo al que enlaza.",
+	"anywhere.bookmarklet.text": "Arrastra este botón a tu barra de marcadores. En la web de una organización, una página de empleo o una oferta, pulsa el marcador: joblist se abre sobre ella, para ver lo que sabe, guardarla o proponerla.",
 	"anywhere.bookmarklet.link": "Añadir a joblist",
 	"anywhere.bookmarklet.help": "Arrástralo a tu barra de marcadores; hacer clic aquí no hace nada.",
 	"anywhere.bookmarklet.code": "Código del marcador",
