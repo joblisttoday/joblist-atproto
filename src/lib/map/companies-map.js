@@ -24,8 +24,9 @@ export function mainArea(list) {
 }
 
 /**
- * Companies as one GL circle layer (fast with thousands of points),
- * colored from the page's CSS variables. Loads MapLibre on demand.
+ * Companies as GL circles (fast with thousands of points), grouped where they are many:
+ * a group says how many and opens closer on a tap, as the jobs map does (Berlin alone has
+ * hundreds). Colored from the page's CSS variables. Loads MapLibre on demand.
  * @param {HTMLElement} node
  * @param {Point[]} points
  * @returns {() => void} cleanup
@@ -54,12 +55,44 @@ export function mountMap(node, points) {
 						geometry: { type: 'Point', coordinates: [p.lon, p.lat] },
 						properties: { key: p.company.key, name: p.company.name, href: p.href || `/${p.company.key}` }
 					}))
+				},
+				cluster: true,
+				clusterRadius: config.map.clusterRadius,
+				clusterMaxZoom: config.map.clusterMaxZoom
+			});
+			instance.addLayer({
+				id: 'clusters',
+				type: 'circle',
+				source: 'companies',
+				filter: ['has', 'point_count'],
+				paint: {
+					'circle-color': color('--color-fg'),
+					'circle-opacity': 0.85,
+					'circle-stroke-width': config.map.pointStroke,
+					'circle-stroke-color': color('--color-bg'),
+					// Bigger with more organizations, slowly.
+					'circle-radius': ['interpolate', ['linear'], ['sqrt', ['get', 'point_count']], 1, 12, 40, 34]
 				}
+			});
+			// How many organizations in each group.
+			instance.addLayer({
+				id: 'cluster-counts',
+				type: 'symbol',
+				source: 'companies',
+				filter: ['has', 'point_count'],
+				layout: {
+					'text-field': ['get', 'point_count_abbreviated'],
+					'text-font': config.map.font,
+					'text-size': ['interpolate', ['linear'], ['sqrt', ['get', 'point_count']], 1, 11, 40, 16],
+					'text-allow-overlap': true
+				},
+				paint: { 'text-color': color('--color-bg') }
 			});
 			instance.addLayer({
 				id: 'companies',
 				type: 'circle',
 				source: 'companies',
+				filter: ['!', ['has', 'point_count']],
 				paint: {
 					'circle-radius': config.map.pointRadius,
 					'circle-color': color('--color-fg'),
@@ -67,8 +100,12 @@ export function mountMap(node, points) {
 					'circle-stroke-color': color('--color-bg')
 				}
 			});
-			instance.on('click', 'companies', (event) => {
-				const features = event.features || [];
+			/**
+			 * A list of organizations at a place, over the map.
+			 * @param {{properties: Record<string, any>}[]} features
+			 * @param {import('maplibre-gl').LngLatLike} at
+			 */
+			const popup = (features, at) => {
 				const list = document.createElement('ul');
 				const seen = new Set();
 				for (const feature of features) {
@@ -82,10 +119,24 @@ export function mountMap(node, points) {
 					item.append(link);
 					list.append(item);
 				}
-				new maplibre.Popup({ closeButton: false }).setLngLat(event.lngLat).setDOMContent(list).addTo(instance);
+				new maplibre.Popup({ closeButton: false }).setLngLat(at).setDOMContent(list).addTo(instance);
+			};
+			instance.on('click', 'companies', (event) => popup(/** @type {any} */ (event.features || []), event.lngLat));
+			instance.on('click', 'clusters', async (event) => {
+				const feature = event.features?.[0];
+				const source = /** @type {import('maplibre-gl').GeoJSONSource | undefined} */ (instance.getSource('companies'));
+				if (!feature || !source) return;
+				const id = feature.properties.cluster_id;
+				const zoom = await source.getClusterExpansionZoom(id);
+				const center = /** @type {[number, number]} */ (/** @type {import('geojson').Point} */ (feature.geometry).coordinates);
+				// Organizations at the very same address never split: list them instead of zooming on.
+				if (zoom > config.map.clusterMaxZoom) popup(/** @type {any} */ (await source.getClusterLeaves(id, config.map.popupMax, 0)), center);
+				else instance.easeTo({ center, zoom });
 			});
-			instance.on('mouseenter', 'companies', () => (instance.getCanvas().style.cursor = 'pointer'));
-			instance.on('mouseleave', 'companies', () => (instance.getCanvas().style.cursor = ''));
+			for (const layer of ['companies', 'clusters']) {
+				instance.on('mouseenter', layer, () => (instance.getCanvas().style.cursor = 'pointer'));
+				instance.on('mouseleave', layer, () => (instance.getCanvas().style.cursor = ''));
+			}
 		});
 	})();
 
