@@ -213,6 +213,7 @@
 	"company.editedBy": "Modifiée par",
 	"company.unchecked": "Ajoutée par le robot",
 	"company.unchecked.newAccount": "Modifiée par un nouveau compte",
+	"company.tabs": "Les onglets de l'organisation",
 	"company.history": "Historique",
 	"company.history.count": "{count} versions",
 	"company.history.count.one": "1 version",

@@ -213,6 +213,7 @@
 	"company.editedBy": "Bearbeitet von",
 	"company.unchecked": "Vom Crawler hinzugefügt",
 	"company.unchecked.newAccount": "Von einem neuen Konto bearbeitet",
+	"company.tabs": "Die Reiter der Organisation",
 	"company.history": "Verlauf",
 	"company.history.count": "{count} Versionen",
 	"company.history.count.one": "1 Version",

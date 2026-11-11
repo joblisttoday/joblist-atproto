@@ -213,6 +213,7 @@
 	"company.editedBy": "Edited by",
 	"company.unchecked": "Added by the crawler",
 	"company.unchecked.newAccount": "Edited by a new account",
+	"company.tabs": "The organization's tabs",
 	"company.history": "History",
 	"company.history.count": "{count} versions",
 	"company.history.count.one": "1 version",

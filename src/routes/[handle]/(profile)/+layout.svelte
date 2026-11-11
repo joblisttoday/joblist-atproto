@@ -22,7 +22,7 @@
 	/**
 	 * A domain's page, joblist.today/{domain}: a handle is a domain, and an organization is known
 	 * by its domain. An organization joblist knows: its page (with its Bluesky account when the
-	 * domain is its handle). Else an account: who it is, then the organizations it described
+	 * domain is its handle), in tabs (/{domain}, /{domain}/places, /{domain}/history). Else an account: who it is, then the organizations it described
 	 * and the jobs it posted, each a tab (/{handle}, /{handle}/jobs).
 	 * Else a domain: what this browser finds of it (its local profile). Else not found.
 	 * @type {{children: import('svelte').Snippet}}
@@ -30,9 +30,15 @@
 	let { children } = $props();
 	const handle = $derived(page.params.handle || '');
 	const company = $derived(data.companies.get(handle));
+	// An organization's tab, from its address: /{domain}, /{domain}/places, /{domain}/history.
+	const tab = $derived(/** @type {'jobs' | 'places' | 'history'} */ (page.route.id?.endsWith('/places') ? 'places' : page.route.id?.endsWith('/history') ? 'history' : 'jobs'));
+	// Tabs only an organization has: an account's page is not found there.
+	const companyOnly = $derived(tab !== 'jobs');
 	// The same organization added twice: its page is the kept one's.
 	$effect(() => {
 		if (company && company.key !== handle) goto(`/${company.key}`, { replace: true });
+		// An organization's jobs are its page itself.
+		else if (company && page.route.id?.endsWith('/jobs')) goto(`/${company.key}${location.hash}`, { replace: true });
 	});
 	// A domain (acme.org): its local profile when it is neither an organization nor an account.
 	const domain = $derived.by(() => {
@@ -76,18 +82,20 @@
 <svelte:head>
 	{#if company}
 		<title>{company.name} · {config.name}</title>
-		<link rel="canonical" href="{config.url}/{company.key}" />
+		<link rel="canonical" href="{config.url}/{company.key}{tab === 'jobs' ? '' : `/${tab}`}" />
 	{:else}
 		<link rel="canonical" href="{config.url}{page.url.pathname}" />
 	{/if}
 </svelte:head>
 
 {#if company}
-	<CompanyPage {company} />
+	<CompanyPage {company} {tab} />
 {:else if data.status !== 'known'}
 	<DataState />
 {:else if unreachable}
 	<DataState state="unreachable" />
+{:else if companyOnly}
+	<NotFound title={t('notFound.title')} text={t('notFound.path', { path: page.url.pathname })} />
 {:else if did === null && domain}
 	<OrganizationProfile link={domain} />
 {:else if did === null}

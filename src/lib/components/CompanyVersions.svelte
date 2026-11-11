@@ -8,8 +8,8 @@
 	import { changedFields, editedAt, isOwnRecord, isUnchecked, uncheckedLabel } from '#lib/models/company.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
-	/** @type {{company: import('#lib/models/company.js').Company}} */
-	let { company } = $props();
+	/** open: shown unfolded (its own tab). @type {{company: import('#lib/models/company.js').Company, open?: boolean}} */
+	let { company, open = false } = $props();
 	/** @type {string | null} */
 	let busy = $state(null);
 	/** @type {string | null} */
@@ -30,7 +30,7 @@
 </script>
 
 <jl-company-versions>
-	<details>
+	<details {open}>
 		<summary id="company-history">{t('company.history')} <small>{t('company.history.count', { count: company.versions.length })}</small></summary>
 		<p><small>{t('company.history.help')}</small></p>
 		<ol aria-labelledby="company-history">

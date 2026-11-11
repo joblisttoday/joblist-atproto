@@ -27,3 +27,18 @@ test('a domain joblist does not know has its local profile', async ({ page }) =>
 	await page.goto('/example-not-on-joblist.org');
 	await expect(page.getByRole('link', { name: 'Suggest to joblist' })).toBeVisible();
 });
+
+test("an organization's page has tabs, each its own address", async ({ page }) => {
+	await page.goto('/ableton.com');
+	const tabs = page.locator('jl-tabs nav');
+	await tabs.getByRole('link', { name: /Locations/ }).click();
+	await expect(page).toHaveURL(/\/ableton\.com\/places$/);
+	await expect(page.locator('main')).toContainText('Schönhauser Allee');
+	await expect(page.locator('link[rel=canonical]').last()).toHaveAttribute('href', 'https://joblist.today/ableton.com/places');
+	await tabs.getByRole('link', { name: /History/ }).click();
+	await expect(page).toHaveURL(/\/ableton\.com\/history$/);
+	await expect(page.locator('jl-company-versions details')).toHaveAttribute('open', '');
+	// Its jobs are its page itself.
+	await page.goto('/ableton.com/jobs');
+	await expect(page).toHaveURL(/\/ableton\.com$/);
+});
