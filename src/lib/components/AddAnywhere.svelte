@@ -5,13 +5,15 @@
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * Ways to send a company to joblist from the page it is on: share target, bookmarklet, AI assistants.
+	 * Ways to send a company to joblist from the page it is on: share target, bookmarklet, and
+	 * AI assistants only in a browser that lets them use the page's tools (WebMCP, webmcp.js).
 	 * open: unfolded (on /apps).
 	 * @type {{open?: boolean}}
 	 */
 	let { open = false } = $props();
 	const code = $derived(bookmarklet(page.url.origin));
 	let dragHint = $state(false);
+	const agents = typeof document !== 'undefined' && Boolean(/** @type {any} */ (document).modelContext || /** @type {any} */ (navigator).modelContext);
 
 	/** @param {MouseEvent} event */
 	function click(event) {
@@ -37,8 +39,10 @@
 		<textarea id="bookmarklet-code" readonly rows="4" aria-describedby="bookmarklet-code-help" onfocus={(e) => e.currentTarget.select()}>{code}</textarea>
 		<small id="bookmarklet-code-help">{t('anywhere.bookmarklet.code.help')}</small>
 
-		<h3>{t('anywhere.agents.title')}</h3>
-		<p>{t('anywhere.agents.text')}</p>
+		{#if agents}
+			<h3>{t('anywhere.agents.title')}</h3>
+			<p>{t('anywhere.agents.text')}</p>
+		{/if}
 	</details>
 </jl-add-anywhere>
 
