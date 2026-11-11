@@ -37,7 +37,8 @@ function joinOriginTrial() {
 export function registerTools() {
 	if (!registered) joinOriginTrial();
 	/** @type {any} */
-	const context = /** @type {any} */ (document).modelContext;
+	// document.modelContext, as the spec names it now; navigator.modelContext in older Chromes.
+	const context = /** @type {any} */ (document).modelContext || /** @type {any} */ (navigator).modelContext;
 	if (registered || !context?.registerTool) return;
 	registered = true;
 	for (const tool of webmcp.tools) {
