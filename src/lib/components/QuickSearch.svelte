@@ -10,6 +10,7 @@
 	import { data } from '#lib/network/network.svelte.js';
 	import providers from '#lib/data/providers.json';
 	import { providerQuery } from '#lib/models/name-search.js';
+	import { curatedLink } from '#lib/models/curated.js';
 	import { searchName } from '#lib/network/name-search.js';
 	import { kept } from '#lib/network/kept.svelte.js';
 	import { i18n, t } from '#lib/i18n/index.svelte.js';
@@ -39,7 +40,9 @@
 	const found = $derived(quickResults(text, sources, config.quickSearch.shown));
 	const typed = $derived(text.trim().length >= 2);
 	const knows = $derived(knownBy(data.companies));
-	const organization = $derived(organizationPage(text, knows));
+	// A list someone curates on Bluesky: its organizations, to follow (before the page of bsky.app itself).
+	const curated = $derived(curatedLink(text) ? `/following/list#${new URLSearchParams({ url: text.trim() })}` : '');
+	const organization = $derived(curated ? null : organizationPage(text, knows));
 	/** @param {Partial<import('#lib/models/job.js').JobFilters>} filters */
 	const jobsPath = (filters) => addressOf(searchState({ query: '', where: '', remote: '', ...filters }), '/');
 	// A name at a provider: its board, opened as any link (no request before).
@@ -50,7 +53,7 @@
 	// A name: what it may be, asked after a pause, once per name (kept in this browser).
 	/** @type {{text: string, results: import('#lib/network/name-search.js').NameResults | null, busy: boolean}} */
 	let names = $state({ text: '', results: null, busy: false });
-	const asking = $derived(text.trim().length >= config.nameSearch.minLength && !organization?.sure && !atProvider);
+	const asking = $derived(text.trim().length >= config.nameSearch.minLength && !curated && !organization?.sure && !atProvider);
 	$effect(() => {
 		const name = text.trim();
 		if (!asking) return;
@@ -72,7 +75,8 @@
 	/** @param {SubmitEvent} event */
 	function submit(event) {
 		event.preventDefault();
-		if (organization?.sure) goto(organization.href);
+		if (curated) goto(curated);
+		else if (organization?.sure) goto(organization.href);
 		else if (atProviderPage) goto(atProviderPage.href);
 		else if (!following && named?.found[0]) goto(`/${named.found[0].domain}`);
 		else if (text.trim()) goto(jobsPath({ query: text.trim() }));
@@ -125,6 +129,9 @@
 	</form>
 	{#if open && typed}
 		<ul>
+			{#if curated}
+				<li><a onkeydown={keys} href={curated}><Icon name="companies" /> {t('curated.offer')}</a></li>
+			{/if}
 			{#if organization?.sure}
 				<li>
 					<a onkeydown={keys} href={organization.href}>

@@ -20,6 +20,7 @@
 <jl-following>
 	<h1>{t('nav.following')}</h1>
 	<QuickSearch inline placeholder={t('quick.placeholder.start')} />
+	<p><small>{t('curated.hint')}</small></p>
 	{#if tags.length}
 		<menu aria-label={t('kept.tags')}>
 			{#each tags as each (each)}

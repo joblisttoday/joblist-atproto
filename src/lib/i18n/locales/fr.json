@@ -570,5 +570,14 @@
 	"accounts.device.help": "Privé : ce que vous suivez et gardez reste ici, jamais publié.",
 	"accounts.use": "Utiliser",
 	"accounts.current": "Utilisé",
-	"accounts.add": "Ajouter un compte"
+	"accounts.add": "Ajouter un compte",
+	"curated.title": "Suivre une liste",
+	"curated.intro": "Les organisations d’une liste que quelqu’un tient sur Bluesky : les comptes qui ont leur propre domaine. Suivies ici, en privé, étiquetées du nom de la liste.",
+	"curated.onJoblist": "sur joblist",
+	"curated.follow": "En suivre {count}",
+	"curated.none": "Aucune organisation dans cette liste : aucun compte avec son propre domaine.",
+	"curated.invalid": "Ce n’est pas un lien de liste, de pack de démarrage ou d’abonnements Bluesky.",
+	"curated.unread": "Cette liste n’a pas pu être lue pour l’instant.",
+	"curated.offer": "Suivre les organisations de cette liste",
+	"curated.hint": "Ou collez une liste ou un pack de démarrage Bluesky : suivez ses organisations d’un coup."
 }

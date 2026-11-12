@@ -570,5 +570,14 @@
 	"accounts.device.help": "Private: what you follow and save stays here, never published.",
 	"accounts.use": "Use",
 	"accounts.current": "In use",
-	"accounts.add": "Add an account"
+	"accounts.add": "Add an account",
+	"curated.title": "Follow a list",
+	"curated.intro": "Organizations of a list someone curates on Bluesky: accounts with a domain of their own. Followed here, privately, tagged with the list's name.",
+	"curated.onJoblist": "on joblist",
+	"curated.follow": "Follow {count}",
+	"curated.none": "No organization in this list: no account with a domain of its own.",
+	"curated.invalid": "This is not a Bluesky list, starter pack or follows link.",
+	"curated.unread": "This list could not be read now.",
+	"curated.offer": "Follow the organizations of this list",
+	"curated.hint": "Or paste a Bluesky list or starter pack: follow its organizations at once."
 }

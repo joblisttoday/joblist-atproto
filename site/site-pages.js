@@ -18,6 +18,7 @@ import { escape } from './html.js';
 const appPages = [
 	['/following', en['nav.following']],
 	['/saved', en['nav.saved']],
+	['/following/list', en['curated.title']],
 	['/me/organization', en['nav.following']],
 	['/me/lists/saved', en['marks.saved']],
 	['/me/lists/applied', en['marks.applied']],

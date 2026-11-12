@@ -2156,6 +2156,7 @@ var X = {
 		scripts: "/embed/",
 		shown: 20
 	},
+	curated: { max: 500 },
 	nameSearch: {
 		minLength: 3,
 		waitMs: 600,

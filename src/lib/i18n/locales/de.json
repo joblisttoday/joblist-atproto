@@ -570,5 +570,14 @@
 	"accounts.device.help": "Privat: Was du folgst und merkst, bleibt hier, nie veröffentlicht.",
 	"accounts.use": "Verwenden",
 	"accounts.current": "In Verwendung",
-	"accounts.add": "Konto hinzufügen"
+	"accounts.add": "Konto hinzufügen",
+	"curated.title": "Einer Liste folgen",
+	"curated.intro": "Die Organisationen einer Liste, die jemand auf Bluesky pflegt: Konten mit eigener Domain. Hier gefolgt, privat, mit dem Namen der Liste getaggt.",
+	"curated.onJoblist": "auf joblist",
+	"curated.follow": "{count} folgen",
+	"curated.none": "Keine Organisation in dieser Liste: kein Konto mit eigener Domain.",
+	"curated.invalid": "Das ist kein Link zu einer Bluesky-Liste, einem Starterpaket oder Follows.",
+	"curated.unread": "Diese Liste konnte gerade nicht gelesen werden.",
+	"curated.offer": "Den Organisationen dieser Liste folgen",
+	"curated.hint": "Oder füge eine Bluesky-Liste oder ein Starterpaket ein: folge ihren Organisationen auf einmal."
 }
