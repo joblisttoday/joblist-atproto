@@ -2077,7 +2077,7 @@ var X = {
 		sheetPeekBelow: .3,
 		sheetFullAbove: .72,
 		copiedMs: 3e3,
-		bare: ["/jobs"]
+		bare: ["/"]
 	},
 	map: {
 		style: "https://tiles.openfreemap.org/styles/positron",

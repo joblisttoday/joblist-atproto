@@ -1,4 +1,5 @@
 <script>
+	import { kept } from '#lib/network/kept.svelte.js';
 	import Logo from './Logo.svelte';
 	import { page } from '$app/state';
 	import config from '#lib/data/config.json';
@@ -6,7 +7,8 @@
 
 	// The app name is always there; the way back is the browser's.
 	// Phones: these pages take the whole screen, their own bar at the top (config.layout.bare).
-	const bare = $derived(config.layout.bare.includes(page.route.id || ''));
+	// The home is the jobs only once organizations are followed (before, a start page).
+	const bare = $derived(config.layout.bare.includes(page.route.id || '') && (page.route.id !== '/' || kept.list.length > 0));
 </script>
 
 <jl-header bare={bare || undefined}>

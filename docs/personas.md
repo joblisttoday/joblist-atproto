@@ -26,7 +26,7 @@ they heard of, a studio's Instagram, a lab's website.
   its page and jobs; another has a profile (/me/organization#url=…, and /{domain} for
   any domain) with what their browser finds: its Bluesky account when its domain
   is its handle, its job board's name and open jobs (read live, one board), where
-  they are. A Save on each organization's page; saved ones are listed on the home.
+  they are. Follow on each organization's page; followed ones are on Following.
   Job seekers never sign in.
   The Firefox add-on (extension/), on any website: whether joblist knows it and
   its open jobs, its job board and social profiles read in the page; save and tag
@@ -36,11 +36,10 @@ they heard of, a studio's Instagram, a lab's website.
 
 ### Near home
 Wants a job they can reach by bike or on foot.
-- **Today:** a search on the home leads to the explorer (/jobs), with the
-  map; "Near me" with bike or walking minutes, a map area. On the home: saved
-  searches, lists of jobs (saved, applied, hidden, and named ones like "Dream
-  jobs") and saved organizations with their tags (/me/searches, /me/lists/…),
-  with a file to move them all (Menu).
+- **Today:** Jobs (the home, once something is followed) is the explorer, with the
+  map; "Near me" with bike or walking minutes, a map area; saved searches as chips
+  on top. Saved: lists of jobs (saved, applied, hidden, and named ones like "Dream
+  jobs"); Following: organizations with their tags; a file moves them all (Menu).
 - **Missing:** being told when a new job appears near them without opening
   the site; real bike routes (today: straight-line distance).
 
@@ -53,8 +52,8 @@ Wants remote work they are allowed to take from their country.
 ### Watching, not searching
 Has a job, looks now and then: wants the new jobs of their saved searches,
 and nothing else.
-- **Today:** the Home tab counts the new jobs of their searches, and the home
-  shows them; /me/searches shows them per search.
+- **Today:** the Jobs tab counts the new jobs of their searches, and Jobs
+  shows them as chips, each with its new jobs.
 - **Missing:** browser notifications (they would need the searches stored
   on a server: not unless asked for).
 
@@ -62,7 +61,7 @@ and nothing else.
 Knows where they want to work, or wants to find out who hires in a city or
 field.
 - **Today:** an organization's page from any link (`/{domain}`), its jobs read live; saved
-  organizations with tags; `/jobs` searches the saved ones' jobs together.
+  organizations with tags; Jobs searches the followed ones' jobs together.
 - **Missing:** knowing when a saved organization opens a job, without opening joblist.
 
 ## Making joblist

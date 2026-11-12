@@ -5,15 +5,13 @@
 	import { navLinks } from '#lib/navigation/nav.js';
 	import { savedJobs } from '#lib/network/saved-jobs.svelte.js';
 	import { data } from '#lib/network/network.svelte.js';
-	import { kept } from '#lib/network/kept.svelte.js';
 	import { ownDomain } from '#lib/models/company.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	const all = navLinks();
-	// Nothing saved yet: no tab for jobs that are not there.
 	const own = $derived(ownDomain(session.handle));
 	// An organization's tab only for its account.
-	const items = $derived(all.filter((i) => (!i.saved || kept.list.length > 0) && (!i.organization || own)));
+	const items = $derived(all.filter((i) => !i.organization || own));
 	/** The count a tab shows, 0 for none. @param {string | undefined} badge */
 	const count = (badge) => (badge === 'saved' ? savedJobs.fresh : 0);
 	// Signed in with a company's domain: the account is that company's.
@@ -26,8 +24,8 @@
 	/** The tab of the page shown: its own path, or one it is the tab of (nav.json "within"). @param {{href: string, within: string[]}} item */
 	function current({ href, within }) {
 		const path = page.url.pathname;
-		if (href === '/') return path === '/';
 		const under = (/** @type {string} */ p) => path === p || path.startsWith(`${p}/`);
+		if (href === '/') return path === '/' || within.some(under);
 		// When two tabs claim a path, the more precise one wins.
 		const mine = [href, ...within].filter(under).reduce((a, b) => Math.max(a, b.length), 0);
 		const others = items.filter((i) => i.href !== href).flatMap((i) => [i.href, ...i.within].filter((p) => p !== '/' && under(p)));

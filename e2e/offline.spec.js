@@ -17,6 +17,6 @@ test('opens offline, with what this browser keeps', async ({ page, context }) =>
 	await page.goto('/menu');
 	await expect(page.locator('h1')).toBeVisible();
 	await expect(page.locator('jl-outbox-status[state="offline"]')).toBeVisible();
-	await page.goto('/jobs');
+	await page.goto('/');
 	await expect(page.locator('main')).toBeAttached();
 });

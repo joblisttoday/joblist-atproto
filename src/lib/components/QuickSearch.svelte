@@ -34,7 +34,7 @@
 	const knows = $derived(knownBy(data.companies));
 	const organization = $derived(organizationPage(text, knows));
 	/** @param {Partial<import('#lib/models/job.js').JobFilters>} filters */
-	const jobsPath = (filters) => addressOf(searchState({ query: '', where: '', remote: '', ...filters }), '/jobs');
+	const jobsPath = (filters) => addressOf(searchState({ query: '', where: '', remote: '', ...filters }), '/');
 
 	afterNavigate(() => {
 		text = '';

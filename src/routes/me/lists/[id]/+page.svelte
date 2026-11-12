@@ -33,7 +33,7 @@
 
 	async function remove() {
 		deleteCollection(id);
-		await goto('/me/lists', { replace: true });
+		await goto('/saved', { replace: true });
 	}
 </script>
 
@@ -58,7 +58,7 @@
 		<JobMarks {collection} />
 	{:else}
 		<PageHeader title={t('me.lists.title')} />
-		<Empty text={t('me.list.missing')}><a href="/me/lists"><Icon name="lists" /> {t('me.lists.title')}</a></Empty>
+		<Empty text={t('me.list.missing')}><a href="/saved"><Icon name="saved" /> {t('nav.saved')}</a></Empty>
 	{/if}
 </jl-me-list>
 

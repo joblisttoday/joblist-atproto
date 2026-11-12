@@ -16,9 +16,9 @@ import { escape } from './html.js';
 
 /** The app's pages for people (their own data, forms): shells, kept out of search results. */
 const appPages = [
-	['/me/searches', en['me.searches.title']],
-	['/me/organization', en['kept.title']],
-	['/me/lists', en['me.lists.title']],
+	['/following', en['nav.following']],
+	['/saved', en['nav.saved']],
+	['/me/organization', en['nav.following']],
 	['/me/lists/saved', en['marks.saved']],
 	['/me/lists/applied', en['marks.applied']],
 	['/me/lists/hidden', en['marks.hidden']],
@@ -47,10 +47,11 @@ export function sitePages() {
 			listed: true,
 			meta: { title: `${config.name} · ${en['home.heading']}`, description: welcome, url: url('/'), body: `<h1>${escape(config.name)}</h1><p>${escape(welcome)}</p>` }
 		},
+		// Jobs moved to the home: an old link opens it there.
 		{
 			path: '/jobs',
-			listed: true,
-			meta: { title: `${en['nav.jobs']} · ${config.name}`, description: welcome, url: url('/jobs'), body: `<h1>${escape(en['nav.jobs'])}</h1><p>${escape(welcome)}</p>` }
+			listed: false,
+			meta: { title: `${en['nav.jobs']} · ${config.name}`, description: welcome, url: url('/'), body: '', noindex: true }
 		},
 		...appPages.map(([path, title]) => ({
 			path,

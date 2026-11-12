@@ -36,10 +36,10 @@ test('the popup reads a website, saves and tags it in this browser', async ({ pa
 	await expect(page.locator('dl')).toContainText('Lever · acme-design');
 	await expect(page.locator('dl')).toContainText('Instagram · Bluesky');
 	await expect(page.getByRole('link', { name: 'Open on joblist' })).toHaveAttribute('href', 'https://joblist.today/acme-design.coop');
-	await page.getByRole('button', { name: 'Save' }).click();
+	await page.getByRole('button', { name: 'Follow' }).click();
 	await page.getByLabel('Add a tag').fill('Design');
 	await page.getByLabel('Add a tag').press('Enter');
-	await expect(page.getByRole('button', { name: 'Saved' })).toBeVisible();
+	await expect(page.getByRole('button', { name: 'Following' })).toBeVisible();
 	const changes = await page.evaluate(() => /** @type {any} */ (window).store.changes);
 	expect(changes.map((/** @type {any} */ c) => [c.op, c.url, c.tags])).toEqual([
 		['keep', 'https://acme-design.coop', []],

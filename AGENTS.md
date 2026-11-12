@@ -1,7 +1,7 @@
 # joblist
 
 Two sides, one site (https://joblist.today):
-- For job seekers, a private watchlist: "Follow the jobs of organizations you choose." They save organizations from any link (the site, the add-on, a share), and joblist reads their open jobs live from their own job boards; searches, lists of jobs and saved organizations stay in their browser. They never sign in.
+- For job seekers, a private watchlist: "Follow the jobs of organizations you choose." They follow organizations from any link (the site, the add-on, a share), and joblist reads their open jobs live from their own job boards; followed organizations, saved searches and saved jobs stay in their browser. They never sign in.
 - For organizations, their careers page on the open network: signed in with their domain as their Bluesky handle, they describe themselves and post their jobs from their own account (`/organization`, their dashboard), or point to their job board; shown at `/{domain}`, on their own website (the embed) and in any app. Not an ATS: applications go straight to them.
 
 Objectives: people find work that feels right for them and for society; projects find great contributors; both on a phone, in a few taps.
@@ -16,7 +16,8 @@ Choices, on purpose:
 ## How it works
 
 - An organization's page (`/{domain}`): its own atproto account (its handle is its domain), its `today.joblist.company` record and `today.joblist.job` offers read from its server when the page opens (`lookup` in `src/lib/network/network.svelte.js`); else what the browser finds of the domain (`src/lib/network/discover.js`: its Bluesky account, its job board), and its jobs read live from the board (`src/lib/ats/`).
-- Saved organizations (`src/lib/network/kept.svelte.js`): links, names, tags and job boards, in this browser only. Their jobs (`src/lib/network/kept-jobs.svelte.js`) are read live from their boards, at most `config.kept.boardsPerVisit` a visit, kept `config.kept.refreshHours`: they make `/jobs`, the saved searches and their new jobs.
+- Tabs, one word each: Jobs (`/`, the home: the jobs of the organizations followed, saved searches as chips; before any is followed, the welcome with two doors), Following (`/following`, organizations: Follow), Saved (`/saved`, jobs: Save, Applied, Hide), Your organization (`/organization`, only signed in with a domain), Menu.
+- Followed organizations (`src/lib/network/kept.svelte.js`): links, names, tags and job boards, in this browser only. Their jobs (`src/lib/network/kept-jobs.svelte.js`) are read live from their boards, at most `config.kept.boardsPerVisit` a visit, kept `config.kept.refreshHours`: they make Jobs, the saved searches and their new jobs.
 - The browser add-on (`extension/`) reads the website open (websites do not answer other sites), saves it with its board; the embed (`embed/`) shows a board's jobs on any website.
 - Local-first: a service worker (`src/service-worker.js`) keeps the app, so it opens offline; IndexedDB keeps what was read and the outbox (`src/lib/network/outbox.svelte.js`), where a write that can't reach the person's server waits.
 - Settings, limits, phrases and fields are data in [src/lib/data/](src/lib/data), interface text in [src/lib/i18n/locales/](src/lib/i18n/locales) (en, fr, de, es: every key in each).

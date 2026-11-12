@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 
-// Your saved organizations are on the home, under the search.
+// The organizations you follow are the Following tab.
 export function load() {
-	redirect(308, '/');
+	redirect(308, '/following');
 }

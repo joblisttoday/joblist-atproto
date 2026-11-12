@@ -10,7 +10,7 @@
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * An organization's careers page, its head: its name (✓ when it publishes it itself), Save,
+	 * An organization's careers page, its head: its name (✓ when it publishes it itself), Follow,
 	 * one line of links (website, Bluesky, job board), its description, its places and tags.
 	 * local: one only this browser knows (CompanyPage): the link it is kept by, the Bluesky
 	 * account found for it.
@@ -22,6 +22,7 @@
 	const author = $derived(company.verified ? data.profiles.get(company.record.did) : undefined);
 	const bluesky = $derived(accountOf(company.key));
 	let unfolded = $state(false);
+	let followed = $state(false);
 	const account = $derived(
 		local ? local.account : author || bluesky ? { handle: author?.handle || company.key, avatar: author?.avatar || bluesky?.avatar } : undefined
 	);
@@ -38,11 +39,11 @@
 				{#if company.verified}<span title={t('company.verified', { domain: company.key })}><Icon name="verified" /><jl-visually-hidden>{t('company.verified', { domain: company.key })}</jl-visually-hidden></span>{/if}
 			</h1>
 			{#if local}
-				<button type="button" aria-pressed={kept ? 'true' : 'false'} onclick={() => (kept ? forget(local.link) : keep(local.link, company.name, company.jobBoard))} title={t('collections.private')}>
-					<Icon name={kept ? 'savedOn' : 'save'} /> {t(kept ? 'collections.saved' : 'collections.save')}
+				<button type="button" aria-pressed={kept ? 'true' : 'false'} onclick={() => (kept ? forget(local.link) : (keep(local.link, company.name, company.jobBoard), (followed = true)))} title={t('collections.private')}>
+					<Icon name={kept ? 'savedOn' : 'save'} /> {t(kept ? 'follow.done' : 'follow.do')}
 				</button>
 			{:else}
-				<CompanySave {company} />
+				<CompanySave {company} onfollow={() => (followed = true)} />
 			{/if}
 			<PageMenu own={[]} />
 		</jl-company-title>
@@ -63,6 +64,10 @@
 			</jl-company-about>
 		{/if}
 		{#if about.length}<p data-about><small>{about.join(' · ')}</small></p>{/if}
+		{#if followed}
+			<!-- Just followed: where its jobs are now. -->
+			<p role="status" data-followed><Icon name="added" /> {t('follow.started', { name: company.name })} <a href="/">{t('nav.jobs')} <Icon name="next" /></a></p>
+		{/if}
 	</header>
 </jl-company-header>
 
@@ -122,5 +127,16 @@
 	}
 	[data-about] {
 		color: var(--color-muted);
+	}
+	[data-followed] {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--space-xs);
+		padding: var(--space-xs) var(--space-m);
+		border-radius: var(--radius);
+		background: var(--color-soft);
+		color: var(--color-ok);
+		font-size: var(--font-size-small);
 	}
 </style>

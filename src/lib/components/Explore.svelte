@@ -9,6 +9,7 @@
 	import JobItem from './JobItem.svelte';
 	import JobsMap from './JobsMap.svelte';
 	import SaveSearch from './SaveSearch.svelte';
+	import SearchChips from './SearchChips.svelte';
 	import ViewSwitch from './ViewSwitch.svelte';
 	import { readView } from '#lib/navigation/explore-view.js';
 	import { tick, untrack } from 'svelte';
@@ -324,6 +325,8 @@
 		<!-- Kept while a job is open, so its search and its place in the list are still there after. -->
 		<jl-explore-results id="explore-results" hidden={pickedJobs ? true : undefined}>
 			<!-- The fields jobs are in: one tap shows a field's jobs, searched or not. -->
+			<!-- Your saved searches: one tap opens one, its new jobs marked; "All" clears the search. -->
+			<SearchChips {filters} {jobs} {names} onopen={(search) => (search ? open(search) : ((since = ''), (filters = { query: '', where: '', remote: '', pay: false, field: '', near: null, within: 0, area: null })))} />
 			{#if jobs.length}<ExploreFields bind:field={filters.field} {jobs} />{/if}
 			{#if companies.length}
 				<Jobs

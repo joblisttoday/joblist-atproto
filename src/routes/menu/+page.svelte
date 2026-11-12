@@ -13,7 +13,7 @@
 
 	/** @type {import('#lib/navigation/nav.js').MenuLink[]} */
 	const rows = $derived([
-		{ href: '/organization', icon: /** @type {const} */ ('companies'), label: own ? t('orgs.yours') : t('orgs.title'), value: own ? `@${own}` : undefined },
+		{ href: '/organization', icon: /** @type {const} */ ('companies'), label: own ? t('orgs.yours') : t('menu.hiring'), value: own ? `@${own}` : undefined },
 		{ href: '/menu/language', icon: /** @type {const} */ ('language'), label: t('about.language'), value: t(`locale.${i18n.locale}`) },
 		{ href: '/menu/collections', icon: /** @type {const} */ ('saved'), label: t('collections.transfer') },
 		{ href: '/apps', icon: /** @type {const} */ ('embed'), label: t('menu.apps') },

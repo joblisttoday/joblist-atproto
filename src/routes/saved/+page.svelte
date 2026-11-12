@@ -11,8 +11,8 @@
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * Your lists of jobs, private in this browser, each on its own page. A new one is named
-	 * here; /me/lists#new opens its name.
+	 * Saved: your lists of jobs (Saved, Applied, Hidden, and the ones you name), private in
+	 * this browser, each on its own page (/me/lists/{id}). A new one is named here (/saved#new).
 	 */
 	let naming = $state(location.hash === '#new');
 
@@ -22,10 +22,10 @@
 	}
 </script>
 
-<svelte:head><title>{t('me.lists.title')} · {config.name}</title></svelte:head>
+<svelte:head><title>{t('nav.saved')} · {config.name}</title></svelte:head>
 
 <jl-me-lists>
-	<PageHeader title={t('me.lists.title')} intro={t('me.lists.intro')} />
+	<PageHeader title={t('nav.saved')} intro={t('me.lists.intro')} />
 	<ul>
 		{#each own.lists as list (list.id)}<li><OwnListItem {list} /></li>{/each}
 	</ul>
@@ -36,7 +36,6 @@
 			<button type="button" data-add onclick={() => (naming = true)}><Icon name="add" /> {t('collections.new')}</button>
 		</menu>
 	{/if}
-	<p><small><a href="/menu/collections">{t('collections.transfer')}</a></small></p>
 </jl-me-lists>
 
 <style>

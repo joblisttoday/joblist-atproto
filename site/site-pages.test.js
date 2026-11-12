@@ -6,7 +6,7 @@ test("the site's pages: what joblist is, never numbers", () => {
 	const pages = sitePages();
 	assert.deepEqual(
 		pages.filter((p) => p.listed).map((p) => p.path),
-		['/', '/jobs']
+		['/']
 	);
 	for (const { meta } of pages) assert.doesNotMatch(`${meta.title} ${meta.description}`, /\d{2,}/);
 	assert.ok(pages.some((p) => p.path === '/apps' && p.meta.noindex));

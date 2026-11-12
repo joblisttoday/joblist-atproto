@@ -28,7 +28,7 @@
 
 <CardMenu label={t('card.actions', { name: company.name })}>
 	{#snippet items(done)}
-		<li><button type="button" onclick={() => (toggleKept(company), done())}><Icon name={saved ? 'savedOn' : 'save'} /> {t(saved ? 'collections.saved' : 'collections.save')}</button></li>
+		<li><button type="button" onclick={() => (toggleKept(company), done())}><Icon name={saved ? 'savedOn' : 'save'} /> {t(saved ? 'follow.done' : 'follow.do')}</button></li>
 		{#if board}<li><a href={board} target="_blank" rel="noopener" onclick={done}><Icon name="external" /> {t('company.jobBoard')}</a></li>{/if}
 		{#if company.url}<li><a href={company.url} target="_blank" rel="noopener" onclick={done}><Icon name="external" /> {t('card.website')}</a></li>{/if}
 		<li><button type="button" onclick={() => copy(done)}><Icon name="copy" /> {t(copied ? 'menu.copied' : 'card.copy')}</button></li>

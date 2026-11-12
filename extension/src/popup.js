@@ -108,7 +108,7 @@ const app = /** @type {HTMLElement} */ (document.getElementById('app'));
 document.documentElement.lang = locale;
 
 /** @param {string} text */
-const say = (text) => app.replaceChildren(h('p', { class: 'muted' }, text), h('footer', {}, link(site('/'), {}, t('yours'))));
+const say = (text) => app.replaceChildren(h('p', { class: 'muted' }, text), h('footer', {}, link(site('/following'), {}, t('yours'))));
 
 async function start() {
 	say(t('reading'));
@@ -184,7 +184,7 @@ async function start() {
 				h('button', { type: 'button', 'aria-pressed': kept ? 'true' : 'false', onclick: () => (kept ? forget() : save(tags)) }, kept ? t('saved') : t('save')),
 				link(joblistPage, { class: 'primary' }, t('open'))
 			),
-			h('footer', {}, h('small', {}, t('private')), link(site('/'), {}, t('yours')))
+			h('footer', {}, h('small', {}, t('private')), link(site('/following'), {}, t('yours')))
 		];
 		// Drawn again when the board answers: what is being typed in the tag field stays.
 		const typing = /** @type {HTMLInputElement | null} */ (app.querySelector('.tags input'));

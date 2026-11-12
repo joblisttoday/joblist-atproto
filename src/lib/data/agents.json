@@ -5,7 +5,7 @@
 	"pages": [
 		{ "title": "Home", "path": "/", "about": "a search: a link or a domain opens its organization" },
 		{ "title": "An organization", "about": "`/{domain}`, e.g. `/gitlab.com`: its open jobs read live from its board, its Bluesky account; its places at `/{domain}/places`" },
-		{ "title": "Jobs", "path": "/jobs", "about": "the open jobs of the organizations saved in this browser (`/jobs#q=design&where=Berlin`)" },
+		{ "title": "Jobs", "path": "/", "about": "the open jobs of the organizations followed in this browser (`/#q=design&where=Berlin`)" },
 		{ "title": "Jobs posted on atproto", "about": "`/job/{did}/{rkey}`, with schema.org JobPosting data" },
 		{ "title": "Embed", "path": "/embed", "about": "an organization's open jobs on any website: `<joblist-jobs board=\"greenhouse:acme\">`" }
 	],
