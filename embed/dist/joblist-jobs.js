@@ -4056,6 +4056,7 @@ new Map([
 					provider: {
 						type: "string",
 						maxLength: 64,
+						description: "The job board's provider; 'today.joblist.job' when the organization posts its jobs as today.joblist.job records from its own account (then no id).",
 						knownValues: [
 							"ashby",
 							"greenhouse",
@@ -4064,7 +4065,8 @@ new Map([
 							"recruitee",
 							"rippling",
 							"smartrecruiters",
-							"workable"
+							"workable",
+							"today.joblist.job"
 						]
 					},
 					id: {
@@ -4347,7 +4349,7 @@ new Map([
 			}
 		} }
 	}
-].map((e) => [e.id, e]));
+].map((e) => [e.id, e])), X.collections.job;
 //#endregion
 //#region src/lib/models/paste.js
 function mo(e) {
