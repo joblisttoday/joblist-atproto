@@ -40,11 +40,11 @@
 				title={`@${handle}`}
 				avatar={{ key: handle, name: handle, src: current && session.avatar ? session.avatar : '' }}
 				chip={current ? { text: t('accounts.current'), tone: 'ok' } : null}
+				onclick={current ? undefined : () => switchAccount(account.did)}
 			>
 				{#snippet menu()}
 					<CardMenu label={t('card.actions', { name: handle })}>
 						{#snippet items(done)}
-							{#if !current}<li><button type="button" onclick={() => (switchAccount(account.did), done())}><Icon name="me" /> {t('accounts.use')}</button></li>{/if}
 							<li><button type="button" onclick={() => (out(account.did), done())}><Icon name="signout" /> {t('me.signout')}</button></li>
 						{/snippet}
 					</CardMenu>

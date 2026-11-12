@@ -82,9 +82,8 @@ test('switching accounts happens in place: the app does not reload', async ({ pa
 	});
 	await page.goto('/menu/accounts');
 	await page.evaluate(() => (/** @type {any} */ (window).stayed = true));
-	const row = page.locator('jl-accounts jl-row').nth(1);
-	await row.getByRole('button').click();
-	await page.getByRole('button', { name: 'Use' }).click();
+	// The account's row itself switches to it, as this device's does.
+	await page.locator('jl-accounts jl-row').nth(1).getByRole('button', { name: /@joblist\.today/ }).click();
 	await page.waitForTimeout(1500);
 	expect(await page.evaluate(() => /** @type {any} */ (window).stayed)).toBe(true);
 });
