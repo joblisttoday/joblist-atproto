@@ -12,7 +12,8 @@ describe('search addresses', () => {
 		expect(isEmpty({ query: '', where: '', remote: '' })).toBe(true);
 		expect(toParams({ query: '', where: '', remote: '', field: 'design' })).toBe('?field=design');
 		expect(fromParams(new URLSearchParams('field=design')).field).toBe('design');
-		expect(fromParams(new URLSearchParams('field=astrology')).field).toBeUndefined();
+		expect(fromParams(new URLSearchParams('field=Starlink%20Network%20Engineering')).field).toBe('starlink network engineering');
+		expect(fromParams(new URLSearchParams('field=')).field).toBeUndefined();
 		expect(sameSearch({ ...search, field: 'data' }, search)).toBe(false);
 	});
 	it('keeps "shows pay" as pay=1', () => {

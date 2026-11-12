@@ -54,13 +54,12 @@ describe('filterJobs', () => {
 	it("keeps only the jobs of an organization's team", () => {
 		const platform = job({ url: 'https://x/1', title: 'SRE', department: 'Platform' });
 		const frontend = job({ url: 'https://x/2', title: 'Frontend developer' });
-		expect(filterJobs([platform, frontend], { ...none, team: 'Platform' }, names)).toEqual([platform]);
-		expect(filterJobs([platform, frontend], { ...none, team: 'field:engineering' }, names)).toEqual([frontend]);
+		expect(filterJobs([platform, frontend], { ...none, team: 'platform' }, names)).toEqual([platform]);
 	});
-	it('keeps only the jobs of a field, from their title or department', () => {
+	it('keeps only the jobs of a team across organizations, by the department their boards give', () => {
 		const design = job({ url: 'https://x/1', title: 'Product designer' });
 		const team = job({ url: 'https://x/2', title: 'Lead', department: 'Design' });
-		expect(filterJobs([design, job({ url: 'https://x/3', title: 'Accountant' }), team], { ...none, field: 'design' }, names)).toEqual([design, team]);
+		expect(filterJobs([design, job({ url: 'https://x/3', title: 'Accountant' }), team], { ...none, field: 'design' }, names)).toEqual([team]);
 	});
 	it('keeps only the jobs that show their pay', () => {
 		const paid = job({ url: 'https://x/1', salary: { min: 1, currency: 'EUR', period: 'hour' } });

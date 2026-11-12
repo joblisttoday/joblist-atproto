@@ -4,15 +4,35 @@ import { oneRange, toSalary } from './salary.js';
 
 /** @type {import('./index.js').Fetcher} */
 export default async function greenhouse(id) {
-	const data = await getJson(`https://boards-api.greenhouse.io/v1/boards/${encodeURIComponent(id)}/jobs?pay_transparency=true`);
+	const board = `https://boards-api.greenhouse.io/v1/boards/${encodeURIComponent(id)}`;
+	// Departments come with the jobs' whole texts only (ten times as much): from their own list instead.
+	const [data, departments] = await Promise.all([getJson(`${board}/jobs?pay_transparency=true`), getJson(`${board}/departments`)]);
+	const departmentOf = departmentsByJob(departments);
 	return (data?.jobs || []).map((/** @type {any} */ j) => ({
 		id: String(j.id),
 		title: j.title,
 		url: j.absolute_url,
 		location: j.location?.name,
+		department: departmentOf.get(String(j.id)),
 		published: j.first_published || j.updated_at,
 		salary: oneRange((j.pay_input_ranges || []).map(payRange))
 	}));
+}
+
+/**
+ * Each job's department, from a board's departments (a job is listed in its own one).
+ * @param {any} data
+ * @returns {Map<string, string>} job id → department name
+ */
+export function departmentsByJob(data) {
+	/** @type {Map<string, string>} */
+	const by = new Map();
+	for (const d of data?.departments || []) {
+		const name = String(d?.name || '').trim();
+		if (!name || name === 'No Department') continue;
+		for (const job of d.jobs || []) if (!by.has(String(job.id))) by.set(String(job.id), name);
+	}
+	return by;
 }
 
 const notBase = /variable|bonus|commission|equity/i;

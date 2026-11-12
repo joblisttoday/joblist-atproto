@@ -2,7 +2,6 @@ import config from '#lib/data/config.json' with { type: 'json' };
 import { distanceKm, inArea, travelMinutes } from './distance.js';
 import { placeMatcher, remoteRegion } from './place.js';
 import { placeParts } from './place-names.js';
-import { fieldsOf } from './landing.js';
 import { teamOf } from './team.js';
 
 /**
@@ -11,7 +10,7 @@ import { teamOf } from './team.js';
  *   remote: jobs done remotely; anywhere: remote jobs that name no country or region they are limited to.
  * @typedef {[[number, number], [number, number]]} Area [[west, south], [east, north]]
  * @typedef {{query: string, where: string, remote: RemoteFilter, pay?: boolean, field?: string, team?: string, near?: [number, number] | null, within?: number, area?: Area | null, places?: string[]}} JobFilters
- *   pay: only the jobs whose board says what they pay. field: only those of a field (data/fields.json: engineering, design…).
+ *   pay: only the jobs whose board says what they pay. field: only those of a team, across organizations (models/team.js: its key).
  *   team: only those of a team, on an organization's page (models/team.js).
  *   places: only the jobs in one of them, as for `where` (a list about places: "Paris & Lyon").
  *   near: where the person is ([longitude, latitude]), to find jobs close by; never kept in the page address.
@@ -78,7 +77,7 @@ export function filterJobs(jobs, { query, where, remote, pay, field, team, near,
 			? jobs
 			: jobs.filter((job) => {
 					if (pay && !job.salary) return false;
-					if (field && !fieldsOf({ t: job.title, d: job.department }).includes(field)) return false;
+					if (field && teamOf(job) !== field) return false;
 					if (team && teamOf(job) !== team) return false;
 					if (area && !(job.point && inArea(job.point, area))) return false;
 					if (remote && !isRemote(job)) return false;

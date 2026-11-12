@@ -1,5 +1,5 @@
 import { filterJobs, sameOffers, time } from './job.js';
-import { FIELDS } from './landing.js';
+import { teamKey } from './team.js';
 
 /**
  * A job search someone keeps: its filters, and when they last looked at its jobs.
@@ -34,7 +34,8 @@ export function fromParams(search) {
 	};
 	if (search.get(payParam) === '1') filters.pay = true;
 	const field = search.get(fieldParam) || '';
-	if (FIELDS.some((f) => f.slug === field)) filters.field = field;
+	// A team, by its key (models/team.js); any name a board gives.
+	if (field && field.length <= 120) filters.field = teamKey(field);
 	return filters;
 }
 

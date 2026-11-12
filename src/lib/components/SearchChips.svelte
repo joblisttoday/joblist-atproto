@@ -13,7 +13,7 @@
 
 	/** @param {import('#lib/models/saved-search.js').SavedSearch} s */
 	const label = (s) =>
-		[s.query, s.where, s.remote && t(`jobs.filter.workplace.${s.remote}`), s.pay && t('jobs.filter.pay'), s.field && t(`field.${s.field}`)].filter(Boolean).join(' · ') ||
+		[s.query, s.where, s.remote && t(`jobs.filter.workplace.${s.remote}`), s.pay && t('jobs.filter.pay'), s.field].filter(Boolean).join(' · ') ||
 		(s.near ? (s.within ? t(`near.within.${config.travel.mode}`, { minutes: s.within }) : t('near.me')) : t('saved.all'));
 	const all = $derived(!filters.query && !filters.where && !filters.remote && !filters.pay && !filters.field && !filters.near && !filters.area);
 </script>

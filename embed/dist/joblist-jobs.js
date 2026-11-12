@@ -45,17 +45,17 @@ function T(e) {
 	return w = e;
 }
 function Te() {
-	return T(/* @__PURE__ */ tn(w));
+	return T(/* @__PURE__ */ en(w));
 }
 function Ee(e) {
 	if (C) {
-		if (/* @__PURE__ */ tn(w) !== null) throw Se(), n;
+		if (/* @__PURE__ */ en(w) !== null) throw Se(), n;
 		w = e;
 	}
 }
 function De(e = 1) {
 	if (C) {
-		for (var t = e, n = w; t--;) n = /* @__PURE__ */ tn(n);
+		for (var t = e, n = w; t--;) n = /* @__PURE__ */ en(n);
 		w = n;
 	}
 }
@@ -68,7 +68,7 @@ function Oe(e = !0) {
 				--t;
 			} else (r === "[" || r === "[!" || r[0] === "[" && !isNaN(Number(r.slice(1)))) && (t += 1);
 		}
-		var i = /* @__PURE__ */ tn(n);
+		var i = /* @__PURE__ */ en(n);
 		e && n.remove(), n = i;
 	}
 }
@@ -286,7 +286,7 @@ var dt = Symbol("obsolete");
 function ft(e, t, n) {
 	let i = B;
 	i === null && Ne();
-	var a = void 0, o = Bt(r), s = !L, c = /* @__PURE__ */ new Set();
+	var a = void 0, o = zt(r), s = !L, c = /* @__PURE__ */ new Set();
 	return bn(() => {
 		var t = B, n = v();
 		a = n.promise;
@@ -305,7 +305,7 @@ function ft(e, t, n) {
 			c.add(n), r.async_deriveds.set(t, n);
 		}
 		let u = (e, t = void 0) => {
-			l?.(), c.delete(n), t !== dt && (r.activate(), t ? (o.f |= le, Wt(o, t)) : (o.f & 8388608 && (o.f ^= le), Wt(o, e)), r.deactivate());
+			l?.(), c.delete(n), t !== dt && (r.activate(), t ? (o.f |= le, Ut(o, t)) : (o.f & 8388608 && (o.f ^= le), Ut(o, e)), r.deactivate());
 		};
 		n.promise.then(u, (e) => u(null, e || "unknown"));
 	}), hn(() => {
@@ -470,7 +470,7 @@ var bt = null, O = null, xt = null, k = null, St = null, Ct = !1, wt = !1, Tt = 
 					this.#c = [];
 				} else o = this;
 			}
-			o !== null && (Rt.clear(), o.#_());
+			o !== null && (A.clear(), o.#_());
 		}
 	}
 	#v(e, t, n) {
@@ -541,7 +541,7 @@ var bt = null, O = null, xt = null, k = null, St = null, Ct = !1, wt = !1, Tt = 
 		try {
 			wt = !0, O = this, this.#_();
 		} finally {
-			Dt = 0, St = null, Tt = null, Et = null, wt = !1, O = null, k = null, Rt.clear();
+			Dt = 0, St = null, Tt = null, Et = null, wt = !1, O = null, k = null, A.clear();
 		}
 	}
 	discard() {
@@ -631,7 +631,7 @@ function Nt(e) {
 		for (var n = 0; n < t;) {
 			var r = e[n++];
 			if (!(r.f & 24576) && Wn(r) && (Mt = /* @__PURE__ */ new Set(), Xn(r), r.deps === null && r.first === null && r.nodes === null && r.teardown === null && r.ac === null && On(r), Mt?.size > 0)) {
-				Rt.clear();
+				A.clear();
 				for (let e of Mt) {
 					if (e.f & 24576) continue;
 					let t = [e], n = e.parent;
@@ -662,8 +662,8 @@ function It(e) {
 }
 //#endregion
 //#region node_modules/svelte/src/internal/client/reactivity/sources.js
-var Lt = /* @__PURE__ */ new Set(), Rt = /* @__PURE__ */ new Map(), zt = !1;
-function Bt(e, t) {
+var Lt = /* @__PURE__ */ new Set(), A = /* @__PURE__ */ new Map(), Rt = !1;
+function zt(e, t) {
 	return {
 		f: 0,
 		v: e,
@@ -674,33 +674,33 @@ function Bt(e, t) {
 	};
 }
 /*#__NO_SIDE_EFFECTS__*/
-function A(e, t) {
-	let n = Bt(e, t);
+function j(e, t) {
+	let n = zt(e, t);
 	return Ln(n), n;
 }
 /*#__NO_SIDE_EFFECTS__*/
-function Vt(e, t = !1, n = !0) {
-	let r = Bt(e);
+function Bt(e, t = !1, n = !0) {
+	let r = zt(e);
 	return t || (r.equals = Me), r;
 }
-function j(e, t, n = !1) {
-	return L !== null && (!R || L.f & 131072) && Je() && L.f & 4325394 && (H === null || !H.has(e)) && He(), Wt(e, n ? Jt(t) : t, Et);
+function M(e, t, n = !1) {
+	return L !== null && (!R || L.f & 131072) && Je() && L.f & 4325394 && (H === null || !H.has(e)) && He(), Ut(e, n ? qt(t) : t, Et);
 }
-var Ht = null, Ut = 0;
-function Wt(e, t, n = null) {
+var Vt = null, Ht = 0;
+function Ut(e, t, n = null) {
 	if (!e.equals(t)) {
-		Fn ? Rt.set(e, t) : Rt.has(e) || Rt.set(e, e.v);
+		Fn ? A.set(e, t) : A.has(e) || A.set(e, e.v);
 		var r = kt.ensure();
 		if (r.capture(e, t), e.f & 2) {
 			let t = e;
 			e.f & 2048 && gt(t), k === null && et(t);
 		}
-		e.wv = Un(), Ht = null, Ut = 0, qt(e, b, n), Ht = null, Je() && B !== null && B.f & 1024 && !(B.f & 96) && (G === null ? Rn([e]) : G.push(e)), !r.is_fork && Lt.size > 0 && !zt && Gt();
+		e.wv = Un(), Vt = null, Ht = 0, Kt(e, b, n), Vt = null, Je() && B !== null && B.f & 1024 && !(B.f & 96) && (G === null ? Rn([e]) : G.push(e)), !r.is_fork && Lt.size > 0 && !Rt && Wt();
 	}
 	return t;
 }
-function Gt() {
-	zt = !1;
+function Wt() {
+	Rt = !1;
 	for (let e of Lt) {
 		e.f & 1024 && D(e, x);
 		let t;
@@ -713,16 +713,16 @@ function Gt() {
 	}
 	Lt.clear();
 }
-function Kt(e) {
-	j(e, e.v + 1);
+function Gt(e) {
+	M(e, e.v + 1);
 }
-function qt(e, t, n) {
+function Kt(e, t, n) {
 	var r = e.reactions;
 	if (r !== null) {
 		var i = Je(), a = r.length;
-		if (Ut += a, Ut > 1e5 && Ht === null && (Ht = /* @__PURE__ */ new Set()), Ht !== null) {
-			if (Ht.has(e)) return;
-			Ht.add(e);
+		if (Ht += a, Ht > 1e5 && Vt === null && (Vt = /* @__PURE__ */ new Set()), Vt !== null) {
+			if (Vt.has(e)) return;
+			Vt.add(e);
 		}
 		for (var o = 0; o < a; o++) {
 			var s = r[o], c = s.f;
@@ -731,7 +731,7 @@ function qt(e, t, n) {
 				if (l && D(s, t), c & 131072) Lt.add(s);
 				else if (c & 2) {
 					var u = s;
-					k?.delete(u), qt(u, x, n);
+					k?.delete(u), Kt(u, x, n);
 				} else if (l) {
 					var d = s;
 					c & 16 && Mt !== null && Mt.add(d), n === null ? Pt(d) : n.push(d);
@@ -740,40 +740,40 @@ function qt(e, t, n) {
 		}
 	}
 }
-function Jt(e) {
+function qt(e) {
 	if (typeof e != "object" || !e || ue in e || de in e) return e;
 	let t = m(e);
 	if (t !== f && t !== p) return e;
-	var n = /* @__PURE__ */ new Map(), i = a(e), o = /* @__PURE__ */ A(0), s = null, c = Vn, l = (e) => {
+	var n = /* @__PURE__ */ new Map(), i = a(e), o = /* @__PURE__ */ j(0), s = null, c = Vn, l = (e) => {
 		if (Vn === c) return e();
 		var t = L, n = Vn;
 		z(null), Hn(c);
 		var r = e();
 		return z(t), Hn(n), r;
 	};
-	return i && n.set("length", /* @__PURE__ */ A(e.length, s)), new Proxy(e, {
+	return i && n.set("length", /* @__PURE__ */ j(e.length, s)), new Proxy(e, {
 		defineProperty(e, t, r) {
 			(!("value" in r) || r.configurable === !1 || r.enumerable === !1 || r.writable === !1) && Be();
 			var i = n.get(t);
 			return i === void 0 ? l(() => {
-				var e = /* @__PURE__ */ A(r.value, s);
+				var e = /* @__PURE__ */ j(r.value, s);
 				return n.set(t, e), e;
-			}) : j(i, r.value, !0), !0;
+			}) : M(i, r.value, !0), !0;
 		},
 		deleteProperty(e, t) {
 			var i = n.get(t);
 			if (i === void 0) {
 				if (t in e) {
-					let e = l(() => /* @__PURE__ */ A(r, s));
-					n.set(t, e), Kt(o);
+					let e = l(() => /* @__PURE__ */ j(r, s));
+					n.set(t, e), Gt(o);
 				}
-			} else j(i, r), Kt(o);
+			} else M(i, r), Gt(o);
 			return !0;
 		},
 		get(t, i, a) {
 			if (i === ue) return e;
 			var o = n.get(i), c = i in t;
-			if (o === void 0 && (!c || u(t, i)?.writable) && (o = l(() => /* @__PURE__ */ A(Jt(c ? t[i] : r), s)), n.set(i, o)), o !== void 0) {
+			if (o === void 0 && (!c || u(t, i)?.writable) && (o = l(() => /* @__PURE__ */ j(qt(c ? t[i] : r), s)), n.set(i, o)), o !== void 0) {
 				var d = K(o);
 				return d === r ? void 0 : d;
 			}
@@ -798,27 +798,27 @@ function Jt(e) {
 		has(e, t) {
 			if (t === ue) return !0;
 			var i = n.get(t), a = i !== void 0 && i.v !== r || Reflect.has(e, t);
-			return (i !== void 0 || B !== null && (!a || u(e, t)?.writable)) && (i === void 0 && (i = l(() => /* @__PURE__ */ A(a ? Jt(e[t]) : r, s)), n.set(t, i)), K(i) === r) ? !1 : a;
+			return (i !== void 0 || B !== null && (!a || u(e, t)?.writable)) && (i === void 0 && (i = l(() => /* @__PURE__ */ j(a ? qt(e[t]) : r, s)), n.set(t, i)), K(i) === r) ? !1 : a;
 		},
 		set(e, t, a, c) {
 			var d = n.get(t), f = t in e;
 			if (i && t === "length") for (var p = a; p < d.v; p += 1) {
 				var m = n.get(p + "");
-				m === void 0 ? p in e && (m = l(() => /* @__PURE__ */ A(r, s)), n.set(p + "", m)) : j(m, r);
+				m === void 0 ? p in e && (m = l(() => /* @__PURE__ */ j(r, s)), n.set(p + "", m)) : M(m, r);
 			}
-			if (d === void 0) (!f || u(e, t)?.writable) && (d = l(() => /* @__PURE__ */ A(void 0, s)), j(d, Jt(a)), n.set(t, d));
+			if (d === void 0) (!f || u(e, t)?.writable) && (d = l(() => /* @__PURE__ */ j(void 0, s)), M(d, qt(a)), n.set(t, d));
 			else {
 				f = d.v !== r;
-				var h = l(() => Jt(a));
-				j(d, h);
+				var h = l(() => qt(a));
+				M(d, h);
 			}
 			var g = Reflect.getOwnPropertyDescriptor(e, t);
 			if (g?.set && g.set.call(c, a), !f) {
 				if (i && typeof t == "string") {
 					var _ = n.get("length"), v = Number(t);
-					Number.isInteger(v) && v >= _.v && j(_, v + 1);
+					Number.isInteger(v) && v >= _.v && M(_, v + 1);
 				}
-				Kt(o);
+				Gt(o);
 			}
 			return !0;
 		},
@@ -836,61 +836,61 @@ function Jt(e) {
 		}
 	});
 }
-var Yt, Xt, Zt, Qt;
-function $t() {
-	if (Yt === void 0) {
-		Yt = window, Xt = /Firefox/.test(navigator.userAgent);
+var Jt, Yt, Xt, Zt;
+function Qt() {
+	if (Jt === void 0) {
+		Jt = window, Yt = /Firefox/.test(navigator.userAgent);
 		var e = Element.prototype, t = Node.prototype, n = Text.prototype;
-		Zt = u(t, "firstChild").get, Qt = u(t, "nextSibling").get, h(e) && (e[he] = void 0, e[me] = null, e[ge] = void 0, e.__e = void 0), h(n) && (n[_e] = void 0);
+		Xt = u(t, "firstChild").get, Zt = u(t, "nextSibling").get, h(e) && (e[he] = void 0, e[me] = null, e[ge] = void 0, e.__e = void 0), h(n) && (n[_e] = void 0);
 	}
 }
-function M(e = "") {
+function N(e = "") {
 	return document.createTextNode(e);
+}
+/*@__NO_SIDE_EFFECTS__*/
+function $t(e) {
+	return Xt.call(e);
 }
 /*@__NO_SIDE_EFFECTS__*/
 function en(e) {
 	return Zt.call(e);
 }
-/*@__NO_SIDE_EFFECTS__*/
-function tn(e) {
-	return Qt.call(e);
-}
-function nn(e, t) {
-	if (!C) return /* @__PURE__ */ en(e);
-	var n = /* @__PURE__ */ en(w);
-	if (n === null) n = w.appendChild(M());
+function tn(e, t) {
+	if (!C) return /* @__PURE__ */ $t(e);
+	var n = /* @__PURE__ */ $t(w);
+	if (n === null) n = w.appendChild(N());
 	else if (t && n.nodeType !== 3) {
-		var r = M();
+		var r = N();
 		return n?.before(r), T(r), r;
 	}
 	return t && cn(n), T(n), n;
 }
-function rn(e, t = !1) {
+function nn(e, t = !1) {
 	if (!C) {
-		var n = /* @__PURE__ */ en(e);
-		return n instanceof Comment && n.data === "" ? /* @__PURE__ */ tn(n) : n;
+		var n = /* @__PURE__ */ $t(e);
+		return n instanceof Comment && n.data === "" ? /* @__PURE__ */ en(n) : n;
 	}
 	if (t) {
 		if (w?.nodeType !== 3) {
-			var r = M();
+			var r = N();
 			return w?.before(r), T(r), r;
 		}
 		cn(w);
 	}
 	return w;
 }
-function N(e, t = !1) {
-	if (!C) return /* @__PURE__ */ en(e);
-	var n = nn(e, t);
+function P(e, t = !1) {
+	if (!C) return /* @__PURE__ */ $t(e);
+	var n = tn(e, t);
 	return Ee(e), n;
 }
-function P(e, t = 1, n = !1) {
+function rn(e, t = 1, n = !1) {
 	let r = C ? w : e;
-	for (var i; t--;) i = r, r = /* @__PURE__ */ tn(r);
+	for (var i; t--;) i = r, r = /* @__PURE__ */ en(r);
 	if (!C) return r;
 	if (n) {
 		if (r?.nodeType !== 3) {
-			var a = M();
+			var a = N();
 			return r === null ? i?.after(a) : r.before(a), T(a), a;
 		}
 		cn(r);
@@ -1071,7 +1071,7 @@ function I(e, t = !0) {
 }
 function Dn(e, t) {
 	for (; e !== null;) {
-		var n = e === t ? null : /* @__PURE__ */ tn(e);
+		var n = e === t ? null : /* @__PURE__ */ en(e);
 		e.remove(), e = n;
 	}
 }
@@ -1121,7 +1121,7 @@ function Mn(e, t) {
 }
 function Nn(e, t) {
 	if (e.nodes) for (var n = e.nodes.start, r = e.nodes.end; n !== null;) {
-		var i = n === r ? null : /* @__PURE__ */ tn(n);
+		var i = n === r ? null : /* @__PURE__ */ en(n);
 		t.append(n), n = i;
 	}
 }
@@ -1255,12 +1255,12 @@ function K(e) {
 			r === null ? e.reactions = [L] : s.call(r, L) || r.push(L);
 		}
 	}
-	if (Fn && Rt.has(e)) return Rt.get(e);
+	if (Fn && A.has(e)) return A.get(e);
 	if (t) {
 		var i = e;
 		if (Fn) {
 			var a = i.v;
-			return (!(i.f & 1024) && i.reactions !== null || $n(i)) && (a = gt(i)), Rt.set(i, a), a;
+			return (!(i.f & 1024) && i.reactions !== null || $n(i)) && (a = gt(i)), A.set(i, a), a;
 		}
 		var o = !(i.f & 512) && !R && L !== null && !!(L.f & 512), c = (i.f & te) === 0;
 		Wn(i) && (o && (i.f |= 512), _t(i)), o && !c && (yt(i), Qn(i));
@@ -1278,7 +1278,7 @@ function Qn(e) {
 function $n(e) {
 	if (e.v === r) return !0;
 	if (e.deps === null) return !1;
-	for (let t of e.deps) if (Rt.has(t) || t.f & 2 && $n(t)) return !0;
+	for (let t of e.deps) if (A.has(t) || t.f & 2 && $n(t)) return !0;
 	return !1;
 }
 function er(e) {
@@ -1365,10 +1365,10 @@ function q(e, t) {
 	var n = !!(t & 1), r = !!(t & 2), i, a = !e.startsWith("<!>");
 	return () => {
 		if (C) return ur(w, null), w;
-		i === void 0 && (i = lr(a ? e : "<!>" + e), n || (i = /* @__PURE__ */ en(i)));
-		var t = r || Xt ? document.importNode(i, !0) : i.cloneNode(!0);
+		i === void 0 && (i = lr(a ? e : "<!>" + e), n || (i = /* @__PURE__ */ $t(i)));
+		var t = r || Yt ? document.importNode(i, !0) : i.cloneNode(!0);
 		if (n) {
-			var o = /* @__PURE__ */ en(t), s = t.lastChild;
+			var o = /* @__PURE__ */ $t(t), s = t.lastChild;
 			ur(o, s);
 		} else ur(t, t);
 		return t;
@@ -1388,11 +1388,11 @@ function fr(e) {
 //#endregion
 //#region node_modules/svelte/src/reactivity/create-subscriber.js
 function pr(e) {
-	let t = 0, n = Bt(0), r;
+	let t = 0, n = zt(0), r;
 	return () => {
-		mn() && (K(n), xn(() => (t === 0 && (r = er(() => e(() => Kt(n)))), t += 1, () => {
+		mn() && (K(n), xn(() => (t === 0 && (r = er(() => e(() => Gt(n)))), t += 1, () => {
 			Ze(() => {
-				--t, t === 0 && (r?.(), r = void 0, Kt(n));
+				--t, t === 0 && (r?.(), r = void 0, Gt(n));
 			});
 		})));
 	};
@@ -1422,7 +1422,7 @@ var gr = class {
 	#f = /* @__PURE__ */ new Set();
 	#p = /* @__PURE__ */ new Set();
 	#m = null;
-	#h = pr(() => (this.#m = Bt(this.#l), () => {
+	#h = pr(() => (this.#m = zt(this.#l), () => {
 		this.#m = null;
 	}));
 	constructor(e, t, n, r) {
@@ -1481,7 +1481,7 @@ var gr = class {
 		let e = this.#n.pending;
 		e && (this.is_pending = !0, this.#o = F(() => e(this.#e)), Ze(() => {
 			if (!this.#y()) {
-				var e = this.#c = document.createDocumentFragment(), t = M(), n = !1;
+				var e = this.#c = document.createDocumentFragment(), t = N(), n = !1;
 				e.append(t), this.#a = this.#C(() => {
 					try {
 						return F(() => this.#r(t));
@@ -1541,7 +1541,7 @@ var gr = class {
 	}
 	update_pending_count(e, t) {
 		this.#w(e, t), this.#l += e, !(!this.#m || this.#d) && (this.#d = !0, Ze(() => {
-			this.#d = !1, this.#m && Wt(this.#m, this.#l);
+			this.#d = !1, this.#m && Ut(this.#m, this.#l);
 		}));
 	}
 	get_effect_pending() {
@@ -1592,9 +1592,9 @@ function _r(e, t) {
 }
 var vr = /* @__PURE__ */ new Map();
 function yr(e, { target: t, anchor: r, props: i = {}, events: a, context: o, intro: s = !0, transformError: l }) {
-	$t();
+	Qt();
 	var u = void 0, d = vn(() => {
-		var s = r ?? t.appendChild(M());
+		var s = r ?? t.appendChild(N());
 		hr(s, { pending: () => {} }, (t) => {
 			Ge({});
 			var r = E;
@@ -1654,7 +1654,7 @@ var br = /* @__PURE__ */ new WeakMap(), xr = class {
 				let i = () => {
 					if (Array.from(this.#e.values()).includes(e)) {
 						var t = document.createDocumentFragment();
-						Nn(r, t), t.append(M()), this.#n.set(e, {
+						Nn(r, t), t.append(N()), this.#n.set(e, {
 							effect: r,
 							fragment: t
 						});
@@ -1674,7 +1674,7 @@ var br = /* @__PURE__ */ new WeakMap(), xr = class {
 		var n = O, r = on();
 		if (t && !this.#t.has(e) && !this.#n.has(e)) {
 			if (r) {
-				var i = document.createDocumentFragment(), a = M();
+				var i = document.createDocumentFragment(), a = N();
 				i.append(a), this.#n.set(e, {
 					effect: F(() => t(a)),
 					fragment: i
@@ -1763,7 +1763,7 @@ function Dr(e, t, n, r, i, o = null) {
 	var s = e, l = /* @__PURE__ */ new Map();
 	if (t & 4) {
 		var u = e;
-		s = C ? T(/* @__PURE__ */ en(u)) : u.appendChild(M());
+		s = C ? T(/* @__PURE__ */ $t(u)) : u.appendChild(N());
 	}
 	C && Te();
 	var d = null, f = /* @__PURE__ */ mt(() => {
@@ -1790,9 +1790,9 @@ function Dr(e, t, n, r, i, o = null) {
 			for (var u = /* @__PURE__ */ new Set(), _ = O, v = on(), y = 0; y < a; y += 1) {
 				C && w.nodeType === 8 && w.data === "]" && (s = w, c = !0, we(!1));
 				var b = e[y], x = r(b, y), S = m ? null : l.get(x);
-				S ? (S.v && Wt(S.v, b), S.i && Wt(S.i, y), v && _.unskip_effect(S.e)) : (S = Ar(l, m ? s : Er ??= M(), b, x, y, i, t, n), m || (S.e.f |= oe), l.set(x, S)), u.add(x);
+				S ? (S.v && Ut(S.v, b), S.i && Ut(S.i, y), v && _.unskip_effect(S.e)) : (S = Ar(l, m ? s : Er ??= N(), b, x, y, i, t, n), m || (S.e.f |= oe), l.set(x, S)), u.add(x);
 			}
-			if (a === 0 && o && !d && (m ? d = F(() => o(s)) : (d = F(() => o(Er ??= M())), d.f |= oe)), a > u.size && Pe("", "", ""), C && a > 0 && T(Oe()), !m) {
+			if (a === 0 && o && !d && (m ? d = F(() => o(s)) : (d = F(() => o(Er ??= N())), d.f |= oe)), a > u.size && Pe("", "", ""), C && a > 0 && T(Oe()), !m) {
 				if (p.set(_, u), v) {
 					for (let [e, t] of l) u.has(e) || _.skip_effect(t.e);
 					_.oncommit(h), _.ondiscard(g);
@@ -1865,7 +1865,7 @@ function kr(e, t, n, r, i) {
 	});
 }
 function Ar(e, t, n, r, i, a, o, s) {
-	var c = o & 1 ? o & 16 ? Bt(n) : /* @__PURE__ */ Vt(n, !1, !1) : null, l = o & 2 ? Bt(i) : null;
+	var c = o & 1 ? o & 16 ? zt(n) : /* @__PURE__ */ Bt(n, !1, !1) : null, l = o & 2 ? zt(i) : null;
 	return {
 		v: c,
 		i: l,
@@ -1876,7 +1876,7 @@ function Ar(e, t, n, r, i, a, o, s) {
 }
 function jr(e, t, n) {
 	if (e.nodes) for (var r = e.nodes.start, i = e.nodes.end, a = t && !(t.f & 33554432) ? t.nodes.start : n; r !== null;) {
-		var o = /* @__PURE__ */ tn(r);
+		var o = /* @__PURE__ */ en(r);
 		if (a.before(r), r === i) return;
 		r = o;
 	}
@@ -2034,8 +2034,8 @@ function Xr(e, t, n, r) {
 	var b = B;
 	return (function(e, t) {
 		if (arguments.length > 0) {
-			let n = t ? K(y) : i && a ? Jt(e) : e;
-			return j(y, n), v = !0, s !== void 0 && (s = n), e;
+			let n = t ? K(y) : i && a ? qt(e) : e;
+			return M(y, n), v = !0, s !== void 0 && (s = n), e;
 		}
 		return Fn && v || b.f & 16384 ? y.v : K(y);
 	});
@@ -2187,6 +2187,7 @@ var X = {
 	jobs: {
 		pageSize: 50,
 		companySearchFrom: 10,
+		teamsShown: 12,
 		spread: 2,
 		olderDays: 90,
 		placesSuggested: 30,
@@ -2364,7 +2365,6 @@ var X = {
 			"job.where": "Where",
 			"job.company.more": "{count} open jobs at {name}",
 			"job.company.more.one": "1 open job at {name}",
-			"job.company.one": "The only open job at {name}",
 			"job.new": "New",
 			"job.older": "Open for a while",
 			"job.older.hint": "First seen more than {days} days ago: it may already be filled.",
@@ -2425,7 +2425,6 @@ var X = {
 			"job.where": "Où",
 			"job.company.more": "{count} offres chez {name}",
 			"job.company.more.one": "1 offre chez {name}",
-			"job.company.one": "La seule offre chez {name}",
 			"job.new": "Nouveau",
 			"job.older": "En ligne depuis longtemps",
 			"job.older.hint": "Vue pour la première fois il y a plus de {days} jours : elle est peut-être déjà pourvue.",
@@ -2486,7 +2485,6 @@ var X = {
 			"job.where": "Wo",
 			"job.company.more": "{count} offene Stellen bei {name}",
 			"job.company.more.one": "1 offene Stelle bei {name}",
-			"job.company.one": "Die einzige offene Stelle bei {name}",
 			"job.new": "Neu",
 			"job.older": "Schon länger offen",
 			"job.older.hint": "Zuerst vor mehr als {days} Tagen gesehen: Sie ist vielleicht schon besetzt.",
@@ -2547,7 +2545,6 @@ var X = {
 			"job.where": "Dónde",
 			"job.company.more": "{count} ofertas abiertas en {name}",
 			"job.company.more.one": "1 oferta abierta en {name}",
-			"job.company.one": "La única oferta abierta en {name}",
 			"job.new": "Nueva",
 			"job.older": "Abierta hace tiempo",
 			"job.older.hint": "Vista por primera vez hace más de {days} días: puede que ya esté cubierta.",
@@ -2587,7 +2584,7 @@ var X = {
 			"job.at": "{title} en {company}"
 		}
 	}
-}.strings, Qr = Jt({ locale: "en" });
+}.strings, Qr = qt({ locale: "en" });
 function Z(e, t = {}) {
 	let n = Zr[Qr.locale] || Zr.en, r = t.count === 1 && (n[`${e}.one`] || Zr.en[`${e}.one`]) || n[e] || Zr.en[e] || e;
 	for (let [e, n] of Object.entries(t)) r = r.replaceAll(`{${e}}`, typeof n == "number" ? n.toLocaleString(Qr.locale) : String(n));
@@ -2606,17 +2603,17 @@ function ri(e, t) {
 		t.facts.pay,
 		t.facts.age
 	].filter(Boolean));
-	var i = ti(), a = rn(i), o = N(a, !0), s = P(a, 2), c = N(s), l = P(s, 2);
+	var i = ti(), a = nn(i), o = P(a, !0), s = rn(a, 2), c = P(s), l = rn(s, 2);
 	Ir(l, 1, "svelte-1vivc5");
-	var u = nn(l);
+	var u = tn(l);
 	Sr(u, () => t.lead ?? g);
-	var d = P(u);
+	var d = rn(u);
 	Dr(d, 16, () => K(r), (e) => e, (e, t) => {
-		var n = $r(), r = N(n, !0);
+		var n = $r(), r = P(n, !0);
 		Sn(() => Y(r, t)), J(e, n);
 	});
-	var f = P(d), p = (e) => {
-		var t = ei(), n = N(t, !0);
+	var f = rn(d), p = (e) => {
+		var t = ei(), n = P(t, !0);
 		Sn((e, r) => {
 			Vr(t, "title", e), Y(n, r);
 		}, [() => Z("job.older.hint", { days: X.jobs.olderDays }), () => Z("job.older")]), J(e, t);
@@ -3007,296 +3004,47 @@ var Ci = (e) => e.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), wi = [
 ], Ti = wi.sort((e, t) => t.length - e.length).map(Ci).join("|"), Ei = "[\\s\\[\\]\\-–—:·•*]", Di = `\\(?\\s*(?:${Ti})\\s*\\)?`;
 RegExp(`^(?:${Ei}+|${Di}(?=${Ei}|[()]|$))`, "iu"), RegExp(`(?:(?<=${Ei}|[()])${Di}|${Ei}+)$`, "iu"), Math.max(...wi.map((e) => e.length)) + 8;
 //#endregion
-//#region src/lib/models/landing.js
-var Oi = [
-	{
-		slug: "engineering",
-		query: "engineer",
-		words: [
-			"engineer",
-			"engineering",
-			"developer",
-			"software",
-			"devops",
-			"sre",
-			"backend",
-			"back-end",
-			"frontend",
-			"front-end",
-			"full-stack",
-			"fullstack",
-			"programmer",
-			"architect",
-			"entwickler",
-			"entwicklerin",
-			"développeur",
-			"développeuse",
-			"ingénieur",
-			"ingénieure"
-		]
-	},
-	{
-		slug: "data",
-		query: "data",
-		words: [
-			"data",
-			"analytics",
-			"analyst",
-			"machine learning",
-			"ml",
-			"ai",
-			"bi",
-			"business intelligence",
-			"statistician"
-		]
-	},
-	{
-		slug: "design",
-		query: "design",
-		words: [
-			"design",
-			"designer",
-			"ux",
-			"ui",
-			"user experience",
-			"user research",
-			"illustrator",
-			"art director",
-			"creative director",
-			"gestalter",
-			"gestalterin"
-		]
-	},
-	{
-		slug: "product",
-		query: "product",
-		words: [
-			"product manager",
-			"product owner",
-			"product lead",
-			"head of product",
-			"product management",
-			"product director",
-			"chef de produit"
-		]
-	},
-	{
-		slug: "marketing",
-		query: "marketing",
-		words: [
-			"marketing",
-			"seo",
-			"content",
-			"brand",
-			"growth",
-			"communications",
-			"social media",
-			"copywriter",
-			"public relations",
-			"pr manager"
-		]
-	},
-	{
-		slug: "sales",
-		query: "sales",
-		words: [
-			"sales",
-			"account executive",
-			"account manager",
-			"business development",
-			"sdr",
-			"bdr",
-			"go to market",
-			"go-to-market",
-			"gtm",
-			"vertrieb",
-			"commercial"
-		]
-	},
-	{
-		slug: "customer-support",
-		query: "customer",
-		words: [
-			"customer success",
-			"customer support",
-			"customer service",
-			"customer experience",
-			"customer care",
-			"support specialist",
-			"support engineer",
-			"help desk",
-			"helpdesk",
-			"kundenservice"
-		]
-	},
-	{
-		slug: "operations",
-		query: "operations",
-		words: [
-			"operations",
-			"logistics",
-			"supply chain",
-			"procurement",
-			"purchasing",
-			"warehouse",
-			"office manager",
-			"administrative",
-			"assistant"
-		]
-	},
-	{
-		slug: "finance",
-		query: "finance",
-		words: [
-			"finance",
-			"financial",
-			"accounting",
-			"accountant",
-			"controller",
-			"controlling",
-			"tax",
-			"treasury",
-			"payroll",
-			"audit",
-			"auditor",
-			"buchhaltung",
-			"comptable"
-		]
-	},
-	{
-		slug: "people",
-		query: "recruit",
-		words: [
-			"recruiter",
-			"recruiting",
-			"recruitment",
-			"talent acquisition",
-			"people",
-			"hr",
-			"human resources",
-			"personalwesen",
-			"ressources humaines"
-		]
-	},
-	{
-		slug: "legal",
-		query: "legal",
-		words: [
-			"legal",
-			"counsel",
-			"lawyer",
-			"attorney",
-			"paralegal",
-			"compliance",
-			"jurist",
-			"juriste"
-		]
-	},
-	{
-		slug: "security",
-		query: "security",
-		words: [
-			"security",
-			"cybersecurity",
-			"infosec",
-			"penetration",
-			"soc analyst"
-		]
-	},
-	{
-		slug: "science",
-		query: "scientist",
-		words: [
-			"scientist",
-			"research",
-			"researcher",
-			"laboratory",
-			"lab",
-			"chemist",
-			"chemistry",
-			"biologist",
-			"biology",
-			"physicist",
-			"clinical"
-		]
-	},
-	{
-		slug: "hardware",
-		query: "technician",
-		words: [
-			"technician",
-			"mechanical",
-			"electrical",
-			"manufacturing",
-			"production",
-			"assembly",
-			"machinist",
-			"avionics",
-			"hardware",
-			"welder",
-			"mechatronics",
-			"testing",
-			"quality"
-		]
-	}
-];
-function ki(e) {
-	let t = e.words.map((e) => e.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
-	return RegExp(`\\b(?:${t.join("|")})\\b`, "i");
-}
-var Ai = new Map(Oi.map((e) => [e.slug, ki(e)]));
-function ji(e) {
-	let t = `${e.t} ${e.d || ""}`;
-	return Oi.filter((e) => Ai.get(e.slug)?.test(t)).map((e) => e.slug);
-}
-//#endregion
 //#region src/lib/models/team.js
-function Mi(e) {
-	let t = e.department?.trim();
-	if (t) return t;
-	let n = ji({
-		t: e.title,
-		d: ""
-	})[0];
-	return n ? `field:${n}` : "";
+function Oi(e) {
+	return String(e || "").trim().replace(/\s+/g, " ").toLowerCase();
+}
+function ki(e) {
+	return Oi(e.department);
 }
 //#endregion
 //#region src/lib/models/job.js
-var Ni = X.jobs.remoteWords, Pi = RegExp(`\\b(${Ni.join("|")})\\b`, "i"), Fi = RegExp(`([(\\[|,]|\\s[-–]\\s)\\s*(${Ni.join("|")})\\b`, "i"), Ii = RegExp(`\\b(${X.jobs.hybridWords.join("|")})\\b`, "i"), Li = RegExp(`([(\\[|,]|\\s[-–]\\s)\\s*(${X.jobs.hybridWords.join("|")})\\b`, "i"), Ri = RegExp(`\\b(${X.jobs.onsiteWords.join("|")})\\b`, "i"), zi = (e) => e.toLowerCase().split(/\s+/).filter(Boolean);
-function Bi(e) {
+var Ai = X.jobs.remoteWords, ji = RegExp(`\\b(${Ai.join("|")})\\b`, "i"), Mi = RegExp(`([(\\[|,]|\\s[-–]\\s)\\s*(${Ai.join("|")})\\b`, "i"), Ni = RegExp(`\\b(${X.jobs.hybridWords.join("|")})\\b`, "i"), Pi = RegExp(`([(\\[|,]|\\s[-–]\\s)\\s*(${X.jobs.hybridWords.join("|")})\\b`, "i"), Fi = RegExp(`\\b(${X.jobs.onsiteWords.join("|")})\\b`, "i"), Ii = (e) => e.toLowerCase().split(/\s+/).filter(Boolean);
+function Li(e) {
 	if (e.remote === "onsite" || e.remote === "hybrid" || e.remote === "remote") return e.remote;
 	if (e.remote !== "") {
-		if (Pi.test(e.location || "") || Fi.test(e.title)) return "remote";
-		if (Ii.test(e.location || "") || Li.test(e.title)) return "hybrid";
-		if (Ri.test(e.location || "")) return "onsite";
+		if (ji.test(e.location || "") || Mi.test(e.title)) return "remote";
+		if (Ni.test(e.location || "") || Pi.test(e.title)) return "hybrid";
+		if (Fi.test(e.location || "")) return "onsite";
 	}
 }
-function Vi(e) {
-	return Bi(e) === "remote";
+function Ri(e) {
+	return Li(e) === "remote";
 }
-function Hi(e) {
-	return Vi(e) ? Si(e.location, Ni) : "";
+function zi(e) {
+	return Ri(e) ? Si(e.location, Ai) : "";
 }
-function Ui(e, { query: t, where: n, remote: r, pay: i, field: a, team: o, near: s, within: c = 0, area: l, places: u }, d) {
-	let f = zi(t), p = n.trim() ? bi(n) : null, m = u?.length ? u.map(bi) : null, h = !f.length && !p && !m && !r && !i && !a && !o && !l ? e : e.filter((e) => {
-		if (i && !e.salary || a && !ji({
-			t: e.title,
-			d: e.department
-		}).includes(a) || o && Mi(e) !== o || l && !(e.point && ci(e.point, l)) || r && !Vi(e) || r === "anywhere" && Hi(e) || p && (!r || Hi(e)) && !p(e.location, Vi(e)) || m && (!r || Hi(e)) && !m.some((t) => t(e.location, Vi(e)))) return !1;
+function Bi(e, { query: t, where: n, remote: r, pay: i, field: a, team: o, near: s, within: c = 0, area: l, places: u }, d) {
+	let f = Ii(t), p = n.trim() ? bi(n) : null, m = u?.length ? u.map(bi) : null, h = !f.length && !p && !m && !r && !i && !a && !o && !l ? e : e.filter((e) => {
+		if (i && !e.salary || a && ki(e) !== a || o && ki(e) !== o || l && !(e.point && ci(e.point, l)) || r && !Ri(e) || r === "anywhere" && zi(e) || p && (!r || zi(e)) && !p(e.location, Ri(e)) || m && (!r || zi(e)) && !m.some((t) => t(e.location, Ri(e)))) return !1;
 		if (!f.length) return !0;
-		let t = Zi(e, d);
+		let t = Ji(e, d);
 		return f.every((e) => t.includes(e));
 	});
 	return s ? h.filter((e) => e.point).map((e) => ({
 		...e,
 		km: oi(s, e.point)
-	})).filter((e) => !c || si(e.km) <= c).sort((e, t) => Wi(e.km) - Wi(t.km) || Ji(t.published) - Ji(e.published) || e.km - t.km) : h;
+	})).filter((e) => !c || si(e.km) <= c).sort((e, t) => Vi(e.km) - Vi(t.km) || Gi(t.published) - Gi(e.published) || e.km - t.km) : h;
 }
-function Wi(e) {
+function Vi(e) {
 	return Math.floor(si(e) / X.travel.bandMinutes);
 }
-function Gi(e) {
-	let t = e.map((e) => e.posted ? "" : $i(e)), n = /* @__PURE__ */ new Map();
+function Hi(e) {
+	let t = e.map((e) => e.posted ? "" : Xi(e)), n = /* @__PURE__ */ new Map();
 	e.forEach((e, r) => {
 		if (!t[r]) return;
 		let i = n.get(t[r]);
@@ -3312,53 +3060,53 @@ function Gi(e) {
 		} : e);
 	}), r;
 }
-function Ki(e) {
-	return [...new Set([e, ...e.also || []].map((e) => qi(e.location)).filter(Boolean))];
+function Ui(e) {
+	return [...new Set([e, ...e.also || []].map((e) => Wi(e.location)).filter(Boolean))];
 }
-function qi(e) {
+function Wi(e) {
 	let t = /* @__PURE__ */ new Set();
 	return (e || "").split(/\s*,\s*/).filter((e) => e && !t.has(e.toLowerCase()) && t.add(e.toLowerCase())).join(", ");
 }
-function Ji(e) {
+function Gi(e) {
 	if (!e) return 0;
 	let t = String(e), n = Date.parse(t.includes(" ") ? t.replace(" UTC", "Z").replace(" ", "T") : t);
 	return Number.isFinite(n) ? n : 0;
 }
-function Yi(e, t = Date.now(), n = X.jobs.olderDays) {
-	let r = Ji(e.published);
+function Ki(e, t = Date.now(), n = X.jobs.olderDays) {
+	let r = Gi(e.published);
 	return !e.posted && r > 0 && t - r > n * 864e5;
 }
-var Xi = /* @__PURE__ */ new WeakMap();
-function Zi(e, t) {
-	let n = Xi.get(e);
-	return n === void 0 && (n = `${e.title} ${e.department || ""} ${t.get(e.company) || ""}`.toLowerCase(), Xi.set(e, n)), n;
+var qi = /* @__PURE__ */ new WeakMap();
+function Ji(e, t) {
+	let n = qi.get(e);
+	return n === void 0 && (n = `${e.title} ${e.department || ""} ${t.get(e.company) || ""}`.toLowerCase(), qi.set(e, n)), n;
 }
-function Qi(e) {
-	let t = e.map((e) => Ji(e.published)), n = Array.from(e.keys()).sort((e, n) => t[n] - t[e] || e - n).map((t) => e[t]);
+function Yi(e) {
+	let t = e.map((e) => Gi(e.published)), n = Array.from(e.keys()).sort((e, n) => t[n] - t[e] || e - n).map((t) => e[t]);
 	for (let t = 0; t < n.length; t++) e[t] = n[t];
 }
-function $i(e) {
+function Xi(e) {
 	return `${e.company}\n${e.title.trim().toLowerCase()}`;
 }
 //#endregion
 //#region src/lib/i18n/dates.js
-var ea = [
+var Zi = [
 	["year", 31536e6],
 	["month", 2592e6],
 	["week", 6048e5],
 	["day", 864e5]
 ];
-function ta(e, t, n = Date.now()) {
+function Qi(e, t, n = Date.now()) {
 	if (!e) return "";
 	let r = e - n, i = new Intl.RelativeTimeFormat(t, { numeric: "auto" });
-	for (let [e, t] of ea) if (Math.abs(r) >= t) return i.format(Math.round(r / t), e);
+	for (let [e, t] of Zi) if (Math.abs(r) >= t) return i.format(Math.round(r / t), e);
 	return i.format(0, "day");
 }
 //#endregion
 //#region src/lib/models/salary.js
-var na = 1e4, ra = /* @__PURE__ */ new Map();
-function ia(e, t, n) {
-	let r = `${e}\n${t}\n${n}`, i = ra.get(r);
+var $i = 1e4, ea = /* @__PURE__ */ new Map();
+function ta(e, t, n) {
+	let r = `${e}\n${t}\n${n}`, i = ea.get(r);
 	return i || (i = new Intl.NumberFormat(e, n ? {
 		style: "currency",
 		currency: t,
@@ -3369,27 +3117,27 @@ function ia(e, t, n) {
 		currency: t,
 		minimumFractionDigits: 0,
 		maximumFractionDigits: 2
-	}), ra.set(r, i)), i;
+	}), ea.set(r, i)), i;
 }
-function aa({ min: e, max: t, currency: n }, r) {
-	let i = ia(r, n, (t ?? e ?? 0) >= na);
+function na({ min: e, max: t, currency: n }, r) {
+	let i = ta(r, n, (t ?? e ?? 0) >= $i);
 	return e && t && e !== t ? i.formatRange(e, t) : i.format(e ?? t);
 }
 //#endregion
 //#region src/lib/models/job-card.js
-function oa(e, { t, locale: n, where: r = Bi(e) }) {
-	let i = r ? t(`job.remote.${r}`) : "", a = i && !(e.location || "").toLowerCase().includes(i.toLowerCase()) ? i : "", o = Ki(e), s = X.jobs.placesShown;
+function ra(e, { t, locale: n, where: r = Li(e) }) {
+	let i = r ? t(`job.remote.${r}`) : "", a = i && !(e.location || "").toLowerCase().includes(i.toLowerCase()) ? i : "", o = Ui(e), s = X.jobs.placesShown;
 	return {
 		line: [o.length > s ? `${o.slice(0, s).join("; ")} ${t("job.places.more", { count: o.length - s })}` : o.join("; "), e.department].filter(Boolean).join(" · "),
 		place: a,
-		pay: e.salary ? t(`job.salary.${e.salary.period}`, { amount: aa(e.salary, n) }) : "",
-		age: ta(Ji(e.published), n),
-		older: Yi(e)
+		pay: e.salary ? t(`job.salary.${e.salary.period}`, { amount: na(e.salary, n) }) : "",
+		age: Qi(Gi(e.published), n),
+		older: Ki(e)
 	};
 }
 //#endregion
 //#region src/lib/data/providers.json
-var sa = [
+var ia = [
 	{
 		id: "ashby",
 		name: "Ashby",
@@ -3433,9 +3181,9 @@ var sa = [
 ];
 //#endregion
 //#region src/lib/models/url.js
-function ca(e, { email: t = !1 } = {}) {
+function aa(e, { email: t = !1 } = {}) {
 	let n = String(e ?? "").trim();
-	if (la.test(n)) return n;
+	if (oa.test(n)) return n;
 	try {
 		let { protocol: e } = new URL(n);
 		return e === "https:" || e === "http:" || t && e === "mailto:" ? n : "";
@@ -3443,7 +3191,7 @@ function ca(e, { email: t = !1 } = {}) {
 		return "";
 	}
 }
-var la = /^https?:\/\/[a-z0-9.-]+(?::\d+)?(?:[/?#][^\s"'<>\\]*)?$/i;
+var oa = /^https?:\/\/[a-z0-9.-]+(?::\d+)?(?:[/?#][^\s"'<>\\]*)?$/i;
 //#endregion
 //#region src/lib/ats/job.js
 async function $(e) {
@@ -3454,35 +3202,35 @@ async function $(e) {
 		return null;
 	}
 }
-function ua(...e) {
+function sa(...e) {
 	return e.filter(Boolean).join(", ");
 }
-function da(e) {
+function ca(e) {
 	let t = String(e || "").toLowerCase().replace(/[^a-z]/g, "");
 	if (t === "remote") return "remote";
 	if (t === "hybrid") return "hybrid";
 	if (t === "onsite" || t === "inoffice" || t === "office") return "onsite";
 }
-function fa(e) {
+function la(e) {
 	let t = /* @__PURE__ */ new Map();
 	return (n) => (t.has(n) || t.set(n, e(n)), t.get(n));
 }
 //#endregion
 //#region src/lib/ats/salary.js
-var pa = [
+var ua = [
 	"year",
 	"month",
 	"week",
 	"day",
 	"hour"
 ];
-function ma(e) {
+function da(e) {
 	let t = Number(typeof e == "string" ? e.replace(/[\s,]/g, "") : e);
 	return e !== null && e !== "" && Number.isFinite(t) && t > 0 ? t : void 0;
 }
-function ha({ min: e, max: t, currency: n, period: r }) {
-	let i = ma(e), a = ma(t), o = String(n || "").toUpperCase(), s = String(r || "").toLowerCase();
-	if (!i && !a || !/^[A-Z]{3}$/.test(o) || !pa.includes(s)) return;
+function fa({ min: e, max: t, currency: n, period: r }) {
+	let i = da(e), a = da(t), o = String(n || "").toUpperCase(), s = String(r || "").toLowerCase();
+	if (!i && !a || !/^[A-Z]{3}$/.test(o) || !ua.includes(s)) return;
 	i && a && i > a && ([i, a] = [a, i]);
 	let c = {
 		currency: o,
@@ -3490,7 +3238,7 @@ function ha({ min: e, max: t, currency: n, period: r }) {
 	};
 	return i && (c.min = i), a && (c.max = a), c;
 }
-function ga(e) {
+function pa(e) {
 	let t = e.filter(Boolean), [n] = t;
 	if (!n) return;
 	let r = t.filter((e) => e.currency === n.currency && e.period === n.period), i = r.map((e) => e.min ?? e.max ?? 0), a = r.map((e) => e.max ?? e.min ?? 0), o = Math.min(...i), s = Math.max(...a);
@@ -3501,7 +3249,7 @@ function ga(e) {
 		...s && s !== o ? { max: s } : {}
 	};
 }
-function _a(e) {
+function ma(e) {
 	let t = String(e || "").toLowerCase();
 	if (!/bi-?week|^\s*([2-9]|\d{2,})\s/.test(t)) {
 		if (/hour/.test(t)) return "hour";
@@ -3513,43 +3261,43 @@ function _a(e) {
 }
 //#endregion
 //#region src/lib/ats/ashby.js
-var va = /* @__PURE__ */ t({
-	default: () => ya,
-	describe: () => Sa
+var ha = /* @__PURE__ */ t({
+	default: () => ga,
+	describe: () => ya
 });
-async function ya(e) {
-	return ((await xa(e))?.jobs || []).filter((e) => e.isListed !== !1).map((e) => ({
+async function ga(e) {
+	return ((await va(e))?.jobs || []).filter((e) => e.isListed !== !1).map((e) => ({
 		id: e.id,
 		title: e.title,
 		url: e.jobUrl,
 		location: [e.location, ...(e.secondaryLocations || []).map((e) => e.location)].filter(Boolean).join(", "),
 		department: e.department,
 		published: e.publishedAt,
-		remote: da(e.workplaceType) || (e.isRemote ? "remote" : void 0),
-		salary: ba(e)
+		remote: ca(e.workplaceType) || (e.isRemote ? "remote" : void 0),
+		salary: _a(e)
 	}));
 }
-function ba(e) {
-	return e.shouldDisplayCompensationOnJobPostings ? ga((e.compensation?.summaryComponents || []).filter((e) => e.compensationType === "Salary").map((e) => ha({
+function _a(e) {
+	return e.shouldDisplayCompensationOnJobPostings ? pa((e.compensation?.summaryComponents || []).filter((e) => e.compensationType === "Salary").map((e) => fa({
 		min: e.minValue,
 		max: e.maxValue,
 		currency: e.currencyCode,
-		period: _a(e.interval)
+		period: ma(e.interval)
 	}))) : void 0;
 }
-var xa = fa((e) => $(`https://api.ashbyhq.com/posting-api/job-board/${encodeURIComponent(e)}?includeCompensation=true`));
-async function Sa(e, t) {
-	return (await xa(e))?.jobs?.find((e) => e.id === t)?.descriptionPlain || "";
+var va = la((e) => $(`https://api.ashbyhq.com/posting-api/job-board/${encodeURIComponent(e)}?includeCompensation=true`));
+async function ya(e, t) {
+	return (await va(e))?.jobs?.find((e) => e.id === t)?.descriptionPlain || "";
 }
 //#endregion
 //#region src/lib/ats/text.js
-function Ca(e) {
-	return Ea(String(e || "").replace(/<(script|style)[\s\S]*?<\/\1>/gi, "").replace(/<br\s*\/?>/gi, "\n").replace(/<li[^>]*>/gi, "\n• ").replace(/<\/(p|div|h[1-6]|ul|ol|section|blockquote|tr)>/gi, "\n\n").replace(/<(p|div|h[1-6]|ul|ol|section|blockquote|tr)[^>]*>/gi, "\n\n").replace(/<[^>]+>/g, "")).replace(/[ \t ]+/g, " ").replace(/ *\n */g, "\n").replace(/\n{3,}/g, "\n\n").trim();
+function ba(e) {
+	return Ca(String(e || "").replace(/<(script|style)[\s\S]*?<\/\1>/gi, "").replace(/<br\s*\/?>/gi, "\n").replace(/<li[^>]*>/gi, "\n• ").replace(/<\/(p|div|h[1-6]|ul|ol|section|blockquote|tr)>/gi, "\n\n").replace(/<(p|div|h[1-6]|ul|ol|section|blockquote|tr)[^>]*>/gi, "\n\n").replace(/<[^>]+>/g, "")).replace(/[ \t ]+/g, " ").replace(/ *\n */g, "\n").replace(/\n{3,}/g, "\n\n").trim();
 }
-function wa(e) {
-	return Ea(String(e || ""));
+function xa(e) {
+	return Ca(String(e || ""));
 }
-var Ta = {
+var Sa = {
 	amp: "&",
 	lt: "<",
 	gt: ">",
@@ -3566,53 +3314,64 @@ var Ta = {
 	bull: "•",
 	euro: "€"
 };
-function Ea(e) {
+function Ca(e) {
 	return e.replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (e, t) => {
 		if (t[0] === "#") {
 			let n = t[1].toLowerCase() === "x" ? parseInt(t.slice(2), 16) : Number(t.slice(1));
 			return Number.isFinite(n) && n > 0 && n < 1114112 ? String.fromCodePoint(n) : e;
 		}
-		return Ta[t.toLowerCase()] ?? e;
+		return Sa[t.toLowerCase()] ?? e;
 	});
 }
 //#endregion
 //#region src/lib/ats/greenhouse.js
-var Da = /* @__PURE__ */ t({
-	default: () => Oa,
-	describe: () => ja,
-	payRange: () => Aa
+var wa = /* @__PURE__ */ t({
+	default: () => Ta,
+	departmentsByJob: () => Ea,
+	describe: () => ka,
+	payRange: () => Oa
 });
-async function Oa(e) {
-	return ((await $(`https://boards-api.greenhouse.io/v1/boards/${encodeURIComponent(e)}/jobs?pay_transparency=true`))?.jobs || []).map((e) => ({
+async function Ta(e) {
+	let t = `https://boards-api.greenhouse.io/v1/boards/${encodeURIComponent(e)}`, [n, r] = await Promise.all([$(`${t}/jobs?pay_transparency=true`), $(`${t}/departments`)]), i = Ea(r);
+	return (n?.jobs || []).map((e) => ({
 		id: String(e.id),
 		title: e.title,
 		url: e.absolute_url,
 		location: e.location?.name,
+		department: i.get(String(e.id)),
 		published: e.first_published || e.updated_at,
-		salary: ga((e.pay_input_ranges || []).map(Aa))
+		salary: pa((e.pay_input_ranges || []).map(Oa))
 	}));
 }
-var ka = /variable|bonus|commission|equity/i;
-function Aa(e) {
-	if (ka.test(e?.title || "")) return;
-	let t = `${e.title || ""} ${Ca(e.blurb)}`, n = Math.max(Number(e.min_cents) || 0, Number(e.max_cents) || 0) / 100, r = /\bhour(ly)?\b/i.test(t) && n < 1e3, i = /\bmonth(ly)?\b/i.test(t) && !/\bannual|\byear/i.test(t), a = r ? "hour" : i ? "month" : n >= 1e3 ? "year" : "";
-	return ha({
+function Ea(e) {
+	let t = /* @__PURE__ */ new Map();
+	for (let n of e?.departments || []) {
+		let e = String(n?.name || "").trim();
+		if (e && e !== "No Department") for (let r of n.jobs || []) t.has(String(r.id)) || t.set(String(r.id), e);
+	}
+	return t;
+}
+var Da = /variable|bonus|commission|equity/i;
+function Oa(e) {
+	if (Da.test(e?.title || "")) return;
+	let t = `${e.title || ""} ${ba(e.blurb)}`, n = Math.max(Number(e.min_cents) || 0, Number(e.max_cents) || 0) / 100, r = /\bhour(ly)?\b/i.test(t) && n < 1e3, i = /\bmonth(ly)?\b/i.test(t) && !/\bannual|\byear/i.test(t), a = r ? "hour" : i ? "month" : n >= 1e3 ? "year" : "";
+	return fa({
 		min: Number(e.min_cents) / 100,
 		max: Number(e.max_cents) / 100,
 		currency: e.currency_type,
 		period: a
 	});
 }
-async function ja(e, t) {
-	return Ca(wa((await $(`https://boards-api.greenhouse.io/v1/boards/${encodeURIComponent(e)}/jobs/${encodeURIComponent(t)}`))?.content));
+async function ka(e, t) {
+	return ba(xa((await $(`https://boards-api.greenhouse.io/v1/boards/${encodeURIComponent(e)}/jobs/${encodeURIComponent(t)}`))?.content));
 }
 //#endregion
 //#region src/lib/ats/lever.js
-var Ma = /* @__PURE__ */ t({
-	default: () => Na,
-	describe: () => Pa
+var Aa = /* @__PURE__ */ t({
+	default: () => ja,
+	describe: () => Ma
 });
-async function Na(e) {
+async function ja(e) {
 	return (await $(`https://api.lever.co/v0/postings/${encodeURIComponent(e)}?mode=json`) || []).map((e) => ({
 		id: e.id,
 		title: e.text,
@@ -3620,17 +3379,17 @@ async function Na(e) {
 		location: (e.categories?.allLocations || [e.categories?.location]).filter(Boolean).join(", "),
 		department: e.categories?.team || e.categories?.department,
 		published: e.createdAt ? new Date(e.createdAt).toISOString() : void 0,
-		remote: da(e.workplaceType),
-		salary: e.salaryRange ? ha({
+		remote: ca(e.workplaceType),
+		salary: e.salaryRange ? fa({
 			...e.salaryRange,
-			period: _a(e.salaryRange.interval)
+			period: ma(e.salaryRange.interval)
 		}) : void 0
 	}));
 }
-async function Pa(e, t) {
+async function Ma(e, t) {
 	let n = await $(`https://api.lever.co/v0/postings/${encodeURIComponent(e)}/${encodeURIComponent(t)}`);
 	if (!n) return "";
-	let r = (n.lists || []).map((e) => `${e.text}\n${Ca(e.content)}`);
+	let r = (n.lists || []).map((e) => `${e.text}\n${ba(e.content)}`);
 	return [
 		n.descriptionPlain,
 		...r,
@@ -3639,81 +3398,81 @@ async function Pa(e, t) {
 }
 //#endregion
 //#region src/lib/ats/personio.js
-var Fa = /* @__PURE__ */ t({
-	default: () => Ra,
-	describe: () => za
-}), Ia = (e) => `https://${encodeURIComponent(e)}.jobs.personio.de`, La = fa(async (e) => {
+var Na = /* @__PURE__ */ t({
+	default: () => Ia,
+	describe: () => La
+}), Pa = (e) => `https://${encodeURIComponent(e)}.jobs.personio.de`, Fa = la(async (e) => {
 	try {
-		let t = await fetch(`${Ia(e)}/xml?language=en`);
+		let t = await fetch(`${Pa(e)}/xml?language=en`);
 		return t.ok ? await t.text() : "";
 	} catch {
 		return "";
 	}
 });
-async function Ra(e) {
-	return Ba(await La(e)).map(({ fields: t }) => ({
+async function Ia(e) {
+	return Ra(await Fa(e)).map(({ fields: t }) => ({
 		id: t.id,
 		title: t.name || "",
-		url: `${Ia(e)}/job/${t.id}`,
+		url: `${Pa(e)}/job/${t.id}`,
 		location: t.office,
 		department: t.department,
 		published: t.createdAt
 	}));
 }
-async function za(e, t) {
-	let n = Ba(await La(e)).find((e) => e.fields.id === t);
-	return n ? [...n.body.matchAll(/<jobDescription>([\s\S]*?)<\/jobDescription>/g)].map(([, e]) => `${Va(e, "name")}\n${Ca(Va(e, "value"))}`.trim()).join("\n\n") : "";
+async function La(e, t) {
+	let n = Ra(await Fa(e)).find((e) => e.fields.id === t);
+	return n ? [...n.body.matchAll(/<jobDescription>([\s\S]*?)<\/jobDescription>/g)].map(([, e]) => `${za(e, "name")}\n${ba(za(e, "value"))}`.trim()).join("\n\n") : "";
 }
-function Ba(e) {
+function Ra(e) {
 	return [...e.matchAll(/<position>([\s\S]*?)<\/position>/g)].map(([, e]) => {
 		let t = {};
-		for (let [, n, r] of e.matchAll(/<(\w+)>([^<]*)<\/\1>/g)) t[n] = Ha(r.trim());
+		for (let [, n, r] of e.matchAll(/<(\w+)>([^<]*)<\/\1>/g)) t[n] = Ba(r.trim());
 		return {
 			fields: t,
 			body: e
 		};
 	});
 }
-function Va(e, t) {
+function za(e, t) {
 	let n = e.match(RegExp(`<${t}>([\\s\\S]*?)</${t}>`))?.[1].trim() || "", r = n.match(/^<!\[CDATA\[([\s\S]*)\]\]>$/);
-	return r ? r[1] : Ha(n);
+	return r ? r[1] : Ba(n);
 }
-function Ha(e) {
+function Ba(e) {
 	return e.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&#39;|&apos;/g, "'").replace(/&amp;/g, "&");
 }
 //#endregion
 //#region src/lib/ats/recruitee.js
-var Ua = /* @__PURE__ */ t({
-	default: () => Wa,
-	describe: () => Ka
+var Va = /* @__PURE__ */ t({
+	default: () => Ha,
+	describe: () => Wa
 });
-async function Wa(e) {
+async function Ha(e) {
 	return ((await $(`https://${encodeURIComponent(e)}.recruitee.com/api/offers`))?.offers || []).map((e) => ({
 		id: String(e.id),
 		title: e.title,
 		url: e.careers_url,
-		location: e.location || ua(e.city, e.country),
+		location: e.location || sa(e.city, e.country),
 		department: e.department,
 		published: e.published_at,
 		remote: e.remote ? "remote" : e.hybrid ? "hybrid" : e.on_site ? "onsite" : void 0,
-		salary: e.salary ? ha({
+		salary: e.salary ? fa({
 			...e.salary,
-			period: _a(e.salary.period)
+			period: ma(e.salary.period)
 		}) : void 0
 	}));
 }
-var Ga = fa((e) => $(`https://${encodeURIComponent(e)}.recruitee.com/api/offers`));
-async function Ka(e, t) {
-	let n = (await Ga(e))?.offers?.find((e) => String(e.id) === t);
-	return n ? Ca(`${n.description || ""}${n.requirements || ""}`) : "";
+var Ua = la((e) => $(`https://${encodeURIComponent(e)}.recruitee.com/api/offers`));
+async function Wa(e, t) {
+	let n = (await Ua(e))?.offers?.find((e) => String(e.id) === t);
+	return n ? ba(`${n.description || ""}${n.requirements || ""}`) : "";
 }
 //#endregion
 //#region src/lib/ats/rippling.js
-var qa = /* @__PURE__ */ t({
-	default: () => Ja,
-	describe: () => Ya
+var Ga = /* @__PURE__ */ t({
+	default: () => Ka,
+	describe: () => qa
 });
-async function Ja(e) {
+async function Ka(e) {
 	let t = [];
 	for (let n = 0; n < 20; n++) {
 		let r = await $(`https://api.rippling.com/platform/api/ats/v2/board/${encodeURIComponent(e)}/jobs?page=${n}`);
@@ -3725,20 +3484,20 @@ async function Ja(e) {
 		url: e.url,
 		location: (e.locations || []).map((e) => e.name).join(", "),
 		department: e.department?.name,
-		remote: da(e.locations?.[0]?.workplaceType)
+		remote: ca(e.locations?.[0]?.workplaceType)
 	}));
 }
-async function Ya(e, t) {
+async function qa(e, t) {
 	let n = await $(`https://api.rippling.com/platform/api/ats/v2/board/${encodeURIComponent(e)}/jobs/${encodeURIComponent(t)}`);
-	return Ca(`${n?.description?.role || ""}${n?.description?.company || ""}`);
+	return ba(`${n?.description?.role || ""}${n?.description?.company || ""}`);
 }
 //#endregion
 //#region src/lib/ats/smartrecruiters.js
-var Xa = /* @__PURE__ */ t({
-	default: () => Qa,
-	describe: () => $a
+var Ja = /* @__PURE__ */ t({
+	default: () => Xa,
+	describe: () => Za
 });
-async function Za(e) {
+async function Ya(e) {
 	let { boardPageSize: t, jobsPerBoard: n } = X.limits, r = [];
 	for (let i = 0; i < n; i += t) {
 		let n = await $(`https://api.smartrecruiters.com/v1/companies/${encodeURIComponent(e)}/postings?limit=${t}&offset=${i}`), a = n?.content || [];
@@ -3746,8 +3505,8 @@ async function Za(e) {
 	}
 	return r.slice(0, n);
 }
-async function Qa(e) {
-	return (await Za(e)).map((t) => ({
+async function Xa(e) {
+	return (await Ya(e)).map((t) => ({
 		id: t.id,
 		title: t.name,
 		url: `https://jobs.smartrecruiters.com/${encodeURIComponent(e)}/${t.id}`,
@@ -3757,83 +3516,83 @@ async function Qa(e) {
 		remote: t.location?.remote ? "remote" : t.location?.hybrid ? "hybrid" : "onsite"
 	}));
 }
-async function $a(e, t) {
+async function Za(e, t) {
 	let n = (await $(`https://api.smartrecruiters.com/v1/companies/${encodeURIComponent(e)}/postings/${encodeURIComponent(t)}`))?.jobAd?.sections || {};
 	return [
 		n.jobDescription,
 		n.qualifications,
 		n.additionalInformation,
 		n.companyDescription
-	].filter((e) => e?.text).map((e) => `${e.title || ""}\n${Ca(e.text)}`.trim()).join("\n\n");
+	].filter((e) => e?.text).map((e) => `${e.title || ""}\n${ba(e.text)}`.trim()).join("\n\n");
 }
 //#endregion
 //#region src/lib/ats/workable.js
-var eo = /* @__PURE__ */ t({
-	default: () => to,
-	describe: () => ro
+var Qa = /* @__PURE__ */ t({
+	default: () => $a,
+	describe: () => to
 });
-async function to(e) {
+async function $a(e) {
 	return ((await $(`https://apply.workable.com/api/v1/widget/accounts/${encodeURIComponent(e)}`))?.jobs || []).map((e) => ({
 		id: e.shortcode,
 		title: e.title,
 		url: e.url || e.shortlink,
-		location: e.telecommuting && !e.city ? ua("Remote", e.country) : ua(e.city, e.country),
+		location: e.telecommuting && !e.city ? sa("Remote", e.country) : sa(e.city, e.country),
 		department: e.department,
 		published: e.published_on,
 		remote: e.telecommuting ? "remote" : void 0
 	}));
 }
-var no = fa((e) => $(`https://apply.workable.com/api/v1/widget/accounts/${encodeURIComponent(e)}?details=true`));
-async function ro(e, t) {
-	let n = (await no(e))?.jobs?.find((e) => e.shortcode === t);
-	return Ca(n?.description);
+var eo = la((e) => $(`https://apply.workable.com/api/v1/widget/accounts/${encodeURIComponent(e)}?details=true`));
+async function to(e, t) {
+	let n = (await eo(e))?.jobs?.find((e) => e.shortcode === t);
+	return ba(n?.description);
 }
 //#endregion
 //#region src/lib/ats/index.js
-var io = {
-	ashby: va,
-	greenhouse: Da,
-	lever: Ma,
-	personio: Fa,
-	recruitee: Ua,
-	rippling: qa,
-	smartrecruiters: Xa,
-	workable: eo
-}, ao = /* @__PURE__ */ new Map();
-function oo(e) {
-	let { provider: t = "", id: n = "" } = e.jobBoard || {}, r = io[t]?.default;
+var no = {
+	ashby: ha,
+	greenhouse: wa,
+	lever: Aa,
+	personio: Na,
+	recruitee: Va,
+	rippling: Ga,
+	smartrecruiters: Ja,
+	workable: Qa
+}, ro = /* @__PURE__ */ new Map();
+function io(e) {
+	let { provider: t = "", id: n = "" } = e.jobBoard || {}, r = no[t]?.default;
 	if (!r || !n) return Promise.resolve([]);
 	let i = `${t}:${n}`;
-	return ao.has(i) || ao.set(i, r(n).then((t) => t.map((e) => ({
+	return ro.has(i) || ro.set(i, r(n).then((t) => t.map((e) => ({
 		...e,
-		url: ca(e.url)
+		url: aa(e.url)
 	})).filter((e) => e.title && e.url).map((t) => ({
 		...t,
-		location: so(t.location),
+		location: ao(t.location),
 		company: e.key
-	}))).catch(() => [])), ao.get(i);
+	}))).catch(() => [])), ro.get(i);
 }
-function so(e) {
+function ao(e) {
 	return e?.split(",").map((e) => e.trim()).filter(Boolean).join(", ") || void 0;
 }
 //#endregion
 //#region src/lib/ats/board-check.js
-var co = {
+var oo = {
 	greenhouse: async (e) => (await $(`https://boards-api.greenhouse.io/v1/boards/${encodeURIComponent(e)}`))?.name,
 	workable: async (e) => (await $(`https://apply.workable.com/api/v1/widget/accounts/${encodeURIComponent(e)}`))?.name,
 	smartrecruiters: async (e) => (await $(`https://api.smartrecruiters.com/v1/companies/${encodeURIComponent(e)}/postings?limit=1`))?.content?.[0]?.company?.name,
 	recruitee: async (e) => (await $(`https://${encodeURIComponent(e)}.recruitee.com/api/offers`))?.offers?.[0]?.company_name
 };
-async function lo({ provider: e, id: t }) {
+async function so({ provider: e, id: t }) {
 	try {
-		return String(await co[e]?.(t) || "").trim();
+		return String(await oo[e]?.(t) || "").trim();
 	} catch {
 		return "";
 	}
 }
 //#endregion
 //#region src/lib/ats/detect.js
-var uo = /* @__PURE__ */ new Set([
+var co = /* @__PURE__ */ new Set([
 	"",
 	"api",
 	"app",
@@ -3849,7 +3608,7 @@ var uo = /* @__PURE__ */ new Set([
 	"login",
 	"signup",
 	"help"
-]), fo = [
+]), lo = [
 	{
 		provider: "greenhouse",
 		host: /^boards-api\.greenhouse\.io$/,
@@ -3926,14 +3685,14 @@ var uo = /* @__PURE__ */ new Set([
 		from: "path"
 	}
 ];
-function po(e) {
+function uo(e) {
 	let t;
 	try {
 		t = new URL(e.startsWith("//") ? `https:${e}` : e);
 	} catch {
 		return null;
 	}
-	let n = t.hostname.toLowerCase(), r = fo.find((e) => e.host.test(n) && (!(e.from instanceof RegExp) || e.from.test(t.pathname)));
+	let n = t.hostname.toLowerCase(), r = lo.find((e) => e.host.test(n) && (!(e.from instanceof RegExp) || e.from.test(t.pathname)));
 	if (!r) return null;
 	let i = t.searchParams.get("for");
 	if (r.provider === "greenhouse" && i) return {
@@ -3941,12 +3700,12 @@ function po(e) {
 		id: i
 	};
 	let a = r.from instanceof RegExp ? decodeURIComponent(t.pathname.match(r.from)?.[1] || "") : r.from === "subdomain" ? n.split(".")[0] : decodeURIComponent(t.pathname.split("/").filter(Boolean)[0] || "");
-	return uo.has(a.toLowerCase()) ? null : {
+	return co.has(a.toLowerCase()) ? null : {
 		provider: r.provider,
 		id: a
 	};
 }
-var mo = {
+var fo = {
 	lexicon: 1,
 	id: "today.joblist.company",
 	description: "A company or organization, described by anyone, like a wiki page: each author's record is one version. The record key is the organization's domain, normalised: the website's host name, lowercase, without 'www.' (e.g. 'example.org' for https://www.Example.org/jobs), at most 253 characters (a DNS name). When the author's handle equals that domain, the record is the organization's own.",
@@ -4099,7 +3858,7 @@ var mo = {
 			}
 		}
 	}
-}, ho = {
+}, po = {
 	lexicon: 1,
 	id: "today.joblist.job",
 	description: "A job offer, posted by anyone. When the author's handle equals the company key (its domain), it is the company's own offer. Offers expire; renew to extend. Applications never go through joblist: `apply` says where to send them.",
@@ -4265,7 +4024,7 @@ var mo = {
 			}
 		}
 	}
-}, go = {
+}, mo = {
 	lexicon: 1,
 	id: "today.joblist.list",
 	description: "A list of companies curated by its author, who can let others add to it.",
@@ -4324,7 +4083,7 @@ var mo = {
 			}
 		}
 	} }
-}, _o = {
+}, ho = {
 	lexicon: 1,
 	id: "today.joblist.suggestion",
 	description: "A company someone suggests for a list they do not own, written in their own repository. Open lists show it at once, credited to its author; for other lists, the list's author accepts or dismisses it.",
@@ -4362,39 +4121,39 @@ var mo = {
 			}
 		}
 	} }
-}, vo = 8192, yo = new Map([
+}, go = 8192, _o = new Map([
+	fo,
+	po,
 	mo,
-	ho,
-	go,
-	_o
+	ho
 ].map((e) => [e.id, e]));
-function bo(e, t) {
+function vo(e, t) {
 	return e.length <= t ? e : Array.from(e.slice(0, t * 2)).slice(0, t).join("");
 }
-function xo(e, t) {
-	let [n, r = "main"] = e.split("#"), i = n ? yo.get(n) : t, a = i?.defs[r];
+function yo(e, t) {
+	let [n, r = "main"] = e.split("#"), i = n ? _o.get(n) : t, a = i?.defs[r];
 	return i && a ? [i, a] : null;
 }
-function So(e, t, n) {
+function bo(e, t, n) {
 	if (e != null) switch (t.type) {
 		case "ref": {
-			let r = xo(t.ref, n);
-			return r ? So(e, r[1], r[0]) : void 0;
+			let r = yo(t.ref, n);
+			return r ? bo(e, r[1], r[0]) : void 0;
 		}
 		case "string": {
 			if (typeof e != "string") return;
 			let n = t.maxGraphemes ?? t.maxLength ?? e.length;
-			return !t.format && t.minLength === void 0 ? bo(e, n) : e.length >= (t.minLength ?? 0) && e.length <= (t.maxLength ?? vo) ? e : void 0;
+			return !t.format && t.minLength === void 0 ? vo(e, n) : e.length >= (t.minLength ?? 0) && e.length <= (t.maxLength ?? go) ? e : void 0;
 		}
 		case "integer": return Number.isSafeInteger(e) ? e : void 0;
 		case "boolean": return typeof e == "boolean" ? e : void 0;
-		case "array": return !Array.isArray(e) || !t.items ? void 0 : e.slice(0, t.maxLength ?? e.length).map((e) => So(e, t.items, n)).filter((e) => e !== void 0);
-		case "record": return So(e, t.record, n);
+		case "array": return !Array.isArray(e) || !t.items ? void 0 : e.slice(0, t.maxLength ?? e.length).map((e) => bo(e, t.items, n)).filter((e) => e !== void 0);
+		case "record": return bo(e, t.record, n);
 		case "object": {
 			if (typeof e != "object" || Array.isArray(e)) return;
 			let r = e, i = {};
 			for (let [e, a] of Object.entries(t.properties || {})) {
-				let t = So(r[e], a, n);
+				let t = bo(r[e], a, n);
 				t !== void 0 && (i[e] = t);
 			}
 			return i;
@@ -4402,10 +4161,10 @@ function So(e, t, n) {
 		default: return;
 	}
 }
-function Co(e, t) {
-	let n = yo.get(e);
+function xo(e, t) {
+	let n = _o.get(e);
 	if (!n) throw Error(`no lexicon for ${e}`);
-	let r = So(t, n.defs.main, n);
+	let r = bo(t, n.defs.main, n);
 	return r ? {
 		$type: e,
 		...r
@@ -4413,11 +4172,11 @@ function Co(e, t) {
 }
 //#endregion
 //#region src/lib/models/company.js
-function wo(e, t, n) {
+function So(e, t, n) {
 	let r = e.get(t);
 	return !!n && r?.handle === n && r.verified !== !1;
 }
-function To(e) {
+function Co(e) {
 	return e.map((e) => ({
 		...e,
 		lat: Number(e.latitude),
@@ -4427,53 +4186,53 @@ function To(e) {
 X.collections.job;
 //#endregion
 //#region src/lib/models/paste.js
-function Eo(e) {
+function wo(e) {
 	return e.split(/[-_\s]+/).filter(Boolean).map((e) => e.charAt(0).toUpperCase() + e.slice(1)).join(" ");
 }
 //#endregion
 //#region src/lib/atproto/xrpc.js
-async function Do(e, t, n = {}) {
+async function To(e, t, n = {}) {
 	let r = new URL(`${e.replace(/\/$/, "")}/xrpc/${t}`);
 	for (let [e, t] of Object.entries(n)) t !== void 0 && r.searchParams.set(e, String(t));
 	let i = await fetch(r, { headers: { accept: "application/json" } });
 	if (!i.ok) throw Object.assign(/* @__PURE__ */ Error(`${t} failed (${i.status})`), { status: i.status });
 	return i.json();
 }
-function Oo(e) {
+function Eo(e) {
 	let t = e?.status;
 	return typeof t == "number" && t >= 400 && t < 500;
 }
 //#endregion
 //#region src/lib/atproto/identity.js
-var ko = /* @__PURE__ */ new Map();
-function Ao(e) {
-	return ko.has(e) || ko.set(e, jo(e)), ko.get(e);
+var Do = /* @__PURE__ */ new Map();
+function Oo(e) {
+	return Do.has(e) || Do.set(e, ko(e)), Do.get(e);
 }
-async function jo(e) {
+async function ko(e) {
 	let t = e.startsWith("did:web:") ? `https://${e.slice(8)}/.well-known/did.json` : `${X.services.plc}/${e}`, n = await fetch(t);
 	if (!n.ok) throw Error(`cannot resolve ${e}`);
 	let r = ((await n.json()).service || []).find((t) => t.id === "#atproto_pds" || t.id === `${e}#atproto_pds`);
 	if (!r) throw Error(`no PDS for ${e}`);
 	return r.serviceEndpoint;
 }
-async function Mo(e) {
+async function Ao(e) {
 	if (e.startsWith("did:")) return e;
-	let { did: t } = await Do(X.services.appview, "com.atproto.identity.resolveHandle", { handle: e });
+	let { did: t } = await To(X.services.appview, "com.atproto.identity.resolveHandle", { handle: e });
 	return t;
 }
 //#endregion
 //#region src/lib/atproto/records.js
-async function No(e, t, n) {
-	let r = await Ao(e), i = [], a, o = 0;
+async function jo(e, t, n) {
+	let r = await Oo(e), i = [], a, o = 0;
 	do {
-		let s = await Do(r, "com.atproto.repo.listRecords", {
+		let s = await To(r, "com.atproto.repo.listRecords", {
 			repo: e,
 			collection: t,
 			limit: 100,
 			cursor: a
 		});
 		for (let n of s.records || []) {
-			let r = Fo(n.uri, e, t);
+			let r = No(n.uri, e, t);
 			r && i.push({
 				did: e,
 				rkey: r,
@@ -4486,10 +4245,10 @@ async function No(e, t, n) {
 	} while (a && o < X.limits.pagesPerRepo);
 	return i;
 }
-async function Po(e, t, n) {
-	let r = await Ao(e);
+async function Mo(e, t, n) {
+	let r = await Oo(e);
 	try {
-		let i = await Do(r, "com.atproto.repo.getRecord", {
+		let i = await To(r, "com.atproto.repo.getRecord", {
 			repo: e,
 			collection: t,
 			rkey: n
@@ -4502,11 +4261,11 @@ async function Po(e, t, n) {
 			value: i.value
 		};
 	} catch (e) {
-		if (Oo(e)) return null;
+		if (Eo(e)) return null;
 		throw e;
 	}
 }
-function Fo(e, t, n) {
+function No(e, t, n) {
 	let r = `at://${t}/${n}/`;
 	if (typeof e != "string" || !e.startsWith(r)) return "";
 	let i = e.slice(r.length);
@@ -4514,45 +4273,45 @@ function Fo(e, t, n) {
 }
 //#endregion
 //#region src/lib/models/job-post.js
-var Io = 864e5, { days: Lo, maxDays: Ro } = X.jobPost;
-function zo(e, t = Date.now()) {
+var Po = 864e5, { days: Fo, maxDays: Io } = X.jobPost;
+function Lo(e, t = Date.now()) {
 	if (!e?.title || !e.company || !e.url || e.status && e.status !== X.jobPost.status[0]) return !1;
 	let n = Date.parse(String(e.expiresAt || ""));
-	return Number.isFinite(n) && n > t && n <= t + (Ro + 1) * Io;
+	return Number.isFinite(n) && n > t && n <= t + (Io + 1) * Po;
 }
-function Bo(e, t) {
-	let n = Co(X.collections.job, e.value);
+function Ro(e, t) {
+	let n = xo(X.collections.job, e.value);
 	return {
 		uri: e.uri,
 		did: e.did,
 		rkey: e.rkey,
 		title: String(n.title || ""),
 		company: String(n.company || ""),
-		url: ca(n.url),
+		url: aa(n.url),
 		description: String(n.description || ""),
 		locations: Array.isArray(n.locations) ? n.locations : [],
 		remote: n.remote,
 		employment: n.employment,
 		apply: n.apply && typeof n.apply == "object" ? {
 			...n.apply,
-			url: ca(n.apply.url, { email: !0 }) || void 0
+			url: aa(n.apply.url, { email: !0 }) || void 0
 		} : {},
-		salary: n.salary && typeof n.salary == "object" ? Uo(ha(n.salary)) : void 0,
+		salary: n.salary && typeof n.salary == "object" ? Vo(fa(n.salary)) : void 0,
 		status: typeof n.status == "string" && n.status ? n.status : X.jobPost.status[0],
 		createdAt: String(n.createdAt || ""),
 		updatedAt: typeof n.updatedAt == "string" ? n.updatedAt : void 0,
 		expiresAt: String(n.expiresAt || ""),
-		verified: wo(t, e.did, String(n.company || "")),
+		verified: So(t, e.did, String(n.company || "")),
 		record: e
 	};
 }
-function Vo(e) {
-	let [t] = To(e.locations);
+function zo(e) {
+	let [t] = Co(e.locations);
 	return {
 		title: e.title,
 		url: e.url,
 		company: e.company,
-		location: Ho(e.locations) || void 0,
+		location: Bo(e.locations) || void 0,
 		published: e.createdAt,
 		remote: e.remote || void 0,
 		salary: e.salary,
@@ -4564,10 +4323,10 @@ function Vo(e) {
 		point: t && [t.lon, t.lat]
 	};
 }
-function Ho(e) {
+function Bo(e) {
 	return [...new Set(e.map((e) => [e.name, e.country].filter(Boolean).join(", ")).filter(Boolean))].join("; ");
 }
-function Uo(e) {
+function Vo(e) {
 	if (!e) return;
 	let t = {
 		currency: e.currency,
@@ -4577,39 +4336,39 @@ function Uo(e) {
 }
 //#endregion
 //#region embed/src/find.js
-function Wo(e) {
+function Ho(e) {
 	let t = e.trim(), [, n, r] = t.match(/^([a-z]+):([^/\s]+)$/) || [];
-	return n && r && sa.some((e) => e.id === n) ? {
+	return n && r && ia.some((e) => e.id === n) ? {
 		provider: n,
 		id: r
-	} : t ? po(t) : null;
+	} : t ? uo(t) : null;
 }
-async function Go(e, t) {
-	let n = await oo({
+async function Uo(e, t) {
+	let n = await io({
 		key: t,
 		jobBoard: e
 	});
-	return Qi(n), n;
+	return Yi(n), n;
 }
-async function Ko(e) {
+async function Wo(e) {
 	if (!e) return null;
-	let [t, n] = await Promise.all([lo(e), Go(e, e.id)]);
+	let [t, n] = await Promise.all([so(e), Uo(e, e.id)]);
 	return {
-		name: t || Eo(e.id),
+		name: t || wo(e.id),
 		jobs: n
 	};
 }
-async function qo(e) {
+async function Go(e) {
 	let t = e.trim().toLowerCase();
 	if (!t) return null;
 	try {
-		let e = await Mo(t), [n, r] = await Promise.all([Po(e, X.collections.company, t), No(e, X.collections.job)]), i = String(n?.value?.name || t), a = Wo(`${n?.value?.jobBoard?.provider || ""}:${n?.value?.jobBoard?.id || ""}`);
+		let e = await Ao(t), [n, r] = await Promise.all([Mo(e, X.collections.company, t), jo(e, X.collections.job)]), i = String(n?.value?.name || t), a = Ho(`${n?.value?.jobBoard?.provider || ""}:${n?.value?.jobBoard?.id || ""}`);
 		if (a) return {
 			name: i,
-			jobs: await Go(a, t)
+			jobs: await Uo(a, t)
 		};
-		let o = /* @__PURE__ */ new Map([[e, { handle: t }]]), s = r.filter((e) => zo(e.value) && e.value.company === t).map((e) => Vo(Bo(e, o)));
-		return Qi(s), {
+		let o = /* @__PURE__ */ new Map([[e, { handle: t }]]), s = r.filter((e) => Lo(e.value) && e.value.company === t).map((e) => zo(Ro(e, o)));
+		return Yi(s), {
 			name: i,
 			jobs: s
 		};
@@ -4619,12 +4378,12 @@ async function qo(e) {
 }
 //#endregion
 //#region embed/src/JoblistJobs.svelte
-var Jo = /* @__PURE__ */ q("<p class=\"svelte-uruhdc\"> </p>"), Yo = /* @__PURE__ */ q("<label class=\"svelte-uruhdc\"> </label> <input type=\"search\" class=\"svelte-uruhdc\"/>", 1), Xo = /* @__PURE__ */ q("<li class=\"svelte-uruhdc\"><a target=\"_blank\" rel=\"noopener\" class=\"svelte-uruhdc\"><!></a></li>"), Zo = /* @__PURE__ */ q("<ul class=\"svelte-uruhdc\"></ul>"), Qo = /* @__PURE__ */ q("<a target=\"_blank\" rel=\"noopener\" class=\"svelte-uruhdc\"> </a> ·", 1), $o = /* @__PURE__ */ q("<p class=\"svelte-uruhdc\"> </p> <!> <footer class=\"svelte-uruhdc\"><!> <a target=\"_blank\" rel=\"noopener\" class=\"svelte-uruhdc\"> </a></footer>", 1), es = /* @__PURE__ */ q("<h2 class=\"svelte-uruhdc\"><a target=\"_blank\" rel=\"noopener\" class=\"svelte-uruhdc\"> </a></h2> <!> <!>", 1), ts = /* @__PURE__ */ q("<jl-embed><!></jl-embed>", 2), ns = {
+var Ko = /* @__PURE__ */ q("<p class=\"svelte-uruhdc\"> </p>"), qo = /* @__PURE__ */ q("<label class=\"svelte-uruhdc\"> </label> <input type=\"search\" class=\"svelte-uruhdc\"/>", 1), Jo = /* @__PURE__ */ q("<li class=\"svelte-uruhdc\"><a target=\"_blank\" rel=\"noopener\" class=\"svelte-uruhdc\"><!></a></li>"), Yo = /* @__PURE__ */ q("<ul class=\"svelte-uruhdc\"></ul>"), Xo = /* @__PURE__ */ q("<a target=\"_blank\" rel=\"noopener\" class=\"svelte-uruhdc\"> </a> ·", 1), Zo = /* @__PURE__ */ q("<p class=\"svelte-uruhdc\"> </p> <!> <footer class=\"svelte-uruhdc\"><!> <a target=\"_blank\" rel=\"noopener\" class=\"svelte-uruhdc\"> </a></footer>", 1), Qo = /* @__PURE__ */ q("<h2 class=\"svelte-uruhdc\"><a target=\"_blank\" rel=\"noopener\" class=\"svelte-uruhdc\"> </a></h2> <!> <!>", 1), $o = /* @__PURE__ */ q("<jl-embed><!></jl-embed>", 2), es = {
 	hash: "svelte-uruhdc",
 	code: "\n	/* joblist's tokens (src/app.css), here on any page: its colors from the page's, unless set. */jl-embed.svelte-uruhdc {--space-xxs: 0.125rem;--space-xs: 0.25rem;--space-s: 0.5rem;--space-m: 1rem;--radius: 0.5rem;--radius-round: 999px;--font-size-small: 0.875rem;--font-weight-strong: 600;--chip-line: 1.6;--color-fg: var(--joblist-fg, currentColor);--color-muted: var(--joblist-muted, rgb(128 128 128));--color-soft: var(--joblist-soft, rgb(128 128 128 / 0.14));--color-line: var(--joblist-line, rgb(128 128 128 / 0.3));--color-warn: var(--joblist-warn, #8a5a00);--color-accent: var(--joblist-accent, currentColor);display:block;font-family:var(--joblist-font, inherit);color:var(--color-fg);line-height:1.45;}h2.svelte-uruhdc {margin:0 0 var(--space-s);font-size:1.15em;}a.svelte-uruhdc {color:inherit;}h2.svelte-uruhdc a:where(.svelte-uruhdc) {text-decoration:none;}h2.svelte-uruhdc a:where(.svelte-uruhdc):hover {text-decoration:underline;}label.svelte-uruhdc {position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);}input.svelte-uruhdc {box-sizing:border-box;width:100%;margin:0 0 var(--space-s);padding:var(--space-s) var(--space-m);font:inherit;color:inherit;background:transparent;border:1px solid var(--color-line);border-radius:var(--radius);}p.svelte-uruhdc,\n	footer.svelte-uruhdc {margin:0;color:var(--color-muted);font-size:var(--font-size-small);}footer.svelte-uruhdc {margin-top:var(--space-s);}footer.svelte-uruhdc a:where(.svelte-uruhdc) {color:var(--color-accent);}ul.svelte-uruhdc {margin:var(--space-xs) 0 0;padding:0;list-style:none;}\n	/* The site's job cards: a line between them, the title underlined on hover. */li.svelte-uruhdc {border-bottom:1px solid var(--color-line);}li.svelte-uruhdc a:where(.svelte-uruhdc) {display:block;padding:var(--space-s) 0;text-decoration:none;}li.svelte-uruhdc a:where(.svelte-uruhdc):hover strong {text-decoration:underline;}"
 };
-function rs(e, t) {
-	Ge(t, !0), Nr(e, ns);
+function ts(e, t) {
+	Ge(t, !0), Nr(e, es);
 	let n = Xr(t, "board", 3, ""), r = Xr(t, "organization", 3, ""), i = Xr(t, "lang", 3, ""), a = Xr(t, "limit", 3, 0), o = Xr(t, "query", 3, ""), s = Xr(t, "where", 3, ""), c = Xr(t, "remote", 3, ""), l = Xr(t, "search", 3, !1), u = {
 		site: "https://joblist.today",
 		shown: 20,
@@ -4651,7 +4410,6 @@ function rs(e, t) {
 				"job.where": "Where",
 				"job.company.more": "{count} open jobs at {name}",
 				"job.company.more.one": "1 open job at {name}",
-				"job.company.one": "The only open job at {name}",
 				"job.new": "New",
 				"job.older": "Open for a while",
 				"job.older.hint": "First seen more than {days} days ago: it may already be filled.",
@@ -4712,7 +4470,6 @@ function rs(e, t) {
 				"job.where": "Où",
 				"job.company.more": "{count} offres chez {name}",
 				"job.company.more.one": "1 offre chez {name}",
-				"job.company.one": "La seule offre chez {name}",
 				"job.new": "Nouveau",
 				"job.older": "En ligne depuis longtemps",
 				"job.older.hint": "Vue pour la première fois il y a plus de {days} jours : elle est peut-être déjà pourvue.",
@@ -4773,7 +4530,6 @@ function rs(e, t) {
 				"job.where": "Wo",
 				"job.company.more": "{count} offene Stellen bei {name}",
 				"job.company.more.one": "1 offene Stelle bei {name}",
-				"job.company.one": "Die einzige offene Stelle bei {name}",
 				"job.new": "Neu",
 				"job.older": "Schon länger offen",
 				"job.older.hint": "Zuerst vor mehr als {days} Tagen gesehen: Sie ist vielleicht schon besetzt.",
@@ -4834,7 +4590,6 @@ function rs(e, t) {
 				"job.where": "Dónde",
 				"job.company.more": "{count} ofertas abiertas en {name}",
 				"job.company.more.one": "1 oferta abierta en {name}",
-				"job.company.one": "La única oferta abierta en {name}",
 				"job.new": "Nueva",
 				"job.older": "Abierta hace tiempo",
 				"job.older.hint": "Vista por primera vez hace más de {days} días: puede que ya esté cubierta.",
@@ -4879,40 +4634,40 @@ function rs(e, t) {
 		let e = (i() || document.documentElement.lang || navigator.language || "en").slice(0, 2).toLowerCase();
 		Qr.locale = e in u.strings ? e : "en";
 	});
-	let f = /* @__PURE__ */ pt(() => Wo(n() || "")), p = /* @__PURE__ */ A(void 0);
+	let f = /* @__PURE__ */ pt(() => Ho(n() || "")), p = /* @__PURE__ */ j(void 0);
 	gn(() => {
 		let e = K(f), t = r();
-		j(p, void 0), (t && !e ? qo(t) : Ko(e)).then((n) => e === K(f) && t === r() && j(p, n, !0));
+		M(p, void 0), (t && !e ? Go(t) : Wo(e)).then((n) => e === K(f) && t === r() && M(p, n, !0));
 	});
-	let m = /* @__PURE__ */ A(""), h = /* @__PURE__ */ pt(() => new Map(K(p) ? [[K(p).jobs[0]?.company || "", K(p).name]] : [])), g = /* @__PURE__ */ pt(() => K(p) ? Gi(Ui(K(p).jobs, {
+	let m = /* @__PURE__ */ j(""), h = /* @__PURE__ */ pt(() => new Map(K(p) ? [[K(p).jobs[0]?.company || "", K(p).name]] : [])), g = /* @__PURE__ */ pt(() => K(p) ? Hi(Bi(K(p).jobs, {
 		query: `${o() || ""} ${K(m)}`.trim(),
 		where: s() || "",
 		remote: c() === "remote" ? "remote" : ""
 	}, K(h))) : []), _ = /* @__PURE__ */ pt(() => K(g).slice(0, Math.max(1, Number(a()) || u.shown))), v = /* @__PURE__ */ pt(() => Z("embed.count", { count: K(g).length })), y = /* @__PURE__ */ pt(() => r() && !K(f) ? `${u.site}/${r()}` : K(f) ? `${u.site}/me/organization#${new URLSearchParams({ url: n() || "" })}` : u.site);
-	var b = ts();
+	var b = $o();
 	Ir(b, 1, "svelte-uruhdc");
-	var x = nn(b), S = (e) => {
-		var t = Jo(), n = N(t, !0);
+	var x = tn(b), S = (e) => {
+		var t = Ko(), n = P(t, !0);
 		Sn((e) => Y(n, e), [() => Z("embed.error")]), J(e, t);
 	}, ee = (e) => {
-		var t = es(), n = rn(t), i = nn(n), a = N(i, !0);
+		var t = Qo(), n = nn(t), i = tn(n), a = P(i, !0);
 		Ee(n);
-		var o = P(n, 2), s = (e) => {
-			var t = Yo(), n = rn(t), r = N(n, !0), i = P(n, 2);
+		var o = rn(n, 2), s = (e) => {
+			var t = qo(), n = nn(t), r = P(n, !0), i = rn(n, 2);
 			Br(i), Sn((e, t) => {
 				Vr(n, "for", `${d}-search`), Y(r, e), Vr(i, "id", `${d}-search`), Vr(i, "placeholder", t);
-			}, [() => Z("embed.search"), () => Z("embed.search")]), Gr(i, () => K(m), (e) => j(m, e)), J(e, t);
+			}, [() => Z("embed.search"), () => Z("embed.search")]), Gr(i, () => K(m), (e) => M(m, e)), J(e, t);
 		};
 		Cr(o, (e) => {
 			l() && e(s);
 		});
-		var c = P(o, 2), h = (e) => {
-			var t = $o(), n = rn(t), r = N(n, !0), i = P(n, 2), a = (e) => {
-				var t = Zo();
+		var c = rn(o, 2), h = (e) => {
+			var t = Zo(), n = nn(t), r = P(n, !0), i = rn(n, 2), a = (e) => {
+				var t = Yo();
 				Dr(t, 21, () => K(_), (e) => e.url, (e, t) => {
-					var n = Xo(), r = nn(n), i = nn(r);
+					var n = Jo(), r = tn(n), i = tn(r);
 					{
-						let e = /* @__PURE__ */ pt(() => oa(K(t), {
+						let e = /* @__PURE__ */ pt(() => ra(K(t), {
 							t: Z,
 							locale: Qr.locale
 						}));
@@ -4928,14 +4683,14 @@ function rs(e, t) {
 					Ee(r), Ee(n), Sn(() => Vr(r, "href", K(t).url)), J(e, n);
 				}), Ee(t), J(e, t);
 			}, o = (e) => {
-				var t = Jo(), n = N(t, !0);
+				var t = Ko(), n = P(t, !0);
 				Sn((e) => Y(n, e), [() => Z("embed.none")]), J(e, t);
 			};
 			Cr(i, (e) => {
 				K(_).length ? e(a) : e(o, -1);
 			});
-			var s = P(i, 2), c = nn(s), l = (e) => {
-				var t = Qo(), n = rn(t), r = N(n, !0);
+			var s = rn(i, 2), c = tn(s), l = (e) => {
+				var t = Xo(), n = nn(t), r = P(n, !0);
 				De(), Sn((e) => {
 					Vr(n, "href", K(y)), Y(r, e);
 				}, [() => Z("embed.more", { count: K(v) })]), J(e, t);
@@ -4943,7 +4698,7 @@ function rs(e, t) {
 			Cr(c, (e) => {
 				K(g).length > K(_).length && e(l);
 			});
-			var d = P(c, 2), f = N(d, !0);
+			var d = rn(c, 2), f = P(d, !0);
 			Ee(s), Sn((e) => {
 				Y(r, K(v)), Vr(d, "href", u.site), Y(f, e);
 			}, [() => Z("embed.by")]), J(e, t);
@@ -4960,7 +4715,7 @@ function rs(e, t) {
 }
 //#endregion
 //#region embed/src/joblist-jobs.svelte.js
-var is = [
+var ns = [
 	"board",
 	"organization",
 	"lang",
@@ -4969,19 +4724,19 @@ var is = [
 	"where",
 	"remote",
 	"search"
-], as = class extends HTMLElement {
-	static observedAttributes = is;
-	#e = /* @__PURE__ */ A(Jt({}));
+], rs = class extends HTMLElement {
+	static observedAttributes = ns;
+	#e = /* @__PURE__ */ j(qt({}));
 	get props() {
 		return K(this.#e);
 	}
 	set props(e) {
-		j(this.#e, e, !0);
+		M(this.#e, e, !0);
 	}
 	connectedCallback() {
 		if (!this.shadowRoot) {
-			for (let e of is) this.read(e);
-			_r(rs, {
+			for (let e of ns) this.read(e);
+			_r(ts, {
 				target: this.attachShadow({ mode: "open" }),
 				props: this.props
 			});
@@ -4995,5 +4750,5 @@ var is = [
 		this.props[e] = e === "search" ? t !== null : t ?? "";
 	}
 };
-customElements.get("joblist-jobs") || customElements.define("joblist-jobs", as);
+customElements.get("joblist-jobs") || customElements.define("joblist-jobs", rs);
 //#endregion

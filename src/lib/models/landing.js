@@ -1,15 +1,4 @@
-import fields from '#lib/data/fields.json' with { type: 'json' };
-
-/**
- * The fields jobs are in (engineering, design…), found from a job's title and department,
- * slugs for words, and what can be an organization's key.
- *
- * @typedef {{slug: string, query: string, words: string[]}} Field
- *   query: what the jobs search looks for in this field; words: what a job's title or department says.
- */
-
-/** @type {Field[]} */
-export const FIELDS = fields;
+/** Slugs for words, and what can be an organization's key. */
 
 /** The longest slug made (a place's or a word's). */
 const SLUG_MAX = 60;
@@ -27,24 +16,6 @@ export function slugify(name) {
 		.replace(/^-+|-+$/g, '')
 		.slice(0, SLUG_MAX)
 		.replace(/-+$/, '');
-}
-
-/** @param {Field} field */
-function fieldPattern(field) {
-	const words = field.words.map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-	// Words start and end with a latin letter: \b is enough, and fast over every job.
-	return new RegExp(`\\b(?:${words.join('|')})\\b`, 'i');
-}
-const patterns = new Map(FIELDS.map((f) => [f.slug, fieldPattern(f)]));
-
-/**
- * The fields a job belongs to, from its title and department.
- * @param {{t: string, d?: string}} job
- * @returns {string[]} field slugs
- */
-export function fieldsOf(job) {
-	const text = `${job.t} ${job.d || ''}`;
-	return FIELDS.filter((f) => patterns.get(f.slug)?.test(text)).map((f) => f.slug);
 }
 
 /**

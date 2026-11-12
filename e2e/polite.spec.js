@@ -13,16 +13,17 @@ test('Jobs asks some of the saved organizations’ boards, not all', async ({ pa
 		const saved = Array.from({ length: 60 }, (_, i) => ({ url: `https://org${i}.example.org`, name: `Org ${i}`, at: '2026-11-01T00:00:00Z', board: { provider: 'greenhouse', id: `org${i}` } }));
 		localStorage.setItem('joblist.kept.v1', JSON.stringify(saved));
 	});
-	let asked = 0;
+	// Boards asked (a board can take two requests: Greenhouse's jobs and departments).
+	const asked = new Set();
 	await page.route(
 		(url) => !ours(url),
 		(route) => {
-			asked++;
+			asked.add(route.request().url().match(/org\d+/)?.[0] || route.request().url());
 			return route.abort();
 		}
 	);
 	await page.goto('/#view=list');
 	await page.waitForTimeout(6000);
-	expect(asked).toBeGreaterThan(0);
-	expect(asked).toBeLessThanOrEqual(config.kept.boardsPerVisit);
+	expect(asked.size).toBeGreaterThan(0);
+	expect(asked.size).toBeLessThanOrEqual(config.kept.boardsPerVisit);
 });

@@ -40,7 +40,7 @@
 	const searchable = $derived(jobs.length > config.jobs.companySearchFrom || Boolean(filters.query));
 
 	// Its teams, the largest first: chips when there are two or more.
-	const teams = $derived(teamsOf(jobs, offerCount).map(({ id, count }) => ({ id, count, label: id.startsWith('field:') ? t(`field.${id.slice(6)}`) : id })));
+	const teams = $derived(teamsOf(jobs, offerCount));
 
 	// A job opens in a dialog over them (Jobs, job-open.svelte.js).
 	const selected = $derived(openJob());

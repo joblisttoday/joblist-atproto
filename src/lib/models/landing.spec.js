@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { fieldsOf, isCompanyKey, slugify } from './landing.js';
+import { isCompanyKey, slugify } from './landing.js';
 
-describe('fields, slugs and keys', () => {
+describe('slugs and keys', () => {
 	it('makes addresses of place names', () => {
 		expect(slugify('São Paulo')).toBe('sao-paulo');
 		expect(slugify('  New York City ')).toBe('new-york-city');
@@ -21,12 +21,4 @@ describe('fields, slugs and keys', () => {
 		expect(isCompanyKey('vertical-aerospace')).toBe(true);
 	});
 
-	it('finds the fields of a job by whole words', () => {
-		expect(fieldsOf({ t: 'Senior Product Designer' })).toEqual(['design']);
-		expect(fieldsOf({ t: 'Backend Engineer', d: 'Data Platform' })).toEqual(['engineering', 'data']);
-		expect(fieldsOf({ t: 'Account Executive' })).toEqual(['sales']);
-		expect(fieldsOf({ t: 'Ingénieure logiciel' })).toEqual(['engineering']);
-		// "ai" is a word, not a part of one.
-		expect(fieldsOf({ t: 'Maintainer' })).toEqual([]);
-	});
 });
