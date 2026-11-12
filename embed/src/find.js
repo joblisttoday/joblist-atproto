@@ -4,10 +4,7 @@ import { detectBoard } from '../../src/lib/ats/detect.js';
 import { getJobs } from '../../src/lib/ats/index.js';
 import { newestFirst } from '../../src/lib/models/job.js';
 import { prettyId } from '../../src/lib/models/paste.js';
-import config from '../../src/lib/data/config.json' with { type: 'json' };
-import { resolveDid } from '../../src/lib/atproto/identity.js';
-import { getRecord, listRecords } from '../../src/lib/atproto/records.js';
-import { isLive, toJob, toPost } from '../../src/lib/models/job-post.js';
+import { organizationJobs } from '../../src/lib/network/organization-jobs.js';
 
 /**
  * What the embed shows: an organization's jobs, read live from its own board, as joblist reads
@@ -49,28 +46,11 @@ export async function find(board) {
 
 /**
  * An organization by its domain, from its own atproto account (its handle is its domain): its
- * name, and its jobs: from the board its record points to, else the offers it posts itself.
- * Only its own account counts: no one else's records about it.
+ * name, and its jobs (network/organization-jobs.js).
  * @param {string} domain
  * @returns {Promise<Found>}
  */
 export async function findOrganization(domain) {
-	const key = domain.trim().toLowerCase();
-	if (!key) return null;
-	try {
-		const did = await resolveDid(key);
-		const [company, records] = await Promise.all([getRecord(did, config.collections.company, key), listRecords(did, config.collections.job)]);
-		const name = String(company?.value?.name || key);
-		const pointed = boardOf(`${company?.value?.jobBoard?.provider || ''}:${company?.value?.jobBoard?.id || ''}`);
-		if (pointed) return { name, jobs: await live(pointed, key) };
-		// The handle resolved to this account: it speaks for the domain.
-		const profiles = new Map([[did, { handle: key }]]);
-		const jobs = records
-			.filter((r) => isLive(r.value) && r.value.company === key)
-			.map((r) => toJob(toPost(r, profiles)));
-		newestFirst(jobs);
-		return { name, jobs };
-	} catch {
-		return null;
-	}
+	const found = await organizationJobs(domain).catch(() => null);
+	return found ? { name: found.name, jobs: found.jobs } : null;
 }

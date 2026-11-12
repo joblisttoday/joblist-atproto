@@ -5,6 +5,7 @@ import { keep as store, readKept as stored } from '#lib/local/store.js';
 import { boardOfKept, keyOf } from '#lib/models/kept.js';
 import { kept } from './kept.svelte.js';
 import { data } from './network.svelte.js';
+import { organizationJobs } from './organization-jobs.js';
 
 /**
  * The jobs of the organizations saved in this browser, read live from their own job boards:
@@ -52,24 +53,36 @@ let reading = $state(false);
 /** The boards last asked for: asked again only when they change (one saved, or the list just loaded). */
 let asked = '';
 
+/** @param {Company} c */
+const hasBoard = (c) => Boolean(c.jobBoard?.provider && c.jobBoard.id);
+// A domain with no board known: its own atproto account may say where its jobs are, or post them.
+/** @param {Company} c */
+const ownAccount = (c) => !hasBoard(c) && /^[a-z0-9-]+(\.[a-z0-9-]+)+$/.test(c.key);
+
 async function read() {
-	const boards = companies.filter((c) => c.jobBoard?.provider && c.jobBoard.id).slice(0, config.kept.boardsPerVisit);
-	const these = boards.map((c) => c.key).join(' ');
+	const boards = companies.filter(hasBoard).slice(0, config.kept.boardsPerVisit);
+	const accounts = companies.filter(ownAccount).slice(0, config.kept.boardsPerVisit - boards.length);
+	const these = [...boards, ...accounts].map((c) => c.key).join(' ');
 	if (these === asked) return;
 	asked = these;
 	// Asked while a page is drawn (a derived value): state changes wait until it is drawn.
 	await Promise.resolve();
 	reading = true;
-	const kept = /** @type {{at: number, jobs: [string, Job[]][]} | null} */ (await stored(KEY).catch(() => null));
+	// null: asked, and its account says nothing of jobs (kept too: not asked again for a while).
+	const kept = /** @type {{at: number, jobs: [string, Job[] | null][]} | null} */ (await stored(KEY).catch(() => null));
 	const fresh = kept && Date.now() - kept.at < config.kept.refreshHours * 3600 * 1000;
 	const had = new Map(kept?.jobs || []);
-	if (fresh && boards.every((c) => had.has(c.key))) {
-		jobs = had;
+	/** @param {[string, Job[] | null][]} read */
+	const known = (read) => new Map(/** @type {[string, Job[]][]} */ (read.filter(([, list]) => list !== null)));
+	if (fresh && [...boards, ...accounts].every((c) => had.has(c.key))) {
+		jobs = known([...had]);
 		reading = false;
 		return;
 	}
-	const read = await mapLimit(boards, config.limits.jobsConcurrency, async (c) => /** @type {[string, Job[]]} */ ([c.key, await getJobs(c)]));
-	jobs = new Map(read);
+	const read = await mapLimit([...boards, ...accounts], config.limits.jobsConcurrency, async (c) =>
+		/** @type {[string, Job[] | null]} */ ([c.key, hasBoard(c) ? await getJobs(c) : ((await organizationJobs(c.key).catch(() => null))?.jobs ?? null)])
+	);
+	jobs = known(read);
 	reading = false;
 	store(KEY, { at: Date.now(), jobs: read });
 }

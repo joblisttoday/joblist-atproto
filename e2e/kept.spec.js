@@ -51,3 +51,11 @@ test('a kept organization joblist does not know opens its profile, to forget or 
 	await page.getByRole('button', { name: 'Following', exact: true }).first().click();
 	await expect(page.getByRole('button', { name: 'Follow', exact: true }).first()).toBeVisible();
 });
+
+test('a followed organization that posts its jobs on atproto has them, not "look for its job board"', async ({ page }) => {
+	await page.addInitScript(() => localStorage.setItem('joblist.kept.v1', JSON.stringify([{ url: 'https://joblist.today', name: 'joblist', at: '2026-11-01T00:00:00Z' }])));
+	await page.goto('/');
+	const row = page.locator('jl-kept-organizations li').first();
+	await expect(row).toContainText(/open job|No open jobs/, { timeout: 20_000 });
+	await expect(row).not.toContainText('Look for it');
+});

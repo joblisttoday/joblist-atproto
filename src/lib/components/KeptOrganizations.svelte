@@ -6,7 +6,7 @@
 	import { forget, kept } from '#lib/network/kept.svelte.js';
 	import { keptJobs } from '#lib/network/kept-jobs.svelte.js';
 	import config from '#lib/data/config.json';
-	import { formatNumber, t } from '#lib/i18n/index.svelte.js';
+	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
 	 * The organizations followed in this browser, newest first, each with its open jobs (read
@@ -46,7 +46,7 @@
 				<a href={pageOf(item)}>
 					<span>{name}</span>
 					<small>
-						{#if count !== undefined}{count ? t('kept.jobs', { count: formatNumber(count) }) : t('kept.noJobs')}{#if lately}{' · '}<strong>{t('kept.new', { count: formatNumber(lately) })}</strong>{/if}
+						{#if count !== undefined}{count ? t('kept.jobs', { count }) : t('kept.noJobs')}{#if lately}{' · '}<strong>{t('kept.new', { count: lately })}</strong>{/if}
 						{:else if board}{t('kept.board', { provider: provider(board.provider) })}
 						{:else}{t('kept.noBoard')} · <span data-find>{t('kept.find')}</span>{/if}
 						{#if item.tags?.length}{' · '}{item.tags.join(', ')}{/if}

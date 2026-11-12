@@ -4337,55 +4337,79 @@ function Vo(e) {
 	return e.min && (t.min = Math.round(e.min)), e.max && (t.max = Math.round(e.max)), t;
 }
 //#endregion
+//#region src/lib/network/organization-jobs.js
+async function Ho(e) {
+	let t = e.trim().toLowerCase();
+	if (!t) return null;
+	let n;
+	try {
+		n = await Ao(t);
+	} catch {
+		return null;
+	}
+	let [r, i] = await Promise.all([Mo(n, X.collections.company, t).catch(() => null), jo(n, X.collections.job).catch(() => [])]);
+	if (!r && !i.length) return null;
+	let a = String(r?.value?.name || t), { provider: o = "", id: s = "" } = r?.value?.jobBoard || {};
+	if (s && ia.some((e) => e.id === o)) {
+		let e = {
+			provider: o,
+			id: s
+		}, n = await io({
+			key: t,
+			jobBoard: e
+		});
+		return Yi(n), {
+			name: a,
+			board: e,
+			jobs: n
+		};
+	}
+	let c = /* @__PURE__ */ new Map([[n, { handle: t }]]), l = i.filter((e) => Lo(e.value) && e.value.company === t).map((e) => zo(Ro(e, c)));
+	return Yi(l), {
+		name: a,
+		board: null,
+		jobs: l
+	};
+}
+//#endregion
 //#region embed/src/find.js
-function Ho(e) {
+function Uo(e) {
 	let t = e.trim(), [, n, r] = t.match(/^([a-z]+):([^/\s]+)$/) || [];
 	return n && r && ia.some((e) => e.id === n) ? {
 		provider: n,
 		id: r
 	} : t ? uo(t) : null;
 }
-async function Uo(e, t) {
+async function Wo(e, t) {
 	let n = await io({
 		key: t,
 		jobBoard: e
 	});
 	return Yi(n), n;
 }
-async function Wo(e) {
+async function Go(e) {
 	if (!e) return null;
-	let [t, n] = await Promise.all([so(e), Uo(e, e.id)]);
+	let [t, n] = await Promise.all([so(e), Wo(e, e.id)]);
 	return {
 		name: t || wo(e.id),
 		jobs: n
 	};
 }
-async function Go(e) {
-	let t = e.trim().toLowerCase();
-	if (!t) return null;
-	try {
-		let e = await Ao(t), [n, r] = await Promise.all([Mo(e, X.collections.company, t), jo(e, X.collections.job)]), i = String(n?.value?.name || t), a = Ho(`${n?.value?.jobBoard?.provider || ""}:${n?.value?.jobBoard?.id || ""}`);
-		if (a) return {
-			name: i,
-			jobs: await Uo(a, t)
-		};
-		let o = /* @__PURE__ */ new Map([[e, { handle: t }]]), s = r.filter((e) => Lo(e.value) && e.value.company === t).map((e) => zo(Ro(e, o)));
-		return Yi(s), {
-			name: i,
-			jobs: s
-		};
-	} catch {
-		return null;
-	}
+async function Ko(e) {
+	let t = await Ho(e).catch(() => null);
+	return t ? {
+		name: t.name,
+		jobs: t.jobs
+	} : null;
 }
 //#endregion
 //#region embed/src/JoblistJobs.svelte
-var Ko = /* @__PURE__ */ q("<p class=\"svelte-uruhdc\"> </p>"), qo = /* @__PURE__ */ q("<label class=\"svelte-uruhdc\"> </label> <input type=\"search\" class=\"svelte-uruhdc\"/>", 1), Jo = /* @__PURE__ */ q("<li class=\"svelte-uruhdc\"><a target=\"_blank\" rel=\"noopener\" class=\"svelte-uruhdc\"><!></a></li>"), Yo = /* @__PURE__ */ q("<ul class=\"svelte-uruhdc\"></ul>"), Xo = /* @__PURE__ */ q("<a target=\"_blank\" rel=\"noopener\" class=\"svelte-uruhdc\"> </a> ·", 1), Zo = /* @__PURE__ */ q("<p class=\"svelte-uruhdc\"> </p> <!> <footer class=\"svelte-uruhdc\"><!> <a target=\"_blank\" rel=\"noopener\" class=\"svelte-uruhdc\"> </a></footer>", 1), Qo = /* @__PURE__ */ q("<h2 class=\"svelte-uruhdc\"><a target=\"_blank\" rel=\"noopener\" class=\"svelte-uruhdc\"> </a></h2> <!> <!>", 1), $o = /* @__PURE__ */ q("<jl-embed><!></jl-embed>", 2), es = {
+var qo = /* @__PURE__ */ q("<p class=\"svelte-uruhdc\"> </p>"), Jo = /* @__PURE__ */ q("<label class=\"svelte-uruhdc\"> </label> <input type=\"search\" class=\"svelte-uruhdc\"/>", 1), Yo = /* @__PURE__ */ q("<li class=\"svelte-uruhdc\"><a target=\"_blank\" rel=\"noopener\" class=\"svelte-uruhdc\"><!></a></li>"), Xo = /* @__PURE__ */ q("<ul class=\"svelte-uruhdc\"></ul>"), Zo = /* @__PURE__ */ q("<a target=\"_blank\" rel=\"noopener\" class=\"svelte-uruhdc\"> </a> ·", 1), Qo = /* @__PURE__ */ q("<p class=\"svelte-uruhdc\"> </p> <!> <footer class=\"svelte-uruhdc\"><!> <a target=\"_blank\" rel=\"noopener\" class=\"svelte-uruhdc\"> </a></footer>", 1), $o = /* @__PURE__ */ q("<h2 class=\"svelte-uruhdc\"><a target=\"_blank\" rel=\"noopener\" class=\"svelte-uruhdc\"> </a></h2> <!> <!>", 1), es = /* @__PURE__ */ q("<jl-embed><!></jl-embed>", 2), ts = {
 	hash: "svelte-uruhdc",
 	code: "\n	/* joblist's tokens (src/app.css), here on any page: its colors from the page's, unless set. */jl-embed.svelte-uruhdc {--space-xxs: 0.125rem;--space-xs: 0.25rem;--space-s: 0.5rem;--space-m: 1rem;--radius: 0.5rem;--radius-round: 999px;--font-size-small: 0.875rem;--font-weight-strong: 600;--chip-line: 1.6;--color-fg: var(--joblist-fg, currentColor);--color-muted: var(--joblist-muted, rgb(128 128 128));--color-soft: var(--joblist-soft, rgb(128 128 128 / 0.14));--color-line: var(--joblist-line, rgb(128 128 128 / 0.3));--color-warn: var(--joblist-warn, #8a5a00);--color-accent: var(--joblist-accent, currentColor);display:block;font-family:var(--joblist-font, inherit);color:var(--color-fg);line-height:1.45;}h2.svelte-uruhdc {margin:0 0 var(--space-s);font-size:1.15em;}a.svelte-uruhdc {color:inherit;}h2.svelte-uruhdc a:where(.svelte-uruhdc) {text-decoration:none;}h2.svelte-uruhdc a:where(.svelte-uruhdc):hover {text-decoration:underline;}label.svelte-uruhdc {position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);}input.svelte-uruhdc {box-sizing:border-box;width:100%;margin:0 0 var(--space-s);padding:var(--space-s) var(--space-m);font:inherit;color:inherit;background:transparent;border:1px solid var(--color-line);border-radius:var(--radius);}p.svelte-uruhdc,\n	footer.svelte-uruhdc {margin:0;color:var(--color-muted);font-size:var(--font-size-small);}footer.svelte-uruhdc {margin-top:var(--space-s);}footer.svelte-uruhdc a:where(.svelte-uruhdc) {color:var(--color-accent);}ul.svelte-uruhdc {margin:var(--space-xs) 0 0;padding:0;list-style:none;}\n	/* The site's job cards: a line between them, the title underlined on hover. */li.svelte-uruhdc {border-bottom:1px solid var(--color-line);}li.svelte-uruhdc a:where(.svelte-uruhdc) {display:block;padding:var(--space-s) 0;text-decoration:none;}li.svelte-uruhdc a:where(.svelte-uruhdc):hover strong {text-decoration:underline;}"
 };
-function ts(e, t) {
-	Ge(t, !0), Nr(e, es);
+function ns(e, t) {
+	Ge(t, !0), Nr(e, ts);
 	let n = Xr(t, "board", 3, ""), r = Xr(t, "organization", 3, ""), i = Xr(t, "lang", 3, ""), a = Xr(t, "limit", 3, 0), o = Xr(t, "query", 3, ""), s = Xr(t, "where", 3, ""), c = Xr(t, "remote", 3, ""), l = Xr(t, "search", 3, !1), u = {
 		site: "https://joblist.today",
 		shown: 20,
@@ -4636,26 +4660,26 @@ function ts(e, t) {
 		let e = (i() || document.documentElement.lang || navigator.language || "en").slice(0, 2).toLowerCase();
 		Qr.locale = e in u.strings ? e : "en";
 	});
-	let f = /* @__PURE__ */ pt(() => Ho(n() || "")), p = /* @__PURE__ */ j(void 0);
+	let f = /* @__PURE__ */ pt(() => Uo(n() || "")), p = /* @__PURE__ */ j(void 0);
 	gn(() => {
 		let e = K(f), t = r();
-		M(p, void 0), (t && !e ? Go(t) : Wo(e)).then((n) => e === K(f) && t === r() && M(p, n, !0));
+		M(p, void 0), (t && !e ? Ko(t) : Go(e)).then((n) => e === K(f) && t === r() && M(p, n, !0));
 	});
 	let m = /* @__PURE__ */ j(""), h = /* @__PURE__ */ pt(() => new Map(K(p) ? [[K(p).jobs[0]?.company || "", K(p).name]] : [])), g = /* @__PURE__ */ pt(() => K(p) ? Hi(Bi(K(p).jobs, {
 		query: `${o() || ""} ${K(m)}`.trim(),
 		where: s() || "",
 		remote: c() === "remote" ? "remote" : ""
 	}, K(h))) : []), _ = /* @__PURE__ */ pt(() => K(g).slice(0, Math.max(1, Number(a()) || u.shown))), v = /* @__PURE__ */ pt(() => Z("embed.count", { count: K(g).length })), y = /* @__PURE__ */ pt(() => r() && !K(f) ? `${u.site}/${r()}` : K(f) ? `${u.site}/me/organization#${new URLSearchParams({ url: n() || "" })}` : u.site);
-	var b = $o();
+	var b = es();
 	Ir(b, 1, "svelte-uruhdc");
 	var x = tn(b), S = (e) => {
-		var t = Ko(), n = P(t, !0);
+		var t = qo(), n = P(t, !0);
 		Sn((e) => Y(n, e), [() => Z("embed.error")]), J(e, t);
 	}, ee = (e) => {
-		var t = Qo(), n = nn(t), i = tn(n), a = P(i, !0);
+		var t = $o(), n = nn(t), i = tn(n), a = P(i, !0);
 		Ee(n);
 		var o = rn(n, 2), s = (e) => {
-			var t = qo(), n = nn(t), r = P(n, !0), i = rn(n, 2);
+			var t = Jo(), n = nn(t), r = P(n, !0), i = rn(n, 2);
 			Br(i), Sn((e, t) => {
 				Vr(n, "for", `${d}-search`), Y(r, e), Vr(i, "id", `${d}-search`), Vr(i, "placeholder", t);
 			}, [() => Z("embed.search"), () => Z("embed.search")]), Gr(i, () => K(m), (e) => M(m, e)), J(e, t);
@@ -4664,10 +4688,10 @@ function ts(e, t) {
 			l() && e(s);
 		});
 		var c = rn(o, 2), h = (e) => {
-			var t = Zo(), n = nn(t), r = P(n, !0), i = rn(n, 2), a = (e) => {
-				var t = Yo();
+			var t = Qo(), n = nn(t), r = P(n, !0), i = rn(n, 2), a = (e) => {
+				var t = Xo();
 				Dr(t, 21, () => K(_), (e) => e.url, (e, t) => {
-					var n = Jo(), r = tn(n), i = tn(r);
+					var n = Yo(), r = tn(n), i = tn(r);
 					{
 						let e = /* @__PURE__ */ pt(() => ra(K(t), {
 							t: Z,
@@ -4685,14 +4709,14 @@ function ts(e, t) {
 					Ee(r), Ee(n), Sn(() => Vr(r, "href", K(t).url)), J(e, n);
 				}), Ee(t), J(e, t);
 			}, o = (e) => {
-				var t = Ko(), n = P(t, !0);
+				var t = qo(), n = P(t, !0);
 				Sn((e) => Y(n, e), [() => Z("embed.none")]), J(e, t);
 			};
 			Cr(i, (e) => {
 				K(_).length ? e(a) : e(o, -1);
 			});
 			var s = rn(i, 2), c = tn(s), l = (e) => {
-				var t = Xo(), n = nn(t), r = P(n, !0);
+				var t = Zo(), n = nn(t), r = P(n, !0);
 				De(), Sn((e) => {
 					Vr(n, "href", K(y)), Y(r, e);
 				}, [() => Z("embed.more", { count: K(v) })]), J(e, t);
@@ -4717,7 +4741,7 @@ function ts(e, t) {
 }
 //#endregion
 //#region embed/src/joblist-jobs.svelte.js
-var ns = [
+var rs = [
 	"board",
 	"organization",
 	"lang",
@@ -4726,8 +4750,8 @@ var ns = [
 	"where",
 	"remote",
 	"search"
-], rs = class extends HTMLElement {
-	static observedAttributes = ns;
+], is = class extends HTMLElement {
+	static observedAttributes = rs;
 	#e = /* @__PURE__ */ j(qt({}));
 	get props() {
 		return K(this.#e);
@@ -4737,8 +4761,8 @@ var ns = [
 	}
 	connectedCallback() {
 		if (!this.shadowRoot) {
-			for (let e of ns) this.read(e);
-			_r(ts, {
+			for (let e of rs) this.read(e);
+			_r(ns, {
 				target: this.attachShadow({ mode: "open" }),
 				props: this.props
 			});
@@ -4752,5 +4776,5 @@ var ns = [
 		this.props[e] = e === "search" ? t !== null : t ?? "";
 	}
 };
-customElements.get("joblist-jobs") || customElements.define("joblist-jobs", rs);
+customElements.get("joblist-jobs") || customElements.define("joblist-jobs", is);
 //#endregion
