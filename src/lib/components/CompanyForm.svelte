@@ -127,7 +127,7 @@
 	}
 </script>
 
-<jl-company-form editing={company ? true : undefined} {only}>
+<jl-company-form editing={company ? true : undefined} data-only={only || undefined}>
 	{#if !only}<CompanyEditNote {company} />{/if}
 	<form bind:this={formElement} onsubmit={submit} toolname={tool.toolname} tooldescription={tool.tooldescription}>
 		{#if !only}<p><small data-required>{t('form.required')}</small></p>{/if}
@@ -231,6 +231,17 @@
 <style>
 	jl-form-part {
 		display: block;
+	}
+	/* One part alone: the page's title already names it; its own heading is for screen readers. */
+	jl-company-form[data-only] jl-form-part > label:first-child,
+	jl-company-form[data-only] jl-form-part :global(fieldset:first-of-type > legend:first-child),
+	jl-company-form[data-only] jl-form-part :global(jl-tag-input > label:first-child) {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
 	}
 	/* The description grows with what is written. */
 	textarea {
