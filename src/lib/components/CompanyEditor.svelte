@@ -1,4 +1,5 @@
 <script>
+	import { ownPath } from '#lib/network/own-organization.svelte.js';
 	import FormPage from '#lib/components/FormPage.svelte';
 	import config from '#lib/data/config.json';
 	import { page } from '$app/state';
@@ -15,11 +16,11 @@
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * Describing an organization (/org/page with ?field=…, ?all or what a link gives): signed
+	 * Describing an organization (/{domain}/edit with ?field=…, ?all or what a link gives): signed
 	 * in with its domain as its handle, the form for that domain (new, or its own record to
 	 * edit; ?field=… one part alone). Anyone else, or another domain (?url=… from an
 	 * organization's page), is shown how. &name=…&board=…&description=…&link=… fill the form;
-	 * ?next=/org/post goes back to post a job.
+	 * ?next=/{domain}/post goes back to post a job.
 	 */
 	const params = $derived(page.url.searchParams);
 	const own = $derived(ownDomain(session.handle));
@@ -43,9 +44,9 @@
 
 	/** @param {Saved} done */
 	async function onsaved(done) {
-		if (back === '/org/post') return goto(`${back}?company=${encodeURIComponent(done.key)}`);
+		if (back === ownPath('post')) return goto(`${back}?company=${encodeURIComponent(done.key)}`);
 		// An edit goes back to its page on the dashboard; a first description says what comes next.
-		if (!done.added) return goto('/org/page');
+		if (!done.added) return goto(ownPath('edit'));
 		saved = done;
 		await tick();
 		scrollTo({ top: 0 });
@@ -61,7 +62,7 @@
 		<AddSaved {...saved} />
 	{:else}
 		<h1>{heading}</h1>
-		{#if field && open}<p><small><a href="/org/page?all">{t('orgs.editAll')}</a></small></p>{/if}
+		{#if field && open}<p><small><a href="{ownPath('edit')}?all">{t('orgs.editAll')}</a></small></p>{/if}
 		{#if open && params.get('key') && !company}
 			<!-- Editing its record: the form waits for it, so it starts from what it says. -->
 			<Pending />
@@ -75,7 +76,7 @@
 			<p><a href="/{target}">{company?.name || target}</a></p>
 		{:else}
 			<p>{t('add.ownOnly')}</p>
-			<menu><a href="/signin?next=/org/page" data-primary>{t('nav.signin')}</a></menu>
+			<menu><a href="/signin?next={encodeURIComponent(page.url.pathname + page.url.search)}" data-primary>{t('nav.signin')}</a></menu>
 		{/if}
 	{/if}
 </FormPage>

@@ -32,7 +32,7 @@ test('a job of a followed organization shows its description, and can be saved',
 	await expect(dialog.locator('jl-job-description p').first()).not.toContainText(/no description|Reading/, { timeout: 20_000 });
 	await dialog.getByRole('button', { name: 'Save', exact: true }).click();
 	await expect(dialog.getByRole('button', { name: 'Saved', exact: true })).toBeVisible();
-	await page.goto('/saved');
+	await page.goto('/jobs/saved');
 	await expect(page.locator('main')).toContainText('1 job');
 });
 
@@ -42,6 +42,6 @@ test("a job posted on atproto has its page, where it can be saved", async ({ pag
 	await expect(save).toBeVisible({ timeout: 20_000 });
 	await save.click();
 	await expect(page.getByRole('button', { name: 'Saved', exact: true })).toBeVisible();
-	await page.goto('/saved');
+	await page.goto('/jobs/saved');
 	await expect(page.locator('main')).toContainText('1 job');
 });

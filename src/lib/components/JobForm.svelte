@@ -1,4 +1,5 @@
 <script>
+	import { ownPath } from '#lib/network/own-organization.svelte.js';
 	import config from '#lib/data/config.json';
 	import webmcp from '#lib/data/webmcp.json';
 	import ChoiceChips from './ChoiceChips.svelte';
@@ -90,7 +91,7 @@
 	const canApply = $derived(Boolean(toApplyUrl(form.applyTo) || form.bluesky));
 	const until = $derived(longDate(expiryDate(form.days), i18n.locale));
 	// Back here from describing a missing company.
-	const back = '/org/post';
+	const back = ownPath('post');
 	// WebMCP: an AI assistant may fill this form; the person checks it and posts.
 	const tool = webmcp.forms.job;
 	/** @type {SaveSignIn | undefined} */

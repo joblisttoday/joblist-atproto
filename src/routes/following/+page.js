@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 
-// The organizations you follow are on Explore, the home.
+// The organizations you follow are Explore's Organizations.
 export function load() {
-	redirect(308, '/');
+	redirect(308, '/companies');
 }

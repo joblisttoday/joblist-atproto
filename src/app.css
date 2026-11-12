@@ -54,7 +54,7 @@
 	--handle-height: 2rem;
 	--sheet-half: 55%;
 	--sheet-max: 85dvh;
-	--popover-top: calc(var(--header-height) + var(--space-s) + var(--chip-height) + var(--space-xs));
+	--popover-top: calc(var(--space-s) + var(--chip-height) + var(--space-xs));
 	--color-backdrop: rgb(0 0 0 / 0.4);
 	--handle-width: 2.5rem;
 	--radius-large: 1rem;
@@ -85,7 +85,6 @@
 	--nav-height: 3.5rem;
 	--nav-icon-size: 1.25rem;
 	--icon-size: 1.15em;
-	--header-height: 3rem;
 	--map-height: 60vh;
 	--map-height-small: 16rem;
 	--transition: 120ms ease-out;
@@ -120,9 +119,9 @@
 	color-scheme: light dark;
 }
 
-/* What gets the keyboard is never hidden under the sticky header or the bottom navigation (WCAG 2.4.11). */
+/* What gets the keyboard is never hidden under the bottom navigation (WCAG 2.4.11). */
 html {
-	scroll-padding-block: var(--header-height) calc(var(--nav-height) + env(safe-area-inset-bottom));
+	scroll-padding-block: 0 calc(var(--nav-height) + env(safe-area-inset-bottom));
 }
 
 

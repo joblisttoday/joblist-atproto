@@ -5,8 +5,8 @@ import { data } from './network.svelte.js';
 import { outbox } from './outbox.svelte.js';
 
 /**
- * The organization signed in here (its domain is the account's handle), as its dashboard
- * (/org and its pages) shows it: its record, its job offers, its board, what its
+ * The organization signed in here (its domain is the account's handle), as its own page
+ * (/{domain}) and its tools (/{domain}/edit, /post, /jobs/{rkey}) show it: its record, its job offers, its board, what its
  * page lacks, what waits to be sent.
  */
 const own = $derived(ownDomain(session.handle));
@@ -37,3 +37,13 @@ export const ownOrganization = {
 		return waiting;
 	}
 };
+
+/**
+ * One of its tools' addresses, under its own page: '' its page, 'edit', 'post', 'jobs/{rkey}';
+ * signed in as no organization, where to sign in, and back.
+ * @param {string} [tool]
+ */
+export function ownPath(tool = '') {
+	if (!own) return `/signin?next=${encodeURIComponent(location.pathname + location.search)}`;
+	return tool ? `/${own}/${tool}` : `/${own}`;
+}

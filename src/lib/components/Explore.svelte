@@ -30,9 +30,10 @@
 	 * or as a list (a grid of cards on wide screens). Phones show the results over the
 	 * map as a sheet (peek, half or full screen). A job open is read on the whole page,
 	 * without the big map.
-	 * @type {{path: string}} path: the page address the search is kept on
+	 * top: what the page shows above it, always (Explore's switch, the lists of jobs).
+	 * @type {{path: string, top?: import('svelte').Snippet}} path: the page address the search is kept on
 	 */
-	let { path } = $props();
+	let { path, top } = $props();
 
 	// The organizations saved in this browser: their jobs, read live from their boards.
 	const companies = $derived(keptJobs.companies);
@@ -284,6 +285,7 @@
 <jl-explore {view} empty={!jobs.length && !busy ? true : undefined} nomap={jobs.length && !busy && !has.points ? true : undefined}>
 	<!-- Jobs, organizations or lists; the search, and how the jobs are shown, at the same place in every view. -->
 	<!-- No job read yet: no search, no filters, only how to start (below). -->
+	{#if top}<jl-explore-top>{@render top()}</jl-explore-top>{/if}
 	{#if jobs.length}
 	<jl-explore-bar>
 		<ExploreSearch bind:filters {places} {has}>
@@ -443,6 +445,20 @@
 		flex-direction: column;
 		background: var(--color-bg);
 	}
+	jl-explore-top {
+		flex: none;
+		z-index: 2;
+		padding: calc(env(safe-area-inset-top) + var(--space-s)) var(--gutter) 0;
+		background: var(--color-bg);
+	}
+	jl-explore-top + jl-explore-bar {
+		padding-top: var(--space-s);
+	}
+	/* As wide as reading, centered: the same place as on Organizations. */
+	jl-explore-top > :global(*) {
+		max-width: var(--reading-width);
+		margin-inline: auto;
+	}
 	jl-explore-bar {
 		flex: none;
 		display: grid;
@@ -560,7 +576,7 @@
 	/* Wide screens: the results in a panel at the left of the map; or the whole width. */
 	@media (min-width: 64rem) {
 		jl-explore {
-			top: var(--header-height);
+			top: 0;
 			bottom: calc(var(--nav-height) + env(safe-area-inset-bottom));
 		}
 		jl-explore-bar {

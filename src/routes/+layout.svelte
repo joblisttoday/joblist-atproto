@@ -2,7 +2,7 @@
 	import '../app.css';
 	import favicon from '#lib/assets/favicon.svg';
 	import config from '#lib/data/config.json';
-	import Header from '#lib/components/Header.svelte';
+	import Nav from '#lib/components/Nav.svelte';
 	import OutboxStatus from '#lib/components/OutboxStatus.svelte';
 	import { startOutbox } from '#lib/network/outbox.svelte.js';
 	import { initSession } from '#lib/auth/session.svelte.js';
@@ -31,7 +31,7 @@
 </svelte:head>
 
 <a href="#main">{t('nav.skip')}</a>
-<Header />
+<Nav />
 <OutboxStatus />
 <main id="main" tabindex="-1">
 	{@render children()}

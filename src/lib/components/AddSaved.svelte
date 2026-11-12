@@ -1,4 +1,5 @@
 <script>
+	import { ownPath } from '#lib/network/own-organization.svelte.js';
 	import Icon from './Icon.svelte';
 	import { t } from '#lib/i18n/index.svelte.js';
 
@@ -15,9 +16,9 @@
 	<p>{t('added.own.text', { name })}</p>
 	<menu>
 		<a href="/{key}">{t('added.open', { name })}</a>
-		<a href="/org/post?company={encodeURIComponent(key)}"><Icon name="post" /> {t('added.post')}</a>
+		<a href="{ownPath('post')}?company={encodeURIComponent(key)}"><Icon name="post" /> {t('added.post')}</a>
 	</menu>
-	<p><small><a href="/org/page">{t('added.another')}</a></small></p>
+	<p><small><a href={ownPath('edit')}>{t('added.another')}</a></small></p>
 </jl-add-saved>
 
 <style>

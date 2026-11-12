@@ -1,7 +1,7 @@
 <script>
 	import FilterChips from './FilterChips.svelte';
 	import { teamsOf } from '#lib/models/team.js';
-	import { offerCount } from '#lib/models/job.js';
+	import { offerCount, placeCounts } from '#lib/models/job.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 	import Jobs from './Jobs.svelte';
 	import { untrack } from 'svelte';
@@ -15,7 +15,8 @@
 
 	/**
 	 * An organization's jobs, one list: a box to filter them when there are many, its teams as
-	 * chips (#team=…). Near me, remote, pay and the map are on Jobs, across the saved
+	 * chips (#team=…), its places as chips (#where=…: as its jobs name them, each spelling of a
+	 * place together, job.js placeCounts). Near me, remote, pay and the map are on Jobs, across the saved
 	 * organizations. A job opens in a dialog over them: a history entry (back closes it), in
 	 * the address to share.
 	 * jobs: every job read, for the page. local: an organization only this browser knows
@@ -26,9 +27,9 @@
 	let { company, jobs = $bindable([]), address = {}, local = false } = $props();
 
 	// Its search, its view and the job open are in the address (after the "#").
-	const params = readAddress(['q', 'team', config.jobs.jobParam]);
+	const params = readAddress(['q', 'where', 'team', config.jobs.jobParam]);
 	/** @type {import('#lib/models/job.js').JobFilters} */
-	let filters = $state({ ...fromParams(params), where: '', remote: '', pay: false, team: params.get('team') || '', near: null, within: 0 });
+	let filters = $state({ ...fromParams(params), remote: '', pay: false, team: params.get('team') || '', near: null, within: 0 });
 	/** @param {string} [job] */
 	const stateOf = (job) => ({ ...address, ...searchState(filters), team: filters.team, [config.jobs.jobParam]: job });
 	/** @type {import('#lib/ats/job.js').Job[]} */
@@ -41,6 +42,8 @@
 
 	// Its teams, the largest first: chips when there are two or more.
 	const teams = $derived(teamsOf(jobs, offerCount));
+	// Its places, the most named first: chips when there are two or more.
+	const placeChips = $derived(placeCounts(jobs, config.jobs.companyPlaces).map(([place, count]) => ({ id: place, label: place, count })));
 
 	// A job opens in a dialog over them (Jobs, job-open.svelte.js).
 	const selected = $derived(openJob());
@@ -59,6 +62,7 @@
 		<input type="search" bind:value={filters.query} placeholder={t('company.filter')} aria-label={t('company.filter')} />
 	{/if}
 	{#if teams.length > 1}<FilterChips label={t('jobs.teams')} items={teams} bind:value={filters.team} />{/if}
+	{#if placeChips.length > 1}<FilterChips label={t('jobs.places')} items={placeChips} bind:value={filters.where} />{/if}
 	<Jobs companies={[company]} search={false} {filters} bind:jobs bind:results bind:places bind:busy />
 </jl-company-jobs>
 

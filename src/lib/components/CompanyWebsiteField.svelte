@@ -1,4 +1,5 @@
 <script>
+	import { ownPath } from '#lib/network/own-organization.svelte.js';
 	import Icon from './Icon.svelte';
 	import config from '#lib/data/config.json';
 	import { readWebsite } from '#lib/models/company-form.js';
@@ -39,7 +40,7 @@
 		{:else if read.state === 'exists' && existing}
 			{t('form.website.exists', { name: existing.name })}
 			<a href="/{read.key}">{t('form.website.open')}</a> ·
-			<a href="/org/page?all">{t('form.website.improve')}</a>
+			<a href="{ownPath('edit')}?all">{t('form.website.improve')}</a>
 		{:else if read.state === 'invalid'}
 			{t('form.website.invalid')}
 		{:else if read.state === 'kept'}

@@ -8,13 +8,14 @@ const touch = 44;
 
 qualityTests([
 	{ name: 'home', path: '/', touch },
-	{ name: 'saved', path: '/saved', touch },
+	{ name: 'organizations', path: '/companies', touch },
+	{ name: 'a list of jobs', path: '/jobs/saved', touch },
 	{ name: 'organization', path: '/joblist.today', touch },
 	{ name: 'menu', path: '/menu', touch },
 	{ name: 'language', path: '/menu/language', touch },
-	{ name: 'for organizations', path: '/org', touch },
-	{ name: 'add an organization', path: '/org/page', touch },
-	{ name: 'post a job', path: '/org/post', touch },
+	{ name: 'this device', path: '/device.local', touch },
+	{ name: 'sign in', path: '/signin', touch },
+	{ name: 'post a job, signed out', path: '/joblist.today/post', touch },
 	{
 		name: 'job dialog',
 		touch,
@@ -29,7 +30,7 @@ qualityTests([
 		name: 'delete a collection',
 		touch,
 		open: async (page) => {
-			await page.goto('/saved');
+			await page.goto('/jobs/saved');
 			await page.getByRole('button', { name: 'New list of jobs' }).click();
 			await page.locator('jl-collection-name input').fill('Dream jobs');
 			await page.locator('jl-collection-name button[type="submit"]').click();

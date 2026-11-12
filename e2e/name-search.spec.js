@@ -7,7 +7,7 @@ import { expect, test } from '@playwright/test';
  */
 test('a name at a provider offers its board', async ({ page }) => {
 	await page.goto('/');
-	await page.getByPlaceholder('Paste a website or a job board').fill('gitlab greenhouse');
+	await page.getByLabel('Follow an organization').fill('gitlab greenhouse');
 	const board = page.locator('jl-search ul a', { hasText: 'job-boards.greenhouse.io/gitlab' });
 	await expect(board).toBeVisible();
 	await expect(board).toContainText('Greenhouse');
@@ -15,7 +15,7 @@ test('a name at a provider offers its board', async ({ page }) => {
 
 test('a name offers the organizations it may be, with their website, and says where it was asked', async ({ page }) => {
 	await page.goto('/');
-	await page.getByPlaceholder('Paste a website or a job board').fill('Ableton');
+	await page.getByLabel('Follow an organization').fill('Ableton');
 	await expect(page.locator('jl-search ul a[href="/ableton.com"]')).toBeVisible({ timeout: 15000 });
 	await expect(page.locator('jl-search')).toContainText('Wikidata');
 	await page.locator('jl-search ul a[href="/ableton.com"]').click();

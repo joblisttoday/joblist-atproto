@@ -2,70 +2,83 @@ import { expect, test } from '@playwright/test';
 
 /**
  * joblist keeps no list of organizations or jobs: a first visit has nothing to browse. The
- * home says what it is for, with two doors (looking for work, hiring); once an organization
- * is followed, the home is its jobs.
+ * home says what it does and how, plainly, the same for everyone; once an organization is
+ * followed, the home is its jobs.
  */
-test('a first visit has two doors, and the home is Explore once one organization is followed', async ({ page }) => {
+test('a first visit says how it works, and the home is Explore once one organization is followed', async ({ page }) => {
 	await page.goto('/');
-	await expect(page.locator('h1')).toHaveText('Follow the jobs of organizations you choose');
-	await expect(page.getByRole('heading', { name: 'Looking for work?' })).toBeVisible();
-	await expect(page.getByRole('link', { name: /Publish your careers page/ })).toHaveAttribute('href', '/org');
-	await page.getByPlaceholder('Paste a website or a job board').fill('gitlab.com');
-	await page.getByPlaceholder('Paste a website or a job board').press('Enter');
+	await expect(page.locator('h1')).toHaveText('Follow organizations, see their open jobs');
+	await expect(page.locator('jl-welcome ol li')).toHaveCount(4);
+	await expect(page.locator('jl-welcome ol').getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/signin');
+	await page.getByLabel('Follow an organization').fill('gitlab.com');
+	await page.getByLabel('Follow an organization').press('Enter');
 	await expect(page).toHaveURL(/\/gitlab\.com$/);
 	await page.getByRole('button', { name: 'Follow', exact: true }).first().click();
 	await expect(page.getByRole('status').filter({ hasText: 'Following GitLab' })).toBeVisible();
 	await page.goto('/');
-	await expect(page.locator('h1')).toHaveText('Explore');
+	await expect(page.getByLabel('Find an organization or a job')).toBeVisible();
+	await expect(page.locator('jl-kept-organizations jl-row')).toHaveCount(1);
+	await page.goto('/companies');
 	await expect(page.locator('jl-kept-organizations jl-row')).toHaveCount(1);
 	await page.goto('/jobs');
 	await expect(page.locator('jl-explore')).toBeVisible();
+	await expect(page.getByRole('navigation', { name: 'Explore' }).getByRole('link')).toHaveText([/Organizations/, /Jobs/]);
 });
 
-test('the tabs say what is there: Explore, Jobs, Saved, Menu', async ({ page }) => {
+test('the tabs say what is there: Home, Explore, Menu; Explore opens the part last used', async ({ page }) => {
 	await page.goto('/');
 	const nav = page.getByRole('navigation', { name: 'Main' });
-	await expect(nav.getByRole('link')).toHaveText([/Explore/, /Jobs/, /Saved/, /Menu/]);
+	await expect(nav.getByRole('link')).toHaveText([/Home/, /Explore/, /Menu/]);
+	await expect(nav.getByRole('link', { name: /Explore/ })).toHaveAttribute('href', '/jobs');
 	await page.goto('/following');
-	await expect(page).toHaveURL(/\/$/);
+	await expect(page).toHaveURL(/\/companies$/);
+	await expect(nav.getByRole('link', { name: /Explore/ })).toHaveAttribute('href', '/companies');
 });
 
 test('the menu is short, and signing in is for organizations', async ({ page }) => {
 	await page.goto('/menu');
+	await expect(page.locator('jl-you')).toContainText('device.local');
 	const rows = page.locator('jl-menu-page menu > li');
-	await expect(rows).toHaveCount(6);
-	await expect(rows.first()).toContainText('This device');
-	await rows.nth(1).getByRole('link', { name: /Hiring/ }).click();
-	await expect(page).toHaveURL(/\/org$/);
+	await expect(rows).toHaveCount(5);
+	await rows.first().getByRole('link', { name: /Sign in/ }).click();
+	await expect(page).toHaveURL(/\/signin$/);
 	await expect(page.locator('ol li')).toHaveCount(3);
 	await expect(page.getByPlaceholder('example.org')).toBeVisible();
 });
 
-test('who you are: this device, with no account, private', async ({ page }) => {
+test('who you are: this device, its own profile, private and renamable', async ({ page }) => {
 	await page.goto('/menu');
-	await page.locator('jl-menu-page').getByRole('link', { name: /^Account/ }).click();
-	await expect(page).toHaveURL(/\/menu\/accounts$/);
+	await page.locator('jl-you').getByRole('link', { name: /device\.local/ }).click();
+	await expect(page).toHaveURL(/\/device\.local$/);
+	await expect(page.locator('h1')).toHaveText('device.local');
+	await page.getByRole('button', { name: 'More' }).click();
+	await page.getByRole('button', { name: 'Rename' }).click();
+	await page.locator('jl-collection-name input').fill('My laptop');
+	await page.locator('jl-collection-name').getByRole('button', { name: 'Rename' }).click();
+	await expect(page).toHaveURL(/\/my-laptop\.local$/);
+	await page.goto('/device.local');
+	await expect(page.locator('h1')).toHaveText('Page not found');
+});
+
+test('accounts: this device, and adding one', async ({ page }) => {
+	await page.goto('/menu/accounts');
 	await expect(page.locator('jl-accounts jl-row:first-of-type')).toContainText('This device');
 	await expect(page.getByRole('link', { name: 'Add an account' })).toHaveAttribute('href', /\/signin\?add/);
 });
 
-test("an organization's pages are its account's: signed out, they lead to how to sign in", async ({ page }) => {
-	for (const path of ['/org/post', '/org/embed', '/org/jobs/3abc']) {
+test("an organization's tools are under its page, its account's: anyone else is asked to sign in as it", async ({ page }) => {
+	for (const path of ['/example.org/post', '/example.org/edit', '/example.org/jobs/3abc']) {
 		await page.goto(path);
-		await expect(page).toHaveURL(/\/org$/);
-		await expect(page.locator('ol li')).toHaveCount(3);
+		await expect(page.getByText('sign in as @example.org')).toBeVisible();
+		await expect(page.getByRole('link', { name: 'Sign in' }).last()).toHaveAttribute('href', /\/signin\?next=%2Fexample\.org%2F/);
 	}
-	// Describing one's organization says how, to anyone: "Is this your organization?" leads there.
-	await page.goto('/org/page?url=https%3A%2F%2Fexample.org');
-	await expect(page).toHaveURL(/\/org\/page\?url=/);
+	await page.goto('/signin');
+	await expect(page.locator('jl-signin ol li')).toHaveCount(3);
 });
 
 test('old addresses lead to the new ones, with what follows the "#"', async ({ page }) => {
 	for (const [from, to] of [
-		['/organization', /\/org$/],
-		['/jobs/new', /\/org\/post$/],
 		['/apps', /\/menu\/apps$/],
-		['/me/lists/saved', /\/saved\/saved$/],
 		['/following/list#url=https%3A%2F%2Fbsky.app%2Fprofile%2Fjoblist.today%2Ffollows', /\/explore\/list#url=/]
 	]) {
 		await page.goto(from);

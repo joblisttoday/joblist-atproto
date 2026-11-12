@@ -8,13 +8,12 @@ import links from '#lib/data/nav.json';
  */
 
 /**
- * The job seeker's navigation (nav.json): Explore (the home: the search, and the
- * organizations you follow), Jobs (theirs), Saved (your lists of jobs), Menu. An
- * organization's, in /org, is made in Nav.svelte (docs/architecture.md).
+ * The navigation, the same for everyone (nav.json): Home (the search and what is new: a
+ * dashboard), Explore (Organizations /companies by tag, Jobs /jobs with your lists), Menu
+ * (who you are: your profile, /{domain} or /{name}.local; docs/architecture.md).
  * badge: the count it shows ("saved": the new jobs of the saved searches).
  * within: the paths it is the tab of, besides its own (Explore: every job, organization and list, and adding one).
- * account: the tab that shows the signed-in account (its picture).
- * @returns {{href: string, label: string, icon: import('#lib/icons.js').IconName, badge?: string, account?: boolean, within: string[]}[]}
+ * @returns {{href: string, label: string, icon: import('#lib/icons.js').IconName, badge?: string, within: string[]}[]}
  */
 export function navLinks() {
 	return links.map((link) => {
@@ -24,7 +23,6 @@ export function navLinks() {
 			label,
 			icon: /** @type {import('#lib/icons.js').IconName} */ (icon),
 			badge: 'badge' in link ? link.badge : undefined,
-			account: 'account' in link && link.account === true ? true : undefined,
 			within: ('within' in link && link.within) || []
 		};
 	});

@@ -2080,14 +2080,14 @@ var X = {
 		handleResolver: "https://public.api.bsky.app",
 		placeSearch: "https://photon.komoot.io/api/"
 	},
+	device: { name: "device" },
 	layout: {
 		wide: "(min-width: 64rem)",
 		dragThreshold: 6,
 		finePointer: "(hover: hover) and (pointer: fine)",
 		sheetPeekBelow: .3,
 		sheetFullAbove: .72,
-		copiedMs: 3e3,
-		bare: ["/jobs"]
+		copiedMs: 3e3
 	},
 	map: {
 		style: "https://tiles.openfreemap.org/styles/positron",
@@ -2202,6 +2202,7 @@ var X = {
 		spread: 2,
 		olderDays: 90,
 		placesSuggested: 30,
+		companyPlaces: 12,
 		prepareChunk: 500,
 		prepareWaitMs: 5e3,
 		placesShown: 3,
@@ -2372,6 +2373,7 @@ var X = {
 			"embed.iframe": "As a frame (any site)",
 			"embed.element": "As an element (styled by your site)",
 			"embed.copy": "Copy",
+			"embed.nothing": "No job board known, and no job posted here yet: nothing to show.",
 			"embed.copied": "Copied",
 			"job.distance.bike": "{minutes} min · {km} km",
 			"job.distance.walk": "{minutes} min · {km} km",
@@ -2433,6 +2435,7 @@ var X = {
 			"embed.iframe": "En cadre (tout site)",
 			"embed.element": "En élément (au style de votre site)",
 			"embed.copy": "Copier",
+			"embed.nothing": "Aucun site d’offres connu, et aucune offre publiée ici : rien à afficher.",
 			"embed.copied": "Copié",
 			"job.distance.bike": "{minutes} min · {km} km",
 			"job.distance.walk": "{minutes} min · {km} km",
@@ -2494,6 +2497,7 @@ var X = {
 			"embed.iframe": "Als Frame (jede Website)",
 			"embed.element": "Als Element (im Stil deiner Website)",
 			"embed.copy": "Kopieren",
+			"embed.nothing": "Keine Jobbörse bekannt und noch keine Stelle hier veröffentlicht: nichts zu zeigen.",
 			"embed.copied": "Kopiert",
 			"job.distance.bike": "{minutes} Min. · {km} km",
 			"job.distance.walk": "{minutes} Min. · {km} km",
@@ -2555,6 +2559,7 @@ var X = {
 			"embed.iframe": "Como marco (cualquier sitio)",
 			"embed.element": "Como elemento (con el estilo de tu sitio)",
 			"embed.copy": "Copiar",
+			"embed.nothing": "Ninguna bolsa de empleo conocida y ninguna oferta publicada aquí: nada que mostrar.",
 			"embed.copied": "Copiado",
 			"job.distance.bike": "{minutes} min · {km} km",
 			"job.distance.walk": "{minutes} min · {km} km",
@@ -4452,6 +4457,7 @@ function ns(e, t) {
 				"embed.iframe": "As a frame (any site)",
 				"embed.element": "As an element (styled by your site)",
 				"embed.copy": "Copy",
+				"embed.nothing": "No job board known, and no job posted here yet: nothing to show.",
 				"embed.copied": "Copied",
 				"job.distance.bike": "{minutes} min · {km} km",
 				"job.distance.walk": "{minutes} min · {km} km",
@@ -4513,6 +4519,7 @@ function ns(e, t) {
 				"embed.iframe": "En cadre (tout site)",
 				"embed.element": "En élément (au style de votre site)",
 				"embed.copy": "Copier",
+				"embed.nothing": "Aucun site d’offres connu, et aucune offre publiée ici : rien à afficher.",
 				"embed.copied": "Copié",
 				"job.distance.bike": "{minutes} min · {km} km",
 				"job.distance.walk": "{minutes} min · {km} km",
@@ -4574,6 +4581,7 @@ function ns(e, t) {
 				"embed.iframe": "Als Frame (jede Website)",
 				"embed.element": "Als Element (im Stil deiner Website)",
 				"embed.copy": "Kopieren",
+				"embed.nothing": "Keine Jobbörse bekannt und noch keine Stelle hier veröffentlicht: nichts zu zeigen.",
 				"embed.copied": "Kopiert",
 				"job.distance.bike": "{minutes} Min. · {km} km",
 				"job.distance.walk": "{minutes} Min. · {km} km",
@@ -4635,6 +4643,7 @@ function ns(e, t) {
 				"embed.iframe": "Como marco (cualquier sitio)",
 				"embed.element": "Como elemento (con el estilo de tu sitio)",
 				"embed.copy": "Copiar",
+				"embed.nothing": "Ninguna bolsa de empleo conocida y ninguna oferta publicada aquí: nada que mostrar.",
 				"embed.copied": "Copiado",
 				"job.distance.bike": "{minutes} min · {km} km",
 				"job.distance.walk": "{minutes} min · {km} km",
@@ -4695,7 +4704,7 @@ function ns(e, t) {
 		query: `${o() || ""} ${G(m)}`.trim(),
 		where: s() || "",
 		remote: c() === "remote" ? "remote" : ""
-	}, G(h))) : []), _ = /* @__PURE__ */ pt(() => G(g).slice(0, Math.max(1, Number(a()) || u.shown))), v = /* @__PURE__ */ pt(() => Z("embed.count", { count: G(g).length })), y = /* @__PURE__ */ pt(() => r() && !G(f) ? `${u.site}/${r()}` : G(f) ? `${u.site}/me/organization#${new URLSearchParams({ url: n() || "" })}` : u.site);
+	}, G(h))) : []), _ = /* @__PURE__ */ pt(() => G(g).slice(0, Math.max(1, Number(a()) || u.shown))), v = /* @__PURE__ */ pt(() => Z("embed.count", { count: G(g).length })), y = /* @__PURE__ */ pt(() => r() && !G(f) ? `${u.site}/${r()}` : G(f) ? `${u.site}/explore/organization#${new URLSearchParams({ url: n() || "" })}` : u.site);
 	var b = es();
 	Lr(b, 1, "svelte-uruhdc");
 	var x = tn(b), S = (e) => {

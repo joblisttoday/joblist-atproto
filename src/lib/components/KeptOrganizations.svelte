@@ -1,4 +1,5 @@
 <script>
+	import { session } from '#lib/auth/session.svelte.js';
 	import CardMenu from './CardMenu.svelte';
 	import Icon from './Icon.svelte';
 	import Row from './Row.svelte';
@@ -74,6 +75,7 @@
 				<CardMenu label={t('card.actions', { name })}>
 					{#snippet items(done)}
 						<li><a href={pageOf(item)} onclick={done}><Icon name="companies" /> {name}</a></li>
+						{#if session.handle && keyOf(item.url) === session.handle}<li><a href="/{session.handle}/edit" onclick={done}><Icon name="edit" /> {t('company.edit')}</a></li>{/if}
 						<li><button type="button" onclick={() => (forget(item.url), done())}><Icon name="close" /> {t('kept.forget', { name })}</button></li>
 					{/snippet}
 				</CardMenu>

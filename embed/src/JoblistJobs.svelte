@@ -45,7 +45,7 @@
 	const count = $derived(t('embed.count', { count: offers.length }));
 	// All of them, on joblist: the page of its board.
 	const whole = $derived(
-		organization && !asked ? `${settings.site}/${organization}` : asked ? `${settings.site}/me/organization#${new URLSearchParams({ url: board || '' })}` : settings.site
+		organization && !asked ? `${settings.site}/${organization}` : asked ? `${settings.site}/explore/organization#${new URLSearchParams({ url: board || '' })}` : settings.site
 	);
 </script>
 

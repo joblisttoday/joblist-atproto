@@ -1,13 +1,13 @@
 /**
- * Someone's lists of jobs as rows (/saved): Saved, Applied, Hidden and the ones they
- * name (job-collection.js), private in this browser, each at /saved/{id}.
+ * Someone's lists of jobs (chips on Jobs): Saved, Applied, Hidden and the ones they
+ * name (job-collection.js), private in this browser, each at /jobs/{id}.
  * @typedef {import('./job-collection.js').Collection} Collection
  * @typedef {{id: string, href: string, name: string, builtin: boolean, count: number, at: string}} OwnList
  *   name: empty for the built-in lists (named by the interface); at: its latest change known
  */
 
 /** Where a private list of jobs is. @param {string} id */
-export const jobListPath = (id) => `/saved/${id}`;
+export const jobListPath = (id) => `/jobs/${id}`;
 
 /** @param {Collection} collection */
 function latest(collection) {

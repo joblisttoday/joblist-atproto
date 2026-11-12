@@ -7,8 +7,12 @@ describe('suggestAddress', () => {
 			suggestAddress({ link: 'https://instagram.com/acme', website: 'https://acme.org', name: 'Acme', board: 'https://jobs.lever.co/acme', description: 'A coop', others: ['https://bsky.app/profile/acme.org', 'https://acme.org'] }),
 			'https://joblist.example'
 		);
-		expect(address.pathname).toBe('/org/page');
+		expect(address.pathname).toBe('/acme.org/edit');
 		expect(Object.fromEntries([...address.searchParams].filter(([k]) => k !== 'link'))).toEqual({ url: 'https://acme.org', name: 'Acme', board: 'https://jobs.lever.co/acme', description: 'A coop' });
 		expect(address.searchParams.getAll('link')).toEqual(['https://bsky.app/profile/acme.org', 'https://instagram.com/acme']);
+	});
+
+	it('leads to signing in when it has no domain of its own (only another site\'s page)', () => {
+		expect(suggestAddress({ link: 'https://instagram.com/some.coop', name: 'Some' })).toBe('/signin');
 	});
 });

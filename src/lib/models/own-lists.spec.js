@@ -14,13 +14,13 @@ const rows = ownLists(collections);
 describe('own lists', () => {
 	it('lists the lists of jobs: the built-in ones, then the named ones', () => {
 		expect(rows.map((r) => [r.href, r.count, r.builtin])).toEqual([
-			['/saved/saved', 1, true],
-			['/saved/applied', 0, true],
-			['/saved/cdream', 2, false]
+			['/jobs/saved', 1, true],
+			['/jobs/applied', 0, true],
+			['/jobs/cdream', 2, false]
 		]);
 	});
 
 	it('shows at a glance the few with something in them, the latest changed first', () => {
-		expect(recentLists(rows, 3).map((r) => r.href)).toEqual(['/saved/cdream', '/saved/saved']);
+		expect(recentLists(rows, 3).map((r) => r.href)).toEqual(['/jobs/cdream', '/jobs/saved']);
 	});
 });

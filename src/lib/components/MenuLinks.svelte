@@ -5,15 +5,16 @@
 	 * A group of the menu's rows, as every row (Row.svelte): each a place (a link, ›) or an
 	 * action (a button), with its icon, what it is, and its current value at the end.
 	 * hidden: the label is said to screen readers only (a page's one group, under its title).
-	 * @type {{label: string, items: import('#lib/navigation/nav.js').MenuLink[], hidden?: boolean}}
+	 * card: the rows in a rounded box, as the Menu's groups (as enform's settings).
+	 * @type {{label: string, items: import('#lib/navigation/nav.js').MenuLink[], hidden?: boolean, card?: boolean}}
 	 */
-	let { label, items, hidden = false } = $props();
+	let { label, items, hidden = false, card = false } = $props();
 	const id = $props.id();
 </script>
 
 <section aria-labelledby={id}>
 	{#if hidden}<jl-visually-hidden><h2 {id}>{label}</h2></jl-visually-hidden>{:else}<h2 {id}>{label}</h2>{/if}
-	<menu>
+	<menu data-card={card || undefined}>
 		{#each items as item (item.label)}
 			<li><Row title={item.label} icon={item.icon} href={item.href} onclick={item.onclick} external={item.external} count={item.value} chips={item.chips} /></li>
 		{/each}
@@ -33,5 +34,19 @@
 		display: block;
 		margin: 0;
 		padding: 0;
+	}
+	menu[data-card] {
+		border: var(--border);
+		border-radius: var(--radius-large);
+		overflow: hidden;
+	}
+	menu[data-card] > li > :global(jl-row) {
+		padding-inline: var(--space-s);
+	}
+	menu[data-card] > li:last-child > :global(jl-row) {
+		border-bottom: 0;
+	}
+	menu[data-card] > li > :global(jl-row:has(a:hover, button:hover)) {
+		background: var(--color-soft);
 	}
 </style>

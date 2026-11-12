@@ -4,21 +4,24 @@
 	import CompanyDelete from '#lib/components/CompanyDelete.svelte';
 	import Row from '#lib/components/Row.svelte';
 	import CompanyEditor from '#lib/components/CompanyEditor.svelte';
+	import OwnOnly from '#lib/components/OwnOnly.svelte';
 	import { page } from '$app/state';
 	import { ownOrganization as org } from '#lib/network/own-organization.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * Editing its page (seen by visitors at /{domain}): each part done or not, each edited alone
-	 * (?field=…), all of it at once (?all), or its description deleted. With ?field, ?all or
-	 * what a link gives (?url=…), the form (CompanyEditor).
+	 * Editing its page (/{domain}/edit, its own account's: OwnOnly): each part done or not, each
+	 * edited alone (?field=…), all of it at once (?all), or its description deleted. With ?field,
+	 * ?all or what a link gives (?url=…), the form (CompanyEditor).
 	 */
+	const handle = $derived(page.params.handle || '');
 	const editing = $derived(['field', 'all', 'url', 'name', 'board', 'key', 'text', 'title', 'next'].some((k) => page.url.searchParams.has(k)));
 	const fields = /** @type {const} */ (['description', 'jobBoard', 'locations', 'tags']);
 </script>
 
 <svelte:head><title>{t('orgs.page')} · {config.name}</title></svelte:head>
 
+<OwnOnly {handle}>
 {#if editing}
 	<CompanyEditor />
 {:else}
@@ -29,7 +32,7 @@
 		{#each fields as field (field)}
 			{@const done = !org.missing.includes(field)}
 			<Row
-				href="/org/page?field={field}"
+				href="/{handle}/edit?field={field}"
 				icon={done ? 'added' : 'add'}
 				title={t(`orgs.field.${field}`)}
 				chip={done ? null : { text: t('orgs.field.add'), tone: 'warn' }}
@@ -37,14 +40,15 @@
 		{/each}
 	</jl-rows>
 	<menu>
-		<a href="/org/page?all">{t('orgs.editAll')}</a>
+		<a href="/{handle}/edit?all">{t('orgs.editAll')}</a>
 		<CompanyDelete company={org.company} />
 	</menu>
 {:else}
 	<p>{t('orgs.none')}</p>
-	<menu><a href="/org/page?all" data-primary><Icon name="add" /> {t('orgs.describe')}</a></menu>
+	<menu><a href="/{handle}/edit?all" data-primary><Icon name="add" /> {t('orgs.describe')}</a></menu>
 {/if}
 {/if}
+</OwnOnly>
 
 <style>
 	jl-rows {

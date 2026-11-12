@@ -1,6 +1,9 @@
+import { keyOf } from './kept.js';
+
 /**
- * The add form, filled in with what was found of an organization (/org/page?url=…&name=…&board=…
- * &description=…&link=…): from its local profile, the add-on.
+ * The add form, filled in with what was found of an organization (/{domain}/edit?url=…&name=…&board=…
+ * &description=…&link=…): from its local profile, the add-on. Only its own account describes it,
+ * under its domain: known only by another site's page (an Instagram profile), how to sign in.
  * @param {{link: string, website?: string, name?: string, board?: string, description?: string, others?: string[]}} found
  *   link: what it was kept by; website: its own, when known; board: its job board's address;
  *   others: its other links (a Bluesky profile…)
@@ -14,5 +17,6 @@ export function suggestAddress({ link, website = '', name = '', board = '', desc
 	if (description) params.set('description', description);
 	// Its other links, and the link it was kept by when it is not its website or board.
 	for (const other of new Set([...others, link])) if (other && other !== url && other !== board) params.append('link', other);
-	return `/org/page?${params}`;
+	const domain = keyOf(url);
+	return domain ? `/${domain}/edit?${params}` : '/signin';
 }

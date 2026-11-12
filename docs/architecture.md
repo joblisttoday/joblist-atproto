@@ -18,27 +18,30 @@ One repository, two workflows, one host, no secret but the lexicon account's pas
 
 ## Information architecture
 
-Two areas, by role; the address says which one you are in. Each has four tabs, at the
-bottom at every width (`src/lib/components/Nav.svelte`, `src/lib/data/nav.json`).
+One app, the same for everyone: three tabs, at the bottom at every width
+(`src/lib/components/Nav.svelte`, `src/lib/data/nav.json`). It says what it does and how,
+plainly: a tool, no marketing.
 
-| | Job seeker (default, never signs in) | Organization (signed in with its domain) |
-|---|---|---|
-| Home | `/` **Explore**: the search (a name, a link, a list) and the organizations followed; before any, the welcome with two doors | `/org` **Organization** (its icon): its job offers (cards), Post a job, its page's status, its embed, its link, sign out |
-| 2nd tab | `/jobs` **Jobs**: the followed organizations' jobs; with searches saved, only those matching one of them ("Your searches", the default; each search; All jobs) | `/org/post` **Post a job** |
-| 3rd tab | `/saved` **Saved**: Saved, Applied, Hidden, named lists | `/{domain}` **@domain** (its logo): its page, as visitors see it |
-| 4th tab | `/menu` **Menu** | `/menu` **Menu** |
-| Inside | `/{domain}` an organization · `/job/{did}/{rkey}` a posted job · `/saved/{id}` a list · `/explore/list` follow a Bluesky list · `/explore/organization#url=…` a link's organization | `/org/page` its page's parts (`?field=…` one alone, `?all` everything) · `/org/jobs/{rkey}` edit an offer · `/org/embed` its jobs on its website |
+| Tab | Page |
+|---|---|
+| `/` **Home** | the search (a name, a link, a list), then a dashboard, each row a way into Explore: the new jobs of your searches, your lists of jobs with their counts, your tags, the organizations followed last; before following any, how it works (four lines) and the box to start |
+| **Explore** | one view, two parts, switched at its top (`ExploreTabs`); its tab opens the part last used. `/companies` **Organizations**: the ones followed, by tag (`#tag=…`), and the box to follow another. `/jobs` **Jobs**: their jobs (with searches saved, only those matching one of them: "Your searches", the default; each search; All jobs), and your lists as chips: Open jobs, Saved, Applied, Hidden, the ones you name (`/jobs/{id}`), a new one |
+| `/menu` **Menu** | who you are (opens your profile), Switch account, Sign in (signed out: for organizations), Language, Move to another device, Apps and add-on, Source code; joblist's mark at the end |
 
-- Menu, the same for both: Account (this device and each account, as chips, or an account: `/menu/accounts`), Hiring? or
-  Your organization (`/org`), Browse jobs (an organization), Language, Move to another
-  device, Apps and add-on (`/menu/apps`), Source code.
-- Signed in as an organization that follows nothing, `/` opens `/org`.
-- Signed in as an organization, the Menu keeps its tabs; Browse jobs (`/jobs`) shows the seeker's.
-- Old addresses lead to the new ones, with what follows the `?` and `#`
-  (`src/lib/components/Redirect.svelte`): `/organization*` → `/org*`, `/add` → `/org/page`,
-  `/jobs/new` → `/org/post`, `/job/{did}/{rkey}/edit` → `/org/jobs/{rkey}`, `/me/lists/{id}` →
-  `/saved/{id}`, `/following/list` → `/explore/list`, `/me/organization` →
-  `/explore/organization`, `/apps` → `/menu/apps`.
+- Everyone is a profile, with the same view: an account at `/{domain}` (an organization's
+  careers page), this device at `/{name}.local` (`DeviceProfile`: its name, and links to what
+  it keeps, in Explore; private; one per browser, renamable, `src/lib/local/device.svelte.js`).
+  There is no `/org`, `/me` nor `/saved`.
+- Inside Explore: `/{domain}` an organization · `/{domain}/embed` its jobs on a website · `/job/{did}/{rkey}` a posted job · `/jobs/{id}` a list of jobs · `/explore/list` follow a Bluesky list · `/explore/organization#url=…` a link's organization.
+- An organization's tools are under its page, its own account's only (`OwnOnly`: anyone else
+  is asked to sign in as it): `/{domain}/edit` its page's parts (`?field=…` one alone, `?all`
+  everything, `?url=…` what a link gives), `/{domain}/post` post a job, `/{domain}/jobs/{rkey}`
+  edit an offer. Its own page shows it, until its jobs are listed, what to do in order
+  (`OrganizationSetup`: describe it; link its job board or post jobs here; optionally, show
+  them on its website), then its offers (to edit or renew); its "…" has Edit, Post a job,
+  Show these jobs on your site. `/signin` says how to sign in with a domain.
+- Old addresses that still lead somewhere (`src/lib/components/Redirect.svelte`), with what
+  follows the `?` and `#`: `/following` → `/companies`, `/following/list` → `/explore/list`, `/apps` → `/menu/apps`.
 - A change to a page, a tab or an address is checked against this table first; the table
   changes with it.
 

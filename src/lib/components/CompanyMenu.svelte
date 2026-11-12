@@ -1,12 +1,14 @@
 <script>
 	import CardMenu from './CardMenu.svelte';
 	import Icon from './Icon.svelte';
-	import { boardUrl } from '#lib/models/company.js';
+	import { boardUrl, mayDescribe } from '#lib/models/company.js';
+	import { session } from '#lib/auth/session.svelte.js';
 	import { isKept, toggleKept } from '#lib/network/kept.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * An organization card's "…": save it (in this browser), its job board, its website, its link.
+	 * An organization card's "…": save it (in this browser), its job board, its website, its link;
+	 * to its own account, edit it.
 	 * @type {{company: import('#lib/models/company.js').Company}}
 	 */
 	let { company } = $props();
@@ -28,6 +30,7 @@
 
 <CardMenu label={t('card.actions', { name: company.name })}>
 	{#snippet items(done)}
+		{#if mayDescribe(company, session)}<li><a href="/{company.key}/edit" onclick={done}><Icon name="edit" /> {t('company.edit')}</a></li>{/if}
 		<li><button type="button" onclick={() => (toggleKept(company), done())}><Icon name={saved ? 'savedOn' : 'save'} /> {t(saved ? 'follow.done' : 'follow.do')}</button></li>
 		{#if board}<li><a href={board} target="_blank" rel="noopener" onclick={done}><Icon name="external" /> {t('company.jobBoard')}</a></li>{/if}
 		{#if company.url}<li><a href={company.url} target="_blank" rel="noopener" onclick={done}><Icon name="external" /> {t('card.website')}</a></li>{/if}

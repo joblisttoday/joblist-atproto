@@ -1,4 +1,5 @@
 <script>
+	import { ownPath } from '#lib/network/own-organization.svelte.js';
 	import config from '#lib/data/config.json';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { accountOf } from '#lib/network/accounts.svelte.js';
@@ -11,8 +12,8 @@
 	 */
 	let { company } = $props();
 	const manager = $derived(session.handle === company.key);
-	const post = $derived(`/org/post?company=${encodeURIComponent(company.key)}`);
-	const edit = $derived('/org/page');
+	const post = $derived(`${ownPath('post')}?company=${encodeURIComponent(company.key)}`);
+	const edit = $derived(ownPath('edit'));
 	// Its domain is already its Bluesky handle: signing in with it is the only step left.
 	const onBluesky = $derived(Boolean(accountOf(company.key)));
 	const signin = $derived(`/signin?handle=${encodeURIComponent(company.key)}&next=${encodeURIComponent(`/${company.key}`)}`);

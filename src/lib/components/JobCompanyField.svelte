@@ -1,4 +1,5 @@
 <script>
+	import { ownPath } from '#lib/network/own-organization.svelte.js';
 	import { tick } from 'svelte';
 	import { data } from '#lib/network/network.svelte.js';
 	import { searchCompanies } from '#lib/models/company.js';
@@ -24,7 +25,7 @@
 
 	const chosen = $derived(company ? data.companies.get(company) : undefined);
 	const results = $derived(searchCompanies(data.companies.values(), query, RESULTS));
-	const describe = $derived(`/org/page?${new URLSearchParams({ url: query, next: back })}`);
+	const describe = $derived(`${ownPath('edit')}?${new URLSearchParams({ url: query, next: back })}`);
 	// One status, always there, so each change of the results is heard.
 	const said = $derived(
 		company ? (picked ? t('post.company.chosen', { name: picked }) : '') : query.trim() ? t('post.company.found', { count: results.length }) : ''

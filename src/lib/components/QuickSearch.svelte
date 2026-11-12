@@ -28,9 +28,11 @@
 	 * In the header, on phones, it is a button that opens the box over the header;
 	 * inline (a page's own, the home's), always a box.
 	 * placeholder: what the box asks for (by default: search, or paste a link).
-	 * @type {{inline?: boolean, placeholder?: string}}
+	 * legend: its name, shown above the box (the home's, in place of a title).
+	 * @type {{inline?: boolean, placeholder?: string, legend?: string}}
 	 */
-	let { inline = false, placeholder = '' } = $props();
+	let { inline = false, placeholder = '', legend = '' } = $props();
+	const id = $props.id();
 	let text = $state('');
 	let open = $state(false);
 	/** @type {HTMLInputElement | undefined} */
@@ -117,6 +119,7 @@
 	}
 </script>
 
+{#if legend}<label for={id}>{legend}</label>{/if}
 <jl-search bind:this={box} open={open || undefined} inline={inline || undefined} onfocusout={leave}>
 	<button type="button" aria-expanded={open} onclick={show}><Icon name="search" label={t('quick.label')} /></button>
 	<form role="search" onsubmit={submit}>
@@ -124,9 +127,10 @@
 		<input
 			bind:this={input}
 			bind:value={text}
+			{id}
 			type="search"
 			placeholder={placeholder || t('quick.placeholder')}
-			aria-label={placeholder || t('quick.placeholder')}
+			aria-label={legend ? undefined : placeholder || t('quick.placeholder')}
 			enterkeyhint="search"
 			autocomplete="off"
 			onkeydown={keys}
@@ -187,6 +191,11 @@
 </jl-search>
 
 <style>
+	label {
+		display: block;
+		margin: var(--space-m) 0 var(--space-s);
+		font-weight: var(--font-weight-strong);
+	}
 	jl-search {
 		position: relative;
 		display: flex;

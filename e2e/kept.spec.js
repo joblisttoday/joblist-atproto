@@ -40,14 +40,13 @@ test('words offer the saved organizations they name, and search their jobs', asy
 	await expect(page).toHaveURL(/\/jobs#q=gitlab/);
 });
 
-test('a kept organization joblist does not know opens its profile, to forget or suggest it', async ({ page }) => {
+test('a kept organization joblist does not know opens its profile, to forget it', async ({ page }) => {
 	await page.goto('/');
 	await search(page, 'instagram.com/some.coop');
 	await page.getByRole('button', { name: 'Follow', exact: true }).first().click();
 	await page.goto('/');
 	await page.locator('jl-kept-organizations jl-row a').first().click();
 	await expect(page).toHaveURL(/\/explore\/organization#url=/);
-	await expect(page.getByRole('link', { name: 'Is this your organization?' })).toHaveAttribute('href', /^\/org\/page\?url=https%3A%2F%2Finstagram\.com%2Fsome\.coop/);
 	await page.getByRole('button', { name: 'Following', exact: true }).first().click();
 	await expect(page.getByRole('button', { name: 'Follow', exact: true }).first()).toBeVisible();
 });

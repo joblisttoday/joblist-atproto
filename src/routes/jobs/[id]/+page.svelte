@@ -5,6 +5,8 @@
 	import CollectionName from '#lib/components/CollectionName.svelte';
 	import ConfirmDialog from '#lib/components/ConfirmDialog.svelte';
 	import Empty from '#lib/components/Empty.svelte';
+	import ExploreTabs from '#lib/components/ExploreTabs.svelte';
+	import ListChips from '#lib/components/ListChips.svelte';
 	import Icon from '#lib/components/Icon.svelte';
 	import JobMarks from '#lib/components/JobMarks.svelte';
 	import PageHeader from '#lib/components/PageHeader.svelte';
@@ -13,8 +15,8 @@
 	import { formatNumber, t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * One private list of jobs (Saved, Applied, Hidden or one someone named): its jobs,
-	 * and for a named one, rename and delete.
+	 * One private list of jobs (/jobs/{id}: Saved, Applied, Hidden or one someone named), in
+	 * Explore's Jobs: its jobs, and for a named one, rename and delete.
 	 */
 	const id = $derived(page.params.id || '');
 	const collection = $derived(collectionOf(kept.state, id));
@@ -33,13 +35,15 @@
 
 	async function remove() {
 		deleteCollection(id);
-		await goto('/saved', { replace: true });
+		await goto('/jobs', { replace: true });
 	}
 </script>
 
 <svelte:head><title>{name || t('me.lists.title')} · {config.name}</title></svelte:head>
 
 <jl-me-list>
+	<ExploreTabs />
+	<ListChips />
 	{#if collection}
 		<PageHeader title={name} intro={[t('saved.matching', { count: formatNumber(count) }), t('list.private')].join(' · ')}>
 			{#snippet actions()}
@@ -58,7 +62,7 @@
 		<JobMarks {collection} />
 	{:else}
 		<PageHeader title={t('me.lists.title')} />
-		<Empty text={t('me.list.missing')}><a href="/saved"><Icon name="saved" /> {t('nav.saved')}</a></Empty>
+		<Empty text={t('me.list.missing')}><a href="/jobs"><Icon name="jobs" /> {t('lists.open')}</a></Empty>
 	{/if}
 </jl-me-list>
 
@@ -67,7 +71,7 @@
 		display: block;
 		max-width: var(--reading-width);
 		margin-inline: auto;
-		padding-bottom: var(--space-xl);
+		padding: var(--space-s) 0 var(--space-xl);
 	}
 	jl-me-list :global(jl-page-header menu > *) {
 		font-size: var(--font-size-small);

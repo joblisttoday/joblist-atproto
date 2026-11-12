@@ -24,7 +24,11 @@ test("the site's own pages and files stay as they are", async ({ request }) => {
 
 test('a domain that publishes no page has what the browser finds of it', async ({ page }) => {
 	await page.goto('/example-not-on-joblist.org');
-	await expect(page.getByRole('link', { name: 'Is this your organization?' })).toBeVisible({ timeout: 20_000 });
+	// No job board known: looking for one by its name is on its action line, with Follow and "…".
+	await expect(page.locator('jl-company-actions').getByRole('button', { name: 'Look for its job board' })).toBeVisible({ timeout: 20_000 });
+	await expect(page.getByText('Is this your organization?')).toHaveCount(0);
+	// Only once asked does it say what it found.
+	await expect(page.getByText('None found under its name')).toHaveCount(0);
 });
 
 test("an organization's page is one page: old tab addresses open it", async ({ page }) => {
@@ -39,6 +43,6 @@ test('a name that is no domain is no organization: not found', async ({ page }) 
 	for (const path of ['/test.env', '/fake-fomaine.no-tld']) {
 		await page.goto(path);
 		await expect(page.locator('h1')).toContainText('Page not found');
-		await expect(page.getByRole('link', { name: 'Is this your organization?' })).toHaveCount(0);
+		await expect(page.locator('jl-company-header')).toHaveCount(0);
 	}
 });

@@ -1,4 +1,5 @@
 <script>
+	import { ownPath } from '#lib/network/own-organization.svelte.js';
 	import CardMenu from './CardMenu.svelte';
 	import ConfirmDialog from './ConfirmDialog.svelte';
 	import Icon from './Icon.svelte';
@@ -64,7 +65,7 @@
 	{#snippet menu()}
 		<CardMenu label={t('card.actions', { name: post.title })}>
 			{#snippet items(done)}
-				<li><a href="/org/jobs/{post.rkey}" onclick={done}><Icon name="edit" /> {t('post.change')}</a></li>
+				<li><a href={ownPath(`jobs/${post.rkey}`)} onclick={done}><Icon name="edit" /> {t('post.change')}</a></li>
 				<li><button type="button" disabled={busy} onclick={() => (renew(), done())}><Icon name="next" /> {t('post.renew', { count: config.jobPost.days })}</button></li>
 				<li><button type="button" onclick={() => copy(done)}><Icon name="copy" /> {t(copied ? 'menu.copied' : 'card.copy')}</button></li>
 				<li><button type="button" disabled={busy} onclick={() => (confirmer?.ask(), done())}><Icon name="delete" /> {t('post.delete')}</button></li>

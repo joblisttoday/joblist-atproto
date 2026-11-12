@@ -4,7 +4,10 @@
 	import { goto } from '$app/navigation';
 	import config from '#lib/data/config.json';
 	import CompanyPage from '#lib/components/CompanyPage.svelte';
+	import DeviceProfile from '#lib/components/DeviceProfile.svelte';
+	import { device } from '#lib/local/device.svelte.js';
 	import OrganizationProfile from '#lib/components/OrganizationProfile.svelte';
+	import OrganizationSetup from '#lib/components/OrganizationSetup.svelte';
 	import { isDomain, keptUrl, keyOf } from '#lib/models/kept.js';
 	import NotFound from '#lib/components/NotFound.svelte';
 	import Pending from '#lib/components/Pending.svelte';
@@ -21,6 +24,7 @@
 	 * domain is its handle), one page (/{domain}). Else an account:
 	 * who it is, then the jobs it posted (/{handle}): its own things, not its edits of others'.
 	 * Else a domain: what this browser finds of it (its local profile). Else not found.
+	 * This device's own profile is /{name}.local (DeviceProfile): the same view, private.
 	 * @type {{children: import('svelte').Snippet}}
 	 */
 	let { children } = $props();
@@ -42,8 +46,8 @@
 	// Its own account, its organization record and its job offers, read from its server (lookup).
 	$effect(() => {
 		const asked = handle;
-		// Not a domain, not a DID: no account's handle, nothing to ask.
-		if (!isDomain(asked) && !asked.startsWith('did:')) {
+		// Not a domain, not a DID (a .local name is this device's): no account's handle, nothing to ask.
+		if ((!isDomain(asked) && !asked.startsWith('did:')) || asked.endsWith('.local')) {
 			did = null;
 			return;
 		}
@@ -77,12 +81,16 @@
 	{/if}
 </svelte:head>
 
-{#if company}
+{#if handle.endsWith('.local')}
+	{#if handle === `${device.name}.local`}<DeviceProfile />{:else}<NotFound title={t('notFound.title')} text={t('notFound.path', { path: `/${handle}` })} />{/if}
+{:else if company}
 	<CompanyPage {company} />
 {:else if did === undefined}
 	<Pending />
 {:else if domain && !posted}
 	<OrganizationProfile link={domain} />
+	<!-- Its own, not described yet: what to do, under what visitors see now. -->
+	{#if self}<OrganizationSetup />{/if}
 {:else if did === null}
 	<!-- Not an account: most often a mistyped page address. -->
 	<NotFound title={t('notFound.title')} text={t('notFound.path', { path: `/${handle}` })} />
@@ -90,12 +98,13 @@
 	<jl-profile self={self || undefined}>
 		<ProfileHeader did={did || undefined} {handle}>
 			<menu>
-				<!-- Its own: managing it, and signing out, are in /org. -->
-				{#if self}<a href="/org"><Icon name="settings" /> {t('orgs.manage')}</a>{/if}
+				<!-- Its own: describing it (/{handle}/edit). -->
+				{#if self}<a href="/{handle}/edit"><Icon name="edit" /> {t('orgs.describe')}</a>{/if}
 				<PageMenu />
 			</menu>
 		</ProfileHeader>
 		{@render children()}
+		{#if self}<OrganizationSetup />{/if}
 	</jl-profile>
 {/if}
 

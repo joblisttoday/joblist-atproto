@@ -83,11 +83,11 @@
 </jl-job-filters>
 
 <style>
-	/* Stays in reach under the header while scrolling the results. */
+	/* Stays in reach at the top while scrolling the results. */
 	jl-job-filters {
 		display: block;
 		position: sticky;
-		top: var(--header-height);
+		top: 0;
 		z-index: 5;
 		margin: 0 calc(-1 * var(--gutter));
 		padding: var(--space-s) var(--gutter);

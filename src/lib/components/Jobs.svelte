@@ -1,4 +1,5 @@
 <script>
+	import { ownPath } from '#lib/network/own-organization.svelte.js';
 	import config from '#lib/data/config.json';
 	import JobFilters from './JobFilters.svelte';
 	import JobGroup from './JobGroup.svelte';
@@ -236,7 +237,7 @@
 			<p>
 				{t('jobs.gone')}
 				{#if companies[0].url}<a href={companies[0].url} target="_blank" rel="noopener">{t('jobs.gone.website')}</a> ·{/if}
-				<a href="/org/page?field=jobBoard">{t('jobs.gone.fix')}</a>
+				<a href="{ownPath('edit')}?field=jobBoard">{t('jobs.gone.fix')}</a>
 			</p>
 		{:else}
 			<p>{jobs.length ? t('search.none') : t('jobs.none')}</p>

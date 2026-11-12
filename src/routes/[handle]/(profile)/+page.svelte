@@ -27,7 +27,7 @@
 	<jl-visually-hidden><h2 id="profile-jobs">{t('profile.jobs')}</h2></jl-visually-hidden>
 	{#if profile.self}
 		{#if posts.length}<MyJobPosts {posts} />{/if}
-		<menu><a href="/jobs/new" data-add={posts.length ? '' : 'main'}><Icon name="add" /> {t('post.title')}</a></menu>
+		<menu><a href="/{profile.handle}/post" data-add={posts.length ? '' : 'main'}><Icon name="add" /> {t('post.title')}</a></menu>
 	{:else if posts.length}
 		<menu data-views><ViewSwitch bind:view={shown.view} page="jobs" {mapless} /></menu>
 		{#if shown.view === 'map' && !mapless}

@@ -21,14 +21,16 @@
 		"handleResolver": "https://public.api.bsky.app",
 		"placeSearch": "https://photon.komoot.io/api/"
 	},
+	"device": {
+		"name": "device"
+	},
 	"layout": {
 		"wide": "(min-width: 64rem)",
 		"dragThreshold": 6,
 		"finePointer": "(hover: hover) and (pointer: fine)",
 		"sheetPeekBelow": 0.3,
 		"sheetFullAbove": 0.72,
-		"copiedMs": 3000,
-		"bare": ["/jobs"]
+		"copiedMs": 3000
 	},
 	"map": {
 		"style": "https://tiles.openfreemap.org/styles/positron",
@@ -124,6 +126,7 @@
 		"spread": 2,
 		"olderDays": 90,
 		"placesSuggested": 30,
+		"companyPlaces": 12,
 		"prepareChunk": 500,
 		"prepareWaitMs": 5000,
 		"placesShown": 3,

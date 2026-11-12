@@ -1,6 +1,5 @@
 [
-	{ "href": "/", "icon": "search", "label": "nav.explore", "within": ["/following", "/explore"] },
-	{ "href": "/jobs", "icon": "jobs", "label": "nav.jobs", "badge": "saved", "within": ["/jobs", "/job"] },
-	{ "href": "/saved", "icon": "saved", "label": "nav.saved", "within": [] },
-	{ "href": "/menu", "icon": "menu", "label": "nav.menu", "within": ["/me", "/signin"] }
+	{ "href": "/", "icon": "home", "label": "nav.home", "within": [] },
+	{ "href": "/jobs", "icon": "explore", "label": "nav.explore", "badge": "saved", "within": ["/jobs", "/job", "/companies", "/explore", "/following"] },
+	{ "href": "/menu", "icon": "menu", "label": "nav.menu", "within": ["/signin"] }
 ]
