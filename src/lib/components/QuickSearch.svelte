@@ -18,9 +18,10 @@
 	 * the saved organizations (/jobs).
 	 * In the header, on phones, it is a button that opens the box over the header;
 	 * inline (a page's own, the home's), always a box.
-	 * @type {{inline?: boolean}}
+	 * placeholder: what the box asks for (by default: search, or paste a link).
+	 * @type {{inline?: boolean, placeholder?: string}}
 	 */
-	let { inline = false } = $props();
+	let { inline = false, placeholder = '' } = $props();
 	let text = $state('');
 	let open = $state(false);
 	/** @type {HTMLInputElement | undefined} */
@@ -83,8 +84,8 @@
 			bind:this={input}
 			bind:value={text}
 			type="search"
-			placeholder={t('quick.placeholder')}
-			aria-label={t('quick.placeholder')}
+			placeholder={placeholder || t('quick.placeholder')}
+			aria-label={placeholder || t('quick.placeholder')}
 			enterkeyhint="search"
 			autocomplete="off"
 			onkeydown={keys}

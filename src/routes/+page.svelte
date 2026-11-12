@@ -29,13 +29,22 @@
 	const max = config.me.glance;
 	const tags = $derived(keptTags(kept.list));
 	let tag = $state('');
+	// Something kept here (an organization, a search): the home is what you keep.
+	const started = $derived(kept.list.length > 0 || searches.list.length > 0);
 </script>
 
 <svelte:head><title>{config.name}</title></svelte:head>
 
-<jl-home>
-	<h1>{t('home.heading')}</h1>
-	<QuickSearch inline />
+<jl-home started={started || undefined}>
+	{#if started}
+		<h1><jl-visually-hidden>{config.name}</jl-visually-hidden></h1>
+		<QuickSearch inline />
+	{:else}
+		<!-- Nothing kept yet: joblist has nothing to browse, it reads the organizations one brings. -->
+		<h1>{t('home.heading')}</h1>
+		<QuickSearch inline placeholder={t('quick.placeholder.start')} />
+		<p>{t('home.how')}</p>
+	{/if}
 
 	{#if searches.list.length}
 		<section aria-labelledby="home-searches">
@@ -72,6 +81,17 @@
 		margin: 0 0 var(--space-l);
 		text-align: center;
 	}
+	jl-home > p {
+		margin-top: var(--space-m);
+		color: var(--color-muted);
+		text-align: center;
+	}
+	jl-home[started] {
+		padding-top: var(--space-m);
+	}
+	jl-home[started] h1 {
+		margin: 0;
+	}
 	section {
 		margin-top: var(--space-xl);
 	}
@@ -92,7 +112,7 @@
 		border-color: var(--color-accent);
 	}
 	@media (min-width: 48rem) {
-		jl-home {
+		jl-home:not([started]) {
 			padding-top: 18vh;
 		}
 		h1 {
