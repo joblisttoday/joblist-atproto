@@ -585,5 +585,6 @@
 	"kept.new": "{count} esta semana",
 	"kept.noBoard": "Ningún portal de empleo conocido",
 	"kept.find": "Buscarlo",
-	"kept.title": "Tus organizaciones"
+	"kept.title": "Tus organizaciones",
+	"job.hide": "Ocultar esta oferta"
 }

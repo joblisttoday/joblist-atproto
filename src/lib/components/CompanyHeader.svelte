@@ -55,7 +55,7 @@
 				{:else if company.url}<a href={company.url} target="_blank" rel="noopener">{company.key} <Icon name="external" /></a>{:else}{company.key}{/if}
 				{#if account}· <a href={config.links.profile.replace('{handle}', account.handle)} target="_blank" rel="noopener">Bluesky <Icon name="external" /></a>{/if}
 				{#if board}· <a href={board} target="_blank" rel="noopener noreferrer">{t('company.jobBoard')} <Icon name="external" /></a>{/if}
-				{#each others as link (link)}<span data-sep> · </span><a href={link} target="_blank" rel="noopener noreferrer">{new URL(link).hostname.replace(/^www\./, '')}</a>{/each}
+				{#each others as link (link)}{' · '}<a href={link} target="_blank" rel="noopener noreferrer">{new URL(link).hostname.replace(/^www\./, '')}</a>{/each}
 			</small>
 		</p>
 		{#if company.description}

@@ -585,5 +585,6 @@
 	"kept.new": "{count} this week",
 	"kept.noBoard": "No job board known",
 	"kept.find": "Look for it",
-	"kept.title": "Your organizations"
+	"kept.title": "Your organizations",
+	"job.hide": "Hide this job"
 }

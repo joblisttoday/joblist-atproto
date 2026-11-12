@@ -28,8 +28,8 @@
 	<button type="button" aria-pressed={saved ? 'true' : 'false'} onclick={() => toggleJob(job, 'saved', company)} title={t('collections.private')}>
 		<Icon name={saved ? 'savedOn' : 'save'} /> {t(saved ? 'collections.saved' : 'collections.save')}
 	</button>
-	<button type="button" popovertarget="{id}-pick">
-		<Icon name="add" /> {t('collections.more')}{#if elsewhere} <small>{elsewhere}</small>{/if}
+	<button type="button" popovertarget="{id}-pick" aria-label={t('collections.more')} title={t('collections.more')}>
+		<Icon name="add" />{#if elsewhere} <small>{elsewhere}</small>{/if}
 	</button>
 	<jl-collection-picker id="{id}-pick" popover="auto">
 		<h2>{t('collections.pick')}</h2>

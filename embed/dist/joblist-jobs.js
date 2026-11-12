@@ -2403,7 +2403,8 @@ var X = {
 			"job.expired": "Expired: no longer shown.",
 			"job.notFound": "This job offer does not exist, or its poster removed it.",
 			"job.notFoundTitle": "Job not found",
-			"job.at": "{title} at {company}"
+			"job.at": "{title} at {company}",
+			"job.hide": "Hide this job"
 		},
 		fr: {
 			"embed.title": "Offres chez {name}",
@@ -2463,7 +2464,8 @@ var X = {
 			"job.expired": "Expirée : elle n'est plus affichée.",
 			"job.notFound": "Cette offre n'existe pas, ou son auteur l'a retirée.",
 			"job.notFoundTitle": "Offre introuvable",
-			"job.at": "{title} chez {company}"
+			"job.at": "{title} chez {company}",
+			"job.hide": "Masquer cette offre"
 		},
 		de: {
 			"embed.title": "Offene Stellen bei {name}",
@@ -2523,7 +2525,8 @@ var X = {
 			"job.expired": "Abgelaufen: wird nicht mehr angezeigt.",
 			"job.notFound": "Dieses Jobangebot gibt es nicht, oder es wurde entfernt.",
 			"job.notFoundTitle": "Job nicht gefunden",
-			"job.at": "{title} bei {company}"
+			"job.at": "{title} bei {company}",
+			"job.hide": "Diese Stelle ausblenden"
 		},
 		es: {
 			"embed.title": "Ofertas abiertas en {name}",
@@ -2583,7 +2586,8 @@ var X = {
 			"job.expired": "Vencida: ya no se muestra.",
 			"job.notFound": "Esta oferta no existe, o quien la publicó la quitó.",
 			"job.notFoundTitle": "Oferta no encontrada",
-			"job.at": "{title} en {company}"
+			"job.at": "{title} en {company}",
+			"job.hide": "Ocultar esta oferta"
 		}
 	}
 }.strings, Qr = qt({ locale: "en" });
@@ -4472,7 +4476,8 @@ function ns(e, t) {
 				"job.expired": "Expired: no longer shown.",
 				"job.notFound": "This job offer does not exist, or its poster removed it.",
 				"job.notFoundTitle": "Job not found",
-				"job.at": "{title} at {company}"
+				"job.at": "{title} at {company}",
+				"job.hide": "Hide this job"
 			},
 			fr: {
 				"embed.title": "Offres chez {name}",
@@ -4532,7 +4537,8 @@ function ns(e, t) {
 				"job.expired": "Expirée : elle n'est plus affichée.",
 				"job.notFound": "Cette offre n'existe pas, ou son auteur l'a retirée.",
 				"job.notFoundTitle": "Offre introuvable",
-				"job.at": "{title} chez {company}"
+				"job.at": "{title} chez {company}",
+				"job.hide": "Masquer cette offre"
 			},
 			de: {
 				"embed.title": "Offene Stellen bei {name}",
@@ -4592,7 +4598,8 @@ function ns(e, t) {
 				"job.expired": "Abgelaufen: wird nicht mehr angezeigt.",
 				"job.notFound": "Dieses Jobangebot gibt es nicht, oder es wurde entfernt.",
 				"job.notFoundTitle": "Job nicht gefunden",
-				"job.at": "{title} bei {company}"
+				"job.at": "{title} bei {company}",
+				"job.hide": "Diese Stelle ausblenden"
 			},
 			es: {
 				"embed.title": "Ofertas abiertas en {name}",
@@ -4652,7 +4659,8 @@ function ns(e, t) {
 				"job.expired": "Vencida: ya no se muestra.",
 				"job.notFound": "Esta oferta no existe, o quien la publicó la quitó.",
 				"job.notFoundTitle": "Oferta no encontrada",
-				"job.at": "{title} en {company}"
+				"job.at": "{title} en {company}",
+				"job.hide": "Ocultar esta oferta"
 			}
 		}
 	}, d = `jl-${Math.random().toString(36).slice(2, 8)}`;

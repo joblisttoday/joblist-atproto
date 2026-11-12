@@ -1,4 +1,5 @@
 <script>
+	import { organizationOf } from '#lib/network/kept-jobs.svelte.js';
 	import Icon from './Icon.svelte';
 	import config from '#lib/data/config.json';
 	import JobAvatar from './JobAvatar.svelte';
@@ -35,7 +36,7 @@
 		told = undefined;
 		if (!read || job.posted || workplace(job)) return;
 		const asked = job;
-		getDescription(data.companies.get(job.company), job).then((text) => {
+		getDescription(organizationOf(job.company), job).then((text) => {
 			if (asked === job) told = workplaceFromText(text);
 		});
 	});

@@ -585,5 +585,6 @@
 	"kept.new": "{count} cette semaine",
 	"kept.noBoard": "Aucune page d’offres connue",
 	"kept.find": "La chercher",
-	"kept.title": "Vos organisations"
+	"kept.title": "Vos organisations",
+	"job.hide": "Masquer cette offre"
 }

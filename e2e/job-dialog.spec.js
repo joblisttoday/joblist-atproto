@@ -23,3 +23,15 @@ test('the jobs page opens a job in a dialog, back closes it, its link opens it',
 	await expect(dialog).toHaveCount(0);
 	expect(page.url()).not.toMatch(/[#&]job=/);
 });
+
+test('a job of a followed organization shows its description, and can be saved', async ({ page }) => {
+	await page.addInitScript(() => localStorage.setItem('joblist.kept.v1', JSON.stringify([{ url: 'https://gitlab.com', name: 'GitLab', at: '2026-11-01T00:00:00Z', board: { provider: 'greenhouse', id: 'gitlab' } }])));
+	await page.goto('/jobs#view=list');
+	await page.locator('jl-job button').first().click({ timeout: 20_000 });
+	const dialog = page.locator('dialog[open]');
+	await expect(dialog.locator('jl-job-description p').first()).not.toContainText(/no description|Reading/, { timeout: 20_000 });
+	await dialog.getByRole('button', { name: 'Save', exact: true }).click();
+	await expect(dialog.getByRole('button', { name: 'Saved', exact: true })).toBeVisible();
+	await page.goto('/saved');
+	await expect(page.locator('main')).toContainText('1 job');
+});

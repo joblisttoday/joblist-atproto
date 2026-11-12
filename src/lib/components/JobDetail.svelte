@@ -63,10 +63,10 @@
 					{#snippet actions()}
 						<menu>
 							<a href={apply} target={job.posted ? undefined : '_blank'} rel={job.posted ? undefined : 'noopener'}>{t('explore.apply')}{#if !job.posted}<Icon name="external" />{/if}</a>
-							<button type="button" aria-pressed={mark === 'applied'} onclick={() => toggleMark(job, 'applied', name)}><Icon name="applied" /> {t(mark === 'applied' ? 'marks.applied' : 'marks.apply')}</button>
-							<button type="button" onclick={hide}><Icon name="hide" /> {t('marks.hide')}</button>
 							<JobSave {job} company={name} />
+							<button type="button" aria-pressed={mark === 'applied'} onclick={() => toggleMark(job, 'applied', name)}><Icon name="applied" /> {t(mark === 'applied' ? 'marks.applied' : 'marks.apply')}</button>
 						</menu>
+						<p data-hide><button type="button" onclick={hide}><Icon name="hide" /> {t('job.hide')}</button></p>
 					{/snippet}
 				</JobItem>
 			{/key}
@@ -74,14 +74,12 @@
 		<aside>
 			<section aria-labelledby="job-company">
 				<h2 id="job-company">
-					{#if avatar}<img src={thumbnail(avatar)} alt="" />{/if}
-					<a href="/{job.company}">{name}</a>
+					<a href="/{job.company}">
+						{#if avatar}<img src={thumbnail(avatar)} alt="" />{/if}
+						<span>{name}{#if atCompany > 1}<small>{t('kept.jobs', { count: atCompany })}</small>{/if}</span>
+						<Icon name="next" />
+					</a>
 				</h2>
-				{#if atCompany > 1}
-					<p><a href="/{job.company}">{t('job.company.more', { count: atCompany, name })}</a></p>
-				{:else if atCompany === 1}
-					<p><small>{t('job.company.one', { name })}</small></p>
-				{/if}
 			</section>
 			{#if place}
 				<section aria-labelledby="job-where">
@@ -107,10 +105,29 @@
 <style>
 	/* The organization's name: a finger's size. */
 	h2[id='job-company'] > a {
-		display: inline-flex;
+		display: flex;
 		align-items: center;
-		min-width: var(--chip-height);
+		gap: var(--space-s);
+		min-height: var(--tap-size);
+		color: var(--color-fg);
+		text-decoration: none;
+	}
+	h2[id='job-company'] span {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+	}
+	h2[id='job-company'] small {
+		font-weight: normal;
+		color: var(--color-muted);
+	}
+	[data-hide] button {
 		min-height: var(--chip-height);
+		padding: 0;
+		border: 0;
+		background: none;
+		color: var(--color-muted);
+		font-size: var(--font-size-small);
 	}
 	jl-job-detail {
 		display: block;

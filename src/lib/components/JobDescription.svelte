@@ -1,7 +1,7 @@
 <script>
 	import Icon from './Icon.svelte';
 	import { getDescription } from '#lib/ats/index.js';
-	import { data } from '#lib/network/network.svelte.js';
+	import { organizationOf } from '#lib/network/kept-jobs.svelte.js';
 	import { textLinks } from '#lib/models/text-links.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
@@ -12,7 +12,7 @@
 	 * @type {{job: import('#lib/ats/job.js').Job, company?: string}}
 	 */
 	let { job, company } = $props();
-	const text = $derived(getDescription(data.companies.get(job.company), job));
+	const text = $derived(getDescription(organizationOf(job.company), job));
 	/** @param {string} value */
 	const paragraphs = (value) => value.split(/\n{2,}/).filter((p) => p.trim());
 	// The same offer at its other places, one link per place.
@@ -32,7 +32,6 @@
 	<menu>
 		<a href={job.url} target="_blank" rel="noopener">{t('job.offer')}{elsewhere.length && job.location ? `: ${job.location}` : ''} <Icon name="external" /></a>
 		{#each elsewhere as other (other.url)}<a href={other.url} target="_blank" rel="noopener">{other.location} <Icon name="external" /></a>{/each}
-		{#if company}<a href="/{job.company}">{t('jobs.aboutCompany', { name: company })}</a>{/if}
 	</menu>
 </jl-job-description>
 

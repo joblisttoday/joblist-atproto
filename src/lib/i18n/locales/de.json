@@ -585,5 +585,6 @@
 	"kept.new": "{count} diese Woche",
 	"kept.noBoard": "Keine Jobbörse bekannt",
 	"kept.find": "Suchen",
-	"kept.title": "Deine Organisationen"
+	"kept.title": "Deine Organisationen",
+	"job.hide": "Diese Stelle ausblenden"
 }

@@ -87,6 +87,16 @@ async function read() {
 	store(KEY, { at: Date.now(), jobs: read });
 }
 
+/**
+ * An organization by its key: one publishing on atproto (network.svelte.js), else one
+ * followed here (its board known): what a job's description is read from.
+ * @param {string} key
+ * @returns {Company | undefined}
+ */
+export function organizationOf(key) {
+	return data.companies.get(key) || companies.find((c) => c.key === key);
+}
+
 export const keptJobs = {
 	/** The saved organizations, as organizations. */
 	get companies() {
