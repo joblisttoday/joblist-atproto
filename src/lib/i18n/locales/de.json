@@ -590,5 +590,6 @@
 	"orgs.page.done": "{done} von {all} ausgefüllt",
 	"orgs.page.none": "Noch nicht beschrieben",
 	"orgs.copyLink": "Link deiner Seite kopieren",
-	"orgs.field.add": "Hinzufügen"
+	"orgs.field.add": "Hinzufügen",
+	"orgs.from.short": "Deine Jobbörse"
 }

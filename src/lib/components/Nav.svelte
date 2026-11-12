@@ -11,7 +11,14 @@
 	const all = navLinks();
 	const own = $derived(ownDomain(session.handle));
 	// An organization's tab only for its account.
-	const items = $derived(all.filter((i) => !i.organization || own));
+	// An organization signed in: the home is its own (Home, its picture), its pages within it.
+	const items = $derived(
+		own
+			? all
+					.filter((i) => !i.organization)
+					.map((i) => (i.href === '/' ? { ...i, label: 'nav.home', icon: /** @type {const} */ ('home'), account: true, within: [...i.within, '/organization', '/add', '/jobs/new', '/signin'] } : i))
+			: all.filter((i) => !i.organization)
+	);
 	/** The count a tab shows, 0 for none. @param {string | undefined} badge */
 	const count = (badge) => (badge === 'saved' ? savedJobs.fresh : 0);
 	// Signed in with a company's domain: the account is that company's.

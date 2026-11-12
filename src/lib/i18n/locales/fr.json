@@ -590,5 +590,6 @@
 	"orgs.page.done": "{done} sur {all} remplis",
 	"orgs.page.none": "Pas encore décrite",
 	"orgs.copyLink": "Copier le lien de votre page",
-	"orgs.field.add": "Ajouter"
+	"orgs.field.add": "Ajouter",
+	"orgs.from.short": "Votre page d’offres"
 }

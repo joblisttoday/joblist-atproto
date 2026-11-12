@@ -590,5 +590,6 @@
 	"orgs.page.done": "{done} de {all} completados",
 	"orgs.page.none": "Aún sin describir",
 	"orgs.copyLink": "Copiar el enlace de tu página",
-	"orgs.field.add": "Añadir"
+	"orgs.field.add": "Añadir",
+	"orgs.from.short": "Tu portal de empleo"
 }
