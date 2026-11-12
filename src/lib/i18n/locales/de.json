@@ -593,5 +593,12 @@
 	"orgs.field.add": "Hinzufügen",
 	"orgs.from.short": "Deine Jobbörse",
 	"post.expired": "Abgelaufen",
-	"menu.browse": "Stellen durchsuchen"
+	"menu.browse": "Stellen durchsuchen",
+	"search.kind.website": "Website",
+	"search.kind.joblist": "Auf joblist",
+	"search.kind.link": "Link",
+	"search.kind.jobs": "Deine Stellen",
+	"search.kind.wikidata": "Wikidata",
+	"search.kind.bluesky": "Bluesky",
+	"search.kind.list": "Bluesky-Liste"
 }

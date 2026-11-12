@@ -1,5 +1,6 @@
 <script>
 	import Icon from './Icon.svelte';
+	import Row from './Row.svelte';
 	import config from '#lib/data/config.json';
 	import { afterNavigate, goto } from '$app/navigation';
 	import { quickResults } from '#lib/models/quick-search.js';
@@ -12,7 +13,7 @@
 	import { providerQuery } from '#lib/models/name-search.js';
 	import { curatedLink } from '#lib/models/curated.js';
 	import { searchName } from '#lib/network/name-search.js';
-	import { kept } from '#lib/network/kept.svelte.js';
+	import { isKept, kept } from '#lib/network/kept.svelte.js';
 	import { i18n, t } from '#lib/i18n/index.svelte.js';
 
 	/**
@@ -104,6 +105,12 @@
 		else /** @type {HTMLElement} */ (links[Math.min(next, links.length - 1)]).focus();
 	}
 
+	/** The arrows work from a result too (its row's link). @param {HTMLElement} node */
+	function arrows(node) {
+		node.addEventListener('keydown', keys);
+		return { destroy: () => node.removeEventListener('keydown', keys) };
+	}
+
 	/** Leaving the box closes its offers. @param {FocusEvent} event */
 	function leave(event) {
 		if (!box?.contains(/** @type {Node | null} */ (event.relatedTarget))) open = false;
@@ -128,45 +135,47 @@
 		<button type="button" onclick={() => (open = false)}><Icon name="close" label={t('quick.close')} /></button>
 	</form>
 	{#if open && typed}
-		<ul>
+		<!-- Each result a row (Row.svelte), its chip saying what it is: a website, a page on joblist,
+		     a job board, one you follow, an organization on Wikidata, a Bluesky account or list. -->
+		<ul use:arrows>
 			{#if curated}
-				<li><a onkeydown={keys} href={curated}><Icon name="companies" /> {t('curated.offer')}</a></li>
+				<li><Row href={curated} icon="lists" title={t('curated.offer')} chip={{ text: t('search.kind.list') }} /></li>
 			{/if}
 			{#if organization?.sure}
+				{@const domain = organization.href.startsWith('/explore/') ? '' : organization.href.slice(1)}
+				{@const followed = Boolean(domain) && isKept(domain)}
 				<li>
-					<a onkeydown={keys} href={organization.href}>
-						<Icon name="companies" /> {t(organization.known ? 'quick.open' : 'quick.find', { name: organization.name })}
-					</a>
+					<Row
+						href={organization.href}
+						avatar={{ key: domain || organization.name, name: organization.name }}
+						title={organization.name}
+						meta={[followed || organization.known ? domain : t('quick.find', { name: organization.name })]}
+						chip={followed
+							? { text: t('follow.done'), tone: 'ok' }
+							: { text: t(organization.known ? 'search.kind.joblist' : domain ? 'search.kind.website' : 'search.kind.link'), tone: organization.known ? 'ok' : undefined }}
+					/>
 				</li>
 			{/if}
 			{#if atProvider && atProviderPage}
 				<li>
-					<a onkeydown={keys} href={atProviderPage.href}><Icon name="jobs" /> {t('quick.atProvider', { name: atProvider.id, provider: atProvider.provider.name })}</a>
+					<Row href={atProviderPage.href} icon="jobs" title={atProvider.id} meta={[atProvider.url.replace(/^https:\/\//, '')]} chip={{ text: atProvider.provider.name }} />
 				</li>
 			{/if}
 			{#if following}
-				<li><a onkeydown={keys} href={jobsPath({ query: text.trim() })}><Icon name="search" /> {t('quick.jobs', { text: text.trim() })}</a></li>
+				<li><Row href={jobsPath({ query: text.trim() })} icon="search" title={t('quick.jobs', { text: text.trim() })} chip={{ text: t('search.kind.jobs') }} /></li>
 			{/if}
 			{#each found.companies as company (company.key)}
-				<li>
-					<a onkeydown={keys} href={company.href}><Icon name="savedOn" /> {company.name}</a>
-				</li>
+				<li><Row href={company.href} avatar={{ key: company.key, name: company.name }} title={company.name} chip={{ text: t('follow.done'), tone: 'ok' }} /></li>
 			{/each}
 			{#if named}
 				{#each named.found as org (org.domain)}
 					<li>
-						<a onkeydown={keys} href="/{org.domain}">
-							<Icon name="companies" />
-							<span>{org.name} <small>{org.domain}{org.description ? ` · ${org.description}` : ''}</small></span>
-						</a>
+						<Row href="/{org.domain}" avatar={{ key: org.domain, name: org.name }} title={org.name} meta={[org.domain, org.description]} chip={{ text: t('search.kind.wikidata') }} />
 					</li>
 				{/each}
 				{#each named.accounts as account (account.handle)}
 					<li>
-						<a onkeydown={keys} href="/{account.handle}">
-							{#if account.avatar}<img src={account.avatar} alt="" />{:else}<Icon name="me" />{/if}
-							<span>{account.name} <small>@{account.handle}</small></span>
-						</a>
+						<Row href="/{account.handle}" avatar={{ key: account.handle, name: account.name, src: account.avatar }} title={account.name} meta={[`@${account.handle}`]} chip={{ text: t('search.kind.bluesky') }} />
 					</li>
 				{/each}
 				<li data-note><small>{named.found.length || named.accounts.length ? t('quick.names.source') : t('quick.names.none')}</small></li>
@@ -250,33 +259,16 @@
 		border-bottom: var(--border);
 		box-shadow: var(--shadow);
 	}
-	ul a {
-		display: flex;
-		align-items: center;
-		gap: var(--space-s);
-		min-height: var(--tap-size);
+	/* Each result a row (Row.svelte), lit when pointed at or chosen with the arrows. */
+	li {
 		padding: 0 var(--gutter);
-		color: var(--color-fg);
-		text-decoration: none;
 	}
-	ul a:hover,
-	ul a:focus {
+	li:hover,
+	li:focus-within {
 		background: var(--color-soft);
 	}
-	ul a span {
-		min-width: 0;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
-	ul a small {
-		color: var(--color-muted);
-	}
-	ul img {
-		width: var(--icon-size, 1.25rem);
-		height: var(--icon-size, 1.25rem);
-		border-radius: var(--radius-round);
-		object-fit: cover;
+	li:last-child > :global(jl-row) {
+		border-bottom: 0;
 	}
 	[data-note] {
 		padding: var(--space-xs) var(--gutter);
@@ -306,7 +298,7 @@
 		border-radius: var(--radius);
 		margin-top: var(--space-xs);
 	}
-	jl-search[inline] ul a {
+	jl-search[inline] li {
 		padding: 0 var(--space-m);
 	}
 
@@ -334,7 +326,7 @@
 			border-radius: var(--radius);
 			margin-top: var(--space-xs);
 		}
-		ul a {
+		li {
 			padding: 0 var(--space-m);
 		}
 	}

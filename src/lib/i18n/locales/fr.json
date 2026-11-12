@@ -593,5 +593,12 @@
 	"orgs.field.add": "Ajouter",
 	"orgs.from.short": "Votre page d’offres",
 	"post.expired": "Expirée",
-	"menu.browse": "Parcourir les offres"
+	"menu.browse": "Parcourir les offres",
+	"search.kind.website": "Site",
+	"search.kind.joblist": "Sur joblist",
+	"search.kind.link": "Lien",
+	"search.kind.jobs": "Vos offres",
+	"search.kind.wikidata": "Wikidata",
+	"search.kind.bluesky": "Bluesky",
+	"search.kind.list": "Liste Bluesky"
 }

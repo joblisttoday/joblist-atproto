@@ -593,5 +593,12 @@
 	"orgs.field.add": "Añadir",
 	"orgs.from.short": "Tu portal de empleo",
 	"post.expired": "Caducada",
-	"menu.browse": "Explorar ofertas"
+	"menu.browse": "Explorar ofertas",
+	"search.kind.website": "Sitio web",
+	"search.kind.joblist": "En joblist",
+	"search.kind.link": "Enlace",
+	"search.kind.jobs": "Tus ofertas",
+	"search.kind.wikidata": "Wikidata",
+	"search.kind.bluesky": "Bluesky",
+	"search.kind.list": "Lista de Bluesky"
 }

@@ -8,7 +8,9 @@ import { expect, test } from '@playwright/test';
 test('a name at a provider offers its board', async ({ page }) => {
 	await page.goto('/');
 	await page.getByPlaceholder('Paste a website or a job board').fill('gitlab greenhouse');
-	await expect(page.getByRole('link', { name: 'gitlab on Greenhouse' })).toBeVisible();
+	const board = page.locator('jl-search ul a', { hasText: 'job-boards.greenhouse.io/gitlab' });
+	await expect(board).toBeVisible();
+	await expect(board).toContainText('Greenhouse');
 });
 
 test('a name offers the organizations it may be, with their website, and says where it was asked', async ({ page }) => {
