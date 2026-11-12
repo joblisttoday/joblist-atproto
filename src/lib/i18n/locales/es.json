@@ -184,7 +184,7 @@
 	"explore.notOnlyPay": "También sin salario indicado",
 	"explore.clear": "Sin “{text}”",
 	"explore.apply": "Postularme",
-	"explore.none": "Aún no hay ofertas: guarda una organización, y sus ofertas abiertas llegan aquí.",
+	"explore.none": "Las ofertas son las de las organizaciones que sigues, leídas en sus propios portales de empleo. Busca una por su nombre, su sitio web o su portal de empleo:",
 	"explore.none.find": "Encontrar una organización",
 	"explore.back": "Todos los resultados",
 	"explore.nearby": "Otras ofertas cerca",
@@ -603,5 +603,9 @@
 	"search.kind.list": "Lista de Bluesky",
 	"searches.yours": "Tus búsquedas",
 	"searches.hint": "Escribe lo que buscas (producto, diseño…) y toca Guardar búsqueda: Ofertas mostrará solo esas.",
-	"kept.matching": "{count} coinciden"
+	"kept.matching": "{count} coinciden",
+	"explore.start": "Encuentra organizaciones que seguir",
+	"explore.noJobs": "Aún no se ha leído ninguna oferta de las {count} organizaciones que sigues: joblist no conoce ninguno de sus portales de empleo.",
+	"explore.findBoards": "Encontrar sus portales de empleo",
+	"explore.noJobs.one": "Aún no se ha leído ninguna oferta de la organización que sigues: joblist no conoce ninguno de sus portales de empleo."
 }

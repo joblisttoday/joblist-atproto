@@ -2,7 +2,7 @@
 	import Icon from './Icon.svelte';
 	import config from '#lib/data/config.json';
 	import ExploreFields from './ExploreFields.svelte';
-	import Empty from './Empty.svelte';
+	import QuickSearch from './QuickSearch.svelte';
 	import ExploreSearch from './ExploreSearch.svelte';
 	import Jobs from './Jobs.svelte';
 	import JobDialog from './JobDialog.svelte';
@@ -12,6 +12,8 @@
 	import SearchChips from './SearchChips.svelte';
 	import ViewSwitch from './ViewSwitch.svelte';
 	import { readView } from '#lib/navigation/explore-view.js';
+	import { isRemote } from '#lib/models/job.js';
+	import { hasJobsApi } from '#lib/models/company.js';
 	import { tick, untrack } from 'svelte';
 	import { afterNavigate, pushState, replaceState } from '$app/navigation';
 	import { page } from '$app/state';
@@ -228,6 +230,12 @@
 	let busy = $state(false);
 	// Nothing found has a place: no map to show (once the jobs are read).
 	const mapless = $derived(!busy && jobs.length > 0 && !results.some((job) => job.point));
+	// The jobs the followed organizations post from their own accounts (no board: kept-jobs.svelte.js).
+	const atproto = $derived(companies.filter((c) => !hasJobsApi(c)).flatMap((c) => keptJobs.jobs.get(c.key) || []));
+	// What the jobs read can be chosen by: the interface is made from them.
+	const has = $derived({ points: jobs.some((j) => j.point), remote: jobs.some(isRemote), pay: jobs.some((j) => j.salary) });
+	// Organizations followed, all read, and not one job: their boards are to be found.
+	const noJobs = $derived(companies.length > 0 && !busy && jobs.length === 0);
 	const empty = $derived(searching && !busy && jobs.length > 0 && results.length === 0);
 
 	function nextSheet() {
@@ -273,12 +281,12 @@
 	onkeydown={(e) => e.key === 'Escape' && !(e.target instanceof HTMLInputElement) && !selected && picked && back()}
 />
 
-<jl-explore {view}>
+<jl-explore {view} empty={!jobs.length && !busy ? true : undefined} nomap={jobs.length && !busy && !has.points ? true : undefined}>
 	<!-- Jobs, organizations or lists; the search, and how the jobs are shown, at the same place in every view. -->
-	<!-- Nothing saved yet: no search, no filters, only how to start. -->
-	{#if companies.length}
+	<!-- No job read yet: no search, no filters, only how to start (below). -->
+	{#if jobs.length}
 	<jl-explore-bar>
-		<ExploreSearch bind:filters {places}>
+		<ExploreSearch bind:filters {places} {has}>
 			{#snippet tools()}<ViewSwitch bind:view {mapless} />{/snippet}
 		</ExploreSearch>
 	</jl-explore-bar>
@@ -331,6 +339,7 @@
 		<jl-explore-results id="explore-results" hidden={pickedJobs ? true : undefined}>
 			<!-- The fields jobs are in: one tap shows a field's jobs, searched or not. -->
 			<!-- Your saved searches: one tap opens one, its new jobs marked; "All" clears the search. -->
+			{#if jobs.length}
 			<SearchChips
 				{filters}
 				{jobs}
@@ -339,7 +348,15 @@
 				onyours={() => ((mine = true), (since = ''), (filters = { query: '', where: '', remote: '', pay: false, field: '', near: null, within: 0, area: null }))}
 				onopen={(search) => (search ? open(search) : ((mine = false), (since = ''), (filters = { query: '', where: '', remote: '', pay: false, field: '', near: null, within: 0, area: null })))}
 			/>
+			{/if}
 			{#if !searches.list.length && jobs.length}<p data-hint><small>{t('searches.hint')}</small></p>{/if}
+			{#if noJobs}
+				<!-- Followed, but no board read: where their jobs can be found. -->
+				<jl-explore-start>
+					<p>{t('explore.noJobs', { count: companies.length })}</p>
+					<menu><a href="/" data-primary><Icon name="search" /> {t('explore.findBoards')}</a></menu>
+				</jl-explore-start>
+			{/if}
 			{#if jobs.length}<ExploreFields bind:field={filters.field} {jobs} />{/if}
 			{#if companies.length}
 				<Jobs
@@ -347,6 +364,7 @@
 					careers={false}
 					search={false}
 					filters={shownFilters}
+					extra={atproto}
 					bind:jobs
 					bind:results
 					bind:places
@@ -359,8 +377,12 @@
 					{#snippet actions()}<SaveSearch {filters} />{/snippet}
 				</Jobs>
 			{:else}
-				<!-- joblist lists no organizations: these are the jobs of the ones saved here. -->
-				<Empty text={t('explore.none')}><a href="/"><Icon name="search" /> {t('explore.none.find')}</a></Empty>
+				<!-- joblist lists no organizations: these are the jobs of the ones followed here. -->
+				<jl-explore-start>
+					<h2>{t('explore.start')}</h2>
+					<p>{t('explore.none')}</p>
+					<QuickSearch inline placeholder={t('quick.placeholder.explore')} />
+				</jl-explore-start>
 			{/if}
 			{#if empty}
 				<menu aria-label={t('explore.widen')}>
@@ -392,6 +414,25 @@
 </jl-explore>
 
 <style>
+	/* No job: no map, no list's own words: the page says how to start. */
+	jl-explore[empty] :global(jl-explore-map),
+	jl-explore[nomap] :global(jl-explore-map),
+	jl-explore[empty] :global(jl-jobs) {
+		display: none;
+	}
+	jl-explore-start {
+		display: block;
+		max-width: var(--reading-width);
+		margin: var(--space-l) auto;
+	}
+	jl-explore-start h2 {
+		margin-top: 0;
+	}
+	jl-explore-start [data-primary] {
+		background: var(--color-accent);
+		color: var(--color-accent-fg);
+		border-color: var(--color-accent);
+	}
 	/* The explorer takes the whole screen above the navigation (phones) or below the header:
 	   the search bar at the top, the jobs under it; only the results scroll. */
 	jl-explore {
@@ -535,6 +576,17 @@
 		}
 		jl-explore-panel > button {
 			display: none;
+		}
+		/* No job, or none with a place: the page's own column, no panel over a map. */
+		jl-explore[empty] jl-explore-panel,
+		jl-explore[empty] jl-explore-panel[sheet],
+		jl-explore[nomap] jl-explore-panel,
+		jl-explore[nomap] jl-explore-panel[sheet] {
+			inset: 0;
+			width: auto;
+			border-radius: 0;
+			box-shadow: none;
+			background: var(--color-bg);
 		}
 		/* A grid: cards across the width. */
 		jl-explore[view='grid'] :global(jl-jobs > ul) {

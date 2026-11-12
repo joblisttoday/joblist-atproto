@@ -42,8 +42,10 @@
 	 *   onselect?: (job: import('#lib/ats/job.js').Job) => void,
 	 *   selected?: string,
 	 *   places?: string[],
-	 *   quick?: boolean
+	 *   quick?: boolean,
+	 *   extra?: import('#lib/ats/job.js').Job[]
 	 * }}
+	 * extra: jobs read elsewhere, listed with the others (a followed organization's own atproto account).
 	 * quick: the explorer's (its jobs are prepared for searching while the page is idle).
 	 */
 	let {
@@ -60,7 +62,8 @@
 		onselect: pageSelect,
 		selected: pageSelected = '',
 		places: suggested = $bindable([]),
-		quick = false
+		quick = false,
+		extra = []
 	} = $props();
 	const PAGE = config.jobs.pageSize;
 	// The page opens a job itself (the explorer), or it opens in the dialog over the list.
@@ -82,7 +85,7 @@
 	const single = $derived(companies.length === 1);
 	const names = $derived(new Map(companies.map((c) => [c.key, c.name])));
 	// Offers posted on joblist, for every company here (with a job board or not).
-	const posted = $derived(withPoints(companies.flatMap((c) => data.postedJobs.get(c.key) || []), new Map()));
+	const posted = $derived(mergeJobs(withPoints(companies.flatMap((c) => data.postedJobs.get(c.key) || []), new Map()), extra));
 	/** Jobs read live from boards are among them. */
 	let live = $state(false);
 	// Newest first, sorted once here: every search keeps this order.

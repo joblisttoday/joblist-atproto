@@ -184,7 +184,7 @@
 	"explore.notOnlyPay": "Also without pay shown",
 	"explore.clear": "Without “{text}”",
 	"explore.apply": "Apply",
-	"explore.none": "No jobs yet: save an organization, and its open jobs come here.",
+	"explore.none": "Jobs are the open jobs of the organizations you follow, read from their own job boards. Look one up by its name, its website or its job board:",
 	"explore.none.find": "Find an organization",
 	"explore.back": "All results",
 	"explore.nearby": "Other jobs nearby",
@@ -603,5 +603,9 @@
 	"search.kind.list": "Bluesky list",
 	"searches.yours": "Your searches",
 	"searches.hint": "Type what you look for (product, design…) and tap Save search: Jobs then shows only those.",
-	"kept.matching": "{count} matching"
+	"kept.matching": "{count} matching",
+	"explore.start": "Find organizations to follow",
+	"explore.noJobs": "No job read yet from the {count} organizations you follow: joblist knows none of their job boards.",
+	"explore.findBoards": "Find their job boards",
+	"explore.noJobs.one": "No job read yet from the organization you follow: joblist knows none of its job boards."
 }

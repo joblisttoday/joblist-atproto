@@ -64,6 +64,9 @@ shared with the embed):
 - **Trailing**: one of a count, a checkbox, or "…" (its actions: Save, Hide, Unfollow, Edit,
   Renew, Delete…); › when it goes somewhere. No buttons or × inside a row.
 - Filter chips (teams, tags, saved searches) are pressed buttons above a list, not rows.
+- A page is made from its data: a filter or a view the data cannot answer is left out (no
+  map nor "Near me" when no job has a place; no "Remote" when none is remote), unless it is
+  on (to turn it off); with no data, the page says how to get some, where you are.
 
 ## The contracts
 

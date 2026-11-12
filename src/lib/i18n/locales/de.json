@@ -184,7 +184,7 @@
 	"explore.notOnlyPay": "Auch ohne Gehaltsangabe",
 	"explore.clear": "Ohne „{text}“",
 	"explore.apply": "Anwenden",
-	"explore.none": "Noch keine Stellen: Merke dir eine Organisation, und ihre offenen Stellen kommen hierher.",
+	"explore.none": "Stellen sind die offenen Stellen der Organisationen, denen du folgst, gelesen aus ihren eigenen Jobbörsen. Such eine nach Namen, Website oder Jobbörse:",
 	"explore.none.find": "Eine Organisation finden",
 	"explore.back": "Alle Ergebnisse",
 	"explore.nearby": "Andere Jobs in der Nähe",
@@ -603,5 +603,9 @@
 	"search.kind.list": "Bluesky-Liste",
 	"searches.yours": "Deine Suchen",
 	"searches.hint": "Gib ein, was du suchst (Produkt, Design…), und tippe auf Suche speichern: Stellen zeigt dann nur diese.",
-	"kept.matching": "{count} passend"
+	"kept.matching": "{count} passend",
+	"explore.start": "Organisationen zum Folgen finden",
+	"explore.noJobs": "Noch keine Stelle gelesen von den {count} Organisationen, denen du folgst: joblist kennt keine ihrer Jobbörsen.",
+	"explore.findBoards": "Ihre Jobbörsen finden",
+	"explore.noJobs.one": "Noch keine Stelle gelesen von der Organisation, der du folgst: joblist kennt keine ihrer Jobbörsen."
 }

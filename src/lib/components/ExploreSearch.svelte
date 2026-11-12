@@ -8,9 +8,11 @@
 	/**
 	 * The explorer's search: what and where, then quick choices as chips.
 	 * tools: shown at the end of the chips' row (how the jobs are shown).
-	 * @type {{filters: import('#lib/models/job.js').JobFilters, places: string[], tools?: import('svelte').Snippet}}
+	 * has: what the jobs read can be chosen by (a place on the map, remote, their pay): the
+	 * other choices are left out, unless already on (to turn them off).
+	 * @type {{filters: import('#lib/models/job.js').JobFilters, places: string[], tools?: import('svelte').Snippet, has?: {points: boolean, remote: boolean, pay: boolean}}}
 	 */
-	let { filters = $bindable(), places, tools } = $props();
+	let { filters = $bindable(), places, tools, has = { points: true, remote: true, pay: true } } = $props();
 	const id = $props.id();
 	const mode = config.travel.mode;
 	// Searching tens of thousands of jobs waits for a pause in typing.
@@ -61,11 +63,13 @@
 		</datalist>
 		<jl-explore-chips>
 		<menu aria-label={t('jobs.filter.workplace')}>
-			<li>
-				<button type="button" aria-pressed={filters.near ? 'true' : 'false'} onclick={nearMe} disabled={locating === 'locating'}>
-					<Icon name="near" /> {t('near.me')}
-				</button>
-			</li>
+			{#if has.points || filters.near}
+				<li>
+					<button type="button" aria-pressed={filters.near ? 'true' : 'false'} onclick={nearMe} disabled={locating === 'locating'}>
+						<Icon name="near" /> {t('near.me')}
+					</button>
+				</li>
+			{/if}
 			{#if filters.near}
 				<li>
 					<select bind:value={filters.within} aria-label={t(`near.within.${mode}`, { minutes: '…' })}>
@@ -81,25 +85,29 @@
 					<button type="button" aria-pressed="true" onclick={() => (filters.area = null)}><Icon name="close" /> {t('explore.areaOn')}</button>
 				</li>
 			{/if}
-			<li>
-				<button
-					type="button"
-					aria-pressed={filters.remote ? 'true' : 'false'}
-					onclick={() => (filters.remote = filters.remote ? '' : 'remote')}
-				>
-					<Icon name="remote" /> {t('jobs.filter.workplace.remote')}
-				</button>
-			</li>
+			{#if has.remote || filters.remote}
+				<li>
+					<button
+						type="button"
+						aria-pressed={filters.remote ? 'true' : 'false'}
+						onclick={() => (filters.remote = filters.remote ? '' : 'remote')}
+					>
+						<Icon name="remote" /> {t('jobs.filter.workplace.remote')}
+					</button>
+				</li>
+			{/if}
 			{#if filters.remote && !filters.where && country}
 				<li>
 					<button type="button" onclick={() => (filters.where = country.name)}>{t('explore.remoteFrom', { country: country.label })}</button>
 				</li>
 			{/if}
-			<li>
-				<button type="button" aria-pressed={filters.pay ? 'true' : 'false'} onclick={() => (filters.pay = !filters.pay)}>
-					<Icon name="pay" /> {t('jobs.filter.pay')}
-				</button>
-			</li>
+			{#if has.pay || filters.pay}
+				<li>
+					<button type="button" aria-pressed={filters.pay ? 'true' : 'false'} onclick={() => (filters.pay = !filters.pay)}>
+						<Icon name="pay" /> {t('jobs.filter.pay')}
+					</button>
+				</li>
+			{/if}
 		</menu>
 		{@render tools?.()}
 		</jl-explore-chips>
