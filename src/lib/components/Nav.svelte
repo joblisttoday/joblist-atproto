@@ -13,17 +13,20 @@
 	// An organization's tab only for its account.
 	// Two areas, by role (docs/architecture.md): the job seeker's (nav.json: Explore, Jobs,
 	// Saved, Menu) and, signed in with its domain, the organization's in /org (its home with
-	// its picture, Post a job, its page as visitors see it, Menu). The address says which.
+	// the organization's icon, Post a job, its page as visitors see it with its logo and
+	// @domain, Menu). The address says which.
 	const menu = all.filter((i) => i.href === '/menu');
 	// The Menu is both areas': an organization keeps its tabs there; Browse jobs (/jobs) is the seeker's.
 	const path = $derived(page.url.pathname);
 	const inOrg = $derived(Boolean(own) && (path === '/org' || path.startsWith('/org/') || path === `/${own}` || path === '/menu' || path.startsWith('/menu/')));
+	/** @type {{href: string, label: string, raw?: string, icon: import('#lib/icons.js').IconName, badge?: string, account?: boolean, within: string[]}[]} */
 	const items = $derived(
 		inOrg
 			? [
-					{ href: '/org', label: 'nav.home', icon: /** @type {const} */ ('home'), account: true, within: ['/org/page', '/org/embed', '/org/jobs'] },
+					{ href: '/org', label: 'nav.org', icon: /** @type {const} */ ('companies'), within: ['/org/page', '/org/embed', '/org/jobs'] },
 					{ href: '/org/post', label: 'post.title', icon: /** @type {const} */ ('add'), within: [] },
-					{ href: `/${own}`, label: 'orgs.page', icon: /** @type {const} */ ('companies'), within: [] },
+					// Its page, as visitors see it: its logo and its handle.
+					{ href: `/${own}`, label: '', raw: `@${own}`, icon: /** @type {const} */ ('companies'), account: true, within: [] },
 					...menu
 				]
 			: all
@@ -36,6 +39,9 @@
 	const accountLabel = $derived(
 		company ? t('nav.me.company', { handle: session.handle || '', name: company.name }) : t('nav.me.account', { handle: session.handle || '' })
 	);
+
+	/** A tab's words: its own (an organization's @domain), else translated. @param {{label: string, raw?: string}} item */
+	const labelOf = (item) => item.raw || t(item.label);
 
 	/** The tab of the page shown: its own path, or one it is the tab of (nav.json "within"). @param {{href: string, within: string[]}} item */
 	function current({ href, within }) {
@@ -62,10 +68,10 @@
 				<!-- The menu: signed in, the account's picture in place of its icon. -->
 				{#if item.account && session.handle}
 					{#if session.avatar}<img src={session.avatar} alt="" />{:else}<Icon name={item.icon} />{/if}
-					<span>{t(item.label)}</span>
-					{#if company}<Icon name="companies" />{/if}{#if n}<mark>{n > 99 ? '99+' : n}</mark>{/if}
+					<span>{labelOf(item)}</span>
+					{#if company && !item.raw}<Icon name="companies" />{/if}{#if n}<mark>{n > 99 ? '99+' : n}</mark>{/if}
 				{:else}
-					<Icon name={item.icon} />{t(item.label)}{#if n}<mark>{n > 99 ? '99+' : n}</mark>{/if}
+					<Icon name={item.icon} />{labelOf(item)}{#if n}<mark>{n > 99 ? '99+' : n}</mark>{/if}
 				{/if}
 			</a>
 		{/each}

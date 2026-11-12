@@ -23,9 +23,9 @@ bottom at every width (`src/lib/components/Nav.svelte`, `src/lib/data/nav.json`)
 
 | | Job seeker (default, never signs in) | Organization (signed in with its domain) |
 |---|---|---|
-| Home | `/` **Explore**: the search (a name, a link, a list) and the organizations followed; before any, the welcome with two doors | `/org` **Home**: its job offers (cards), Post a job, its page's status, its embed, its link, sign out |
+| Home | `/` **Explore**: the search (a name, a link, a list) and the organizations followed; before any, the welcome with two doors | `/org` **Organization** (its icon): its job offers (cards), Post a job, its page's status, its embed, its link, sign out |
 | 2nd tab | `/jobs` **Jobs**: the followed organizations' jobs; with searches saved, only those matching one of them ("Your searches", the default; each search; All jobs) | `/org/post` **Post a job** |
-| 3rd tab | `/saved` **Saved**: Saved, Applied, Hidden, named lists | `/{domain}` **Your page**: as visitors see it |
+| 3rd tab | `/saved` **Saved**: Saved, Applied, Hidden, named lists | `/{domain}` **@domain** (its logo): its page, as visitors see it |
 | 4th tab | `/menu` **Menu** | `/menu` **Menu** |
 | Inside | `/{domain}` an organization · `/job/{did}/{rkey}` a posted job · `/saved/{id}` a list · `/explore/list` follow a Bluesky list · `/explore/organization#url=…` a link's organization | `/org/page` its page's parts (`?field=…` one alone, `?all` everything) · `/org/jobs/{rkey}` edit an offer · `/org/embed` its jobs on its website |
 

@@ -607,5 +607,6 @@
 	"explore.start": "Trouvez des organisations à suivre",
 	"explore.noJobs": "Aucune offre lue pour l’instant chez les {count} organisations suivies : joblist ne connaît aucune de leurs pages d’offres.",
 	"explore.findBoards": "Trouver leurs pages d’offres",
-	"explore.noJobs.one": "Aucune offre lue pour l’instant chez l’organisation suivie : joblist ne connaît aucune de ses pages d’offres."
+	"explore.noJobs.one": "Aucune offre lue pour l’instant chez l’organisation suivie : joblist ne connaît aucune de ses pages d’offres.",
+	"nav.org": "Organisation"
 }
