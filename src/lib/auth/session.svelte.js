@@ -150,21 +150,35 @@ export async function signOutOf(did) {
 	removeAccount(did);
 }
 
-/** Back to this device, no account in use (the accounts stay signed in): the page reloads. */
+/**
+ * Back to this device, no account in use (the accounts stay signed in), in place: the pages
+ * follow the session (what an account wrote is read again when it is in use).
+ */
 export function switchToDevice() {
 	if (!session.did) return;
 	useDevice();
-	location.reload();
+	session.did = null;
+	session.handle = null;
+	session.avatar = null;
+	session.agent = null;
+	session.offline = false;
 }
 
 /**
- * Publish as another account signed in here: the page reloads with it.
+ * Publish as another account signed in here, in place: its session restored (offline, it
+ * stays in use without its server for now), its records read again (network.svelte.js).
  * @param {string} did
  */
-export function switchAccount(did) {
+export async function switchAccount(did) {
 	if (did === session.did) return;
 	useAccount(did);
-	location.reload();
+	try {
+		client ??= await (await auth()).loadClient(clear);
+		await restore(did);
+	} catch (err) {
+		if (notReached(err)) keepOffline(did);
+		else session.error = err instanceof Error ? err.message : String(err);
+	}
 }
 
 /** Where signing in started, in this tab: back there even when it fails. */

@@ -72,3 +72,19 @@ test('old addresses lead to the new ones, with what follows the "#"', async ({ p
 		await expect(page).toHaveURL(to);
 	}
 });
+
+test('switching accounts happens in place: the app does not reload', async ({ page }) => {
+	await page.addInitScript(() => {
+		if (!sessionStorage.getItem('seeded')) {
+			sessionStorage.setItem('seeded', '1');
+			localStorage.setItem('joblist.accounts.v1', JSON.stringify({ current: null, list: [{ did: 'did:plc:jqaucxlucukeif3bltpuc7zx', handle: 'joblist.today' }] }));
+		}
+	});
+	await page.goto('/menu/accounts');
+	await page.evaluate(() => (/** @type {any} */ (window).stayed = true));
+	const row = page.locator('jl-accounts jl-row').nth(1);
+	await row.getByRole('button').click();
+	await page.getByRole('button', { name: 'Use' }).click();
+	await page.waitForTimeout(1500);
+	expect(await page.evaluate(() => /** @type {any} */ (window).stayed)).toBe(true);
+});
