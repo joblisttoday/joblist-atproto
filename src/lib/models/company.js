@@ -238,11 +238,11 @@ export function mayDescribe(company, who) {
 }
 
 /**
- * The provider of an organization that posts its jobs as atproto records from its own
- * account (today.joblist.job, on joblist and any app that reads them): no board to read,
- * no id (the account is the organization's, its handle its domain).
+ * The provider of an organization that posts its jobs as today.joblist.job records from its
+ * own account: the collection's own name (no board to read, no id: the account is the
+ * organization's, its handle its domain).
  */
-export const ATPROTO = 'atproto';
+export const ATPROTO = config.collections.job;
 
 /**
  * A company record from form values.

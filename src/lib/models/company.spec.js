@@ -94,8 +94,8 @@ describe('kind of organization', () => {
 
 describe('posting on atproto', () => {
 	it('says so in the record, with no board to read', () => {
-		const form = { ...toForm(null), name: 'joblist', url: 'joblist.today', provider: 'atproto', boardId: 'leftover' };
-		expect(toRecord(form, 'x', 'x').jobBoard).toEqual({ provider: 'atproto' });
-		expect(boardUrl({ provider: 'atproto' })).toBe('');
+		const form = { ...toForm(null), name: 'joblist', url: 'joblist.today', provider: 'today.joblist.job', boardId: 'leftover' };
+		expect(toRecord(form, 'x', 'x').jobBoard).toEqual({ provider: 'today.joblist.job' });
+		expect(boardUrl({ provider: 'today.joblist.job' })).toBe('');
 	});
 });

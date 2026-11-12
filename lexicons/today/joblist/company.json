@@ -59,7 +59,8 @@
 				"provider": {
 					"type": "string",
 					"maxLength": 64,
-					"knownValues": ["ashby", "greenhouse", "lever", "personio", "recruitee", "rippling", "smartrecruiters", "workable"]
+					"description": "The job board's provider; 'today.joblist.job' when the organization posts its jobs as today.joblist.job records from its own account (then no id).",
+					"knownValues": ["ashby", "greenhouse", "lever", "personio", "recruitee", "rippling", "smartrecruiters", "workable", "today.joblist.job"]
 				},
 				"id": { "type": "string", "maxLength": 256, "description": "The organization's identifier at the provider." },
 				"url": { "type": "string", "format": "uri", "description": "Careers page, when there is no supported provider." }
