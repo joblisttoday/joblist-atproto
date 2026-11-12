@@ -1,6 +1,8 @@
 # joblist
 
-A tool for a job hunt, in the browser (https://joblist.today): it reads an organization's open jobs straight from its own job board and its Bluesky account, from any link; it keeps the organizations, searches and jobs someone saves in their own browser; and it lets an organization describe itself and post its jobs on atproto, from its own account. For people looking for work, and for projects looking for people to work with.
+Two sides, one site (https://joblist.today):
+- For job seekers, a private watchlist: "Follow the jobs of organizations you choose." They save organizations from any link (the site, the add-on, a share), and joblist reads their open jobs live from their own job boards; searches, lists of jobs and saved organizations stay in their browser. They never sign in.
+- For organizations, their careers page on the open network: signed in with their domain as their Bluesky handle, they describe themselves and post their jobs from their own account (`/organization`, their dashboard), or point to their job board; shown at `/{domain}`, on their own website (the embed) and in any app. Not an ATS: applications go straight to them.
 
 Objectives: people find work that feels right for them and for society; projects find great contributors; both on a phone, in a few taps.
 Never: a list of organizations or jobs kept by joblist, a tracker, an ad network, a middleman for applications, a central database, a server of its own, a paid service, or a tool that contacts anyone on its own.

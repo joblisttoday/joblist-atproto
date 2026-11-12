@@ -10,7 +10,6 @@ qualityTests([
 	{ name: 'home', path: '/', touch },
 	{ name: 'jobs', path: '/jobs', touch },
 	{ name: 'organization', path: '/joblist.today', touch },
-	{ name: 'organization places', path: '/joblist.today/places', touch },
 	{ name: 'my lists', path: '/me/lists', touch },
 	{ name: 'menu', path: '/menu', touch },
 	{ name: 'language', path: '/menu/language', touch },

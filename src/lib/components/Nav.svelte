@@ -6,11 +6,14 @@
 	import { savedJobs } from '#lib/network/saved-jobs.svelte.js';
 	import { data } from '#lib/network/network.svelte.js';
 	import { kept } from '#lib/network/kept.svelte.js';
+	import { ownDomain } from '#lib/models/company.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	const all = navLinks();
 	// Nothing saved yet: no tab for jobs that are not there.
-	const items = $derived(all.filter((i) => !i.saved || kept.list.length > 0));
+	const own = $derived(ownDomain(session.handle));
+	// An organization's tab only for its account.
+	const items = $derived(all.filter((i) => (!i.saved || kept.list.length > 0) && (!i.organization || own)));
 	/** The count a tab shows, 0 for none. @param {string | undefined} badge */
 	const count = (badge) => (badge === 'saved' ? savedJobs.fresh : 0);
 	// Signed in with a company's domain: the account is that company's.

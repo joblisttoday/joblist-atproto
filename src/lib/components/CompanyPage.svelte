@@ -1,129 +1,79 @@
 <script>
-	import CompanyClaim from './CompanyClaim.svelte';
-	import CompanyEmbed from './CompanyEmbed.svelte';
 	import CompanyHeader from './CompanyHeader.svelte';
-	import CompanyHiring from './CompanyHiring.svelte';
-	import CompanyInvite from './CompanyInvite.svelte';
-	import CompanyMap from './CompanyMap.svelte';
 	import CompanyJobs from './CompanyJobs.svelte';
-	import Tabs from './Tabs.svelte';
+	import Icon from './Icon.svelte';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { data } from '#lib/network/network.svelte.js';
-	import { ATPROTO, boardUrl, mapPoints } from '#lib/models/company.js';
+	import { ATPROTO, boardUrl, mayDescribe } from '#lib/models/company.js';
 	import { placeCounts } from '#lib/models/job.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * An organization's page, the same whether joblist knows it (/{domain}) or only
-	 * this browser does (local: /me/organization#url=…, or a domain joblist does not know):
-	 * its header, then its tabs, each its own address: its jobs (/{domain}: searched, by team,
-	 * on a map, opened in a dialog; then "Is this your organization?" and its jobs on your
-	 * site), and its places (/{domain}/places, on a map).
-	 * A local one has no tabs: its jobs, then where they are (from its jobs); it is kept and
-	 * suggested to joblist instead of edited.
-	 * tab: the one shown. address: what its address keeps besides its jobs' search (a local one's #url=…).
-	 * @type {{company: import('#lib/models/company.js').Company, local?: import('#lib/models/kept.js').Local, address?: Record<string, string>, tab?: 'jobs' | 'places'}}
+	 * An organization's careers page, the same whether it publishes it (/{domain}) or only this
+	 * browser knows it (local: /me/organization#url=…, or a domain that does not publish one):
+	 * its head (Save), then its jobs, opened in a dialog. Its own account sees it as anyone does,
+	 * with one bar to manage it (/organization); anyone else, at the end, how to publish theirs.
+	 * address: what its address keeps besides its jobs' search (a local one's #url=…).
+	 * @type {{company: import('#lib/models/company.js').Company, local?: import('#lib/models/kept.js').Local, address?: Record<string, string>}}
 	 */
-	let { company, local, address = {}, tab = 'jobs' } = $props();
+	let { company, local, address = {} } = $props();
 	const key = $derived(company.key);
-	const manager = $derived(!local && session.handle === company.key);
-	// Jobs come from its job board, or were posted here (by the company or anyone).
+	const owner = $derived(!local && mayDescribe(company, session));
+	// Jobs come from its job board, or it posts them from its own account.
 	const hasJobs = $derived(Boolean(boardUrl(company.jobBoard) || company.jobBoard?.provider === ATPROTO || (!local && data.postedJobs.has(key))));
 	/** @type {import('#lib/ats/job.js').Job[]} */
 	let jobs = $state.raw([]);
 	const places = $derived(
 		local
 			? placeCounts(jobs, 5).map(([place]) => place)
-			: (company.locations || []).map((l) => [l.name, l.address, l.country].filter(Boolean).join(', ')).filter(Boolean)
+			: (company.locations || []).map((l) => l.name || [l.address, l.country].filter(Boolean).join(', ')).filter(Boolean)
 	);
-	const tabs = $derived([
-		{ path: '', icon: /** @type {const} */ ('jobs'), label: t('list.tab.jobs'), count: jobs.length || undefined },
-		{ path: '/places', icon: /** @type {const} */ ('place'), label: t('form.locations'), count: places.length }
-	]);
-	const showJobs = $derived(Boolean(local) || tab === 'jobs');
-	const showPlaces = $derived(local ? places.length > 0 : tab === 'places');
+	const claim = $derived(local ? local.suggest : `/add?url=${encodeURIComponent(`https://${key}`)}`);
 </script>
 
-<jl-company-page verified={company.verified || undefined} tabbed={!local || undefined}>
-	<CompanyHeader {company} {local} />
-	<!-- The organization writes its page: "Is this your organization?" first, or, signed in as it, what it can do. -->
-	{#if !local}<CompanyClaim {company} />{/if}
-	{#if !local}<Tabs base="/{key}" label={t('company.tabs')} {tabs} />{/if}
+<jl-company-page>
+	{#if owner}
+		<jl-company-owner>
+			<span>{t('orgs.yourPage')}</span>
+			<a href="/organization"><Icon name="settings" /> {t('orgs.manage')}</a>
+		</jl-company-owner>
+	{/if}
+	<CompanyHeader {company} {local} {places} />
 
-	{#if showJobs}
-		<section aria-labelledby="company-jobs">
-			<h2 id="company-jobs">{t('list.tab.jobs')}</h2>
-			{#if !local}<CompanyHiring {company} />{/if}
-			{#if hasJobs}
-				<CompanyJobs {company} bind:jobs {address} local={Boolean(local)} />
-			{:else if local}
-				<p>{t('org.jobsThere')} <a href={local.link} target="_blank" rel="noopener noreferrer">{local.link.replace(/^https?:\/\/(www\.)?/, '')}</a></p>
-			{:else}
-				<p>{t('org.jobsThere')} <a href={company.url || `https://${key}`} target="_blank" rel="noopener noreferrer">{key}</a></p>
-			{/if}
-		</section>
-		{#if !local}
-			<!-- Its jobs on a website, at hand. -->
-			<jl-company-more>
-				<CompanyEmbed {company} open={manager} />
-			</jl-company-more>
+	<section aria-labelledby="company-jobs">
+		<jl-visually-hidden><h2 id="company-jobs">{t('list.tab.jobs')}</h2></jl-visually-hidden>
+		{#if hasJobs}
+			<CompanyJobs {company} bind:jobs {address} local={Boolean(local)} />
+		{:else}
+			<p>{t('org.jobsThere')} <a href={local?.link || company.url || `https://${key}`} target="_blank" rel="noopener noreferrer">{key}</a></p>
 		{/if}
-	{/if}
+	</section>
 
-	{#if showPlaces}
-		<section aria-labelledby="company-places">
-			<h2 id="company-places">{t('form.locations')}</h2>
-			{#if places.length}
-				<ul>{#each places as place, i (i)}<li>{place}</li>{/each}</ul>
-				{#if mapPoints(company).length}<jl-company-map><CompanyMap companies={[company]} full /></jl-company-map>{/if}
-			{/if}
-			{#if !local}<CompanyInvite {company} field="locations" />{/if}
-		</section>
+	{#if !owner && !company.verified}
+		<p data-claim><small><a href={claim}>{t('company.claim.short')}</a></small></p>
 	{/if}
-
 </jl-company-page>
 
 <style>
 	jl-company-page {
 		display: block;
 	}
-	jl-company-page > :global(jl-tabs) {
-		margin-top: var(--space-m);
+	jl-company-owner {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--space-s);
+		margin-top: var(--space-s);
+		padding: var(--space-xs) var(--space-m);
+		border-radius: var(--radius);
+		background: var(--color-soft);
+		font-size: var(--font-size-small);
 	}
 	section {
-		margin-top: var(--space-l);
-	}
-	h2 {
-		font-size: var(--font-size-small);
-		color: var(--color-muted);
-	}
-	/* Its tab already says what the section is: the heading stays for screen readers only. */
-	jl-company-page[tabbed] section > h2 {
-		position: absolute;
-		width: 1px;
-		height: 1px;
-		overflow: hidden;
-		clip-path: inset(50%);
-		white-space: nowrap;
-	}
-	section > ul {
-		margin: 0;
-		padding: 0;
-		list-style: none;
-	}
-	section > ul > li {
-		padding: var(--space-xs) 0;
-	}
-	jl-company-more {
-		display: grid;
-		gap: var(--space-m);
-		max-width: var(--reading-width);
-		margin-top: var(--space-xl);
-	}
-	/* A page given to its places: a big map. */
-	jl-company-map {
-		display: block;
-		height: var(--map-height);
 		margin-top: var(--space-m);
+	}
+	[data-claim] {
+		margin-top: var(--space-xl);
+		text-align: center;
 	}
 </style>

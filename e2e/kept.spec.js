@@ -46,7 +46,7 @@ test('a kept organization joblist does not know opens its profile, to forget or 
 	await page.goto('/');
 	await page.locator('jl-kept-organizations li a').first().click();
 	await expect(page).toHaveURL(/\/me\/organization#url=/);
-	await expect(page.getByRole('link', { name: 'Your organization? Describe it' })).toHaveAttribute('href', /^\/add\?url=https%3A%2F%2Finstagram\.com%2Fsome\.coop/);
+	await expect(page.getByRole('link', { name: 'Is this your organization?' })).toHaveAttribute('href', /^\/add\?url=https%3A%2F%2Finstagram\.com%2Fsome\.coop/);
 	await page.getByRole('button', { name: 'Saved' }).first().click();
 	await expect(page.getByRole('button', { name: 'Save', exact: true }).first()).toBeVisible();
 });

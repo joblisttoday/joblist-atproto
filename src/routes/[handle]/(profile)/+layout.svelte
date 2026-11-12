@@ -18,7 +18,7 @@
 	/**
 	 * A domain's page, joblist.today/{domain}: a handle is a domain, and an organization is known
 	 * by its domain. An organization joblist knows: its page (with its Bluesky account when the
-	 * domain is its handle), in tabs (/{domain}, /{domain}/places). Else an account:
+	 * domain is its handle), one page (/{domain}). Else an account:
 	 * who it is, then the jobs it posted (/{handle}): its own things, not its edits of others'.
 	 * Else a domain: what this browser finds of it (its local profile). Else not found.
 	 * @type {{children: import('svelte').Snippet}}
@@ -26,10 +26,7 @@
 	let { children } = $props();
 	const handle = $derived(page.params.handle || '');
 	const company = $derived(data.companies.get(handle));
-	// An organization's tab, from its address: /{domain}, /{domain}/places.
-	const tab = $derived(/** @type {'jobs' | 'places'} */ (page.route.id?.endsWith('/places') ? 'places' : 'jobs'));
 	// Tabs only an organization has: an account's page is not found there.
-	const companyOnly = $derived(tab !== 'jobs');
 	// The same organization added twice: its page is the kept one's.
 	$effect(() => {
 		if (company && company.key !== handle) goto(`/${company.key}`, { replace: true });
@@ -74,18 +71,16 @@
 <svelte:head>
 	{#if company}
 		<title>{company.name} · {config.name}</title>
-		<link rel="canonical" href="{config.url}/{company.key}{tab === 'jobs' ? '' : `/${tab}`}" />
+		<link rel="canonical" href="{config.url}/{company.key}" />
 	{:else}
 		<link rel="canonical" href="{config.url}{page.url.pathname}" />
 	{/if}
 </svelte:head>
 
 {#if company}
-	<CompanyPage {company} {tab} />
+	<CompanyPage {company} />
 {:else if did === undefined}
 	<Pending />
-{:else if companyOnly}
-	<NotFound title={t('notFound.title')} text={t('notFound.path', { path: page.url.pathname })} />
 {:else if domain && !posted}
 	<OrganizationProfile link={domain} />
 {:else if did === null}

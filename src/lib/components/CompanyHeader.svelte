@@ -1,100 +1,68 @@
 <script>
 	import Icon from './Icon.svelte';
 	import config from '#lib/data/config.json';
-	import CompanyDelete from './CompanyDelete.svelte';
-	import CompanyInvite from './CompanyInvite.svelte';
 	import CompanySave from './CompanySave.svelte';
 	import PageMenu from './PageMenu.svelte';
 	import { data } from '#lib/network/network.svelte.js';
-	import { boardUrl, mayDescribe } from '#lib/models/company.js';
-	import { session } from '#lib/auth/session.svelte.js';
-	import { isCompanyKey } from '#lib/models/landing.js';
+	import { boardUrl } from '#lib/models/company.js';
 	import { accountOf } from '#lib/network/accounts.svelte.js';
 	import { forget, isKeptLink, keep } from '#lib/network/kept.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * An organization's name, links, description and tags, and what can be done with it.
+	 * An organization's careers page, its head: its name (✓ when it publishes it itself), Save,
+	 * one line of links (website, Bluesky, job board), its description, its places and tags.
 	 * local: one only this browser knows (CompanyPage): the link it is kept by, the Bluesky
-	 * account found for it, Save in this browser and Suggest to joblist, instead of editing it.
-	 * @type {{company: import('#lib/models/company.js').Company, local?: import('#lib/models/kept.js').Local}}
+	 * account found for it.
+	 * @type {{company: import('#lib/models/company.js').Company, local?: import('#lib/models/kept.js').Local, places?: string[]}}
 	 */
-	let { company, local } = $props();
+	let { company, local, places = [] } = $props();
 	const board = $derived(boardUrl(company.jobBoard));
 	// The company's own account (it wrote the version shown, or its domain is its handle): its Bluesky picture and profile.
 	const author = $derived(company.verified ? data.profiles.get(company.record.did) : undefined);
 	const bluesky = $derived(accountOf(company.key));
 	let unfolded = $state(false);
 	const account = $derived(
-		local
-			? local.account
-			: author || bluesky
-				? { handle: author?.handle || company.key, avatar: author?.avatar || bluesky?.avatar, followers: bluesky?.followers }
-				: undefined
+		local ? local.account : author || bluesky ? { handle: author?.handle || company.key, avatar: author?.avatar || bluesky?.avatar } : undefined
 	);
 	const short = (/** @type {string} */ link) => link.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
 	const kept = $derived(local ? isKeptLink(local.link) : false);
-	// Only the organization (or joblist's starter account) writes its page.
-	const writer = $derived(!local && mayDescribe(company, session));
+	const about = $derived([...(company.kind ? [t(`kind.${company.kind}`)] : []), ...places, ...company.tags]);
 </script>
 
-<jl-company-header verified={company.verified || undefined}>
+<jl-company-header>
 	<header>
-		<!-- Its menu at the right edge of its name, as on every page (PageHeader). -->
 		<jl-company-title>
-			<h1>{#if account?.avatar}<img src={account.avatar} alt="" />{/if}{company.name}</h1>
-			<PageMenu
-				own={local
-					? []
-					: [
-							{ href: `/jobs/new?company=${encodeURIComponent(company.key)}`, label: 'menu.postHere', icon: 'post' },
-							...(writer ? [{ href: `/add?key=${encodeURIComponent(company.key)}`, label: 'company.edit', icon: /** @type {const} */ ('edit') }] : [])
-						]}
-			/>
+			<h1>
+				{#if account?.avatar}<img src={account.avatar} alt="" />{/if}{company.name}
+				{#if company.verified}<span title={t('company.verified', { domain: company.key })}><Icon name="verified" /><jl-visually-hidden>{t('company.verified', { domain: company.key })}</jl-visually-hidden></span>{/if}
+			</h1>
+			{#if local}
+				<button type="button" aria-pressed={kept ? 'true' : 'false'} onclick={() => (kept ? forget(local.link) : keep(local.link, company.name, company.jobBoard))} title={t('collections.private')}>
+					<Icon name={kept ? 'savedOn' : 'save'} /> {t(kept ? 'collections.saved' : 'collections.save')}
+				</button>
+			{:else}
+				<CompanySave {company} />
+			{/if}
+			<PageMenu own={[]} />
 		</jl-company-title>
 		<p>
 			<small>
 				{#if local}<a href={local.link} target="_blank" rel="noopener noreferrer">{short(local.link)} <Icon name="external" /></a>
 				{:else if company.url}<a href={company.url} target="_blank" rel="noopener">{company.key} <Icon name="external" /></a>{:else}{company.key}{/if}
-				{#if company.verified}· <span><Icon name="verified" /> {t('company.verified', { domain: company.key })}</span>{/if}
-				{#if account}
-					· <a href={config.links.profile.replace('{handle}', account.handle)} target="_blank" rel="noopener">{t('company.onBluesky', { handle: account.handle })}</a>
-					{#if account.followers}· {t('company.followers', { count: account.followers })}{/if}
-				{/if}
+				{#if account}· <a href={config.links.profile.replace('{handle}', account.handle)} target="_blank" rel="noopener">Bluesky <Icon name="external" /></a>{/if}
+				{#if board}· <a href={board} target="_blank" rel="noopener noreferrer">{t('company.jobBoard')} <Icon name="external" /></a>{/if}
 			</small>
 		</p>
 		{#if company.description}
-			<!-- Long, it folds: the jobs come right after the company, on a phone too. -->
+			<!-- Long, it folds: the jobs come right after, on a phone too. -->
 			{@const long = company.description.length > config.companyForm.foldAt}
 			<jl-company-about folded={(long && !unfolded) || undefined}>
 				<p>{company.description}</p>
 				{#if long}<button type="button" aria-expanded={unfolded} onclick={() => (unfolded = !unfolded)}>{t(unfolded ? 'company.less' : 'company.more')}</button>{/if}
 			</jl-company-about>
 		{/if}
-		{#if !local}<CompanyInvite {company} field="description" />{/if}
-		{#if company.tags.length || company.kind}
-			<ul aria-label={t('form.tags')}>
-				{#if company.kind}<li><span data-kind>{t(`kind.${company.kind}`)}</span></li>{/if}
-				{#each company.tags as tag (tag)}<li><span>{tag}</span></li>{/each}
-			</ul>
-		{/if}
-		{#if local}
-			<menu>
-				<a href={local.suggest} data-primary><Icon name="add" /> {t('org.suggest')}</a>
-				<button type="button" aria-pressed={kept ? 'true' : 'false'} onclick={() => (kept ? forget(local.link) : keep(local.link, company.name, company.jobBoard))} title={t('collections.private')}>
-					<Icon name={kept ? 'savedOn' : 'save'} /> {t(kept ? 'collections.saved' : 'collections.save')}
-				</button>
-				{#if board}<a href={board} target="_blank" rel="noopener noreferrer">{t('company.jobBoard')} <Icon name="external" /></a>{/if}
-			</menu>
-		{:else}
-			<CompanyInvite {company} field="tags" />
-			<menu>
-				<CompanySave {company} />
-				{#if board}<a href={board} target="_blank" rel="noopener">{t('company.jobBoard')} <Icon name="external" /></a>{/if}
-				{#if writer}<a href="/add?key={encodeURIComponent(company.key)}">{t('company.edit')}</a>{/if}
-				<CompanyDelete {company} />
-			</menu>
-		{/if}
+		{#if about.length}<p data-about><small>{about.join(' · ')}</small></p>{/if}
 	</header>
 </jl-company-header>
 
@@ -122,9 +90,9 @@
 	}
 	jl-company-title {
 		display: grid;
-		grid-template-columns: minmax(0, 1fr) auto;
+		grid-template-columns: minmax(0, 1fr) auto auto;
 		align-items: center;
-		gap: var(--space-m);
+		gap: var(--space-s);
 		margin: var(--space-m) 0 var(--space-xs);
 	}
 	h1 {
@@ -132,6 +100,7 @@
 		align-items: center;
 		gap: var(--space-s);
 		margin: 0;
+		min-width: 0;
 	}
 	h1 img {
 		width: var(--avatar-small);
@@ -139,35 +108,19 @@
 		border-radius: var(--radius);
 		object-fit: cover;
 	}
-	span {
-		color: var(--color-ok);
-	}
-	ul {
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-xs);
-		margin-bottom: var(--space-m);
-	}
-	ul span {
+	h1 span {
 		display: inline-flex;
-		align-items: center;
-		min-height: var(--chip-height);
-		padding: 0 var(--space-s);
-		border-radius: var(--radius-round);
-		background: var(--color-soft);
-		font-size: var(--font-size-small);
-		text-decoration: none;
-	}
-	menu > * {
+		color: var(--color-ok);
 		font-size: var(--font-size-small);
 	}
-	menu [data-primary] {
-		background: var(--color-accent);
-		color: var(--color-accent-fg);
-		border-color: var(--color-accent);
+	jl-company-title > button {
+		font-size: var(--font-size-small);
 	}
-	menu button[aria-pressed='true'] {
+	jl-company-title > button[aria-pressed='true'] {
 		background: var(--color-soft);
 		color: var(--color-ok);
+	}
+	[data-about] {
+		color: var(--color-muted);
 	}
 </style>

@@ -22,29 +22,23 @@ test("the site's own pages and files stay as they are", async ({ request }) => {
 	expect((await request.get('/a/b/c/d')).status()).toBe(404);
 });
 
-test('a domain joblist does not know has its local profile', async ({ page }) => {
+test('a domain that publishes no page has what the browser finds of it', async ({ page }) => {
 	await page.goto('/example-not-on-joblist.org');
-	await expect(page.getByRole('link', { name: 'Your organization? Describe it' })).toBeVisible({ timeout: 20_000 });
+	await expect(page.getByRole('link', { name: 'Is this your organization?' })).toBeVisible({ timeout: 20_000 });
 });
 
-test("an organization's page has tabs, each its own address", async ({ page }) => {
-	await page.goto('/joblist.today');
-	const tabs = page.locator('jl-tabs nav');
-	await tabs.getByRole('link', { name: /Locations/ }).click({ timeout: 20_000 });
-	await expect(page).toHaveURL(/\/joblist\.today\/places$/);
-	await expect(page.locator('link[rel=canonical]').last()).toHaveAttribute('href', 'https://joblist.today/joblist.today/places');
-	// No history: an old link opens the page.
-	await page.goto('/joblist.today/history');
-	await expect(page).toHaveURL(/\/joblist\.today$/);
-	// Its jobs are its page itself.
-	await page.goto('/joblist.today/jobs');
-	await expect(page).toHaveURL(/\/joblist\.today$/);
+test("an organization's page is one page: old tab addresses open it", async ({ page }) => {
+	for (const path of ['/joblist.today/places', '/joblist.today/history', '/joblist.today/jobs']) {
+		await page.goto(path);
+		await expect(page).toHaveURL(/\/joblist\.today$/);
+	}
+	await expect(page.locator('jl-tabs')).toHaveCount(0);
 });
 
 test('a name that is no domain is no organization: not found', async ({ page }) => {
 	for (const path of ['/test.env', '/fake-fomaine.no-tld']) {
 		await page.goto(path);
 		await expect(page.locator('h1')).toContainText('Page not found');
-		await expect(page.getByRole('link', { name: 'Your organization? Describe it' })).toHaveCount(0);
+		await expect(page.getByRole('link', { name: 'Is this your organization?' })).toHaveCount(0);
 	}
 });
