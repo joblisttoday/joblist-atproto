@@ -17,7 +17,6 @@ import { escape } from './html.js';
 /** The app's pages for people (their own data, forms): shells, kept out of search results. */
 const appPages = [
 	['/me/searches', en['me.searches.title']],
-	['/me/organizations', en['kept.title']],
 	['/me/organization', en['kept.title']],
 	['/me/lists', en['me.lists.title']],
 	['/me/lists/saved', en['marks.saved']],
@@ -28,7 +27,6 @@ const appPages = [
 	['/menu/language', en['about.language']],
 	['/menu/collections', en['collections.transfer']],
 	['/menu/outbox', en['outbox.title']],
-	['/me', en['nav.me']],
 	['/add', en['form.company.title']],
 	['/jobs/new', en['post.title']],
 	['/tools', config.name],

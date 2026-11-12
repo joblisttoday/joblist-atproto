@@ -33,7 +33,7 @@ const words = (text) => text.toLowerCase().split(/\s+/).filter(Boolean);
 /**
  * Where the work happens: what the job board or the poster says, else what the location
  * or title says ("Remote - USA", "Berlin (Hybrid)"; on site only from the location).
- * '' is "read already, not said" (the snapshot's jobs, see snapshot-job.js).
+ * '' is "read already, not said".
  * @param {Job} job
  * @returns {'onsite' | 'hybrid' | 'remote' | undefined}
  */

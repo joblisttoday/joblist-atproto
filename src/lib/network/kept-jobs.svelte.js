@@ -49,14 +49,18 @@ const companies = $derived(
 let jobs = $state.raw(new Map());
 const all = $derived([...jobs.values()].flat().sort((a, b) => String(b.published || '').localeCompare(String(a.published || ''))));
 let reading = $state(false);
-let asked = false;
+/** The boards last asked for: asked again only when they change (one saved, or the list just loaded). */
+let asked = '';
 
 async function read() {
-	if (asked) return;
-	asked = true;
+	const boards = companies.filter((c) => c.jobBoard?.provider && c.jobBoard.id).slice(0, config.kept.boardsPerVisit);
+	const these = boards.map((c) => c.key).join(' ');
+	if (these === asked) return;
+	asked = these;
+	// Asked while a page is drawn (a derived value): state changes wait until it is drawn.
+	await Promise.resolve();
 	reading = true;
 	const kept = /** @type {{at: number, jobs: [string, Job[]][]} | null} */ (await stored(KEY).catch(() => null));
-	const boards = companies.filter((c) => c.jobBoard?.provider && c.jobBoard.id).slice(0, config.kept.boardsPerVisit);
 	const fresh = kept && Date.now() - kept.at < config.kept.refreshHours * 3600 * 1000;
 	const had = new Map(kept?.jobs || []);
 	if (fresh && boards.every((c) => had.has(c.key))) {

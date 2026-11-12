@@ -17,7 +17,7 @@ test('private lists become saved organizations, tagged', async ({ page }) => {
 		const list = (/** @type {string} */ rkey, /** @type {string} */ name, /** @type {string[]} */ companies) => ({ uri: '', cid: '', did: 'local', rkey, value: { name, companies, createdAt: '2026-11-01T00:00:00Z' } });
 		localStorage.setItem('joblist.lists.v1', JSON.stringify([list('lsaved', 'Saved organizations', ['ableton.com']), list('lcoops', 'Coops', ['ableton.com', 'example.coop'])]));
 	});
-	await page.goto('/me/organizations');
+	await page.goto('/');
 	await expect(page.locator('main')).toContainText('example.coop');
 	const kept = await page.evaluate(() => [JSON.parse(localStorage.getItem('joblist.kept.v1') || '[]'), localStorage.getItem('joblist.lists.v1')]);
 	expect(kept[0].map((/** @type {any} */ k) => [k.url, k.tags])).toEqual([

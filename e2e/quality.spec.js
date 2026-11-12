@@ -11,13 +11,11 @@ qualityTests([
 	{ name: 'jobs', path: '/jobs', touch },
 	{ name: 'organization', path: '/joblist.today', touch },
 	{ name: 'organization places', path: '/joblist.today/places', touch },
-	{ name: 'me', path: '/me', touch },
 	{ name: 'my lists', path: '/me/lists', touch },
 	{ name: 'menu', path: '/menu', touch },
 	{ name: 'language', path: '/menu/language', touch },
 	{ name: 'add an organization', path: '/add', touch },
 	{ name: 'post a job', path: '/jobs/new', touch },
-	{ name: 'my organizations', path: '/me/organizations', touch },
 	{
 		name: 'job dialog',
 		touch,

@@ -6,12 +6,13 @@
 	import { session, signOut, switchAccount } from '#lib/auth/session.svelte.js';
 	import { accounts } from '#lib/auth/accounts.js';
 	import { outbox } from '#lib/network/outbox.svelte.js';
-	import { i18n, t } from '#lib/i18n/index.svelte.js';
+	import { own } from '#lib/network/own-lists.svelte.js';
+	import { searches } from '#lib/network/saved-searches.svelte.js';
+	import { formatNumber, i18n, t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * The menu: who you are here, where else to look, and how joblist
-	 * works in this browser, each a row leading to its own page (as 4000.radio's).
-	 * What each page shows is on it; here, only where to go.
+	 * The menu: what this browser keeps (searches, lists of jobs; organizations are on the
+	 * home), your account, and how joblist works here, each a row leading to its own page.
 	 */
 	const waiting = $derived(outbox.entries.filter((e) => e.did === session.did).length);
 
@@ -33,15 +34,14 @@
 			.map((a) => ({ onclick: () => switchAccount(a.did), icon: /** @type {const} */ ('me'), label: t('accounts.use', { handle: a.handle || a.did }) })),
 		{ href: '/signin?add', icon: /** @type {const} */ ('signin'), label: t('accounts.add') }
 	]);
-	const explore = $derived([
-		{ href: '/in', icon: /** @type {const} */ ('place'), label: t('landing.cities') },
-		{ href: '/field', icon: /** @type {const} */ ('jobs'), label: t('landing.fields') },
-		{ href: '/stats', icon: /** @type {const} */ ('area'), label: t('stats.link') },
-		{ href: '/apps', icon: /** @type {const} */ ('embed'), label: t('menu.apps') }
+	const yours = $derived([
+		{ href: '/me/searches', icon: /** @type {const} */ ('search'), label: t('saved.searches'), value: formatNumber(searches.list.length) },
+		{ href: '/me/lists', icon: /** @type {const} */ ('lists'), label: t('nav.lists'), value: formatNumber(own.lists.reduce((n, l) => n + l.count, 0)) }
 	]);
 	const browser = $derived([
 		{ href: '/menu/language', icon: /** @type {const} */ ('language'), label: t('about.language'), value: t(`locale.${i18n.locale}`) },
-		{ href: '/menu/collections', icon: /** @type {const} */ ('saved'), label: t('collections.transfer') }
+		{ href: '/menu/collections', icon: /** @type {const} */ ('saved'), label: t('collections.transfer') },
+		{ href: '/apps', icon: /** @type {const} */ ('embed'), label: t('menu.apps') }
 	]);
 	const about = $derived([
 		{ href: config.source, icon: /** @type {const} */ ('about'), label: t('menu.source'), external: true },
@@ -53,20 +53,18 @@
 
 <jl-menu-page>
 	<h1>{t('nav.menu')}</h1>
+	<MenuLinks label={t('me.here')} items={yours} />
 	{#if session.handle}
 		<MenuLinks label={t('settings.account')} items={you} />
 		<MenuLinks label={t('accounts.others')} items={others} />
 	{:else}
 		<section aria-labelledby="menu-signin">
 			<h2 id="menu-signin">{t('settings.account')}</h2>
-			<p><small>{t('settings.signedOut')}</small></p>
 			<menu><li><a href="/signin"><Icon name="signin" /> {t('nav.signin')}</a></li></menu>
 		</section>
 	{/if}
-	<MenuLinks label={t('menu.explore')} items={explore} />
 	<MenuLinks label={t('settings.browser')} items={browser} />
 	<MenuLinks label={t('menu.about')} items={about} />
-	<p><small>{t('about.data')}</small></p>
 </jl-menu-page>
 
 <style>
@@ -90,8 +88,5 @@
 		background: var(--color-accent);
 		color: var(--color-accent-fg);
 		border-color: var(--color-accent);
-	}
-	jl-menu-page > p {
-		margin-top: var(--space-l);
 	}
 </style>

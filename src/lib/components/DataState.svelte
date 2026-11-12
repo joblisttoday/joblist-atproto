@@ -27,7 +27,7 @@
 		<p>{t('data.kept')}</p>
 		<menu>
 			<button type="button" onclick={() => location.reload()}>{t('network.retry')}</button>
-			<a href="/me">{t('nav.me')}</a>
+			<a href="/menu">{t('nav.menu')}</a>
 		</menu>
 	</jl-data-state>
 {/if}

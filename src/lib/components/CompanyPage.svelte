@@ -41,7 +41,7 @@
 		{ path: '/places', icon: /** @type {const} */ ('place'), label: t('form.locations'), count: places.length }
 	]);
 	const showJobs = $derived(Boolean(local) || tab === 'jobs');
-	const showPlaces = $derived(Boolean(local) || tab === 'places');
+	const showPlaces = $derived(local ? places.length > 0 : tab === 'places');
 </script>
 
 <jl-company-page verified={company.verified || undefined} tabbed={!local || undefined}>
@@ -74,14 +74,11 @@
 			{#if places.length}
 				<ul>{#each places as place, i (i)}<li>{place}</li>{/each}</ul>
 				{#if mapPoints(company).length}<jl-company-map><CompanyMap companies={[company]} full /></jl-company-map>{/if}
-			{:else if local}
-				<p><small>{t(hasJobs ? 'org.noPlaces' : 'org.placesUnknown')}</small></p>
 			{/if}
 			{#if !local}<CompanyInvite {company} field="locations" />{/if}
 		</section>
 	{/if}
 
-	{#if local}<p><small>{t('org.how')}</small></p>{/if}
 </jl-company-page>
 
 <style>

@@ -269,11 +269,14 @@
 
 <jl-explore {view}>
 	<!-- Jobs, organizations or lists; the search, and how the jobs are shown, at the same place in every view. -->
+	<!-- Nothing saved yet: no search, no filters, only how to start. -->
+	{#if companies.length}
 	<jl-explore-bar>
 		<ExploreSearch bind:filters {places}>
 			{#snippet tools()}<ViewSwitch bind:view {mapless} />{/snippet}
 		</ExploreSearch>
 	</jl-explore-bar>
+	{/if}
 	<jl-explore-stage>
 	<!-- undefined, not false: on a custom element, false would write inert="false", which is still inert. -->
 	<jl-explore-map inert={!mapShown || undefined}>
@@ -321,7 +324,7 @@
 		<!-- Kept while a job is open, so its search and its place in the list are still there after. -->
 		<jl-explore-results id="explore-results" hidden={pickedJobs ? true : undefined}>
 			<!-- The fields jobs are in: one tap shows a field's jobs, searched or not. -->
-			<ExploreFields bind:field={filters.field} {jobs} />
+			{#if jobs.length}<ExploreFields bind:field={filters.field} {jobs} />{/if}
 			{#if companies.length}
 				<Jobs
 					{companies}

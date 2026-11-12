@@ -13,7 +13,7 @@ test('an organization is at its domain, from its own account, and its old addres
 });
 
 test("the site's own pages and files stay as they are", async ({ request }) => {
-	for (const [path, type] of [['/jobs', 'text/html'], ['/robots.txt', 'text/plain'], ['/sitemap.xml', 'application/xml'], ['/me/organizations', 'text/html']]) {
+	for (const [path, type] of [['/jobs', 'text/html'], ['/robots.txt', 'text/plain'], ['/sitemap.xml', 'application/xml'], ['/menu', 'text/html']]) {
 		const res = await request.get(path);
 		expect(res.status(), path).toBe(200);
 		expect(res.headers()['content-type'], path).toContain(type);

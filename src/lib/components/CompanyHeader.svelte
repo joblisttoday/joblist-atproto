@@ -63,7 +63,6 @@
 				{/if}
 			</small>
 		</p>
-		{#if local}<p data-local><small>{t('org.intro')}</small></p>{/if}
 		{#if company.description}
 			<!-- Long, it folds: the jobs come right after the company, on a phone too. -->
 			{@const long = company.description.length > config.companyForm.foldAt}
@@ -170,8 +169,5 @@
 	menu button[aria-pressed='true'] {
 		background: var(--color-soft);
 		color: var(--color-ok);
-	}
-	[data-local] {
-		margin-bottom: var(--space-s);
 	}
 </style>

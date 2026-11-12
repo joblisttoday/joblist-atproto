@@ -14,7 +14,7 @@ test('opens offline, with what this browser keeps', async ({ page, context }) =>
 	await expect(page.locator('h1')).toContainText('joblist', { timeout: 20_000 });
 
 	await context.setOffline(true);
-	await page.goto('/me');
+	await page.goto('/menu');
 	await expect(page.locator('h1')).toBeVisible();
 	await expect(page.locator('jl-outbox-status[state="offline"]')).toBeVisible();
 	await page.goto('/jobs');

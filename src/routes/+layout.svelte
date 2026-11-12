@@ -3,7 +3,6 @@
 	import favicon from '#lib/assets/favicon.svg';
 	import config from '#lib/data/config.json';
 	import Header from '#lib/components/Header.svelte';
-	import Footer from '#lib/components/Footer.svelte';
 	import OutboxStatus from '#lib/components/OutboxStatus.svelte';
 	import { startOutbox } from '#lib/network/outbox.svelte.js';
 	import { initSession } from '#lib/auth/session.svelte.js';
@@ -37,7 +36,6 @@
 <main id="main" tabindex="-1">
 	{@render children()}
 </main>
-<Footer />
 
 <style>
 	a[href='#main'] {
