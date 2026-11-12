@@ -125,12 +125,6 @@ html {
 	scroll-padding-block: var(--header-height) calc(var(--nav-height) + env(safe-area-inset-bottom));
 }
 
-/* Wide screens (64rem, the shared breakpoint): the navigation is in the header. */
-@media (min-width: 64rem) {
-	html {
-		scroll-padding-block-end: 0;
-	}
-}
 
 @media (hover: hover) and (pointer: fine) {
 	:root {
@@ -194,17 +188,11 @@ main p {
 	max-width: var(--measure);
 }
 
-/* Room for the bottom navigation on phones and tablets.
-   One breakpoint for the whole layout (navigation, header, explorer): (min-width: 64rem),
+/* Room for the bottom navigation, at every width (mobile first).
+   One breakpoint for the rest of the layout (header, explorer): (min-width: 64rem),
    the same as config.layout.wide (media queries cannot read CSS variables). */
 body {
 	padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom));
-}
-
-@media (min-width: 64rem) {
-	body {
-		padding-bottom: 0;
-	}
 }
 
 h1,

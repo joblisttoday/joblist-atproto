@@ -507,7 +507,7 @@
 	@media (min-width: 64rem) {
 		jl-explore {
 			top: var(--header-height);
-			bottom: 0;
+			bottom: calc(var(--nav-height) + env(safe-area-inset-bottom));
 		}
 		jl-explore-bar {
 			padding-top: var(--space-s);

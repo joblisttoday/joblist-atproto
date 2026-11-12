@@ -11,12 +11,17 @@
 	const all = navLinks();
 	const own = $derived(ownDomain(session.handle));
 	// An organization's tab only for its account.
-	// An organization signed in: the home is its own (Home, its picture), its pages within it.
+	// An organization signed in: its own tabs (its home with its picture, its page as visitors
+	// see it, posting a job, the menu); Jobs and Saved are a job seeker's, still a link away.
+	const menu = all.filter((i) => i.href === '/menu');
 	const items = $derived(
 		own
-			? all
-					.filter((i) => !i.organization)
-					.map((i) => (i.href === '/' ? { ...i, label: 'nav.home', icon: /** @type {const} */ ('home'), account: true, within: [...i.within, '/organization', '/add', '/jobs/new', '/signin'] } : i))
+			? [
+					{ href: '/', label: 'nav.home', icon: /** @type {const} */ ('home'), account: true, within: ['/organization', '/add', '/signin'] },
+					{ href: `/${own}`, label: 'orgs.page', icon: /** @type {const} */ ('companies'), within: [] },
+					{ href: '/jobs/new', label: 'post.title', icon: /** @type {const} */ ('add'), within: ['/job'] },
+					...menu
+				]
 			: all.filter((i) => !i.organization)
 	);
 	/** The count a tab shows, 0 for none. @param {string | undefined} badge */
@@ -139,43 +144,11 @@
 		border-top-color: var(--color-fg);
 	}
 
+	/* Wide screens too: at the bottom, as wide as reading, centered (mobile first). */
 	@media (min-width: 64rem) {
-		jl-nav {
-			position: static;
-			background: none;
-			border: 0;
-			padding: 0;
-		}
 		nav {
-			display: flex;
-			gap: var(--space-xs);
-			margin: 0;
-		}
-		/* Wide screens: beside it. */
-		a {
-			display: flex;
-			flex-direction: row;
-			gap: var(--space-xs);
-			--icon-size: 1em;
-			min-height: var(--header-height);
-			padding: 0 var(--space-s);
-			font-size: var(--font-size);
-			border-top: 0;
-			border-bottom: var(--border-width) solid transparent;
-		}
-		a[aria-current='page'] {
-			border-bottom-color: var(--color-fg);
-		}
-		mark,
-		a[data-account='company'] > :global(jl-icon:last-child) {
-			position: static;
-		}
-		a[data-account] span {
-			max-width: var(--account-width);
-		}
-		a[data-account] img {
-			width: 1em;
-			height: 1em;
+			max-width: var(--reading-width);
+			margin-inline: auto;
 		}
 	}
 </style>
