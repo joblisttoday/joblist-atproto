@@ -92,6 +92,24 @@
 		"scripts": "/embed/",
 		"shown": 20
 	},
+	"nameSearch": {
+		"minLength": 3,
+		"waitMs": 600,
+		"shown": 5,
+		"cacheDays": 7,
+		"wikidata": "https://www.wikidata.org/w/api.php",
+		"bluesky": "https://public.api.bsky.app/xrpc/app.bsky.actor.searchActorsTypeahead",
+		"socials": {
+			"P2002": "https://x.com/{id}",
+			"P4033": "mastodon",
+			"P12361": "https://bsky.app/profile/{id}",
+			"P4264": "https://www.linkedin.com/company/{id}",
+			"P2037": "https://github.com/{id}",
+			"P2003": "https://www.instagram.com/{id}",
+			"P2013": "https://www.facebook.com/{id}",
+			"P2397": "https://www.youtube.com/channel/{id}"
+		}
+	},
 	"quickSearch": {
 		"places": 2000,
 		"shown": { "fields": 2, "cities": 2, "companies": 4, "tags": 2, "places": 3 }

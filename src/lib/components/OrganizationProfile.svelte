@@ -6,6 +6,8 @@
 	import { suggestAddress } from '#lib/models/suggest.js';
 	import { kept } from '#lib/network/kept.svelte.js';
 	import { boardOfKept, keyOf } from '#lib/models/kept.js';
+	import { foundFor } from '#lib/network/name-search.js';
+	import { keep } from '#lib/network/kept.svelte.js';
 
 	/**
 	 * An organization joblist does not know yet: the same page as one it knows (CompanyPage),
@@ -22,14 +24,28 @@
 		found = null;
 		discover(asked).then((f) => asked === link && (found = f));
 	});
+	// What a name search found of it (Wikidata: its description, its social accounts), kept here.
+	let named = $state(/** @type {import('#lib/models/name-search.js').Found | null} */ (null));
+	$effect(() => {
+		const domain = keyOf(link);
+		named = null;
+		if (domain) foundFor(domain).then((f) => keyOf(link) === domain && (named = f));
+	});
+	// A board found by its name (BoardFinder), kept with it when it is followed.
+	let picked = $state(/** @type {{provider: string, id: string} | null} */ (null));
+	/** @param {{provider: string, id: string}} board */
+	function onboard(board) {
+		picked = board;
+		if (item) keep(item.url, item.name, board);
+	}
 
 	// Saved by its link, or by its domain (the board found when it was saved: a website does not answer browsers).
 	const item = $derived(kept.list.find((k) => k.url === link) || kept.list.find((k) => keyOf(k.url) && keyOf(k.url) === keyOf(link)));
 	const short = $derived(link.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, ''));
-	const board = $derived(found?.board || (item ? boardOfKept(item) : undefined) || null);
+	const board = $derived(picked || found?.board || (item ? boardOfKept(item) : undefined) || null);
 	const boardHref = $derived(board ? providers.find((p) => p.id === board.provider)?.board.replace('{id}', board.id) || link : '');
 	// Its own name first, then what was found; a board's id as a name, else its link.
-	const name = $derived(item?.name || found?.bluesky?.name || found?.boardName || (board ? prettyId(board.id) : '') || found?.key || short);
+	const name = $derived(item?.name || found?.bluesky?.name || named?.name || found?.boardName || (board ? prettyId(board.id) : '') || found?.key || short);
 	const website = $derived(found?.key ? `https://${found.key}` : '');
 	const bluesky = $derived(found?.bluesky ? `https://bsky.app/profile/${found.bluesky.handle}` : '');
 
@@ -45,10 +61,10 @@
 				key: found?.key || (board ? `${board.provider}-${board.id}` : short),
 				name,
 				url: website,
-				description: found?.bluesky?.description || '',
+				description: found?.bluesky?.description || named?.description || '',
 				tags: [],
 				locations: [],
-				links: bluesky ? [bluesky] : [],
+				links: [...(bluesky ? [bluesky] : []), ...(named?.socials || []).map((s) => s.href).filter((h) => h !== bluesky)],
 				jobBoard: board || undefined
 			})
 		)
@@ -62,6 +78,6 @@
 
 <svelte:head><title>{name}</title></svelte:head>
 
-{#key found}
-	<CompanyPage {company} {local} {address} />
+{#key `${found?.key}:${picked?.id}:${Boolean(named)}`}
+	<CompanyPage {company} {local} {address} onboard={board ? undefined : onboard} />
 {/key}

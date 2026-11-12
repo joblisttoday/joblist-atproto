@@ -8,14 +8,21 @@
 	import { sources } from '#lib/network/quick-search.svelte.js';
 	import { knownBy, organizationPage } from '#lib/models/kept.js';
 	import { data } from '#lib/network/network.svelte.js';
-	import { t } from '#lib/i18n/index.svelte.js';
+	import providers from '#lib/data/providers.json';
+	import { providerQuery } from '#lib/models/name-search.js';
+	import { searchName } from '#lib/network/name-search.js';
+	import { kept } from '#lib/network/kept.svelte.js';
+	import { i18n, t } from '#lib/i18n/index.svelte.js';
 
 	/**
 	 * The search box, for jobs and organizations both: a link or a domain (acme.coop,
 	 * jobs.lever.co/acme, instagram.com/acme) offers its organization's page first, and Enter
 	 * opens it: there joblist reads its job board and Bluesky account, to save it in this
-	 * browser. Words offer the saved organizations they name, and Enter searches the jobs of
-	 * the saved organizations (/jobs).
+	 * browser. A name at a provider ("spacex greenhouse") offers that board. Words offer the
+	 * followed organizations they name, and, after a pause, the organizations and Bluesky
+	 * accounts the name may be (Wikidata, Bluesky: network/name-search.js, asked once per
+	 * name); Enter searches the jobs of the followed organizations (/), or, following none
+	 * yet, opens the first organization found.
 	 * In the header, on phones, it is a button that opens the box over the header;
 	 * inline (a page's own, the home's), always a box.
 	 * placeholder: what the box asks for (by default: search, or paste a link).
@@ -35,6 +42,27 @@
 	const organization = $derived(organizationPage(text, knows));
 	/** @param {Partial<import('#lib/models/job.js').JobFilters>} filters */
 	const jobsPath = (filters) => addressOf(searchState({ query: '', where: '', remote: '', ...filters }), '/');
+	// A name at a provider: its board, opened as any link (no request before).
+	const atProvider = $derived(organization?.sure ? null : providerQuery(text, providers));
+	const atProviderPage = $derived(atProvider ? organizationPage(atProvider.url, knows) : null);
+	const following = $derived(kept.list.length > 0);
+
+	// A name: what it may be, asked after a pause, once per name (kept in this browser).
+	/** @type {{text: string, results: import('#lib/network/name-search.js').NameResults | null, busy: boolean}} */
+	let names = $state({ text: '', results: null, busy: false });
+	const asking = $derived(text.trim().length >= config.nameSearch.minLength && !organization?.sure && !atProvider);
+	$effect(() => {
+		const name = text.trim();
+		if (!asking) return;
+		const lang = i18n.locale;
+		const timer = setTimeout(async () => {
+			names = { text: name, results: names.text === name ? names.results : null, busy: true };
+			const results = await searchName(name, lang);
+			if (text.trim() === name) names = { text: name, results, busy: false };
+		}, config.nameSearch.waitMs);
+		return () => clearTimeout(timer);
+	});
+	const named = $derived(asking && names.text === text.trim() ? names.results : null);
 
 	afterNavigate(() => {
 		text = '';
@@ -45,6 +73,8 @@
 	function submit(event) {
 		event.preventDefault();
 		if (organization?.sure) goto(organization.href);
+		else if (atProviderPage) goto(atProviderPage.href);
+		else if (!following && named?.found[0]) goto(`/${named.found[0].domain}`);
 		else if (text.trim()) goto(jobsPath({ query: text.trim() }));
 	}
 
@@ -102,12 +132,40 @@
 					</a>
 				</li>
 			{/if}
-			<li><a onkeydown={keys} href={jobsPath({ query: text.trim() })}><Icon name="search" /> {t('quick.jobs', { text: text.trim() })}</a></li>
+			{#if atProvider && atProviderPage}
+				<li>
+					<a onkeydown={keys} href={atProviderPage.href}><Icon name="jobs" /> {t('quick.atProvider', { name: atProvider.id, provider: atProvider.provider.name })}</a>
+				</li>
+			{/if}
+			{#if following}
+				<li><a onkeydown={keys} href={jobsPath({ query: text.trim() })}><Icon name="search" /> {t('quick.jobs', { text: text.trim() })}</a></li>
+			{/if}
 			{#each found.companies as company (company.key)}
 				<li>
 					<a onkeydown={keys} href={company.href}><Icon name="savedOn" /> {company.name}</a>
 				</li>
 			{/each}
+			{#if named}
+				{#each named.found as org (org.domain)}
+					<li>
+						<a onkeydown={keys} href="/{org.domain}">
+							<Icon name="companies" />
+							<span>{org.name} <small>{org.domain}{org.description ? ` · ${org.description}` : ''}</small></span>
+						</a>
+					</li>
+				{/each}
+				{#each named.accounts as account (account.handle)}
+					<li>
+						<a onkeydown={keys} href="/{account.handle}">
+							{#if account.avatar}<img src={account.avatar} alt="" />{:else}<Icon name="me" />{/if}
+							<span>{account.name} <small>@{account.handle}</small></span>
+						</a>
+					</li>
+				{/each}
+				<li data-note><small>{named.found.length || named.accounts.length ? t('quick.names.source') : t('quick.names.none')}</small></li>
+			{:else if asking}
+				<li data-note><small>{t('quick.names.asking')}</small></li>
+			{/if}
 		</ul>
 	{/if}
 </jl-search>
@@ -197,6 +255,25 @@
 	ul a:hover,
 	ul a:focus {
 		background: var(--color-soft);
+	}
+	ul a span {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	ul a small {
+		color: var(--color-muted);
+	}
+	ul img {
+		width: var(--icon-size, 1.25rem);
+		height: var(--icon-size, 1.25rem);
+		border-radius: var(--radius-round);
+		object-fit: cover;
+	}
+	[data-note] {
+		padding: var(--space-xs) var(--gutter);
+		color: var(--color-muted);
 	}
 
 	/* A page's own: always a box, as tall as a field, its offers under it. */

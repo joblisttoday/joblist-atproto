@@ -7,7 +7,8 @@
 	 * styled by the site, or a whole page of its own (jobs.your-domain). All stay up to date by
 	 * themselves (embed/src/JoblistJobs.svelte): with its board (board="greenhouse:acme"), the
 	 * visitor's browser reads it live, with nothing between it and the website.
-	 * @type {{attribute: 'board', value: string, title: string}}
+	 * attribute: board (provider:id), or organization (its domain: its own atproto account).
+	 * @type {{attribute: 'board' | 'organization', value: string, title: string}}
 	 */
 	let { attribute, value, title } = $props();
 	const page = `${config.url}${config.embed.page}`;

@@ -1,6 +1,7 @@
 <script>
 	import CompanyHeader from './CompanyHeader.svelte';
 	import CompanyJobs from './CompanyJobs.svelte';
+	import BoardFinder from './BoardFinder.svelte';
 	import Icon from './Icon.svelte';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { data } from '#lib/network/network.svelte.js';
@@ -14,9 +15,10 @@
 	 * its head (Save), then its jobs, opened in a dialog. Its own account sees it as anyone does,
 	 * with one bar to manage it (/organization); anyone else, at the end, how to publish theirs.
 	 * address: what its address keeps besides its jobs' search (a local one's #url=…).
-	 * @type {{company: import('#lib/models/company.js').Company, local?: import('#lib/models/kept.js').Local, address?: Record<string, string>}}
+	 * onboard: a local one's job board, found by its name (BoardFinder).
+	 * @type {{company: import('#lib/models/company.js').Company, local?: import('#lib/models/kept.js').Local, address?: Record<string, string>, onboard?: (board: {provider: string, id: string}) => void}}
 	 */
-	let { company, local, address = {} } = $props();
+	let { company, local, address = {}, onboard } = $props();
 	const key = $derived(company.key);
 	const owner = $derived(!local && mayDescribe(company, session));
 	// Jobs come from its job board, or it posts them from its own account.
@@ -46,6 +48,7 @@
 			<CompanyJobs {company} bind:jobs {address} local={Boolean(local)} />
 		{:else}
 			<p>{t('org.jobsThere')} <a href={local?.link || company.url || `https://${key}`} target="_blank" rel="noopener noreferrer">{key}</a></p>
+			{#if onboard}<BoardFinder name={company.name} domain={company.url ? key : ''} onpick={onboard} />{/if}
 		{/if}
 	</section>
 

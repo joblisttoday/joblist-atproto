@@ -586,5 +586,14 @@
 	"home.example": "For example gitlab.com, or a jobs.lever.co/… link.",
 	"home.hire": "Hiring?",
 	"home.hire.link": "Publish your careers page",
-	"menu.hiring": "Hiring? Your careers page"
+	"menu.hiring": "Hiring? Your careers page",
+	"quick.atProvider": "{name} on {provider}",
+	"quick.names.source": "Found on Wikidata and Bluesky: the name you typed is asked there.",
+	"quick.names.none": "Nothing found on Wikidata or Bluesky. Paste its website instead.",
+	"quick.names.asking": "Looking on Wikidata and Bluesky…",
+	"boards.look": "Look for its job board",
+	"boards.look.help": "Tries its name at {count} job board providers.",
+	"boards.looking": "Looking at {count} job board providers…",
+	"boards.found": "Found with open jobs:",
+	"boards.none": "None found under its name. Paste its careers page link in the search instead."
 }

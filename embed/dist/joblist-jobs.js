@@ -144,7 +144,7 @@ function Ke(e) {
 	var t = E, n = t.e;
 	if (n !== null) {
 		t.e = null;
-		for (var r of n) vn(r);
+		for (var r of n) _n(r);
 	}
 	return e !== void 0 && (t.x = e), t.i = !0, E = t.p, qe(e);
 }
@@ -231,7 +231,7 @@ function ot(e, t, n, r) {
 			try {
 				r([...o, ...e]);
 			} catch (e) {
-				dn(e, s);
+				un(e, s);
 			}
 			ct();
 		}
@@ -242,7 +242,7 @@ function ot(e, t, n, r) {
 		return;
 	}
 	function f() {
-		Promise.all(n.map((e) => /* @__PURE__ */ ft(e))).then(u).catch((e) => dn(e, s)).finally(d);
+		Promise.all(n.map((e) => /* @__PURE__ */ ft(e))).then(u).catch((e) => un(e, s)).finally(d);
 	}
 	l ? l.then(() => {
 		s.f & 16384 ? d() : (c(), f(), ct());
@@ -287,7 +287,7 @@ function ft(e, t, n) {
 	let i = B;
 	i === null && Ne();
 	var a = void 0, o = Bt(r), s = !L, c = /* @__PURE__ */ new Set();
-	return xn(() => {
+	return bn(() => {
 		var t = B, n = v();
 		a = n.promise;
 		try {
@@ -308,7 +308,7 @@ function ft(e, t, n) {
 			l?.(), c.delete(n), t !== dt && (r.activate(), t ? (o.f |= le, Wt(o, t)) : (o.f & 8388608 && (o.f ^= le), Wt(o, e)), r.deactivate());
 		};
 		n.promise.then(u, (e) => u(null, e || "unknown"));
-	}), gn(() => {
+	}), hn(() => {
 		for (let e of c) e.reject(dt);
 	}), new Promise((e) => {
 		function t(n) {
@@ -323,7 +323,7 @@ function ft(e, t, n) {
 /*#__NO_SIDE_EFFECTS__*/
 function pt(e) {
 	let t = /* @__PURE__ */ ut(e);
-	return Rn(t), t;
+	return Ln(t), t;
 }
 /*#__NO_SIDE_EFFECTS__*/
 function mt(e) {
@@ -342,7 +342,7 @@ function gt(e) {
 	if (!Fn && i !== null && e.v !== r && i.f & 24576) return xe(), e.v;
 	V(i);
 	try {
-		ht(e), t = qn(e);
+		ht(e), t = Kn(e);
 	} finally {
 		V(n);
 	}
@@ -350,15 +350,15 @@ function gt(e) {
 }
 function _t(e) {
 	var t = gt(e);
-	!e.equals(t) && (e.wv = Wn(), (!O?.is_fork || e.deps === null) && (O === null ? e.v = t : (O.capture(e, t, !0), xt?.capture(e, t, !0)), e.deps === null)) ? D(e, y) : Fn || (k === null ? et(e) : (hn() || O?.is_fork) && k.set(e, t));
+	!e.equals(t) && (e.wv = Un(), (!O?.is_fork || e.deps === null) && (O === null ? e.v = t : (O.capture(e, t, !0), xt?.capture(e, t, !0)), e.deps === null)) ? D(e, y) : Fn || (k === null ? et(e) : (mn() || O?.is_fork) && k.set(e, t));
 }
 function vt(e) {
 	if (e.effects !== null) for (let t of e.effects) (t.teardown || t.ac) && (t.teardown?.(), t.ac !== null && it(() => {
 		t.ac.abort(ye), t.ac = null;
-	}), t.fn !== null && (t.teardown = g), Xn(t, 0), Tn(t));
+	}), t.fn !== null && (t.teardown = g), Yn(t, 0), Tn(t));
 }
 function yt(e) {
-	if (e.effects !== null) for (let t of e.effects) t.teardown && t.fn !== null && Zn(t);
+	if (e.effects !== null) for (let t of e.effects) t.teardown && t.fn !== null && Xn(t);
 }
 //#endregion
 //#region node_modules/svelte/src/internal/client/reactivity/batch.js
@@ -478,7 +478,7 @@ var bt = null, O = null, xt = null, k = null, St = null, Ct = !1, wt = !1, Tt = 
 		for (var r = e.first; r !== null;) {
 			var i = r.f, a = !!(i & 96);
 			if (!(a && i & 1024 || i & 8192 || this.#f.has(r)) && r.fn !== null) {
-				a ? r.f ^= y : i & 4 ? t.push(r) : Gn(r) && (i & 16 && this.#d.add(r), Zn(r));
+				a ? r.f ^= y : i & 4 ? t.push(r) : Wn(r) && (i & 16 && this.#d.add(r), Xn(r));
 				var o = r.first;
 				if (o !== null) {
 					r = o;
@@ -621,7 +621,7 @@ function jt() {
 	try {
 		Re();
 	} catch (e) {
-		dn(e, St);
+		un(e, St);
 	}
 }
 var Mt = null;
@@ -630,7 +630,7 @@ function Nt(e) {
 	if (t !== 0) {
 		for (var n = 0; n < t;) {
 			var r = e[n++];
-			if (!(r.f & 24576) && Gn(r) && (Mt = /* @__PURE__ */ new Set(), Zn(r), r.deps === null && r.first === null && r.nodes === null && r.teardown === null && r.ac === null && On(r), Mt?.size > 0)) {
+			if (!(r.f & 24576) && Wn(r) && (Mt = /* @__PURE__ */ new Set(), Xn(r), r.deps === null && r.first === null && r.nodes === null && r.teardown === null && r.ac === null && On(r), Mt?.size > 0)) {
 				Rt.clear();
 				for (let e of Mt) {
 					if (e.f & 24576) continue;
@@ -638,7 +638,7 @@ function Nt(e) {
 					for (; n !== null;) Mt.has(n) && (Mt.delete(n), t.push(n)), n = n.parent;
 					for (let e = t.length - 1; e >= 0; e--) {
 						let n = t[e];
-						n.f & 24576 || Zn(n);
+						n.f & 24576 || Xn(n);
 					}
 				}
 				Mt.clear();
@@ -676,7 +676,7 @@ function Bt(e, t) {
 /*#__NO_SIDE_EFFECTS__*/
 function A(e, t) {
 	let n = Bt(e, t);
-	return Rn(n), n;
+	return Ln(n), n;
 }
 /*#__NO_SIDE_EFFECTS__*/
 function Vt(e, t = !1, n = !0) {
@@ -684,7 +684,7 @@ function Vt(e, t = !1, n = !0) {
 	return t || (r.equals = Me), r;
 }
 function j(e, t, n = !1) {
-	return L !== null && (!R || L.f & 131072) && Je() && L.f & 4325394 && (Ln === null || !Ln.has(e)) && He(), Wt(e, n ? Jt(t) : t, Et);
+	return L !== null && (!R || L.f & 131072) && Je() && L.f & 4325394 && (H === null || !H.has(e)) && He(), Wt(e, n ? Jt(t) : t, Et);
 }
 var Ht = null, Ut = 0;
 function Wt(e, t, n = null) {
@@ -695,7 +695,7 @@ function Wt(e, t, n = null) {
 			let t = e;
 			e.f & 2048 && gt(t), k === null && et(t);
 		}
-		e.wv = Wn(), Ht = null, Ut = 0, qt(e, b, n), Ht = null, Je() && B !== null && B.f & 1024 && !(B.f & 96) && (W === null ? zn([e]) : W.push(e)), !r.is_fork && Lt.size > 0 && !zt && Gt();
+		e.wv = Un(), Ht = null, Ut = 0, qt(e, b, n), Ht = null, Je() && B !== null && B.f & 1024 && !(B.f & 96) && (G === null ? Rn([e]) : G.push(e)), !r.is_fork && Lt.size > 0 && !zt && Gt();
 	}
 	return t;
 }
@@ -705,11 +705,11 @@ function Gt() {
 		e.f & 1024 && D(e, x);
 		let t;
 		try {
-			t = Gn(e);
+			t = Wn(e);
 		} catch {
 			t = !0;
 		}
-		t && Zn(e);
+		t && Xn(e);
 	}
 	Lt.clear();
 }
@@ -744,12 +744,12 @@ function Jt(e) {
 	if (typeof e != "object" || !e || ue in e || de in e) return e;
 	let t = m(e);
 	if (t !== f && t !== p) return e;
-	var n = /* @__PURE__ */ new Map(), i = a(e), o = /* @__PURE__ */ A(0), s = null, c = Hn, l = (e) => {
-		if (Hn === c) return e();
-		var t = L, n = Hn;
-		z(null), Un(c);
+	var n = /* @__PURE__ */ new Map(), i = a(e), o = /* @__PURE__ */ A(0), s = null, c = Vn, l = (e) => {
+		if (Vn === c) return e();
+		var t = L, n = Vn;
+		z(null), Hn(c);
 		var r = e();
-		return z(t), Un(n), r;
+		return z(t), Hn(n), r;
 	};
 	return i && n.set("length", /* @__PURE__ */ A(e.length, s)), new Proxy(e, {
 		defineProperty(e, t, r) {
@@ -774,7 +774,7 @@ function Jt(e) {
 			if (i === ue) return e;
 			var o = n.get(i), c = i in t;
 			if (o === void 0 && (!c || u(t, i)?.writable) && (o = l(() => /* @__PURE__ */ A(Jt(c ? t[i] : r), s)), n.set(i, o)), o !== void 0) {
-				var d = G(o);
+				var d = K(o);
 				return d === r ? void 0 : d;
 			}
 			return Reflect.get(t, i, a);
@@ -783,7 +783,7 @@ function Jt(e) {
 			this.has?.(e, t);
 			var i = Reflect.getOwnPropertyDescriptor(e, t), a = n.get(t);
 			if (a !== void 0) {
-				var o = G(a);
+				var o = K(a);
 				if (o === r) return;
 				if (i && "value" in i) i.value = o;
 				else return {
@@ -798,7 +798,7 @@ function Jt(e) {
 		has(e, t) {
 			if (t === ue) return !0;
 			var i = n.get(t), a = i !== void 0 && i.v !== r || Reflect.has(e, t);
-			return (i !== void 0 || B !== null && (!a || u(e, t)?.writable)) && (i === void 0 && (i = l(() => /* @__PURE__ */ A(a ? Jt(e[t]) : r, s)), n.set(t, i)), G(i) === r) ? !1 : a;
+			return (i !== void 0 || B !== null && (!a || u(e, t)?.writable)) && (i === void 0 && (i = l(() => /* @__PURE__ */ A(a ? Jt(e[t]) : r, s)), n.set(t, i)), K(i) === r) ? !1 : a;
 		},
 		set(e, t, a, c) {
 			var d = n.get(t), f = t in e;
@@ -823,7 +823,7 @@ function Jt(e) {
 			return !0;
 		},
 		ownKeys(e) {
-			G(o);
+			K(o);
 			var t = Reflect.ownKeys(e).filter((e) => {
 				var t = n.get(e);
 				return t === void 0 || t.v !== r;
@@ -863,7 +863,7 @@ function nn(e, t) {
 		var r = M();
 		return n?.before(r), T(r), r;
 	}
-	return t && ln(n), T(n), n;
+	return t && cn(n), T(n), n;
 }
 function rn(e, t = !1) {
 	if (!C) {
@@ -875,7 +875,7 @@ function rn(e, t = !1) {
 			var r = M();
 			return w?.before(r), T(r), r;
 		}
-		ln(w);
+		cn(w);
 	}
 	return w;
 }
@@ -884,7 +884,7 @@ function N(e, t = !1) {
 	var n = nn(e, t);
 	return Ee(e), n;
 }
-function an(e, t = 1, n = !1) {
+function P(e, t = 1, n = !1) {
 	let r = C ? w : e;
 	for (var i; t--;) i = r, r = /* @__PURE__ */ tn(r);
 	if (!C) return r;
@@ -893,31 +893,31 @@ function an(e, t = 1, n = !1) {
 			var a = M();
 			return r === null ? i?.after(a) : r.before(a), T(a), a;
 		}
-		ln(r);
+		cn(r);
 	}
 	return T(r), r;
 }
-function on(e) {
+function an(e) {
 	e.textContent = "";
 }
-function sn() {
+function on() {
 	return !1;
 }
-function cn(e, t, n) {
+function sn(e, t, n) {
 	return t == null || t === "http://www.w3.org/1999/xhtml" ? n ? document.createElement(e, { is: n }) : document.createElement(e) : n ? document.createElementNS(t, e, { is: n }) : document.createElementNS(t, e);
 }
-function ln(e) {
+function cn(e) {
 	if (e.nodeValue.length < 65536) return;
 	let t = e.nextSibling;
 	for (; t !== null && t.nodeType === 3;) t.remove(), e.nodeValue += t.nodeValue, t = e.nextSibling;
 }
-function un(e) {
+function ln(e) {
 	var t = B;
 	if (t === null) return L.f |= le, e;
 	if (!(t.f & 32768) && !(t.f & 4)) throw e;
-	dn(e, t);
+	un(e, t);
 }
-function dn(e, t) {
+function un(e, t) {
 	if (e === n) throw e;
 	if (!(t !== null && t.f & 16384)) {
 		for (; t !== null;) {
@@ -937,14 +937,14 @@ function dn(e, t) {
 }
 //#endregion
 //#region node_modules/svelte/src/internal/client/reactivity/effects.js
-function fn(e) {
+function dn(e) {
 	B === null && (L === null && Le(e), Ie()), Fn && Fe(e);
 }
-function pn(e, t) {
+function fn(e, t) {
 	var n = t.last;
 	n === null ? t.last = t.first = e : (n.next = e, e.prev = n, t.last = e);
 }
-function mn(e, t) {
+function pn(e, t) {
 	var n = B;
 	n !== null && n.f & 8192 && (e |= S);
 	var r = {
@@ -968,66 +968,66 @@ function mn(e, t) {
 	if (e & 4) Tt === null ? kt.ensure().schedule(r) : Tt.push(r);
 	else if (t !== null) {
 		try {
-			Zn(r);
+			Xn(r);
 		} catch (e) {
 			throw I(r), e;
 		}
 		i.deps === null && i.teardown === null && i.nodes === null && i.first === i.last && !(i.f & 524288) && (i = i.first, e & 16 && e & 65536 && i !== null && (i.f |= re));
 	}
-	if (i !== null && (i.parent = n, n !== null && pn(i, n), L !== null && L.f & 2 && !(e & 64))) {
+	if (i !== null && (i.parent = n, n !== null && fn(i, n), L !== null && L.f & 2 && !(e & 64))) {
 		var a = L;
 		(a.effects ??= []).push(i);
 	}
 	return r;
 }
-function hn() {
+function mn() {
 	return L !== null && !R;
 }
-function gn(e) {
-	let t = mn(8, null);
+function hn(e) {
+	let t = pn(8, null);
 	return D(t, y), t.teardown = e, t;
 }
-function _n(e) {
-	fn("$effect");
+function gn(e) {
+	dn("$effect");
 	var t = B.f;
 	if (!L && t & 32 && E !== null && !E.i) {
 		var n = E;
 		(n.e ??= []).push(e);
-	} else return vn(e);
+	} else return _n(e);
+}
+function _n(e) {
+	return pn(4 | ae, e);
 }
 function vn(e) {
-	return mn(4 | ae, e);
-}
-function yn(e) {
 	kt.ensure();
-	let t = mn(64 | ie, e);
+	let t = pn(64 | ie, e);
 	return (e = {}) => new Promise((n) => {
 		e.outro ? kn(t, () => {
 			I(t), n(void 0);
 		}) : (I(t), n(void 0));
 	});
 }
+function yn(e) {
+	return pn(4, e);
+}
 function bn(e) {
-	return mn(4, e);
+	return pn(ce | ie, e);
 }
-function xn(e) {
-	return mn(ce | ie, e);
+function xn(e, t = 0) {
+	return pn(8 | t, e);
 }
-function Sn(e, t = 0) {
-	return mn(8 | t, e);
-}
-function P(e, t = [], n = [], r = []) {
+function Sn(e, t = [], n = [], r = []) {
 	ot(r, t, n, (t) => {
-		mn(8, () => {
-			e(...t.map(G));
+		pn(8, () => {
+			e(...t.map(K));
 		});
 	});
 }
 function Cn(e, t = 0) {
-	return mn(16 | t, e);
+	return pn(16 | t, e);
 }
 function F(e) {
-	return mn(32 | ie, e);
+	return pn(32 | ie, e);
 }
 function wn(e) {
 	var t = e.teardown;
@@ -1037,7 +1037,7 @@ function wn(e) {
 		try {
 			t.call(null);
 		} catch (t) {
-			dn(t, e.parent);
+			un(t, e.parent);
 		} finally {
 			In(n), z(r);
 		}
@@ -1062,7 +1062,7 @@ function En(e) {
 }
 function I(e, t = !0) {
 	var n = !1;
-	(t || e.f & 262144) && e.nodes !== null && e.nodes.end !== null && (Dn(e.nodes.start, e.nodes.end), n = !0), e.f |= ne, Tn(e, t && !n), Xn(e, 0);
+	(t || e.f & 262144) && e.nodes !== null && e.nodes.end !== null && (Dn(e.nodes.start, e.nodes.end), n = !0), e.f |= ne, Tn(e, t && !n), Yn(e, 0);
 	var r = e.nodes && e.nodes.t;
 	if (r !== null) for (let e of r) e.stop();
 	wn(e), e.f ^= ne, e.f |= ee;
@@ -1139,74 +1139,74 @@ var B = null;
 function V(e) {
 	B = e;
 }
-var Ln = null;
+var H = null;
+function Ln(e) {
+	L !== null && (L.f & 2097152 || L.f & 2) && (H ??= /* @__PURE__ */ new Set()).add(e);
+}
+var U = null, W = 0, G = null;
 function Rn(e) {
-	L !== null && (L.f & 2097152 || L.f & 2) && (Ln ??= /* @__PURE__ */ new Set()).add(e);
+	G = e;
 }
-var H = null, U = 0, W = null;
-function zn(e) {
-	W = e;
+var zn = 1, Bn = 0, Vn = Bn;
+function Hn(e) {
+	Vn = e;
 }
-var Bn = 1, Vn = 0, Hn = Vn;
-function Un(e) {
-	Hn = e;
+function Un() {
+	return ++zn;
 }
-function Wn() {
-	return ++Bn;
-}
-function Gn(e) {
+function Wn(e) {
 	var t = e.f;
 	if (t & 2048) return !0;
 	if (t & 4096) {
 		for (var n = e.deps, r = n.length, i = 0; i < r; i++) {
 			var a = n[i];
-			if (Gn(a) && _t(a), a.wv > e.wv) return !0;
+			if (Wn(a) && _t(a), a.wv > e.wv) return !0;
 		}
 		t & 512 && k === null && D(e, y);
 	}
 	return !1;
 }
-function Kn(e, t, n = !0) {
+function Gn(e, t, n = !0) {
 	var r = e.reactions;
-	if (r !== null && !(Ln !== null && Ln.has(e))) for (var i = 0; i < r.length; i++) {
+	if (r !== null && !(H !== null && H.has(e))) for (var i = 0; i < r.length; i++) {
 		var a = r[i];
-		a.f & 2 ? Kn(a, t, !1) : t === a && (n ? D(a, b) : a.f & 1024 && D(a, x), Pt(a));
+		a.f & 2 ? Gn(a, t, !1) : t === a && (n ? D(a, b) : a.f & 1024 && D(a, x), Pt(a));
 	}
 }
-function qn(e) {
-	var t = H, n = U, r = W, i = L, a = Ln, o = E, s = R, c = Hn, l = e.f;
-	H = null, U = 0, W = null, L = l & 96 ? null : e, Ln = null, We(e.ctx), R = !1, Hn = ++Vn, e.ac !== null && (it(() => {
+function Kn(e) {
+	var t = U, n = W, r = G, i = L, a = H, o = E, s = R, c = Vn, l = e.f;
+	U = null, W = 0, G = null, L = l & 96 ? null : e, H = null, We(e.ctx), R = !1, Vn = ++Bn, e.ac !== null && (it(() => {
 		e.ac.abort(ye);
 	}), e.ac = null);
 	try {
 		e.f |= se;
 		var u = e.fn, d = u();
 		e.f |= te;
-		var f = Jn(e);
-		if (Je() && W !== null && !R && f !== null && !(e.f & 6146)) for (var p = 0; p < W.length; p++) Kn(W[p], e);
+		var f = qn(e);
+		if (Je() && G !== null && !R && f !== null && !(e.f & 6146)) for (var p = 0; p < G.length; p++) Gn(G[p], e);
 		if (i !== null && i !== e) {
-			if (Vn++, i.deps !== null) for (let e = 0; e < n; e += 1) i.deps[e].rv = Vn;
-			if (t !== null) for (let e of t) e.rv = Vn;
-			W !== null && (r === null ? r = W : r.push(...W));
+			if (Bn++, i.deps !== null) for (let e = 0; e < n; e += 1) i.deps[e].rv = Bn;
+			if (t !== null) for (let e of t) e.rv = Bn;
+			G !== null && (r === null ? r = G : r.push(...G));
 		}
 		return e.f & 8388608 && (e.f ^= le), d;
 	} catch (t) {
-		return Jn(e), un(t);
+		return qn(e), ln(t);
 	} finally {
-		e.f ^= se, H = t, U = n, W = r, L = i, Ln = a, We(o), R = s, Hn = c;
+		e.f ^= se, U = t, W = n, G = r, L = i, H = a, We(o), R = s, Vn = c;
 	}
 }
-function Jn(e) {
+function qn(e) {
 	var t = e.deps, n = O?.is_fork;
-	if (H !== null) {
+	if (U !== null) {
 		var r;
-		if (n || Xn(e, U), t !== null && U > 0) for (t.length = U + H.length, r = 0; r < H.length; r++) t[U + r] = H[r];
-		else e.deps = t = H;
-		if (hn() && e.f & 512) for (r = U; r < t.length; r++) (t[r].reactions ??= []).push(e);
-	} else !n && t !== null && U < t.length && (Xn(e, U), t.length = U);
+		if (n || Yn(e, W), t !== null && W > 0) for (t.length = W + U.length, r = 0; r < U.length; r++) t[W + r] = U[r];
+		else e.deps = t = U;
+		if (mn() && e.f & 512) for (r = W; r < t.length; r++) (t[r].reactions ??= []).push(e);
+	} else !n && t !== null && W < t.length && (Yn(e, W), t.length = W);
 	return t;
 }
-function Yn(e, t) {
+function Jn(e, t) {
 	let n = t.reactions;
 	if (n !== null) {
 		var i = o.call(n, e);
@@ -1215,18 +1215,18 @@ function Yn(e, t) {
 			a === 0 ? n = t.reactions = null : (n[i] = n[a], n.pop());
 		}
 	}
-	if (n === null && t.f & 2 && (H === null || !s.call(H, t))) {
+	if (n === null && t.f & 2 && (U === null || !s.call(U, t))) {
 		var c = t;
 		c.f & 512 && (c.f ^= 512), c.v !== r && et(c), c.ac !== null && it(() => {
 			c.ac.abort(ye), c.ac = null, D(c, b);
-		}), vt(c), Xn(c, 0);
+		}), vt(c), Yn(c, 0);
 	}
 }
-function Xn(e, t) {
+function Yn(e, t) {
 	var n = e.deps;
-	if (n !== null) for (var r = t; r < n.length; r++) Yn(e, n[r]);
+	if (n !== null) for (var r = t; r < n.length; r++) Jn(e, n[r]);
 }
-function Zn(e) {
+function Xn(e) {
 	var t = e.f;
 	if (!(t & 16384)) {
 		D(e, y);
@@ -1234,21 +1234,21 @@ function Zn(e) {
 		B = e;
 		try {
 			t & 16777232 ? En(e) : Tn(e), wn(e);
-			var r = qn(e);
-			e.teardown = typeof r == "function" ? r : null, e.wv = Bn;
+			var r = Kn(e);
+			e.teardown = typeof r == "function" ? r : null, e.wv = zn;
 		} finally {
 			B = n;
 		}
 	}
 }
-async function Qn() {
+async function Zn() {
 	await Promise.resolve(), At();
 }
-function G(e) {
+function K(e) {
 	var t = !!(e.f & 2);
-	if (Pn?.add(e), L !== null && !R && !(B !== null && B.f & 16384) && (Ln === null || !Ln.has(e))) {
+	if (Pn?.add(e), L !== null && !R && !(B !== null && B.f & 16384) && (H === null || !H.has(e))) {
 		var n = L.deps;
-		if (L.f & 2097152) e.rv < Vn && (e.rv = Vn, H === null && n !== null && n[U] === e ? U++ : H === null ? H = [e] : H.push(e));
+		if (L.f & 2097152) e.rv < Bn && (e.rv = Bn, U === null && n !== null && n[W] === e ? W++ : U === null ? U = [e] : U.push(e));
 		else {
 			L.deps ??= [], s.call(L.deps, e) || L.deps.push(e);
 			var r = e.reactions;
@@ -1260,28 +1260,28 @@ function G(e) {
 		var i = e;
 		if (Fn) {
 			var a = i.v;
-			return (!(i.f & 1024) && i.reactions !== null || er(i)) && (a = gt(i)), Rt.set(i, a), a;
+			return (!(i.f & 1024) && i.reactions !== null || $n(i)) && (a = gt(i)), Rt.set(i, a), a;
 		}
 		var o = !(i.f & 512) && !R && L !== null && !!(L.f & 512), c = (i.f & te) === 0;
-		Gn(i) && (o && (i.f |= 512), _t(i)), o && !c && (yt(i), $n(i));
+		Wn(i) && (o && (i.f |= 512), _t(i)), o && !c && (yt(i), Qn(i));
 	}
 	if (k?.has(e)) return k.get(e);
 	if (e.f & 8388608) throw e.v;
 	return e.v;
 }
-function $n(e) {
+function Qn(e) {
 	if (e.f |= 512, e.deps !== null) for (let n of e.deps) {
 		var t = n.reactions;
-		t === null ? n.reactions = [e] : s.call(t, e) || t.push(e), n.f & 2 && !(n.f & 512) && (yt(n), $n(n));
+		t === null ? n.reactions = [e] : s.call(t, e) || t.push(e), n.f & 2 && !(n.f & 512) && (yt(n), Qn(n));
 	}
 }
-function er(e) {
+function $n(e) {
 	if (e.v === r) return !0;
 	if (e.deps === null) return !1;
-	for (let t of e.deps) if (Rt.has(t) || t.f & 2 && er(t)) return !0;
+	for (let t of e.deps) if (Rt.has(t) || t.f & 2 && $n(t)) return !0;
 	return !1;
 }
-function tr(e) {
+function er(e) {
 	var t = R;
 	try {
 		return R = !0, e();
@@ -1291,17 +1291,17 @@ function tr(e) {
 }
 //#endregion
 //#region node_modules/svelte/src/internal/client/dom/elements/events.js
-var nr = Symbol("events"), rr = /* @__PURE__ */ new Set(), ir = /* @__PURE__ */ new Set(), ar = null, or = !1;
-function sr(e) {
+var tr = Symbol("events"), nr = /* @__PURE__ */ new Set(), rr = /* @__PURE__ */ new Set(), ir = null, ar = !1;
+function or(e) {
 	var t = this, n = t.ownerDocument, r = e.type, i = e.composedPath?.() || [], a = i[0] || e.target;
-	ar = e, or || (or = !0, setTimeout(() => {
-		or = !1, ar = null;
+	ir = e, ar || (ar = !0, setTimeout(() => {
+		ar = !1, ir = null;
 	}));
-	var o = 0, s = ar === e && e[nr];
+	var o = 0, s = ir === e && e[tr];
 	if (s) {
 		var c = i.indexOf(s);
 		if (c !== -1 && (t === document || t === window)) {
-			e[nr] = t;
+			e[tr] = t;
 			return;
 		}
 		var u = i.indexOf(t);
@@ -1320,7 +1320,7 @@ function sr(e) {
 		try {
 			for (var p, m = []; a !== null && a !== t;) {
 				try {
-					var h = a[nr]?.[r];
+					var h = a[tr]?.[r];
 					h != null && (!a.disabled || e.target === a) && h.call(a, e);
 				} catch (e) {
 					p ? m.push(e) : p = e;
@@ -1335,23 +1335,23 @@ function sr(e) {
 				throw p;
 			}
 		} finally {
-			e[nr] = t, delete e.currentTarget, z(d), V(f);
+			e[tr] = t, delete e.currentTarget, z(d), V(f);
 		}
 	}
 }
 //#endregion
 //#region node_modules/svelte/src/internal/client/dom/reconciler.js
-var cr = globalThis?.window?.trustedTypes && /* @__PURE__ */ globalThis.window.trustedTypes.createPolicy("svelte-trusted-html", { createHTML: (e) => e });
-function lr(e) {
-	return cr?.createHTML(e) ?? e;
+var sr = globalThis?.window?.trustedTypes && /* @__PURE__ */ globalThis.window.trustedTypes.createPolicy("svelte-trusted-html", { createHTML: (e) => e });
+function cr(e) {
+	return sr?.createHTML(e) ?? e;
 }
-function ur(e) {
-	var t = cn("template");
-	return t.innerHTML = lr(e.replaceAll("<!>", "<!---->")), t.content;
+function lr(e) {
+	var t = sn("template");
+	return t.innerHTML = cr(e.replaceAll("<!>", "<!---->")), t.content;
 }
 //#endregion
 //#region node_modules/svelte/src/internal/client/dom/template.js
-function dr(e, t) {
+function ur(e, t) {
 	var n = B;
 	n.nodes === null && (n.nodes = {
 		start: e,
@@ -1361,36 +1361,36 @@ function dr(e, t) {
 	});
 }
 /*#__NO_SIDE_EFFECTS__*/
-function K(e, t) {
+function q(e, t) {
 	var n = !!(t & 1), r = !!(t & 2), i, a = !e.startsWith("<!>");
 	return () => {
-		if (C) return dr(w, null), w;
-		i === void 0 && (i = ur(a ? e : "<!>" + e), n || (i = /* @__PURE__ */ en(i)));
+		if (C) return ur(w, null), w;
+		i === void 0 && (i = lr(a ? e : "<!>" + e), n || (i = /* @__PURE__ */ en(i)));
 		var t = r || Xt ? document.importNode(i, !0) : i.cloneNode(!0);
 		if (n) {
 			var o = /* @__PURE__ */ en(t), s = t.lastChild;
-			dr(o, s);
-		} else dr(t, t);
+			ur(o, s);
+		} else ur(t, t);
 		return t;
 	};
 }
-function q(e, t) {
+function J(e, t) {
 	if (C) {
 		var n = B;
 		(!(n.f & 32768) || n.nodes.end === null) && (n.nodes.end = w), Te();
 	} else e !== null && e.before(t);
 }
 [.../* @__PURE__ */ "allowfullscreen.async.autofocus.autoplay.checked.controls.default.disabled.formnovalidate.indeterminate.inert.ismap.loop.multiple.muted.nomodule.novalidate.open.playsinline.readonly.required.reversed.seamless.selected.webkitdirectory.defer.disablepictureinpicture.disableremoteplayback".split(".")];
-var fr = ["touchstart", "touchmove"];
-function pr(e) {
-	return fr.includes(e);
+var dr = ["touchstart", "touchmove"];
+function fr(e) {
+	return dr.includes(e);
 }
 //#endregion
 //#region node_modules/svelte/src/reactivity/create-subscriber.js
-function mr(e) {
+function pr(e) {
 	let t = 0, n = Bt(0), r;
 	return () => {
-		hn() && (G(n), Sn(() => (t === 0 && (r = tr(() => e(() => Kt(n)))), t += 1, () => {
+		mn() && (K(n), xn(() => (t === 0 && (r = er(() => e(() => Kt(n)))), t += 1, () => {
 			Ze(() => {
 				--t, t === 0 && (r?.(), r = void 0, Kt(n));
 			});
@@ -1399,11 +1399,11 @@ function mr(e) {
 }
 //#endregion
 //#region node_modules/svelte/src/internal/client/dom/blocks/boundary.js
-var hr = re | ie;
-function gr(e, t, n, r) {
-	new _r(e, t, n, r);
+var mr = re | ie;
+function hr(e, t, n, r) {
+	new gr(e, t, n, r);
 }
-var _r = class {
+var gr = class {
 	parent;
 	is_pending = !1;
 	transform_error;
@@ -1422,7 +1422,7 @@ var _r = class {
 	#f = /* @__PURE__ */ new Set();
 	#p = /* @__PURE__ */ new Set();
 	#m = null;
-	#h = mr(() => (this.#m = Bt(this.#l), () => {
+	#h = pr(() => (this.#m = Bt(this.#l), () => {
 		this.#m = null;
 	}));
 	constructor(e, t, n, r) {
@@ -1439,7 +1439,7 @@ var _r = class {
 					this.#_(t);
 				} else t ? this.#b() : this.#g();
 			} else this.#x();
-		}, hr), C && (this.#e = w);
+		}, mr), C && (this.#e = w);
 	}
 	#g() {
 		try {
@@ -1469,7 +1469,7 @@ var _r = class {
 				if (!this.#y()) try {
 					n = !0, this.#n.onerror?.(e, r), n = !1;
 				} catch (e) {
-					dn(e, this.#i && this.#i.parent);
+					un(e, this.#i && this.#i.parent);
 				}
 			}
 		};
@@ -1489,7 +1489,7 @@ var _r = class {
 						try {
 							this.error(e), n = !0;
 						} catch (e) {
-							dn(e, this.#i.parent);
+							un(e, this.#i.parent);
 						}
 						return null;
 					}
@@ -1545,7 +1545,7 @@ var _r = class {
 		}));
 	}
 	get_effect_pending() {
-		return this.#h(), G(this.#m);
+		return this.#h(), K(this.#m);
 	}
 	error(e) {
 		if (e === n || !this.#n.onerror && !this.#n.failed) throw e;
@@ -1565,7 +1565,7 @@ var _r = class {
 						r.b = this, r.f |= 128, t(this.#e, () => e, () => n);
 					});
 				} catch (e) {
-					return dn(e, this.#i.parent), null;
+					return un(e, this.#i.parent), null;
 				}
 			}));
 		};
@@ -1575,30 +1575,30 @@ var _r = class {
 				try {
 					t = this.transform_error(e);
 				} catch (e) {
-					dn(e, this.#i && this.#i.parent);
+					un(e, this.#i && this.#i.parent);
 					return;
 				}
-				typeof t == "object" && t && typeof t.then == "function" ? t.then(n, (e) => dn(e, this.#i && this.#i.parent)) : n(t);
+				typeof t == "object" && t && typeof t.then == "function" ? t.then(n, (e) => un(e, this.#i && this.#i.parent)) : n(t);
 			}
 		});
 	}
 };
-function J(e, t) {
+function Y(e, t) {
 	var n = t == null ? "" : typeof t == "object" ? `${t}` : t;
 	n !== (e[_e] ??= e.nodeValue) && (e[_e] = n, e.nodeValue = `${n}`);
 }
-function vr(e, t) {
-	return br(e, t);
+function _r(e, t) {
+	return yr(e, t);
 }
-var yr = /* @__PURE__ */ new Map();
-function br(e, { target: t, anchor: r, props: i = {}, events: a, context: o, intro: s = !0, transformError: l }) {
+var vr = /* @__PURE__ */ new Map();
+function yr(e, { target: t, anchor: r, props: i = {}, events: a, context: o, intro: s = !0, transformError: l }) {
 	$t();
-	var u = void 0, d = yn(() => {
+	var u = void 0, d = vn(() => {
 		var s = r ?? t.appendChild(M());
-		gr(s, { pending: () => {} }, (t) => {
+		hr(s, { pending: () => {} }, (t) => {
 			Ge({});
 			var r = E;
-			if (o && (r.c = o), a && (i.$$events = a), C && dr(t, null), u = e(t, i) || qe(), C && (B.nodes.end = w, w === null || w.nodeType !== 8 || w.data !== "]")) throw Se(), n;
+			if (o && (r.c = o), a && (i.$$events = a), C && ur(t, null), u = e(t, i) || qe(), C && (B.nodes.end = w, w === null || w.nodeType !== 8 || w.data !== "]")) throw Se(), n;
 			Ke();
 		}, l);
 		var d = /* @__PURE__ */ new Set(), f = (e) => {
@@ -1606,27 +1606,27 @@ function br(e, { target: t, anchor: r, props: i = {}, events: a, context: o, int
 				var r = e[n];
 				if (!d.has(r)) {
 					d.add(r);
-					var i = pr(r);
+					var i = fr(r);
 					for (let e of [t, document]) {
-						var a = yr.get(e);
-						a === void 0 && (a = /* @__PURE__ */ new Map(), yr.set(e, a));
+						var a = vr.get(e);
+						a === void 0 && (a = /* @__PURE__ */ new Map(), vr.set(e, a));
 						var o = a.get(r);
-						o === void 0 ? (e.addEventListener(r, sr, { passive: i }), a.set(r, 1)) : a.set(r, o + 1);
+						o === void 0 ? (e.addEventListener(r, or, { passive: i }), a.set(r, 1)) : a.set(r, o + 1);
 					}
 				}
 			}
 		};
-		return f(c(rr)), ir.add(f), () => {
+		return f(c(nr)), rr.add(f), () => {
 			for (var e of d) for (let r of [t, document]) {
-				var n = yr.get(r), i = n.get(e);
-				--i == 0 ? (r.removeEventListener(e, sr), n.delete(e), n.size === 0 && yr.delete(r)) : n.set(e, i);
+				var n = vr.get(r), i = n.get(e);
+				--i == 0 ? (r.removeEventListener(e, or), n.delete(e), n.size === 0 && vr.delete(r)) : n.set(e, i);
 			}
-			ir.delete(f), s !== r && s.parentNode?.removeChild(s);
+			rr.delete(f), s !== r && s.parentNode?.removeChild(s);
 		};
 	});
-	return xr.set(u, d), u;
+	return br.set(u, d), u;
 }
-var xr = /* @__PURE__ */ new WeakMap(), Sr = class {
+var br = /* @__PURE__ */ new WeakMap(), xr = class {
 	anchor;
 	#e = /* @__PURE__ */ new Map();
 	#t = /* @__PURE__ */ new Map();
@@ -1671,7 +1671,7 @@ var xr = /* @__PURE__ */ new WeakMap(), Sr = class {
 		for (let [e, n] of this.#n) t.includes(e) || (I(n.effect), this.#n.delete(e));
 	};
 	ensure(e, t) {
-		var n = O, r = sn();
+		var n = O, r = on();
 		if (t && !this.#t.has(e) && !this.#n.has(e)) {
 			if (r) {
 				var i = document.createDocumentFragment(), a = M();
@@ -1690,8 +1690,8 @@ var xr = /* @__PURE__ */ new WeakMap(), Sr = class {
 };
 //#endregion
 //#region node_modules/svelte/src/internal/client/dom/blocks/snippet.js
-function Cr(e, t, ...n) {
-	var r = new Sr(e);
+function Sr(e, t, ...n) {
+	var r = new xr(e);
 	Cn(() => {
 		let e = t() ?? null;
 		r.ensure(e, e && ((t) => e(t, ...n)));
@@ -1699,10 +1699,10 @@ function Cr(e, t, ...n) {
 }
 //#endregion
 //#region node_modules/svelte/src/internal/client/dom/blocks/if.js
-function wr(e, t, n = !1) {
+function Cr(e, t, n = !1) {
 	var r;
 	C && (r = w, Te());
-	var i = new Sr(e), a = n ? re : 0;
+	var i = new xr(e), a = n ? re : 0;
 	function o(e, t) {
 		if (C) {
 			var n = ke(r);
@@ -1723,14 +1723,14 @@ function wr(e, t, n = !1) {
 }
 //#endregion
 //#region node_modules/svelte/src/internal/client/dom/blocks/each.js
-function Tr(e, t, n) {
+function wr(e, t, n) {
 	for (var r = [], i = t.length, a, o = t.length, s = 0; s < i; s++) {
 		let n = t[s];
 		kn(n, () => {
 			if (a) {
 				if (a.pending.delete(n), a.done.add(n), a.pending.size === 0) {
 					var t = e.outrogroups;
-					Er(e, c(a.done)), t.delete(a), t.size === 0 && (e.outrogroups = null);
+					Tr(e, c(a.done)), t.delete(a), t.size === 0 && (e.outrogroups = null);
 				}
 			} else --o;
 		}, !1);
@@ -1739,15 +1739,15 @@ function Tr(e, t, n) {
 		var l = r.length === 0 && n !== null && e.pending.size === 0;
 		if (l) {
 			var u = n, d = u.parentNode;
-			on(d), d.append(u), e.items.clear();
+			an(d), d.append(u), e.items.clear();
 		}
-		Er(e, t, !l);
+		Tr(e, t, !l);
 	} else a = {
 		pending: new Set(t),
 		done: /* @__PURE__ */ new Set()
 	}, (e.outrogroups ??= /* @__PURE__ */ new Set()).add(a);
 }
-function Er(e, t, n = !0) {
+function Tr(e, t, n = !0) {
 	var r;
 	if (e.pending.size > 0) {
 		r = /* @__PURE__ */ new Set();
@@ -1758,8 +1758,8 @@ function Er(e, t, n = !0) {
 		r?.has(a) ? (a.f |= oe, Nn(a, document.createDocumentFragment())) : I(t[i], n);
 	}
 }
-var Dr;
-function Or(e, t, n, r, i, o = null) {
+var Er;
+function Dr(e, t, n, r, i, o = null) {
 	var s = e, l = /* @__PURE__ */ new Map();
 	if (t & 4) {
 		var u = e;
@@ -1773,8 +1773,8 @@ function Or(e, t, n, r, i, o = null) {
 	function h(e) {
 		if (!(_.effect.f & 16384)) {
 			_.pending.delete(e);
-			var n = G(f);
-			_.fallback = d, Ar(_, n, s, t, r), d !== null && (n.length === 0 ? d.f & 33554432 ? (d.f ^= oe, Mr(d, null, s)) : jn(d) : kn(d, () => {
+			var n = K(f);
+			_.fallback = d, kr(_, n, s, t, r), d !== null && (n.length === 0 ? d.f & 33554432 ? (d.f ^= oe, jr(d, null, s)) : jn(d) : kn(d, () => {
 				d = null;
 			}));
 		}
@@ -1784,21 +1784,21 @@ function Or(e, t, n, r, i, o = null) {
 	}
 	var _ = {
 		effect: Cn(() => {
-			var e = G(f), a = e.length;
+			var e = K(f), a = e.length;
 			let c = !1;
 			C && ke(s) === "[!" != (a === 0) && (s = Oe(), T(s), we(!1), c = !0);
-			for (var u = /* @__PURE__ */ new Set(), _ = O, v = sn(), y = 0; y < a; y += 1) {
+			for (var u = /* @__PURE__ */ new Set(), _ = O, v = on(), y = 0; y < a; y += 1) {
 				C && w.nodeType === 8 && w.data === "]" && (s = w, c = !0, we(!1));
 				var b = e[y], x = r(b, y), S = m ? null : l.get(x);
-				S ? (S.v && Wt(S.v, b), S.i && Wt(S.i, y), v && _.unskip_effect(S.e)) : (S = jr(l, m ? s : Dr ??= M(), b, x, y, i, t, n), m || (S.e.f |= oe), l.set(x, S)), u.add(x);
+				S ? (S.v && Wt(S.v, b), S.i && Wt(S.i, y), v && _.unskip_effect(S.e)) : (S = Ar(l, m ? s : Er ??= M(), b, x, y, i, t, n), m || (S.e.f |= oe), l.set(x, S)), u.add(x);
 			}
-			if (a === 0 && o && !d && (m ? d = F(() => o(s)) : (d = F(() => o(Dr ??= M())), d.f |= oe)), a > u.size && Pe("", "", ""), C && a > 0 && T(Oe()), !m) {
+			if (a === 0 && o && !d && (m ? d = F(() => o(s)) : (d = F(() => o(Er ??= M())), d.f |= oe)), a > u.size && Pe("", "", ""), C && a > 0 && T(Oe()), !m) {
 				if (p.set(_, u), v) {
 					for (let [e, t] of l) u.has(e) || _.skip_effect(t.e);
 					_.oncommit(h), _.ondiscard(g);
 				} else h(_);
 			}
-			c && we(!0), G(f);
+			c && we(!0), K(f);
 		}),
 		flags: t,
 		items: l,
@@ -1808,20 +1808,20 @@ function Or(e, t, n, r, i, o = null) {
 	};
 	m = !1, C && (s = w);
 }
-function kr(e) {
+function Or(e) {
 	for (; e !== null && !(e.f & 32);) e = e.next;
 	return e;
 }
-function Ar(e, t, n, r, i) {
-	var a = !!(r & 8), o = t.length, s = e.items, l = kr(e.effect.first), u, d = null, f, p = [], m = [], h, g, _, v;
+function kr(e, t, n, r, i) {
+	var a = !!(r & 8), o = t.length, s = e.items, l = Or(e.effect.first), u, d = null, f, p = [], m = [], h, g, _, v;
 	if (a) for (v = 0; v < o; v += 1) h = t[v], g = i(h, v), _ = s.get(g).e, _.f & 33554432 || (_.nodes?.a?.measure(), (f ??= /* @__PURE__ */ new Set()).add(_));
 	for (v = 0; v < o; v += 1) {
 		if (h = t[v], g = i(h, v), _ = s.get(g).e, e.outrogroups !== null) for (let t of e.outrogroups) t.pending.delete(_), t.done.delete(_);
 		if (_.f & 8192 && (jn(_), a && (_.nodes?.a?.unfix(), (f ??= /* @__PURE__ */ new Set()).delete(_))), _.f & 33554432) {
-			if (_.f ^= oe, _ === l) Mr(_, null, n);
+			if (_.f ^= oe, _ === l) jr(_, null, n);
 			else {
 				var y = d ? d.next : l;
-				_ === e.effect.last && (e.effect.last = _.prev), _.prev && (_.prev.next = _.next), _.next && (_.next.prev = _.prev), Nr(e, d, _), Nr(e, _, y), Mr(_, y, n), d = _, p = [], m = [], l = kr(d.next);
+				_ === e.effect.last && (e.effect.last = _.prev), _.prev && (_.prev.next = _.next), _.next && (_.next.prev = _.prev), Mr(e, d, _), Mr(e, _, y), jr(_, y, n), d = _, p = [], m = [], l = Or(d.next);
 				continue;
 			}
 		}
@@ -1831,25 +1831,25 @@ function Ar(e, t, n, r, i) {
 					var b = m[0], x;
 					d = b.prev;
 					var S = p[0], ee = p[p.length - 1];
-					for (x = 0; x < p.length; x += 1) Mr(p[x], b, n);
+					for (x = 0; x < p.length; x += 1) jr(p[x], b, n);
 					for (x = 0; x < m.length; x += 1) u.delete(m[x]);
-					Nr(e, S.prev, ee.next), Nr(e, d, S), Nr(e, ee, b), l = b, d = ee, --v, p = [], m = [];
-				} else u.delete(_), Mr(_, l, n), Nr(e, _.prev, _.next), Nr(e, _, d === null ? e.effect.first : d.next), Nr(e, d, _), d = _;
+					Mr(e, S.prev, ee.next), Mr(e, d, S), Mr(e, ee, b), l = b, d = ee, --v, p = [], m = [];
+				} else u.delete(_), jr(_, l, n), Mr(e, _.prev, _.next), Mr(e, _, d === null ? e.effect.first : d.next), Mr(e, d, _), d = _;
 				continue;
 			}
-			for (p = [], m = []; l !== null && l !== _;) (u ??= /* @__PURE__ */ new Set()).add(l), m.push(l), l = kr(l.next);
+			for (p = [], m = []; l !== null && l !== _;) (u ??= /* @__PURE__ */ new Set()).add(l), m.push(l), l = Or(l.next);
 			if (l === null) continue;
 		}
-		_.f & 33554432 || p.push(_), d = _, l = kr(_.next);
+		_.f & 33554432 || p.push(_), d = _, l = Or(_.next);
 	}
 	if (e.outrogroups !== null) {
-		for (let t of e.outrogroups) t.pending.size === 0 && (Er(e, c(t.done)), e.outrogroups?.delete(t));
+		for (let t of e.outrogroups) t.pending.size === 0 && (Tr(e, c(t.done)), e.outrogroups?.delete(t));
 		e.outrogroups.size === 0 && (e.outrogroups = null);
 	}
 	if (l !== null || u !== void 0) {
 		var te = [];
 		if (u !== void 0) for (_ of u) _.f & 8192 || te.push(_);
-		for (; l !== null;) !(l.f & 8192) && l !== e.fallback && te.push(l), l = kr(l.next);
+		for (; l !== null;) !(l.f & 8192) && l !== e.fallback && te.push(l), l = Or(l.next);
 		var ne = te.length;
 		if (ne > 0) {
 			var re = r & 4 && o === 0 ? n : null;
@@ -1857,14 +1857,14 @@ function Ar(e, t, n, r, i) {
 				for (v = 0; v < ne; v += 1) te[v].nodes?.a?.measure();
 				for (v = 0; v < ne; v += 1) te[v].nodes?.a?.fix();
 			}
-			Tr(e, te, re);
+			wr(e, te, re);
 		}
 	}
 	a && Ze(() => {
 		if (f !== void 0) for (_ of f) _.nodes?.a?.apply();
 	});
 }
-function jr(e, t, n, r, i, a, o, s) {
+function Ar(e, t, n, r, i, a, o, s) {
 	var c = o & 1 ? o & 16 ? Bt(n) : /* @__PURE__ */ Vt(n, !1, !1) : null, l = o & 2 ? Bt(i) : null;
 	return {
 		v: c,
@@ -1874,48 +1874,48 @@ function jr(e, t, n, r, i, a, o, s) {
 		}))
 	};
 }
-function Mr(e, t, n) {
+function jr(e, t, n) {
 	if (e.nodes) for (var r = e.nodes.start, i = e.nodes.end, a = t && !(t.f & 33554432) ? t.nodes.start : n; r !== null;) {
 		var o = /* @__PURE__ */ tn(r);
 		if (a.before(r), r === i) return;
 		r = o;
 	}
 }
-function Nr(e, t, n) {
+function Mr(e, t, n) {
 	t === null ? e.effect.first = n : t.next = n, n === null ? e.effect.last = t : n.prev = t;
 }
 //#endregion
 //#region node_modules/svelte/src/internal/client/dom/css.js
-function Pr(e, t) {
-	bn(() => {
+function Nr(e, t) {
+	yn(() => {
 		e = B?.parent?.nodes?.start ?? e;
 		var n = e.getRootNode(), r = n.host ? n : n.head ?? n.ownerDocument.head;
 		if (!r.querySelector("#" + t.hash)) {
-			let e = cn("style");
+			let e = sn("style");
 			e.id = t.hash, e.textContent = t.code, r.appendChild(e);
 		}
 	});
 }
 //#endregion
 //#region node_modules/svelte/src/internal/shared/attributes.js
-var Fr = [..." 	\n\r\f\xA0\v﻿"];
-function Ir(e, t, n) {
+var Pr = [..." 	\n\r\f\xA0\v﻿"];
+function Fr(e, t, n) {
 	var r = e == null ? "" : "" + e;
 	if (t && (r = r ? r + " " + t : t), n) {
 		for (var i of Object.keys(n)) if (n[i]) r = r ? r + " " + i : i;
 		else if (r.length) for (var a = i.length, o = 0; (o = r.indexOf(i, o)) >= 0;) {
 			var s = o + a;
-			(o === 0 || Fr.includes(r[o - 1])) && (s === r.length || Fr.includes(r[s])) ? r = (o === 0 ? "" : r.substring(0, o)) + r.substring(s + 1) : o = s;
+			(o === 0 || Pr.includes(r[o - 1])) && (s === r.length || Pr.includes(r[s])) ? r = (o === 0 ? "" : r.substring(0, o)) + r.substring(s + 1) : o = s;
 		}
 	}
 	return r === "" ? null : r;
 }
 //#endregion
 //#region node_modules/svelte/src/internal/client/dom/elements/class.js
-function Lr(e, t, n, r, i, a) {
+function Ir(e, t, n, r, i, a) {
 	var o = e[he];
 	if (C || o !== n || o === void 0) {
-		var s = Ir(n, r, a);
+		var s = Fr(n, r, a);
 		(!C || s !== e.getAttribute("class")) && (s == null ? e.removeAttribute("class") : t ? e.className = s : e.setAttribute("class", s)), e[he] = n;
 	} else if (a && i !== a) for (var c in a) {
 		var l = !!a[c];
@@ -1925,32 +1925,32 @@ function Lr(e, t, n, r, i, a) {
 }
 //#endregion
 //#region node_modules/svelte/src/internal/client/dom/elements/attributes.js
-var Rr = Symbol("is custom element"), zr = Symbol("is html"), Br = be ? "link" : "LINK";
-function Vr(e) {
+var Lr = Symbol("is custom element"), Rr = Symbol("is html"), zr = be ? "link" : "LINK";
+function Br(e) {
 	if (C) {
 		var t = !1, n = () => {
 			if (!t) {
 				if (t = !0, e.hasAttribute("value")) {
 					var n = e.value;
-					Y(e, "value", null), e.value = n;
+					Vr(e, "value", null), e.value = n;
 				}
 				if (e.hasAttribute("checked")) {
 					var r = e.checked;
-					Y(e, "checked", null), e.checked = r;
+					Vr(e, "checked", null), e.checked = r;
 				}
 			}
 		};
 		e[ve] = n, Ze(n), rt();
 	}
 }
-function Y(e, t, n, r) {
+function Vr(e, t, n, r) {
 	var i = Hr(e);
-	C && (i[t] = e.getAttribute(t), t === "src" || t === "srcset" || t === "href" && e.nodeName === Br) || i[t] !== (i[t] = n) && (t === "loading" && (e[pe] = n), n == null ? e.removeAttribute(t) : typeof n != "string" && Wr(e).has(t) ? e[t] = n : e.setAttribute(t, n));
+	C && (i[t] = e.getAttribute(t), t === "src" || t === "srcset" || t === "href" && e.nodeName === zr) || i[t] !== (i[t] = n) && (t === "loading" && (e[pe] = n), n == null ? e.removeAttribute(t) : typeof n != "string" && Wr(e).has(t) ? e[t] = n : e.setAttribute(t, n));
 }
 function Hr(e) {
 	return e[me] ??= {
-		[Rr]: e.nodeName.includes("-"),
-		[zr]: e.namespaceURI === i
+		[Lr]: e.nodeName.includes("-"),
+		[Rr]: e.namespaceURI === i
 	};
 }
 var Ur = /* @__PURE__ */ new Map();
@@ -1970,14 +1970,14 @@ function Gr(e, t, n = t) {
 	var r = /* @__PURE__ */ new WeakSet();
 	at(e, "input", async (i) => {
 		var a = i ? e.defaultValue : e.value;
-		if (a = Kr(e) ? qr(a) : a, n(a), O !== null && r.add(O), await Qn(), a !== (a = t())) {
+		if (a = Kr(e) ? qr(a) : a, n(a), O !== null && r.add(O), await Zn(), a !== (a = t())) {
 			var o = e.selectionStart, s = e.selectionEnd, c = e.value.length;
 			if (e.value = a ?? "", s !== null) {
 				var l = e.value.length;
 				o === s && s === c && l > c ? (e.selectionStart = l, e.selectionEnd = l) : (e.selectionStart = o, e.selectionEnd = Math.min(s, l));
 			}
 		}
-	}), (C && e.defaultValue !== e.value || tr(t) == null && e.value) && (n(Kr(e) ? qr(e.value) : e.value), O !== null && r.add(O)), Sn(() => {
+	}), (C && e.defaultValue !== e.value || er(t) == null && e.value) && (n(Kr(e) ? qr(e.value) : e.value), O !== null && r.add(O)), xn(() => {
 		var n = t();
 		if (e === document.activeElement) {
 			var i = O;
@@ -2007,7 +2007,7 @@ function Yr(e) {
 //#endregion
 //#region node_modules/svelte/src/internal/client/reactivity/props.js
 function Xr(e, t, n, r) {
-	var i = !0, a = !!(n & 8), o = !!(n & 16), s = r, c = !0, l = void 0, d = () => o && i ? (l ??= /* @__PURE__ */ ut(r), G(l)) : (c && (c = !1, s = o ? tr(r) : r), s);
+	var i = !0, a = !!(n & 8), o = !!(n & 16), s = r, c = !0, l = void 0, d = () => o && i ? (l ??= /* @__PURE__ */ ut(r), K(l)) : (c && (c = !1, s = o ? er(r) : r), s);
 	let f;
 	if (a) {
 		var p = ue in e || fe in e;
@@ -2030,14 +2030,14 @@ function Xr(e, t, n, r) {
 		});
 	}
 	var v = !1, y = (n & 1 ? ut : mt)(() => (v = !1, g()));
-	a && G(y);
+	a && K(y);
 	var b = B;
 	return (function(e, t) {
 		if (arguments.length > 0) {
-			let n = t ? G(y) : i && a ? Jt(e) : e;
+			let n = t ? K(y) : i && a ? Jt(e) : e;
 			return j(y, n), v = !0, s !== void 0 && (s = n), e;
 		}
-		return Fn && v || b.f & 16384 ? y.v : G(y);
+		return Fn && v || b.f & 16384 ? y.v : K(y);
 	});
 }
 //#endregion
@@ -2155,6 +2155,24 @@ var X = {
 		page: "/embed",
 		scripts: "/embed/",
 		shown: 20
+	},
+	nameSearch: {
+		minLength: 3,
+		waitMs: 600,
+		shown: 5,
+		cacheDays: 7,
+		wikidata: "https://www.wikidata.org/w/api.php",
+		bluesky: "https://public.api.bsky.app/xrpc/app.bsky.actor.searchActorsTypeahead",
+		socials: {
+			P2002: "https://x.com/{id}",
+			P4033: "mastodon",
+			P12361: "https://bsky.app/profile/{id}",
+			P4264: "https://www.linkedin.com/company/{id}",
+			P2037: "https://github.com/{id}",
+			P2003: "https://www.instagram.com/{id}",
+			P2013: "https://www.facebook.com/{id}",
+			P2397: "https://www.youtube.com/channel/{id}"
+		}
 	},
 	quickSearch: {
 		places: 2e3,
@@ -2577,37 +2595,37 @@ function Z(e, t = {}) {
 }
 //#endregion
 //#region src/lib/components/JobCard.svelte
-var $r = /* @__PURE__ */ K("<span> </span>"), ei = /* @__PURE__ */ K("<em class=\"svelte-1vivc5\"> </em>"), ti = /* @__PURE__ */ K("<strong class=\"svelte-1vivc5\"> </strong> <small class=\"svelte-1vivc5\"> </small> <jl-chips><!><!><!></jl-chips>", 3), ni = {
+var $r = /* @__PURE__ */ q("<span> </span>"), ei = /* @__PURE__ */ q("<em class=\"svelte-1vivc5\"> </em>"), ti = /* @__PURE__ */ q("<strong class=\"svelte-1vivc5\"> </strong> <small class=\"svelte-1vivc5\"> </small> <jl-chips><!><!><!></jl-chips>", 3), ni = {
 	hash: "svelte-1vivc5",
 	code: "strong.svelte-1vivc5 {display:block;font-weight:var(--font-weight-strong);}small.svelte-1vivc5 {display:block;color:var(--color-muted);font-size:var(--font-size-small);}jl-chips.svelte-1vivc5 {display:flex;flex-wrap:wrap;gap:var(--space-xs);margin-top:var(--space-xs);}jl-chips.svelte-1vivc5 > * {padding:0 var(--space-s);border-radius:var(--radius-round);background:var(--color-soft);color:var(--color-fg);font-size:var(--font-size-small);line-height:var(--chip-line);}\n	/* An offer listed for long: told, not hidden. */jl-chips.svelte-1vivc5 > em:where(.svelte-1vivc5) {font-style:normal;color:var(--color-warn);}"
 };
 function ri(e, t) {
-	Ge(t, !0), Pr(e, ni);
+	Ge(t, !0), Nr(e, ni);
 	let n = Xr(t, "company", 3, ""), r = /* @__PURE__ */ pt(() => [
 		t.facts.place,
 		t.facts.pay,
 		t.facts.age
 	].filter(Boolean));
-	var i = ti(), a = rn(i), o = N(a, !0), s = an(a, 2), c = N(s), l = an(s, 2);
-	Lr(l, 1, "svelte-1vivc5");
+	var i = ti(), a = rn(i), o = N(a, !0), s = P(a, 2), c = N(s), l = P(s, 2);
+	Ir(l, 1, "svelte-1vivc5");
 	var u = nn(l);
-	Cr(u, () => t.lead ?? g);
-	var d = an(u);
-	Or(d, 16, () => G(r), (e) => e, (e, t) => {
+	Sr(u, () => t.lead ?? g);
+	var d = P(u);
+	Dr(d, 16, () => K(r), (e) => e, (e, t) => {
 		var n = $r(), r = N(n, !0);
-		P(() => J(r, t)), q(e, n);
+		Sn(() => Y(r, t)), J(e, n);
 	});
-	var f = an(d), p = (e) => {
+	var f = P(d), p = (e) => {
 		var t = ei(), n = N(t, !0);
-		P((e, r) => {
-			Y(t, "title", e), J(n, r);
-		}, [() => Z("job.older.hint", { days: X.jobs.olderDays }), () => Z("job.older")]), q(e, t);
+		Sn((e, r) => {
+			Vr(t, "title", e), Y(n, r);
+		}, [() => Z("job.older.hint", { days: X.jobs.olderDays }), () => Z("job.older")]), J(e, t);
 	};
-	wr(f, (e) => {
+	Cr(f, (e) => {
 		t.facts.older && e(p);
-	}), Ee(l), P(() => {
-		J(o, t.title), J(c, `${n() ? `${n()}${t.facts.line ? " · " : ""}` : ""}${t.facts.line ?? ""}`);
-	}), q(e, i), Ke();
+	}), Ee(l), Sn(() => {
+		Y(o, t.title), Y(c, `${n() ? `${n()}${t.facts.line ? " · " : ""}` : ""}${t.facts.line ?? ""}`);
+	}), J(e, i), Ke();
 }
 //#endregion
 //#region src/lib/models/distance.js
@@ -3928,466 +3946,686 @@ function po(e) {
 		id: a
 	};
 }
-new Map([
-	{
-		lexicon: 1,
-		id: "today.joblist.company",
-		description: "A company or organization, described by anyone, like a wiki page: each author's record is one version. The record key is the organization's domain, normalised: the website's host name, lowercase, without 'www.' (e.g. 'example.org' for https://www.Example.org/jobs), at most 253 characters (a DNS name). When the author's handle equals that domain, the record is the organization's own.",
-		defs: {
-			main: {
-				type: "record",
-				key: "any",
-				record: {
-					type: "object",
-					required: ["name", "createdAt"],
-					properties: {
-						name: {
-							type: "string",
-							maxLength: 1e3,
-							maxGraphemes: 100
-						},
-						url: {
-							type: "string",
-							format: "uri",
-							description: "The organization's website."
-						},
-						description: {
-							type: "string",
-							maxLength: 3e4,
-							maxGraphemes: 3e3
-						},
-						kind: {
-							type: "string",
-							maxLength: 64,
-							knownValues: [
-								"company",
-								"cooperative",
-								"nonprofit",
-								"collective",
-								"project",
-								"public"
-							],
-							description: "What sort of organization it is: a company, a cooperative, a nonprofit, a collective, a project, a public body. Apps show others as unknown."
-						},
-						tags: {
-							type: "array",
-							maxLength: 20,
-							items: {
-								type: "string",
-								maxLength: 640,
-								maxGraphemes: 64
-							}
-						},
-						locations: {
-							type: "array",
-							maxLength: 50,
-							items: {
-								type: "ref",
-								ref: "#location"
-							}
-						},
-						jobBoard: {
-							type: "ref",
-							ref: "#jobBoard"
-						},
-						links: {
-							type: "array",
-							maxLength: 20,
-							description: "Other public pages of the organization (social profiles, wikipedia, etc.).",
-							items: {
-								type: "string",
-								format: "uri"
-							}
-						},
-						createdAt: {
-							type: "string",
-							format: "datetime",
-							description: "When this author first described the organization."
-						},
-						updatedAt: {
-							type: "string",
-							format: "datetime",
-							description: "When this author last saved this version. The most recently edited version is the one shown, unless the organization publishes its own."
-						}
-					}
-				}
-			},
-			location: {
-				type: "object",
-				properties: {
-					name: {
-						type: "string",
-						maxLength: 1e3,
-						maxGraphemes: 100,
-						description: "City or place name."
-					},
-					address: {
-						type: "string",
-						maxLength: 2e3,
-						maxGraphemes: 200
-					},
-					country: {
-						type: "string",
-						maxLength: 1e3,
-						maxGraphemes: 100
-					},
-					countryCode: {
-						type: "string",
-						minLength: 2,
-						maxLength: 2,
-						description: "ISO 3166-1 alpha-2 code of the country (e.g. 'DE'), alongside its name."
-					},
-					latitude: {
-						type: "string",
-						maxLength: 32,
-						description: "Decimal degrees, as a string."
-					},
-					longitude: {
-						type: "string",
-						maxLength: 32,
-						description: "Decimal degrees, as a string."
-					}
-				}
-			},
-			jobBoard: {
-				type: "object",
-				description: "Where the organization publishes its jobs.",
-				properties: {
-					provider: {
-						type: "string",
-						maxLength: 64,
-						description: "The job board's provider; 'today.joblist.job' when the organization posts its jobs as today.joblist.job records from its own account (then no id).",
-						knownValues: [
-							"ashby",
-							"greenhouse",
-							"lever",
-							"personio",
-							"recruitee",
-							"rippling",
-							"smartrecruiters",
-							"workable",
-							"today.joblist.job"
-						]
-					},
-					id: {
-						type: "string",
-						maxLength: 256,
-						description: "The organization's identifier at the provider."
-					},
-					url: {
-						type: "string",
-						format: "uri",
-						description: "Careers page, when there is no supported provider."
-					}
-				}
-			}
-		}
-	},
-	{
-		lexicon: 1,
-		id: "today.joblist.job",
-		description: "A job offer, posted by anyone. When the author's handle equals the company key (its domain), it is the company's own offer. Offers expire; renew to extend. Applications never go through joblist: `apply` says where to send them.",
-		defs: {
-			main: {
-				type: "record",
-				key: "tid",
-				record: {
-					type: "object",
-					required: [
-						"title",
-						"company",
-						"url",
-						"createdAt",
-						"expiresAt"
-					],
-					properties: {
-						title: {
-							type: "string",
-							maxLength: 2e3,
-							maxGraphemes: 200
-						},
-						company: {
-							type: "string",
-							maxLength: 253,
-							description: "Company record key: its domain, lowercase, without 'www.' (see today.joblist.company)."
-						},
-						url: {
-							type: "string",
-							format: "uri",
-							description: "Where to read the offer: its page on the company's site or job board, or its joblist page. May equal the application link."
-						},
-						description: {
-							type: "string",
-							maxLength: 1e5,
-							maxGraphemes: 1e4
-						},
-						locations: {
-							type: "array",
-							maxLength: 20,
-							items: {
-								type: "ref",
-								ref: "today.joblist.company#location"
-							}
-						},
-						remote: {
-							type: "string",
-							knownValues: [
-								"onsite",
-								"hybrid",
-								"remote"
-							]
-						},
-						employment: {
-							type: "string",
-							knownValues: [
-								"full-time",
-								"part-time",
-								"contract",
-								"internship",
-								"volunteer"
-							]
-						},
-						apply: {
-							type: "ref",
-							ref: "#apply"
-						},
-						salary: {
-							type: "ref",
-							ref: "#salary"
-						},
-						status: {
-							type: "string",
-							maxLength: 32,
-							knownValues: [
-								"open",
-								"filled",
-								"closed"
-							],
-							description: "Whether the offer still takes applications. Missing means open; a filled or closed offer is no longer shown."
-						},
-						applicantLocations: {
-							type: "array",
-							maxLength: 50,
-							description: "Countries applicants can work from (ISO 3166-1 alpha-2 codes, e.g. 'DE'), for remote offers.",
-							items: {
-								type: "string",
-								minLength: 2,
-								maxLength: 2
-							}
-						},
-						langs: {
-							type: "array",
-							maxLength: 3,
-							description: "Languages the offer is written in (BCP-47 tags).",
-							items: {
-								type: "string",
-								format: "language"
-							}
-						},
-						createdAt: {
-							type: "string",
-							format: "datetime"
-						},
-						updatedAt: {
-							type: "string",
-							format: "datetime",
-							description: "When the poster last edited the offer."
-						},
-						expiresAt: {
-							type: "string",
-							format: "datetime",
-							description: "After this date the offer is no longer shown."
-						}
-					}
-				}
-			},
-			salary: {
-				type: "object",
-				description: "What the job pays, in whole units of the currency (not cents). At least one of min and max.",
-				required: ["currency", "period"],
-				properties: {
-					min: {
-						type: "integer",
-						minimum: 0
-					},
-					max: {
-						type: "integer",
-						minimum: 0
-					},
-					currency: {
-						type: "string",
-						minLength: 3,
-						maxLength: 3,
-						description: "ISO 4217 code, e.g. 'EUR'."
-					},
-					period: {
-						type: "string",
-						maxLength: 16,
-						knownValues: [
-							"year",
-							"month",
-							"week",
-							"day",
-							"hour"
-						]
-					}
-				}
-			},
-			apply: {
-				type: "object",
-				description: "How to apply. Applications go straight to the poster: joblist never receives them.",
-				properties: {
-					url: {
-						type: "string",
-						format: "uri",
-						description: "An application form (https://…) or an email address (mailto:…)."
-					},
-					bluesky: {
-						type: "boolean",
-						description: "Apply by sending a direct message to the poster's account on Bluesky."
-					}
-				}
-			}
-		}
-	},
-	{
-		lexicon: 1,
-		id: "today.joblist.list",
-		description: "A list of companies curated by its author, who can let others add to it.",
-		defs: { main: {
+var mo = {
+	lexicon: 1,
+	id: "today.joblist.company",
+	description: "A company or organization, described by anyone, like a wiki page: each author's record is one version. The record key is the organization's domain, normalised: the website's host name, lowercase, without 'www.' (e.g. 'example.org' for https://www.Example.org/jobs), at most 253 characters (a DNS name). When the author's handle equals that domain, the record is the organization's own.",
+	defs: {
+		main: {
 			type: "record",
-			key: "tid",
+			key: "any",
 			record: {
 				type: "object",
-				required: [
-					"name",
-					"companies",
-					"createdAt"
-				],
+				required: ["name", "createdAt"],
 				properties: {
 					name: {
 						type: "string",
 						maxLength: 1e3,
 						maxGraphemes: 100
+					},
+					url: {
+						type: "string",
+						format: "uri",
+						description: "The organization's website."
 					},
 					description: {
 						type: "string",
 						maxLength: 3e4,
 						maxGraphemes: 3e3
 					},
-					companies: {
+					kind: {
+						type: "string",
+						maxLength: 64,
+						knownValues: [
+							"company",
+							"cooperative",
+							"nonprofit",
+							"collective",
+							"project",
+							"public"
+						],
+						description: "What sort of organization it is: a company, a cooperative, a nonprofit, a collective, a project, a public body. Apps show others as unknown."
+					},
+					tags: {
 						type: "array",
-						maxLength: 2e3,
-						description: "Company record keys (domains), in the curator's order.",
+						maxLength: 20,
 						items: {
 							type: "string",
-							maxLength: 253
+							maxLength: 640,
+							maxGraphemes: 64
 						}
 					},
-					copiedFrom: {
-						type: "string",
-						format: "at-uri",
-						description: "The list this one was copied from."
-					},
-					open: {
-						type: "boolean",
-						description: "Anyone can add companies: companies suggested for this list (today.joblist.suggestion records) are shown in it at once, credited to who suggested them. Otherwise the author accepts or dismisses each one."
-					},
-					hidden: {
+					locations: {
 						type: "array",
-						maxLength: 2e3,
-						description: "Company record keys suggested by others that the author hid or dismissed.",
+						maxLength: 50,
+						items: {
+							type: "ref",
+							ref: "#location"
+						}
+					},
+					jobBoard: {
+						type: "ref",
+						ref: "#jobBoard"
+					},
+					links: {
+						type: "array",
+						maxLength: 20,
+						description: "Other public pages of the organization (social profiles, wikipedia, etc.).",
 						items: {
 							type: "string",
-							maxLength: 253
+							format: "uri"
 						}
 					},
 					createdAt: {
 						type: "string",
-						format: "datetime"
+						format: "datetime",
+						description: "When this author first described the organization."
+					},
+					updatedAt: {
+						type: "string",
+						format: "datetime",
+						description: "When this author last saved this version. The most recently edited version is the one shown, unless the organization publishes its own."
 					}
 				}
 			}
-		} }
-	},
-	{
-		lexicon: 1,
-		id: "today.joblist.suggestion",
-		description: "A company someone suggests for a list they do not own, written in their own repository. Open lists show it at once, credited to its author; for other lists, the list's author accepts or dismisses it.",
-		defs: { main: {
+		},
+		location: {
+			type: "object",
+			properties: {
+				name: {
+					type: "string",
+					maxLength: 1e3,
+					maxGraphemes: 100,
+					description: "City or place name."
+				},
+				address: {
+					type: "string",
+					maxLength: 2e3,
+					maxGraphemes: 200
+				},
+				country: {
+					type: "string",
+					maxLength: 1e3,
+					maxGraphemes: 100
+				},
+				countryCode: {
+					type: "string",
+					minLength: 2,
+					maxLength: 2,
+					description: "ISO 3166-1 alpha-2 code of the country (e.g. 'DE'), alongside its name."
+				},
+				latitude: {
+					type: "string",
+					maxLength: 32,
+					description: "Decimal degrees, as a string."
+				},
+				longitude: {
+					type: "string",
+					maxLength: 32,
+					description: "Decimal degrees, as a string."
+				}
+			}
+		},
+		jobBoard: {
+			type: "object",
+			description: "Where the organization publishes its jobs.",
+			properties: {
+				provider: {
+					type: "string",
+					maxLength: 64,
+					description: "The job board's provider; 'today.joblist.job' when the organization posts its jobs as today.joblist.job records from its own account (then no id).",
+					knownValues: [
+						"ashby",
+						"greenhouse",
+						"lever",
+						"personio",
+						"recruitee",
+						"rippling",
+						"smartrecruiters",
+						"workable",
+						"today.joblist.job"
+					]
+				},
+				id: {
+					type: "string",
+					maxLength: 256,
+					description: "The organization's identifier at the provider."
+				},
+				url: {
+					type: "string",
+					format: "uri",
+					description: "Careers page, when there is no supported provider."
+				}
+			}
+		}
+	}
+}, ho = {
+	lexicon: 1,
+	id: "today.joblist.job",
+	description: "A job offer, posted by anyone. When the author's handle equals the company key (its domain), it is the company's own offer. Offers expire; renew to extend. Applications never go through joblist: `apply` says where to send them.",
+	defs: {
+		main: {
 			type: "record",
 			key: "tid",
 			record: {
 				type: "object",
 				required: [
-					"list",
+					"title",
 					"company",
-					"createdAt"
+					"url",
+					"createdAt",
+					"expiresAt"
 				],
 				properties: {
-					list: {
+					title: {
 						type: "string",
-						format: "at-uri",
-						description: "The today.joblist.list the company is suggested for."
+						maxLength: 2e3,
+						maxGraphemes: 200
 					},
 					company: {
 						type: "string",
 						maxLength: 253,
-						description: "Company record key (its domain)."
+						description: "Company record key: its domain, lowercase, without 'www.' (see today.joblist.company)."
 					},
-					note: {
+					url: {
 						type: "string",
-						maxLength: 3e3,
-						maxGraphemes: 300,
-						description: "Why it belongs in the list."
+						format: "uri",
+						description: "Where to read the offer: its page on the company's site or job board, or its joblist page. May equal the application link."
+					},
+					description: {
+						type: "string",
+						maxLength: 1e5,
+						maxGraphemes: 1e4
+					},
+					locations: {
+						type: "array",
+						maxLength: 20,
+						items: {
+							type: "ref",
+							ref: "today.joblist.company#location"
+						}
+					},
+					remote: {
+						type: "string",
+						knownValues: [
+							"onsite",
+							"hybrid",
+							"remote"
+						]
+					},
+					employment: {
+						type: "string",
+						knownValues: [
+							"full-time",
+							"part-time",
+							"contract",
+							"internship",
+							"volunteer"
+						]
+					},
+					apply: {
+						type: "ref",
+						ref: "#apply"
+					},
+					salary: {
+						type: "ref",
+						ref: "#salary"
+					},
+					status: {
+						type: "string",
+						maxLength: 32,
+						knownValues: [
+							"open",
+							"filled",
+							"closed"
+						],
+						description: "Whether the offer still takes applications. Missing means open; a filled or closed offer is no longer shown."
+					},
+					applicantLocations: {
+						type: "array",
+						maxLength: 50,
+						description: "Countries applicants can work from (ISO 3166-1 alpha-2 codes, e.g. 'DE'), for remote offers.",
+						items: {
+							type: "string",
+							minLength: 2,
+							maxLength: 2
+						}
+					},
+					langs: {
+						type: "array",
+						maxLength: 3,
+						description: "Languages the offer is written in (BCP-47 tags).",
+						items: {
+							type: "string",
+							format: "language"
+						}
 					},
 					createdAt: {
 						type: "string",
 						format: "datetime"
+					},
+					updatedAt: {
+						type: "string",
+						format: "datetime",
+						description: "When the poster last edited the offer."
+					},
+					expiresAt: {
+						type: "string",
+						format: "datetime",
+						description: "After this date the offer is no longer shown."
 					}
 				}
 			}
-		} }
+		},
+		salary: {
+			type: "object",
+			description: "What the job pays, in whole units of the currency (not cents). At least one of min and max.",
+			required: ["currency", "period"],
+			properties: {
+				min: {
+					type: "integer",
+					minimum: 0
+				},
+				max: {
+					type: "integer",
+					minimum: 0
+				},
+				currency: {
+					type: "string",
+					minLength: 3,
+					maxLength: 3,
+					description: "ISO 4217 code, e.g. 'EUR'."
+				},
+				period: {
+					type: "string",
+					maxLength: 16,
+					knownValues: [
+						"year",
+						"month",
+						"week",
+						"day",
+						"hour"
+					]
+				}
+			}
+		},
+		apply: {
+			type: "object",
+			description: "How to apply. Applications go straight to the poster: joblist never receives them.",
+			properties: {
+				url: {
+					type: "string",
+					format: "uri",
+					description: "An application form (https://…) or an email address (mailto:…)."
+				},
+				bluesky: {
+					type: "boolean",
+					description: "Apply by sending a direct message to the poster's account on Bluesky."
+				}
+			}
+		}
 	}
-].map((e) => [e.id, e])), X.collections.job;
+}, go = {
+	lexicon: 1,
+	id: "today.joblist.list",
+	description: "A list of companies curated by its author, who can let others add to it.",
+	defs: { main: {
+		type: "record",
+		key: "tid",
+		record: {
+			type: "object",
+			required: [
+				"name",
+				"companies",
+				"createdAt"
+			],
+			properties: {
+				name: {
+					type: "string",
+					maxLength: 1e3,
+					maxGraphemes: 100
+				},
+				description: {
+					type: "string",
+					maxLength: 3e4,
+					maxGraphemes: 3e3
+				},
+				companies: {
+					type: "array",
+					maxLength: 2e3,
+					description: "Company record keys (domains), in the curator's order.",
+					items: {
+						type: "string",
+						maxLength: 253
+					}
+				},
+				copiedFrom: {
+					type: "string",
+					format: "at-uri",
+					description: "The list this one was copied from."
+				},
+				open: {
+					type: "boolean",
+					description: "Anyone can add companies: companies suggested for this list (today.joblist.suggestion records) are shown in it at once, credited to who suggested them. Otherwise the author accepts or dismisses each one."
+				},
+				hidden: {
+					type: "array",
+					maxLength: 2e3,
+					description: "Company record keys suggested by others that the author hid or dismissed.",
+					items: {
+						type: "string",
+						maxLength: 253
+					}
+				},
+				createdAt: {
+					type: "string",
+					format: "datetime"
+				}
+			}
+		}
+	} }
+}, _o = {
+	lexicon: 1,
+	id: "today.joblist.suggestion",
+	description: "A company someone suggests for a list they do not own, written in their own repository. Open lists show it at once, credited to its author; for other lists, the list's author accepts or dismisses it.",
+	defs: { main: {
+		type: "record",
+		key: "tid",
+		record: {
+			type: "object",
+			required: [
+				"list",
+				"company",
+				"createdAt"
+			],
+			properties: {
+				list: {
+					type: "string",
+					format: "at-uri",
+					description: "The today.joblist.list the company is suggested for."
+				},
+				company: {
+					type: "string",
+					maxLength: 253,
+					description: "Company record key (its domain)."
+				},
+				note: {
+					type: "string",
+					maxLength: 3e3,
+					maxGraphemes: 300,
+					description: "Why it belongs in the list."
+				},
+				createdAt: {
+					type: "string",
+					format: "datetime"
+				}
+			}
+		}
+	} }
+}, vo = 8192, yo = new Map([
+	mo,
+	ho,
+	go,
+	_o
+].map((e) => [e.id, e]));
+function bo(e, t) {
+	return e.length <= t ? e : Array.from(e.slice(0, t * 2)).slice(0, t).join("");
+}
+function xo(e, t) {
+	let [n, r = "main"] = e.split("#"), i = n ? yo.get(n) : t, a = i?.defs[r];
+	return i && a ? [i, a] : null;
+}
+function So(e, t, n) {
+	if (e != null) switch (t.type) {
+		case "ref": {
+			let r = xo(t.ref, n);
+			return r ? So(e, r[1], r[0]) : void 0;
+		}
+		case "string": {
+			if (typeof e != "string") return;
+			let n = t.maxGraphemes ?? t.maxLength ?? e.length;
+			return !t.format && t.minLength === void 0 ? bo(e, n) : e.length >= (t.minLength ?? 0) && e.length <= (t.maxLength ?? vo) ? e : void 0;
+		}
+		case "integer": return Number.isSafeInteger(e) ? e : void 0;
+		case "boolean": return typeof e == "boolean" ? e : void 0;
+		case "array": return !Array.isArray(e) || !t.items ? void 0 : e.slice(0, t.maxLength ?? e.length).map((e) => So(e, t.items, n)).filter((e) => e !== void 0);
+		case "record": return So(e, t.record, n);
+		case "object": {
+			if (typeof e != "object" || Array.isArray(e)) return;
+			let r = e, i = {};
+			for (let [e, a] of Object.entries(t.properties || {})) {
+				let t = So(r[e], a, n);
+				t !== void 0 && (i[e] = t);
+			}
+			return i;
+		}
+		default: return;
+	}
+}
+function Co(e, t) {
+	let n = yo.get(e);
+	if (!n) throw Error(`no lexicon for ${e}`);
+	let r = So(t, n.defs.main, n);
+	return r ? {
+		$type: e,
+		...r
+	} : {};
+}
+//#endregion
+//#region src/lib/models/company.js
+function wo(e, t, n) {
+	let r = e.get(t);
+	return !!n && r?.handle === n && r.verified !== !1;
+}
+function To(e) {
+	return e.map((e) => ({
+		...e,
+		lat: Number(e.latitude),
+		lon: Number(e.longitude)
+	})).filter((e) => e.latitude && e.longitude && Number.isFinite(e.lat) && Number.isFinite(e.lon));
+}
+X.collections.job;
 //#endregion
 //#region src/lib/models/paste.js
-function mo(e) {
+function Eo(e) {
 	return e.split(/[-_\s]+/).filter(Boolean).map((e) => e.charAt(0).toUpperCase() + e.slice(1)).join(" ");
 }
 //#endregion
+//#region src/lib/atproto/xrpc.js
+async function Do(e, t, n = {}) {
+	let r = new URL(`${e.replace(/\/$/, "")}/xrpc/${t}`);
+	for (let [e, t] of Object.entries(n)) t !== void 0 && r.searchParams.set(e, String(t));
+	let i = await fetch(r, { headers: { accept: "application/json" } });
+	if (!i.ok) throw Object.assign(/* @__PURE__ */ Error(`${t} failed (${i.status})`), { status: i.status });
+	return i.json();
+}
+function Oo(e) {
+	let t = e?.status;
+	return typeof t == "number" && t >= 400 && t < 500;
+}
+//#endregion
+//#region src/lib/atproto/identity.js
+var ko = /* @__PURE__ */ new Map();
+function Ao(e) {
+	return ko.has(e) || ko.set(e, jo(e)), ko.get(e);
+}
+async function jo(e) {
+	let t = e.startsWith("did:web:") ? `https://${e.slice(8)}/.well-known/did.json` : `${X.services.plc}/${e}`, n = await fetch(t);
+	if (!n.ok) throw Error(`cannot resolve ${e}`);
+	let r = ((await n.json()).service || []).find((t) => t.id === "#atproto_pds" || t.id === `${e}#atproto_pds`);
+	if (!r) throw Error(`no PDS for ${e}`);
+	return r.serviceEndpoint;
+}
+async function Mo(e) {
+	if (e.startsWith("did:")) return e;
+	let { did: t } = await Do(X.services.appview, "com.atproto.identity.resolveHandle", { handle: e });
+	return t;
+}
+//#endregion
+//#region src/lib/atproto/records.js
+async function No(e, t, n) {
+	let r = await Ao(e), i = [], a, o = 0;
+	do {
+		let s = await Do(r, "com.atproto.repo.listRecords", {
+			repo: e,
+			collection: t,
+			limit: 100,
+			cursor: a
+		});
+		for (let n of s.records || []) {
+			let r = Fo(n.uri, e, t);
+			r && i.push({
+				did: e,
+				rkey: r,
+				uri: n.uri,
+				cid: n.cid,
+				value: n.value
+			});
+		}
+		n?.(s.records?.length || 0), a = s.records?.length ? s.cursor : void 0, o++;
+	} while (a && o < X.limits.pagesPerRepo);
+	return i;
+}
+async function Po(e, t, n) {
+	let r = await Ao(e);
+	try {
+		let i = await Do(r, "com.atproto.repo.getRecord", {
+			repo: e,
+			collection: t,
+			rkey: n
+		});
+		return {
+			did: e,
+			rkey: n,
+			uri: i.uri,
+			cid: i.cid,
+			value: i.value
+		};
+	} catch (e) {
+		if (Oo(e)) return null;
+		throw e;
+	}
+}
+function Fo(e, t, n) {
+	let r = `at://${t}/${n}/`;
+	if (typeof e != "string" || !e.startsWith(r)) return "";
+	let i = e.slice(r.length);
+	return /^[A-Za-z0-9._:~-]{1,512}$/.test(i) && i !== "." && i !== ".." ? i : "";
+}
+//#endregion
+//#region src/lib/models/job-post.js
+var Io = 864e5, { days: Lo, maxDays: Ro } = X.jobPost;
+function zo(e, t = Date.now()) {
+	if (!e?.title || !e.company || !e.url || e.status && e.status !== X.jobPost.status[0]) return !1;
+	let n = Date.parse(String(e.expiresAt || ""));
+	return Number.isFinite(n) && n > t && n <= t + (Ro + 1) * Io;
+}
+function Bo(e, t) {
+	let n = Co(X.collections.job, e.value);
+	return {
+		uri: e.uri,
+		did: e.did,
+		rkey: e.rkey,
+		title: String(n.title || ""),
+		company: String(n.company || ""),
+		url: ca(n.url),
+		description: String(n.description || ""),
+		locations: Array.isArray(n.locations) ? n.locations : [],
+		remote: n.remote,
+		employment: n.employment,
+		apply: n.apply && typeof n.apply == "object" ? {
+			...n.apply,
+			url: ca(n.apply.url, { email: !0 }) || void 0
+		} : {},
+		salary: n.salary && typeof n.salary == "object" ? Uo(ha(n.salary)) : void 0,
+		status: typeof n.status == "string" && n.status ? n.status : X.jobPost.status[0],
+		createdAt: String(n.createdAt || ""),
+		updatedAt: typeof n.updatedAt == "string" ? n.updatedAt : void 0,
+		expiresAt: String(n.expiresAt || ""),
+		verified: wo(t, e.did, String(n.company || "")),
+		record: e
+	};
+}
+function Vo(e) {
+	let [t] = To(e.locations);
+	return {
+		title: e.title,
+		url: e.url,
+		company: e.company,
+		location: Ho(e.locations) || void 0,
+		published: e.createdAt,
+		remote: e.remote || void 0,
+		salary: e.salary,
+		posted: {
+			did: e.did,
+			rkey: e.rkey,
+			verified: e.verified
+		},
+		point: t && [t.lon, t.lat]
+	};
+}
+function Ho(e) {
+	return [...new Set(e.map((e) => [e.name, e.country].filter(Boolean).join(", ")).filter(Boolean))].join("; ");
+}
+function Uo(e) {
+	if (!e) return;
+	let t = {
+		currency: e.currency,
+		period: e.period
+	};
+	return e.min && (t.min = Math.round(e.min)), e.max && (t.max = Math.round(e.max)), t;
+}
+//#endregion
 //#region embed/src/find.js
-function ho(e) {
+function Wo(e) {
 	let t = e.trim(), [, n, r] = t.match(/^([a-z]+):([^/\s]+)$/) || [];
 	return n && r && sa.some((e) => e.id === n) ? {
 		provider: n,
 		id: r
 	} : t ? po(t) : null;
 }
-async function go(e, t) {
+async function Go(e, t) {
 	let n = await oo({
 		key: t,
 		jobBoard: e
 	});
 	return Qi(n), n;
 }
-async function _o(e) {
+async function Ko(e) {
 	if (!e) return null;
-	let [t, n] = await Promise.all([lo(e), go(e, e.id)]);
+	let [t, n] = await Promise.all([lo(e), Go(e, e.id)]);
 	return {
-		name: t || mo(e.id),
+		name: t || Eo(e.id),
 		jobs: n
 	};
 }
+async function qo(e) {
+	let t = e.trim().toLowerCase();
+	if (!t) return null;
+	try {
+		let e = await Mo(t), [n, r] = await Promise.all([Po(e, X.collections.company, t), No(e, X.collections.job)]), i = String(n?.value?.name || t), a = Wo(`${n?.value?.jobBoard?.provider || ""}:${n?.value?.jobBoard?.id || ""}`);
+		if (a) return {
+			name: i,
+			jobs: await Go(a, t)
+		};
+		let o = /* @__PURE__ */ new Map([[e, { handle: t }]]), s = r.filter((e) => zo(e.value) && e.value.company === t).map((e) => Vo(Bo(e, o)));
+		return Qi(s), {
+			name: i,
+			jobs: s
+		};
+	} catch {
+		return null;
+	}
+}
 //#endregion
 //#region embed/src/JoblistJobs.svelte
-var vo = /* @__PURE__ */ K("<p class=\"svelte-uruhdc\"> </p>"), yo = /* @__PURE__ */ K("<label class=\"svelte-uruhdc\"> </label> <input type=\"search\" class=\"svelte-uruhdc\"/>", 1), bo = /* @__PURE__ */ K("<li class=\"svelte-uruhdc\"><a target=\"_blank\" rel=\"noopener\" class=\"svelte-uruhdc\"><!></a></li>"), xo = /* @__PURE__ */ K("<ul class=\"svelte-uruhdc\"></ul>"), So = /* @__PURE__ */ K("<a target=\"_blank\" rel=\"noopener\" class=\"svelte-uruhdc\"> </a> ·", 1), Co = /* @__PURE__ */ K("<p class=\"svelte-uruhdc\"> </p> <!> <footer class=\"svelte-uruhdc\"><!> <a target=\"_blank\" rel=\"noopener\" class=\"svelte-uruhdc\"> </a></footer>", 1), wo = /* @__PURE__ */ K("<h2 class=\"svelte-uruhdc\"><a target=\"_blank\" rel=\"noopener\" class=\"svelte-uruhdc\"> </a></h2> <!> <!>", 1), To = /* @__PURE__ */ K("<jl-embed><!></jl-embed>", 2), Eo = {
+var Jo = /* @__PURE__ */ q("<p class=\"svelte-uruhdc\"> </p>"), Yo = /* @__PURE__ */ q("<label class=\"svelte-uruhdc\"> </label> <input type=\"search\" class=\"svelte-uruhdc\"/>", 1), Xo = /* @__PURE__ */ q("<li class=\"svelte-uruhdc\"><a target=\"_blank\" rel=\"noopener\" class=\"svelte-uruhdc\"><!></a></li>"), Zo = /* @__PURE__ */ q("<ul class=\"svelte-uruhdc\"></ul>"), Qo = /* @__PURE__ */ q("<a target=\"_blank\" rel=\"noopener\" class=\"svelte-uruhdc\"> </a> ·", 1), $o = /* @__PURE__ */ q("<p class=\"svelte-uruhdc\"> </p> <!> <footer class=\"svelte-uruhdc\"><!> <a target=\"_blank\" rel=\"noopener\" class=\"svelte-uruhdc\"> </a></footer>", 1), es = /* @__PURE__ */ q("<h2 class=\"svelte-uruhdc\"><a target=\"_blank\" rel=\"noopener\" class=\"svelte-uruhdc\"> </a></h2> <!> <!>", 1), ts = /* @__PURE__ */ q("<jl-embed><!></jl-embed>", 2), ns = {
 	hash: "svelte-uruhdc",
 	code: "\n	/* joblist's tokens (src/app.css), here on any page: its colors from the page's, unless set. */jl-embed.svelte-uruhdc {--space-xxs: 0.125rem;--space-xs: 0.25rem;--space-s: 0.5rem;--space-m: 1rem;--radius: 0.5rem;--radius-round: 999px;--font-size-small: 0.875rem;--font-weight-strong: 600;--chip-line: 1.6;--color-fg: var(--joblist-fg, currentColor);--color-muted: var(--joblist-muted, rgb(128 128 128));--color-soft: var(--joblist-soft, rgb(128 128 128 / 0.14));--color-line: var(--joblist-line, rgb(128 128 128 / 0.3));--color-warn: var(--joblist-warn, #8a5a00);--color-accent: var(--joblist-accent, currentColor);display:block;font-family:var(--joblist-font, inherit);color:var(--color-fg);line-height:1.45;}h2.svelte-uruhdc {margin:0 0 var(--space-s);font-size:1.15em;}a.svelte-uruhdc {color:inherit;}h2.svelte-uruhdc a:where(.svelte-uruhdc) {text-decoration:none;}h2.svelte-uruhdc a:where(.svelte-uruhdc):hover {text-decoration:underline;}label.svelte-uruhdc {position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);}input.svelte-uruhdc {box-sizing:border-box;width:100%;margin:0 0 var(--space-s);padding:var(--space-s) var(--space-m);font:inherit;color:inherit;background:transparent;border:1px solid var(--color-line);border-radius:var(--radius);}p.svelte-uruhdc,\n	footer.svelte-uruhdc {margin:0;color:var(--color-muted);font-size:var(--font-size-small);}footer.svelte-uruhdc {margin-top:var(--space-s);}footer.svelte-uruhdc a:where(.svelte-uruhdc) {color:var(--color-accent);}ul.svelte-uruhdc {margin:var(--space-xs) 0 0;padding:0;list-style:none;}\n	/* The site's job cards: a line between them, the title underlined on hover. */li.svelte-uruhdc {border-bottom:1px solid var(--color-line);}li.svelte-uruhdc a:where(.svelte-uruhdc) {display:block;padding:var(--space-s) 0;text-decoration:none;}li.svelte-uruhdc a:where(.svelte-uruhdc):hover strong {text-decoration:underline;}"
 };
-function Do(e, t) {
-	Ge(t, !0), Pr(e, Eo);
-	let n = Xr(t, "board", 3, ""), r = Xr(t, "lang", 3, ""), i = Xr(t, "limit", 3, 0), a = Xr(t, "query", 3, ""), o = Xr(t, "where", 3, ""), s = Xr(t, "remote", 3, ""), c = Xr(t, "search", 3, !1), l = {
+function rs(e, t) {
+	Ge(t, !0), Nr(e, ns);
+	let n = Xr(t, "board", 3, ""), r = Xr(t, "organization", 3, ""), i = Xr(t, "lang", 3, ""), a = Xr(t, "limit", 3, 0), o = Xr(t, "query", 3, ""), s = Xr(t, "where", 3, ""), c = Xr(t, "remote", 3, ""), l = Xr(t, "search", 3, !1), u = {
 		site: "https://joblist.today",
 		shown: 20,
 		strings: {
@@ -4636,113 +4874,114 @@ function Do(e, t) {
 				"job.at": "{title} en {company}"
 			}
 		}
-	}, u = `jl-${Math.random().toString(36).slice(2, 8)}`;
-	_n(() => {
-		let e = (r() || document.documentElement.lang || navigator.language || "en").slice(0, 2).toLowerCase();
-		Qr.locale = e in l.strings ? e : "en";
+	}, d = `jl-${Math.random().toString(36).slice(2, 8)}`;
+	gn(() => {
+		let e = (i() || document.documentElement.lang || navigator.language || "en").slice(0, 2).toLowerCase();
+		Qr.locale = e in u.strings ? e : "en";
 	});
-	let d = /* @__PURE__ */ pt(() => ho(n() || "")), f = /* @__PURE__ */ A(void 0);
-	_n(() => {
-		let e = G(d);
-		j(f, void 0), _o(e).then((t) => e === G(d) && j(f, t, !0));
+	let f = /* @__PURE__ */ pt(() => Wo(n() || "")), p = /* @__PURE__ */ A(void 0);
+	gn(() => {
+		let e = K(f), t = r();
+		j(p, void 0), (t && !e ? qo(t) : Ko(e)).then((n) => e === K(f) && t === r() && j(p, n, !0));
 	});
-	let p = /* @__PURE__ */ A(""), m = /* @__PURE__ */ pt(() => new Map(G(f) ? [[G(f).jobs[0]?.company || "", G(f).name]] : [])), h = /* @__PURE__ */ pt(() => G(f) ? Gi(Ui(G(f).jobs, {
-		query: `${a() || ""} ${G(p)}`.trim(),
-		where: o() || "",
-		remote: s() === "remote" ? "remote" : ""
-	}, G(m))) : []), g = /* @__PURE__ */ pt(() => G(h).slice(0, Math.max(1, Number(i()) || l.shown))), _ = /* @__PURE__ */ pt(() => Z("embed.count", { count: G(h).length })), v = /* @__PURE__ */ pt(() => G(d) ? `${l.site}/me/organization#${new URLSearchParams({ url: n() || "" })}` : l.site);
-	var y = To();
-	Lr(y, 1, "svelte-uruhdc");
-	var b = nn(y), x = (e) => {
-		var t = vo(), n = N(t, !0);
-		P((e) => J(n, e), [() => Z("embed.error")]), q(e, t);
-	}, S = (e) => {
-		var t = wo(), n = rn(t), r = nn(n), i = N(r, !0);
+	let m = /* @__PURE__ */ A(""), h = /* @__PURE__ */ pt(() => new Map(K(p) ? [[K(p).jobs[0]?.company || "", K(p).name]] : [])), g = /* @__PURE__ */ pt(() => K(p) ? Gi(Ui(K(p).jobs, {
+		query: `${o() || ""} ${K(m)}`.trim(),
+		where: s() || "",
+		remote: c() === "remote" ? "remote" : ""
+	}, K(h))) : []), _ = /* @__PURE__ */ pt(() => K(g).slice(0, Math.max(1, Number(a()) || u.shown))), v = /* @__PURE__ */ pt(() => Z("embed.count", { count: K(g).length })), y = /* @__PURE__ */ pt(() => r() && !K(f) ? `${u.site}/${r()}` : K(f) ? `${u.site}/me/organization#${new URLSearchParams({ url: n() || "" })}` : u.site);
+	var b = ts();
+	Ir(b, 1, "svelte-uruhdc");
+	var x = nn(b), S = (e) => {
+		var t = Jo(), n = N(t, !0);
+		Sn((e) => Y(n, e), [() => Z("embed.error")]), J(e, t);
+	}, ee = (e) => {
+		var t = es(), n = rn(t), i = nn(n), a = N(i, !0);
 		Ee(n);
-		var a = an(n, 2), o = (e) => {
-			var t = yo(), n = rn(t), r = N(n, !0), i = an(n, 2);
-			Vr(i), P((e, t) => {
-				Y(n, "for", `${u}-search`), J(r, e), Y(i, "id", `${u}-search`), Y(i, "placeholder", t);
-			}, [() => Z("embed.search"), () => Z("embed.search")]), Gr(i, () => G(p), (e) => j(p, e)), q(e, t);
+		var o = P(n, 2), s = (e) => {
+			var t = Yo(), n = rn(t), r = N(n, !0), i = P(n, 2);
+			Br(i), Sn((e, t) => {
+				Vr(n, "for", `${d}-search`), Y(r, e), Vr(i, "id", `${d}-search`), Vr(i, "placeholder", t);
+			}, [() => Z("embed.search"), () => Z("embed.search")]), Gr(i, () => K(m), (e) => j(m, e)), J(e, t);
 		};
-		wr(a, (e) => {
-			c() && e(o);
+		Cr(o, (e) => {
+			l() && e(s);
 		});
-		var s = an(a, 2), m = (e) => {
-			var t = Co(), n = rn(t), r = N(n, !0), i = an(n, 2), a = (e) => {
-				var t = xo();
-				Or(t, 21, () => G(g), (e) => e.url, (e, t) => {
-					var n = bo(), r = nn(n), i = nn(r);
+		var c = P(o, 2), h = (e) => {
+			var t = $o(), n = rn(t), r = N(n, !0), i = P(n, 2), a = (e) => {
+				var t = Zo();
+				Dr(t, 21, () => K(_), (e) => e.url, (e, t) => {
+					var n = Xo(), r = nn(n), i = nn(r);
 					{
-						let e = /* @__PURE__ */ pt(() => oa(G(t), {
+						let e = /* @__PURE__ */ pt(() => oa(K(t), {
 							t: Z,
 							locale: Qr.locale
 						}));
 						ri(i, {
 							get title() {
-								return G(t).title;
+								return K(t).title;
 							},
 							get facts() {
-								return G(e);
+								return K(e);
 							}
 						});
 					}
-					Ee(r), Ee(n), P(() => Y(r, "href", G(t).url)), q(e, n);
-				}), Ee(t), q(e, t);
+					Ee(r), Ee(n), Sn(() => Vr(r, "href", K(t).url)), J(e, n);
+				}), Ee(t), J(e, t);
 			}, o = (e) => {
-				var t = vo(), n = N(t, !0);
-				P((e) => J(n, e), [() => Z("embed.none")]), q(e, t);
+				var t = Jo(), n = N(t, !0);
+				Sn((e) => Y(n, e), [() => Z("embed.none")]), J(e, t);
 			};
-			wr(i, (e) => {
-				G(g).length ? e(a) : e(o, -1);
+			Cr(i, (e) => {
+				K(_).length ? e(a) : e(o, -1);
 			});
-			var s = an(i, 2), c = nn(s), u = (e) => {
-				var t = So(), n = rn(t), r = N(n, !0);
-				De(), P((e) => {
-					Y(n, "href", G(v)), J(r, e);
-				}, [() => Z("embed.more", { count: G(_) })]), q(e, t);
+			var s = P(i, 2), c = nn(s), l = (e) => {
+				var t = Qo(), n = rn(t), r = N(n, !0);
+				De(), Sn((e) => {
+					Vr(n, "href", K(y)), Y(r, e);
+				}, [() => Z("embed.more", { count: K(v) })]), J(e, t);
 			};
-			wr(c, (e) => {
-				G(h).length > G(g).length && e(u);
+			Cr(c, (e) => {
+				K(g).length > K(_).length && e(l);
 			});
-			var d = an(c, 2), f = N(d, !0);
-			Ee(s), P((e) => {
-				J(r, G(_)), Y(d, "href", l.site), J(f, e);
-			}, [() => Z("embed.by")]), q(e, t);
+			var d = P(c, 2), f = N(d, !0);
+			Ee(s), Sn((e) => {
+				Y(r, K(v)), Vr(d, "href", u.site), Y(f, e);
+			}, [() => Z("embed.by")]), J(e, t);
 		};
-		wr(s, (e) => {
-			G(f) && e(m);
-		}), P((e) => {
-			Y(r, "href", G(v)), J(i, e);
-		}, [() => Z("embed.title", { name: G(f)?.name || G(d)?.id || "" })]), q(e, t);
+		Cr(c, (e) => {
+			K(p) && e(h);
+		}), Sn((e) => {
+			Vr(i, "href", K(y)), Y(a, e);
+		}, [() => Z("embed.title", { name: K(p)?.name || K(f)?.id || r() || "" })]), J(e, t);
 	};
-	wr(b, (e) => {
-		G(f) === null ? e(x) : e(S, -1);
-	}), Ee(y), q(e, y), Ke();
+	Cr(x, (e) => {
+		K(p) === null ? e(S) : e(ee, -1);
+	}), Ee(b), J(e, b), Ke();
 }
 //#endregion
 //#region embed/src/joblist-jobs.svelte.js
-var Oo = [
+var is = [
 	"board",
+	"organization",
 	"lang",
 	"limit",
 	"query",
 	"where",
 	"remote",
 	"search"
-], ko = class extends HTMLElement {
-	static observedAttributes = Oo;
+], as = class extends HTMLElement {
+	static observedAttributes = is;
 	#e = /* @__PURE__ */ A(Jt({}));
 	get props() {
-		return G(this.#e);
+		return K(this.#e);
 	}
 	set props(e) {
 		j(this.#e, e, !0);
 	}
 	connectedCallback() {
 		if (!this.shadowRoot) {
-			for (let e of Oo) this.read(e);
-			vr(Do, {
+			for (let e of is) this.read(e);
+			_r(rs, {
 				target: this.attachShadow({ mode: "open" }),
 				props: this.props
 			});
@@ -4756,5 +4995,5 @@ var Oo = [
 		this.props[e] = e === "search" ? t !== null : t ?? "";
 	}
 };
-customElements.get("joblist-jobs") || customElements.define("joblist-jobs", ko);
+customElements.get("joblist-jobs") || customElements.define("joblist-jobs", as);
 //#endregion

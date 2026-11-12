@@ -8,7 +8,7 @@ the browser, when it is asked for.
 
 | Piece | Where it runs | What it reads |
 |---|---|---|
-| The app (SvelteKit, `ssr = false`) | GitHub Pages, static files (`pages` workflow, on each push) | job boards' public APIs, organizations' own atproto accounts, the Bluesky AppView |
+| The app (SvelteKit, `ssr = false`) | GitHub Pages, static files (`pages` workflow, on each push) | job boards' public APIs, organizations' own atproto accounts, the Bluesky AppView, Wikidata (a name's organizations, asked once per name) |
 | The site's own pages (`site/site.js`) | written after the build | nothing: what joblist is, never numbers |
 | The browser add-on (`extension/`) | the person's browser, on any website | the page open, its job board, its Bluesky handle |
 | The embed (`embed/`, `<joblist-jobs board="…">`) | organizations' own websites; jsDelivr and the site serve it | its job board, live |

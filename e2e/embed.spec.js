@@ -20,3 +20,11 @@ test('without a board, it says it cannot show jobs', async ({ page }) => {
 	await expect(page.locator('joblist-jobs').locator('p')).toBeVisible({ timeout: 15000 });
 	expect(await items(page).count()).toBe(0);
 });
+
+test('given an organization on atproto, it shows its own name, linked to its page', async ({ page }) => {
+	await page.goto('/embed/?organization=joblist.today');
+	const title = page.locator('joblist-jobs').locator('h2 a');
+	await expect(title).toContainText('joblist', { timeout: 15000 });
+	await expect(title).toHaveAttribute('href', /\/joblist\.today$/);
+	await expect(page.locator('joblist-jobs').locator('p').first()).toBeVisible();
+});

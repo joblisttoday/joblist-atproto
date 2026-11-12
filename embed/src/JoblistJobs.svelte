@@ -2,7 +2,7 @@
 	import JobCard from '../../src/lib/components/JobCard.svelte';
 	import { filterJobs, sameOffers } from '../../src/lib/models/job.js';
 	import { jobFacts } from '../../src/lib/models/job-card.js';
-	import { boardOf, find } from './find.js';
+	import { boardOf, find, findOrganization } from './find.js';
 	import { i18n, t } from './i18n.svelte.js';
 
 	/**
@@ -13,8 +13,8 @@
 	 * --joblist-font, --joblist-fg, --joblist-muted, --joblist-line, --joblist-soft and
 	 * --joblist-accent on it to change them.
 	 */
-	/** @type {{board?: string, lang?: string, limit?: number | string, query?: string, where?: string, remote?: string, search?: boolean}} */
-	let { board = '', lang = '', limit = 0, query = '', where = '', remote = '', search = false } = $props();
+	/** @type {{board?: string, organization?: string, lang?: string, limit?: number | string, query?: string, where?: string, remote?: string, search?: boolean}} */
+	let { board = '', organization = '', lang = '', limit = 0, query = '', where = '', remote = '', search = false } = $props();
 	const settings = __EMBED__;
 	const id = `jl-${Math.random().toString(36).slice(2, 8)}`;
 
@@ -27,10 +27,12 @@
 	const asked = $derived(boardOf(board || ''));
 	/** undefined while read, null when nothing could be */
 	let found = $state(/** @type {import('./find.js').Found | undefined} */ (undefined));
+	// organization="acme.org": its own account says its name and its jobs (find.js).
 	$effect(() => {
 		const now = asked;
+		const domain = organization;
 		found = undefined;
-		find(now).then((answer) => now === asked && (found = answer));
+		(domain && !now ? findOrganization(domain) : find(now)).then((answer) => now === asked && domain === organization && (found = answer));
 	});
 
 	let typed = $state('');
@@ -42,14 +44,16 @@
 	const shown = $derived(offers.slice(0, Math.max(1, Number(limit) || settings.shown)));
 	const count = $derived(t('embed.count', { count: offers.length }));
 	// All of them, on joblist: the page of its board.
-	const whole = $derived(asked ? `${settings.site}/me/organization#${new URLSearchParams({ url: board || '' })}` : settings.site);
+	const whole = $derived(
+		organization && !asked ? `${settings.site}/${organization}` : asked ? `${settings.site}/me/organization#${new URLSearchParams({ url: board || '' })}` : settings.site
+	);
 </script>
 
 <jl-embed>
 	{#if found === null}
 		<p>{t('embed.error')}</p>
 	{:else}
-		<h2><a href={whole} target="_blank" rel="noopener">{t('embed.title', { name: found?.name || asked?.id || '' })}</a></h2>
+		<h2><a href={whole} target="_blank" rel="noopener">{t('embed.title', { name: found?.name || asked?.id || organization || '' })}</a></h2>
 		{#if search}
 			<label for="{id}-search">{t('embed.search')}</label>
 			<input id="{id}-search" type="search" bind:value={typed} placeholder={t('embed.search')} />

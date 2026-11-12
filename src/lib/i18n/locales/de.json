@@ -586,5 +586,14 @@
 	"home.example": "Zum Beispiel gitlab.com oder ein jobs.lever.co/…-Link.",
 	"home.hire": "Ihr stellt ein?",
 	"home.hire.link": "Veröffentlicht eure Karriereseite",
-	"menu.hiring": "Ihr stellt ein? Eure Karriereseite"
+	"menu.hiring": "Ihr stellt ein? Eure Karriereseite",
+	"quick.atProvider": "{name} bei {provider}",
+	"quick.names.source": "Auf Wikidata und Bluesky gefunden: Der eingegebene Name wird dort gesucht.",
+	"quick.names.none": "Nichts auf Wikidata oder Bluesky gefunden. Füge stattdessen die Website ein.",
+	"quick.names.asking": "Suche auf Wikidata und Bluesky…",
+	"boards.look": "Ihre Jobbörse suchen",
+	"boards.look.help": "Probiert ihren Namen bei {count} Jobbörsen-Anbietern.",
+	"boards.looking": "Suche bei {count} Anbietern…",
+	"boards.found": "Gefunden, mit offenen Stellen:",
+	"boards.none": "Unter ihrem Namen nichts gefunden. Füge stattdessen den Link ihrer Karriereseite in die Suche ein."
 }

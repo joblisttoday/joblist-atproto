@@ -586,5 +586,14 @@
 	"home.example": "Por ejemplo gitlab.com, o un enlace jobs.lever.co/….",
 	"home.hire": "¿Contratas?",
 	"home.hire.link": "Publica tu página de empleo",
-	"menu.hiring": "¿Contratas? Tu página de empleo"
+	"menu.hiring": "¿Contratas? Tu página de empleo",
+	"quick.atProvider": "{name} en {provider}",
+	"quick.names.source": "Encontrado en Wikidata y Bluesky: el nombre escrito se busca allí.",
+	"quick.names.none": "Nada en Wikidata ni Bluesky. Pega mejor su sitio web.",
+	"quick.names.asking": "Buscando en Wikidata y Bluesky…",
+	"boards.look": "Buscar su portal de empleo",
+	"boards.look.help": "Prueba su nombre en {count} proveedores de portales de empleo.",
+	"boards.looking": "Buscando en {count} proveedores…",
+	"boards.found": "Encontrado, con ofertas abiertas:",
+	"boards.none": "Nada con su nombre. Pega mejor el enlace de su página de empleo en la búsqueda."
 }

@@ -91,10 +91,15 @@
 			<menu><a href="/jobs/new" data-primary><Icon name="add" /> {t('post.title')}</a></menu>
 		</section>
 
-		{#if board && company}
+		{#if company}
+			<!-- Its board's jobs, or (posting here) its own account's: one line on its website. -->
 			<section aria-labelledby="org-embed">
 				<h2 id="org-embed">{t('embed.section')}</h2>
-				<Embed attribute="board" value="{board.provider}:{board.id}" title={t('embed.title', { name: company.name })} />
+				{#if board}
+					<Embed attribute="board" value="{board.provider}:{board.id}" title={t('embed.title', { name: company.name })} />
+				{:else}
+					<Embed attribute="organization" value={own} title={t('embed.title', { name: company.name })} />
+				{/if}
 			</section>
 		{/if}
 
