@@ -58,7 +58,7 @@
 
 	<section aria-labelledby="org-offers">
 		<h2 id="org-offers">{t('orgs.posts')}</h2>
-		{#if org.posts.length}<MyJobPosts posts={org.posts} company={false} />{:else if org.board}<p><small>{t('orgs.from.board', { provider, id: org.board.id })}</small></p>{/if}
+		{#if org.posts.length}<MyJobPosts posts={org.posts} />{:else if org.board}<p><small>{t('orgs.from.board', { provider, id: org.board.id })}</small></p>{/if}
 		<menu><a href="/jobs/new" data-primary><Icon name="add" /> {t('post.title')}</a></menu>
 	</section>
 

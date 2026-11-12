@@ -2304,6 +2304,7 @@ var X = {
 	cache: { writeDelayMs: 400 },
 	outbox: { retryMs: 3e4 },
 	jobPost: {
+		renewWithin: 7,
 		days: 30,
 		maxDays: 120,
 		dayChoices: [

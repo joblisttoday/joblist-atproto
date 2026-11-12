@@ -1,24 +1,20 @@
 <script>
-	import JobPostMenu from './JobPostMenu.svelte';
-	import { data } from '#lib/network/network.svelte.js';
-	import { postPath } from '#lib/models/job-post.js';
+	import JobPostCard from './JobPostCard.svelte';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * The signed-in person's job posts, expired ones too, to edit, renew or delete.
-	 * @type {{posts: import('#lib/models/job-post.js').JobPost[], company?: boolean}}
+	 * The signed-in organization's job offers, expired ones too, as cards: the ones still
+	 * shown first, the latest first.
+	 * @type {{posts: import('#lib/models/job-post.js').JobPost[]}}
 	 */
-	let { posts, company = true } = $props();
+	let { posts } = $props();
+	const shown = $derived([...posts].sort((a, b) => b.expiresAt.localeCompare(a.expiresAt)));
 </script>
 
 <jl-my-job-posts>
 	<ul>
-		{#each posts as post (post.uri)}
-			<li>
-				<a href={postPath(post.did, post.rkey)}>{post.title}</a>
-				{#if company}<small>{data.companies.get(post.company)?.name || post.company}</small>{/if}
-				<JobPostMenu {post} />
-			</li>
+		{#each shown as post (post.uri)}
+			<li><JobPostCard {post} /></li>
 		{:else}
 			<li><small>{t('post.mine.empty')}</small></li>
 		{/each}
@@ -26,14 +22,11 @@
 </jl-my-job-posts>
 
 <style>
-	li {
-		padding: var(--space-s) 0 0;
-		border-bottom: var(--border);
-	}
-	li > a {
-		font-weight: var(--font-weight-strong);
-	}
-	li > small {
-		display: block;
+	ul {
+		display: grid;
+		gap: var(--space-s);
+		margin: 0;
+		padding: 0;
+		list-style: none;
 	}
 </style>

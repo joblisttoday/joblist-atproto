@@ -591,5 +591,6 @@
 	"orgs.page.none": "Not described yet",
 	"orgs.copyLink": "Copy your page's link",
 	"orgs.field.add": "Add",
-	"orgs.from.short": "Your job board"
+	"orgs.from.short": "Your job board",
+	"post.expired": "Expired"
 }
