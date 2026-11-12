@@ -48,3 +48,11 @@ test('who you are: this device, with no account, private', async ({ page }) => {
 	await expect(page.locator('jl-accounts li[data-current]')).toContainText('This device');
 	await expect(page.getByRole('link', { name: 'Add an account' })).toHaveAttribute('href', /\/signin\?add/);
 });
+
+test("an organization's pages are its account's: signed out, they lead to how to sign in", async ({ page }) => {
+	for (const path of ['/organization/page', '/organization/jobs', '/organization/embed']) {
+		await page.goto(path);
+		await expect(page).toHaveURL(/\/organization$/);
+		await expect(page.locator('ol li')).toHaveCount(3);
+	}
+});

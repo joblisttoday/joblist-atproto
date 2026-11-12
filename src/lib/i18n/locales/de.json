@@ -586,5 +586,9 @@
 	"kept.noBoard": "Keine Jobbörse bekannt",
 	"kept.find": "Suchen",
 	"kept.title": "Deine Organisationen",
-	"job.hide": "Diese Stelle ausblenden"
+	"job.hide": "Diese Stelle ausblenden",
+	"orgs.page.done": "{done} von {all} ausgefüllt",
+	"orgs.page.none": "Noch nicht beschrieben",
+	"orgs.copyLink": "Link deiner Seite kopieren",
+	"orgs.field.add": "Hinzufügen"
 }

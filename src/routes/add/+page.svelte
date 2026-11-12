@@ -43,8 +43,8 @@
 	/** @param {Saved} done */
 	async function onsaved(done) {
 		if (back === '/jobs/new') return goto(`${back}?company=${encodeURIComponent(done.key)}`);
-		// An edit goes back to the dashboard; a first description says what comes next.
-		if (!done.added) return goto('/organization');
+		// An edit goes back to its page on the dashboard; a first description says what comes next.
+		if (!done.added) return goto('/organization/page');
 		saved = done;
 		await tick();
 		scrollTo({ top: 0 });

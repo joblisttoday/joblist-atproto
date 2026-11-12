@@ -586,5 +586,9 @@
 	"kept.noBoard": "Ningún portal de empleo conocido",
 	"kept.find": "Buscarlo",
 	"kept.title": "Tus organizaciones",
-	"job.hide": "Ocultar esta oferta"
+	"job.hide": "Ocultar esta oferta",
+	"orgs.page.done": "{done} de {all} completados",
+	"orgs.page.none": "Aún sin describir",
+	"orgs.copyLink": "Copiar el enlace de tu página",
+	"orgs.field.add": "Añadir"
 }

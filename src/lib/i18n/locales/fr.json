@@ -586,5 +586,9 @@
 	"kept.noBoard": "Aucune page d’offres connue",
 	"kept.find": "La chercher",
 	"kept.title": "Vos organisations",
-	"job.hide": "Masquer cette offre"
+	"job.hide": "Masquer cette offre",
+	"orgs.page.done": "{done} sur {all} remplis",
+	"orgs.page.none": "Pas encore décrite",
+	"orgs.copyLink": "Copier le lien de votre page",
+	"orgs.field.add": "Ajouter"
 }

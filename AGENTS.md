@@ -2,7 +2,7 @@
 
 Two sides, one site (https://joblist.today):
 - For job seekers, a private watchlist: "Follow the jobs of organizations you choose." They follow organizations from any link (the site, the add-on, a share), and joblist reads their open jobs live from their own job boards; followed organizations, saved searches and saved jobs stay in their browser. They never sign in.
-- For organizations, their careers page on the open network: signed in with their domain as their Bluesky handle, they describe themselves and post their jobs from their own account (`/organization`, their dashboard), or point to their job board; shown at `/{domain}`, on their own website (the embed) and in any app. Not an ATS: applications go straight to them.
+- For organizations, their careers page on the open network: signed in with their domain as their Bluesky handle, they describe themselves and post their jobs from their own account (`/organization`, their dashboard: Your page, Your job offers, On your website, each its own page), or point to their job board; shown at `/{domain}`, on their own website (the embed) and in any app. Not an ATS: applications go straight to them.
 
 Objectives: people find work that feels right for them and for society; projects find great contributors; both on a phone, in a few taps.
 Never: a list of organizations or jobs kept by joblist, a tracker, an ad network, a middleman for applications, a central database, a server of its own, a paid service, or a tool that contacts anyone on its own.

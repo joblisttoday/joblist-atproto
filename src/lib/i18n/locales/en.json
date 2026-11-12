@@ -586,5 +586,9 @@
 	"kept.noBoard": "No job board known",
 	"kept.find": "Look for it",
 	"kept.title": "Your organizations",
-	"job.hide": "Hide this job"
+	"job.hide": "Hide this job",
+	"orgs.page.done": "{done} of {all} filled",
+	"orgs.page.none": "Not described yet",
+	"orgs.copyLink": "Copy your page's link",
+	"orgs.field.add": "Add"
 }
