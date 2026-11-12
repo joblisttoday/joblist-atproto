@@ -18,12 +18,12 @@ test('a link opens its organization, to keep; kept ones are remembered', async (
 	await expect(page).toHaveURL(/\/me\/organization#url=https%3A%2F%2Finstagram\.com%2Fsome\.coop/);
 	await page.getByRole('button', { name: 'Follow', exact: true }).first().click();
 	// Following one: the home is Jobs; another is followed from Following.
-	await page.goto('/following');
+	await page.goto('/');
 	await search(page, 'gitlab.com');
 	await expect(page).toHaveURL(/\/gitlab\.com$/);
 	await expect(page.locator('h1')).toContainText('GitLab');
 	await page.getByRole('button', { name: 'Follow', exact: true }).first().click();
-	await page.goto('/following');
+	await page.goto('/');
 	const items = page.locator('jl-kept-organizations li');
 	await expect(items).toHaveCount(2);
 	await expect(items.first()).toContainText('GitLab');
@@ -33,18 +33,18 @@ test('a link opens its organization, to keep; kept ones are remembered', async (
 
 test('words offer the saved organizations they name, and search their jobs', async ({ page }) => {
 	await page.addInitScript(() => localStorage.setItem('joblist.kept.v1', JSON.stringify([{ url: 'https://gitlab.com', name: 'GitLab', at: '2026-11-01T00:00:00Z' }])));
-	await page.goto('/following');
+	await page.goto('/');
 	await page.locator('jl-search[inline] input').fill('gitlab');
 	await expect(page.locator('jl-search').getByRole('link', { name: /GitLab/ })).toBeVisible();
 	await page.locator('jl-search[inline] input').press('Enter');
-	await expect(page).toHaveURL(/\/#q=gitlab/);
+	await expect(page).toHaveURL(/\/jobs#q=gitlab/);
 });
 
 test('a kept organization joblist does not know opens its profile, to forget or suggest it', async ({ page }) => {
 	await page.goto('/');
 	await search(page, 'instagram.com/some.coop');
 	await page.getByRole('button', { name: 'Follow', exact: true }).first().click();
-	await page.goto('/following');
+	await page.goto('/');
 	await page.locator('jl-kept-organizations li a').first().click();
 	await expect(page).toHaveURL(/\/me\/organization#url=/);
 	await expect(page.getByRole('link', { name: 'Is this your organization?' })).toHaveAttribute('href', /^\/add\?url=https%3A%2F%2Finstagram\.com%2Fsome\.coop/);

@@ -3,9 +3,9 @@
 	"intro": "{name} ({url}) is a tool for a job hunt, in the browser: it reads an organization's open jobs straight from its own job board (Ashby, Greenhouse, Lever, Personio, Recruitee, Rippling, SmartRecruiters, Workable) and its Bluesky account, keeps the organizations, searches and jobs someone saves in their own browser, and lets an organization describe itself and post its jobs on atproto (the Bluesky protocol), from its own account. It keeps no list of organizations or jobs, and nothing of anyone's. Open source (GPL-3.0), no ads, no tracking, no accounts of its own.",
 	"lead": "There is no index to read: an organization's jobs are on its own job board, and what organizations publish is in their own atproto accounts (the records below). Jobs link to the organization's own posting: apply there. Jobs posted on atproto have their own page here.",
 	"pages": [
-		{ "title": "Home", "path": "/", "about": "a search: a link or a domain opens its organization" },
+		{ "title": "Explore", "path": "/", "about": "the search (a name, a link, a domain or a Bluesky list opens its organizations) and the organizations followed in this browser" },
 		{ "title": "An organization", "about": "`/{domain}`, e.g. `/gitlab.com`: its open jobs read live from its board, its Bluesky account; its places at `/{domain}/places`" },
-		{ "title": "Jobs", "path": "/", "about": "the open jobs of the organizations followed in this browser (`/#q=design&where=Berlin`)" },
+		{ "title": "Jobs", "path": "/jobs", "about": "the open jobs of the organizations followed in this browser (`/jobs#q=design&where=Berlin`)" },
 		{ "title": "Jobs posted on atproto", "about": "`/job/{did}/{rkey}`, with schema.org JobPosting data" },
 		{ "title": "Embed", "path": "/embed", "about": "an organization's open jobs on any website: `<joblist-jobs board=\"greenhouse:acme\">`" }
 	],

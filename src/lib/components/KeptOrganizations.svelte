@@ -5,12 +5,14 @@
 	import { offerCount } from '#lib/models/job.js';
 	import { forget, kept } from '#lib/network/kept.svelte.js';
 	import { keptJobs } from '#lib/network/kept-jobs.svelte.js';
-	import { t } from '#lib/i18n/index.svelte.js';
+	import config from '#lib/data/config.json';
+	import { formatNumber, t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * The organizations kept in this browser, newest first, each with its open jobs (read
-	 * live from its board, kept-jobs.svelte.js): its page is its domain's (/{domain}), or
-	 * the link's own (/me/organization#url=…) for a board or a profile.
+	 * The organizations followed in this browser, newest first, each with its open jobs (read
+	 * live from its board, kept-jobs.svelte.js) and those published lately
+	 * (config.kept.newDays), or, with no board known, a way to look for it (on its page):
+	 * its page is its domain's (/{domain}), or the link's own (/me/organization#url=…).
 	 * max: only the first ones; tag: only those with this tag.
 	 * @type {{max?: number, tag?: string}}
 	 */
@@ -18,6 +20,8 @@
 	const shown = $derived(kept.list.filter((k) => !tag || k.tags?.includes(tag)).slice(0, max));
 	const companies = $derived(new Map(kept.list.map((k, i) => [k.url, keptJobs.companies[i]])));
 	const counts = $derived(new Map([...keptJobs.jobs].map(([key, list]) => [key, offerCount(list)])));
+	const since = Date.now() - config.kept.newDays * 24 * 3600 * 1000;
+	const fresh = $derived(new Map([...keptJobs.jobs].map(([key, list]) => [key, offerCount(list.filter((j) => Date.parse(j.published || '') >= since))])));
 
 	/** The link, short: its host and path. @param {string} url */
 	function short(url) {
@@ -36,14 +40,15 @@
 			{@const company = companies.get(item.url)}
 			{@const board = boardOfKept(item)}
 			{@const count = company ? counts.get(company.key) : undefined}
+			{@const lately = company ? fresh.get(company.key) || 0 : 0}
 			{@const name = item.name || company?.name || short(item.url)}
 			<li>
 				<a href={pageOf(item)}>
 					<span>{name}</span>
 					<small>
-						{#if count !== undefined}{count ? t('kept.jobs', { count }) : t('kept.noJobs')}
+						{#if count !== undefined}{count ? t('kept.jobs', { count: formatNumber(count) }) : t('kept.noJobs')}{#if lately}{' · '}<strong>{t('kept.new', { count: formatNumber(lately) })}</strong>{/if}
 						{:else if board}{t('kept.board', { provider: provider(board.provider) })}
-						{:else}{short(item.url)}{/if}
+						{:else}{t('kept.noBoard')} · <span data-find>{t('kept.find')}</span>{/if}
 						{#if item.tags?.length}{' · '}{item.tags.join(', ')}{/if}
 					</small>
 				</a>
@@ -84,6 +89,13 @@
 		align-items: center;
 		gap: var(--space-xs);
 		font-weight: var(--font-weight-strong);
+	}
+	small strong,
+	[data-find] {
+		color: var(--color-ok);
+	}
+	[data-find] {
+		text-decoration: underline;
 	}
 	small {
 		color: var(--color-muted);

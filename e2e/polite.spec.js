@@ -22,7 +22,7 @@ test('Jobs asks some of the saved organizations’ boards, not all', async ({ pa
 			return route.abort();
 		}
 	);
-	await page.goto('/#view=list');
+	await page.goto('/jobs#view=list');
 	await page.waitForTimeout(6000);
 	expect(asked.size).toBeGreaterThan(0);
 	expect(asked.size).toBeLessThanOrEqual(config.kept.boardsPerVisit);

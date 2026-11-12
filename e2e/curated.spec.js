@@ -6,7 +6,7 @@ import { expect, test } from '@playwright/test';
  * joblist.today follows.
  */
 test('a pasted list offers its organizations, followed at once and tagged', async ({ page }) => {
-	await page.goto('/following');
+	await page.goto('/');
 	const box = page.getByPlaceholder('Paste a website or a job board');
 	await box.fill('https://bsky.app/profile/joblist.today/follows');
 	await expect(page.getByRole('link', { name: 'Follow the organizations of this list' })).toBeVisible();
@@ -17,7 +17,7 @@ test('a pasted list offers its organizations, followed at once and tagged', asyn
 	const count = await page.locator('jl-curated li').count();
 	expect(count).toBeGreaterThan(0);
 	await follow.click();
-	await expect(page).toHaveURL(/\/following$/);
+	await expect(page).toHaveURL(/\/$/);
 	await expect(page.locator('jl-kept-organizations li')).toHaveCount(count);
 	await expect(page.locator('jl-kept-organizations li').first()).toContainText('joblist-today');
 });

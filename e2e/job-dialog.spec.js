@@ -7,7 +7,7 @@ import { expect, test } from '@playwright/test';
  */
 test('the jobs page opens a job in a dialog, back closes it, its link opens it', async ({ page }) => {
 	await page.addInitScript(() => localStorage.setItem('joblist.kept.v1', JSON.stringify([{ url: 'https://gitlab.com', name: 'GitLab', at: '2026-11-01T00:00:00Z', board: { provider: 'greenhouse', id: 'gitlab' } }])));
-	await page.goto('/#view=list');
+	await page.goto('/jobs#view=list');
 	await page.locator('jl-job button').first().click({ timeout: 20_000 });
 	const dialog = page.locator('dialog[open]');
 	await expect(dialog).toBeVisible();

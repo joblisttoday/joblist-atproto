@@ -8,7 +8,6 @@ const touch = 44;
 
 qualityTests([
 	{ name: 'home', path: '/', touch },
-	{ name: 'following', path: '/following', touch },
 	{ name: 'saved', path: '/saved', touch },
 	{ name: 'organization', path: '/joblist.today', touch },
 	{ name: 'menu', path: '/menu', touch },
@@ -21,7 +20,7 @@ qualityTests([
 		touch,
 		open: async (page) => {
 			await page.addInitScript(() => localStorage.setItem('joblist.kept.v1', JSON.stringify([{ url: 'https://gitlab.com', name: 'GitLab', at: '2026-11-01T00:00:00Z', board: { provider: 'greenhouse', id: 'gitlab' } }])));
-			await page.goto('/#view=list');
+			await page.goto('/jobs#view=list');
 			await page.locator('jl-job button').first().click({ timeout: 20_000 });
 			await page.locator('dialog[open]').waitFor();
 		}

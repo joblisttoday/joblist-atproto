@@ -13,7 +13,7 @@ for (const [device, use] of /** @type {const} */ ([
 		test('can be moved and zoomed', async ({ page }) => {
 			// The home is the explorer once an organization is followed.
 			await page.addInitScript(() => localStorage.setItem('joblist.kept.v1', JSON.stringify([{ url: 'https://gitlab.com', name: 'GitLab', at: '2026-11-01T00:00:00Z', board: { provider: 'greenhouse', id: 'gitlab' } }])));
-			await page.goto('/#view=map');
+			await page.goto('/jobs#view=map');
 			const map = page.locator('jl-explore-map');
 			await map.locator('canvas').waitFor();
 			expect(await map.evaluate((el) => /** @type {HTMLElement} */ (el).inert)).toBe(false);

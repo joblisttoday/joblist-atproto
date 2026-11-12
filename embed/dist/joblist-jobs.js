@@ -2077,7 +2077,7 @@ var X = {
 		sheetPeekBelow: .3,
 		sheetFullAbove: .72,
 		copiedMs: 3e3,
-		bare: ["/"]
+		bare: ["/jobs"]
 	},
 	map: {
 		style: "https://tiles.openfreemap.org/styles/positron",
@@ -2260,7 +2260,8 @@ var X = {
 		max: 500,
 		namesShown: 5,
 		boardsPerVisit: 40,
-		refreshHours: 6
+		refreshHours: 6,
+		newDays: 7
 	},
 	jobCollections: {
 		file: "joblist-collections.json",

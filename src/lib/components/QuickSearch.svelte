@@ -44,7 +44,7 @@
 	const curated = $derived(curatedLink(text) ? `/following/list#${new URLSearchParams({ url: text.trim() })}` : '');
 	const organization = $derived(curated ? null : organizationPage(text, knows));
 	/** @param {Partial<import('#lib/models/job.js').JobFilters>} filters */
-	const jobsPath = (filters) => addressOf(searchState({ query: '', where: '', remote: '', ...filters }), '/');
+	const jobsPath = (filters) => addressOf(searchState({ query: '', where: '', remote: '', ...filters }), '/jobs');
 	// A name at a provider: its board, opened as any link (no request before).
 	const atProvider = $derived(organization?.sure ? null : providerQuery(text, providers));
 	const atProviderPage = $derived(atProvider ? organizationPage(atProvider.url, knows) : null);

@@ -579,5 +579,11 @@
 	"curated.invalid": "Ce n’est pas un lien de liste, de pack de démarrage ou d’abonnements Bluesky.",
 	"curated.unread": "Cette liste n’a pas pu être lue pour l’instant.",
 	"curated.offer": "Suivre les organisations de cette liste",
-	"curated.hint": "Ou collez une liste ou un pack de démarrage Bluesky : suivez ses organisations d’un coup."
+	"curated.hint": "Ou collez une liste ou un pack de démarrage Bluesky : suivez ses organisations d’un coup.",
+	"nav.explore": "Explorer",
+	"quick.placeholder.explore": "Un nom, un site, une page d’offres ou une liste",
+	"kept.new": "{count} cette semaine",
+	"kept.noBoard": "Aucune page d’offres connue",
+	"kept.find": "La chercher",
+	"kept.title": "Vos organisations"
 }

@@ -69,7 +69,7 @@
 		{#if about.length}<p data-about><small>{about.join(' · ')}</small></p>{/if}
 		{#if followed}
 			<!-- Just followed: where its jobs are now. -->
-			<p role="status" data-followed><Icon name="added" /> {t('follow.started', { name: company.name })} <a href="/">{t('nav.jobs')} <Icon name="next" /></a></p>
+			<p role="status" data-followed><Icon name="added" /> {t('follow.started', { name: company.name })} <a href="/jobs">{t('nav.jobs')} <Icon name="next" /></a></p>
 		{/if}
 	</header>
 </jl-company-header>

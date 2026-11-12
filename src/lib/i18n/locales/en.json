@@ -579,5 +579,11 @@
 	"curated.invalid": "This is not a Bluesky list, starter pack or follows link.",
 	"curated.unread": "This list could not be read now.",
 	"curated.offer": "Follow the organizations of this list",
-	"curated.hint": "Or paste a Bluesky list or starter pack: follow its organizations at once."
+	"curated.hint": "Or paste a Bluesky list or starter pack: follow its organizations at once.",
+	"nav.explore": "Explore",
+	"quick.placeholder.explore": "A name, a website, a job board or a list",
+	"kept.new": "{count} this week",
+	"kept.noBoard": "No job board known",
+	"kept.find": "Look for it",
+	"kept.title": "Your organizations"
 }

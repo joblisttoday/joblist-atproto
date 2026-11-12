@@ -5,7 +5,7 @@ import { expect, test } from '@playwright/test';
  * home says what it is for, with two doors (looking for work, hiring); once an organization
  * is followed, the home is its jobs.
  */
-test('a first visit has two doors, and the home is Jobs once one organization is followed', async ({ page }) => {
+test('a first visit has two doors, and the home is Explore once one organization is followed', async ({ page }) => {
 	await page.goto('/');
 	await expect(page.locator('h1')).toHaveText('Follow the jobs of organizations you choose');
 	await expect(page.getByRole('heading', { name: 'Looking for work?' })).toBeVisible();
@@ -16,17 +16,18 @@ test('a first visit has two doors, and the home is Jobs once one organization is
 	await page.getByRole('button', { name: 'Follow', exact: true }).first().click();
 	await expect(page.getByRole('status').filter({ hasText: 'Following GitLab' })).toBeVisible();
 	await page.goto('/');
-	await expect(page.locator('jl-explore')).toBeVisible();
-	await page.goto('/following');
+	await expect(page.locator('h1')).toHaveText('Explore');
 	await expect(page.locator('jl-kept-organizations li')).toHaveCount(1);
+	await page.goto('/jobs');
+	await expect(page.locator('jl-explore')).toBeVisible();
 });
 
-test('the tabs say what is there: Jobs, Following, Saved, Menu', async ({ page }) => {
+test('the tabs say what is there: Explore, Jobs, Saved, Menu', async ({ page }) => {
 	await page.goto('/');
 	const nav = page.getByRole('navigation', { name: 'Main' });
-	await expect(nav.getByRole('link')).toHaveText([/Jobs/, /Following/, /Saved/, /Menu/]);
-	await page.goto('/jobs#q=design');
-	await expect(page).toHaveURL(/\/#q=design$/);
+	await expect(nav.getByRole('link')).toHaveText([/Explore/, /Jobs/, /Saved/, /Menu/]);
+	await page.goto('/following');
+	await expect(page).toHaveURL(/\/$/);
 });
 
 test('the menu is short, and signing in is for organizations', async ({ page }) => {

@@ -579,5 +579,11 @@
 	"curated.invalid": "Das ist kein Link zu einer Bluesky-Liste, einem Starterpaket oder Follows.",
 	"curated.unread": "Diese Liste konnte gerade nicht gelesen werden.",
 	"curated.offer": "Den Organisationen dieser Liste folgen",
-	"curated.hint": "Oder füge eine Bluesky-Liste oder ein Starterpaket ein: folge ihren Organisationen auf einmal."
+	"curated.hint": "Oder füge eine Bluesky-Liste oder ein Starterpaket ein: folge ihren Organisationen auf einmal.",
+	"nav.explore": "Entdecken",
+	"quick.placeholder.explore": "Ein Name, eine Website, eine Jobbörse oder eine Liste",
+	"kept.new": "{count} diese Woche",
+	"kept.noBoard": "Keine Jobbörse bekannt",
+	"kept.find": "Suchen",
+	"kept.title": "Deine Organisationen"
 }

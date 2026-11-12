@@ -579,5 +579,11 @@
 	"curated.invalid": "Esto no es un enlace a una lista, un paquete de inicio o seguidos de Bluesky.",
 	"curated.unread": "No se pudo leer esta lista ahora.",
 	"curated.offer": "Seguir las organizaciones de esta lista",
-	"curated.hint": "O pega una lista o un paquete de inicio de Bluesky: sigue sus organizaciones de una vez."
+	"curated.hint": "O pega una lista o un paquete de inicio de Bluesky: sigue sus organizaciones de una vez.",
+	"nav.explore": "Explorar",
+	"quick.placeholder.explore": "Un nombre, un sitio web, un portal de empleo o una lista",
+	"kept.new": "{count} esta semana",
+	"kept.noBoard": "Ningún portal de empleo conocido",
+	"kept.find": "Buscarlo",
+	"kept.title": "Tus organizaciones"
 }

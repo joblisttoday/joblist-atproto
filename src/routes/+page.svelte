@@ -1,25 +1,43 @@
 <script>
 	import config from '#lib/data/config.json';
-	import Explore from '#lib/components/Explore.svelte';
 	import Icon from '#lib/components/Icon.svelte';
+	import KeptOrganizations from '#lib/components/KeptOrganizations.svelte';
 	import QuickSearch from '#lib/components/QuickSearch.svelte';
+	import { keptTags } from '#lib/models/kept.js';
 	import { kept } from '#lib/network/kept.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * The home. Following no organization yet: what joblist is for, two doors (looking for
-	 * work: paste an organization; hiring: publish your careers page), nothing to browse.
-	 * Following some: Jobs, their open jobs, searched (/#q=design&where=Berlin), your saved
-	 * searches as chips.
+	 * The home, Explore. Following no organization yet: what joblist is for, two doors (looking
+	 * for work: paste an organization; hiring: publish your careers page), nothing to browse.
+	 * Following some: the one box (a name, a website, a job board, a Bluesky list) and your
+	 * organizations, by tag if chosen, each with its open jobs (or a way to find its board).
+	 * Their jobs together are Jobs (/jobs).
 	 */
 	const following = $derived(kept.list.length > 0);
+	const tags = $derived(keptTags(kept.list));
+	let tag = $state('');
 </script>
 
-<svelte:head><title>{following ? `${t('nav.jobs')} · ${config.name}` : `${config.name} · ${t('home.heading')}`}</title></svelte:head>
+<svelte:head><title>{following ? `${t('nav.explore')} · ${config.name}` : `${config.name} · ${t('home.heading')}`}</title></svelte:head>
 
 {#if following}
-	<jl-visually-hidden><h1>{t('nav.jobs')}</h1></jl-visually-hidden>
-	<Explore path="/" />
+	<jl-explore-home>
+		<h1>{t('nav.explore')}</h1>
+		<QuickSearch inline placeholder={t('quick.placeholder.explore')} />
+		<section aria-labelledby="home-organizations">
+			<h2 id="home-organizations">{t('kept.title')}</h2>
+			{#if tags.length}
+				<menu aria-label={t('kept.tags')}>
+					{#each tags as each (each)}
+						<li><button type="button" aria-pressed={tag === each ? 'true' : 'false'} onclick={() => (tag = tag === each ? '' : each)}>{each}</button></li>
+					{/each}
+				</menu>
+			{/if}
+			<KeptOrganizations {tag} />
+			<p><small>{t('curated.hint')}</small></p>
+		</section>
+	</jl-explore-home>
 {:else}
 	<jl-welcome>
 		<h1>{t('home.heading')}</h1>
@@ -37,6 +55,34 @@
 {/if}
 
 <style>
+	jl-explore-home {
+		display: block;
+		max-width: var(--reading-width);
+		margin-inline: auto;
+		padding-bottom: var(--space-xl);
+	}
+	jl-explore-home section {
+		margin-top: var(--space-l);
+	}
+	jl-explore-home h1 {
+		margin: var(--space-m) 0;
+	}
+	jl-explore-home menu {
+		flex-wrap: wrap;
+		gap: var(--space-xs);
+		margin: 0 0 var(--space-s);
+	}
+	jl-explore-home menu button {
+		min-height: var(--chip-height);
+		padding: 0 var(--space-m);
+		border-radius: var(--radius-round);
+		font-size: var(--font-size-small);
+	}
+	jl-explore-home menu button[aria-pressed='true'] {
+		background: var(--color-accent);
+		color: var(--color-accent-fg);
+		border-color: var(--color-accent);
+	}
 	/* A start page: one centered column, as wide as reading, a little down the screen. */
 	jl-welcome {
 		display: block;
@@ -44,7 +90,7 @@
 		margin-inline: auto;
 		padding: var(--space-xl) 0;
 	}
-	h1 {
+	jl-welcome h1 {
 		margin: 0 0 var(--space-xl);
 		text-align: center;
 	}
@@ -67,7 +113,7 @@
 		jl-welcome {
 			padding-top: 14vh;
 		}
-		h1 {
+		jl-welcome h1 {
 			font-size: 2.5rem;
 		}
 	}
