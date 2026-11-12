@@ -14,10 +14,11 @@
 	/** @type {import('#lib/navigation/nav.js').MenuLink[]} */
 	const rows = $derived([
 		{ href: '/menu/accounts', icon: /** @type {const} */ ('me'), label: t('accounts.you'), value: session.handle ? `@${session.handle}` : t('accounts.device') },
-		{ href: '/organization', icon: /** @type {const} */ ('companies'), label: own ? t('orgs.yours') : t('menu.hiring'), value: own ? `@${own}` : undefined },
+		{ href: '/org', icon: /** @type {const} */ ('companies'), label: own ? t('orgs.yours') : t('menu.hiring'), value: own ? `@${own}` : undefined },
+		...(own ? [{ href: '/jobs', icon: /** @type {const} */ ('jobs'), label: t('menu.browse') }] : []),
 		{ href: '/menu/language', icon: /** @type {const} */ ('language'), label: t('about.language'), value: t(`locale.${i18n.locale}`) },
 		{ href: '/menu/collections', icon: /** @type {const} */ ('saved'), label: t('collections.transfer') },
-		{ href: '/apps', icon: /** @type {const} */ ('embed'), label: t('menu.apps') },
+		{ href: '/menu/apps', icon: /** @type {const} */ ('embed'), label: t('menu.apps') },
 		{ href: config.source, icon: /** @type {const} */ ('about'), label: t('menu.source'), external: true }
 	]);
 </script>

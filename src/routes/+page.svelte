@@ -2,7 +2,8 @@
 	import config from '#lib/data/config.json';
 	import Icon from '#lib/components/Icon.svelte';
 	import KeptOrganizations from '#lib/components/KeptOrganizations.svelte';
-	import OrganizationHome from '#lib/components/OrganizationHome.svelte';
+	import { goto } from '$app/navigation';
+	import { session } from '#lib/auth/session.svelte.js';
 	import { ownOrganization } from '#lib/network/own-organization.svelte.js';
 	import QuickSearch from '#lib/components/QuickSearch.svelte';
 	import { keptTags } from '#lib/models/kept.js';
@@ -14,26 +15,20 @@
 	 * for work: paste an organization; hiring: publish your careers page), nothing to browse.
 	 * Following some: the one box (a name, a website, a job board, a Bluesky list) and your
 	 * organizations, by tag if chosen, each with its open jobs (or a way to find its board).
-	 * Their jobs together are Jobs (/jobs). Signed in with an organization's domain: its home
-	 * (its job offers, its page), then what it follows, if anything.
+	 * Their jobs together are Jobs (/jobs). Signed in with an organization's domain and following
+	 * nothing, its area is its home (/org); Menu › Browse jobs comes back here.
 	 */
 	const following = $derived(kept.list.length > 0);
+	$effect(() => {
+		if (session.ready && ownOrganization.own && !following) goto('/org', { replace: true });
+	});
 	const tags = $derived(keptTags(kept.list));
 	let tag = $state('');
 </script>
 
 <svelte:head><title>{following ? `${t('nav.explore')} · ${config.name}` : `${config.name} · ${t('home.heading')}`}</title></svelte:head>
 
-{#if ownOrganization.own}
-	<OrganizationHome />
-	{#if following}
-		<jl-explore-home>
-			<h2>{t('nav.explore')}</h2>
-			<QuickSearch inline placeholder={t('quick.placeholder.explore')} />
-			<KeptOrganizations {tag} />
-		</jl-explore-home>
-	{/if}
-{:else if following}
+{#if following}
 	<jl-explore-home>
 		<h1>{t('nav.explore')}</h1>
 		<QuickSearch inline placeholder={t('quick.placeholder.explore')} />
@@ -61,7 +56,7 @@
 		</section>
 		<section aria-labelledby="welcome-hire">
 			<h2 id="welcome-hire">{t('home.hire')}</h2>
-			<p><a href="/organization">{t('home.hire.link')} <Icon name="next" /></a></p>
+			<p><a href="/org">{t('home.hire.link')} <Icon name="next" /></a></p>
 		</section>
 	</jl-welcome>
 {/if}
@@ -75,11 +70,6 @@
 	}
 	jl-explore-home section {
 		margin-top: var(--space-l);
-	}
-	/* Below an organization's home: what it follows. */
-	jl-explore-home h2 {
-		margin: var(--space-xl) 0 var(--space-s);
-		font-size: var(--font-size-base);
 	}
 	jl-explore-home h1 {
 		margin: var(--space-m) 0;

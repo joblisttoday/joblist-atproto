@@ -90,8 +90,8 @@
 	<jl-profile self={self || undefined}>
 		<ProfileHeader did={did || undefined} {handle}>
 			<menu>
-				<!-- Its own: managing it, and signing out, are on /organization. -->
-				{#if self}<a href="/organization"><Icon name="settings" /> {t('orgs.manage')}</a>{/if}
+				<!-- Its own: managing it, and signing out, are in /org. -->
+				{#if self}<a href="/org"><Icon name="settings" /> {t('orgs.manage')}</a>{/if}
 				<PageMenu />
 			</menu>
 		</ProfileHeader>

@@ -12,7 +12,7 @@
 	 * The organizations followed in this browser, newest first, each with its open jobs (read
 	 * live from its board, kept-jobs.svelte.js) and those published lately
 	 * (config.kept.newDays), or, with no board known, a way to look for it (on its page):
-	 * its page is its domain's (/{domain}), or the link's own (/me/organization#url=…).
+	 * its page is its domain's (/{domain}), or the link's own (/explore/organization#url=…).
 	 * max: only the first ones; tag: only those with this tag.
 	 * @type {{max?: number, tag?: string}}
 	 */
@@ -31,7 +31,7 @@
 	/** @param {string} id */
 	const provider = (id) => providers.find((p) => p.id === id)?.name || id;
 	/** @param {import('#lib/models/kept.js').Kept} item */
-	const pageOf = (item) => (keyOf(item.url) ? `/${keyOf(item.url)}` : `/me/organization#${new URLSearchParams({ url: item.url })}`);
+	const pageOf = (item) => (keyOf(item.url) ? `/${keyOf(item.url)}` : `/explore/organization#${new URLSearchParams({ url: item.url })}`);
 </script>
 
 <jl-kept-organizations>

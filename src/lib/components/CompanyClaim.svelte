@@ -11,8 +11,8 @@
 	 */
 	let { company } = $props();
 	const manager = $derived(session.handle === company.key);
-	const post = $derived(`/jobs/new?company=${encodeURIComponent(company.key)}`);
-	const edit = $derived(`/add?key=${encodeURIComponent(company.key)}`);
+	const post = $derived(`/org/post?company=${encodeURIComponent(company.key)}`);
+	const edit = $derived('/org/page');
 	// Its domain is already its Bluesky handle: signing in with it is the only step left.
 	const onBluesky = $derived(Boolean(accountOf(company.key)));
 	const signin = $derived(`/signin?handle=${encodeURIComponent(company.key)}&next=${encodeURIComponent(`/${company.key}`)}`);

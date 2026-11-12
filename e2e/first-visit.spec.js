@@ -9,7 +9,7 @@ test('a first visit has two doors, and the home is Explore once one organization
 	await page.goto('/');
 	await expect(page.locator('h1')).toHaveText('Follow the jobs of organizations you choose');
 	await expect(page.getByRole('heading', { name: 'Looking for work?' })).toBeVisible();
-	await expect(page.getByRole('link', { name: /Publish your careers page/ })).toHaveAttribute('href', '/organization');
+	await expect(page.getByRole('link', { name: /Publish your careers page/ })).toHaveAttribute('href', '/org');
 	await page.getByPlaceholder('Paste a website or a job board').fill('gitlab.com');
 	await page.getByPlaceholder('Paste a website or a job board').press('Enter');
 	await expect(page).toHaveURL(/\/gitlab\.com$/);
@@ -36,7 +36,7 @@ test('the menu is short, and signing in is for organizations', async ({ page }) 
 	await expect(rows).toHaveCount(6);
 	await expect(rows.first()).toContainText('This device');
 	await rows.nth(1).getByRole('link', { name: /Hiring/ }).click();
-	await expect(page).toHaveURL(/\/organization$/);
+	await expect(page).toHaveURL(/\/org$/);
 	await expect(page.locator('ol li')).toHaveCount(3);
 	await expect(page.getByPlaceholder('example.org')).toBeVisible();
 });
@@ -50,9 +50,25 @@ test('who you are: this device, with no account, private', async ({ page }) => {
 });
 
 test("an organization's pages are its account's: signed out, they lead to how to sign in", async ({ page }) => {
-	for (const path of ['/organization/page', '/organization/jobs', '/organization/embed']) {
+	for (const path of ['/org/post', '/org/embed', '/org/jobs/3abc']) {
 		await page.goto(path);
-		await expect(page).toHaveURL(/\/organization$/);
+		await expect(page).toHaveURL(/\/org$/);
 		await expect(page.locator('ol li')).toHaveCount(3);
+	}
+	// Describing one's organization says how, to anyone: "Is this your organization?" leads there.
+	await page.goto('/org/page?url=https%3A%2F%2Fexample.org');
+	await expect(page).toHaveURL(/\/org\/page\?url=/);
+});
+
+test('old addresses lead to the new ones, with what follows the "#"', async ({ page }) => {
+	for (const [from, to] of [
+		['/organization', /\/org$/],
+		['/jobs/new', /\/org\/post$/],
+		['/apps', /\/menu\/apps$/],
+		['/me/lists/saved', /\/saved\/saved$/],
+		['/following/list#url=https%3A%2F%2Fbsky.app%2Fprofile%2Fjoblist.today%2Ffollows', /\/explore\/list#url=/]
+	]) {
+		await page.goto(from);
+		await expect(page).toHaveURL(to);
 	}
 });

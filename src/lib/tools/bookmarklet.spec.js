@@ -12,7 +12,7 @@ function run(href) {
 describe('bookmarklet', () => {
 	it("opens joblist on the page, its address after the '#' only", () => {
 		const url = run('https://www.acme.org/jobs?x=1');
-		expect(url.origin + url.pathname + url.search).toBe('https://joblist.example/me/organization');
+		expect(url.origin + url.pathname + url.search).toBe('https://joblist.example/explore/organization');
 		expect(new URLSearchParams(url.hash.slice(1)).get('url')).toBe('https://www.acme.org/jobs?x=1');
 	});
 	it('is a javascript: link calling itself with the origin, short', () => {

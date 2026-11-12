@@ -18,25 +18,23 @@ import { escape } from './html.js';
 const appPages = [
 	['/following', en['nav.following']],
 	['/saved', en['nav.saved']],
-	['/following/list', en['curated.title']],
-	['/me/organization', en['nav.following']],
-	['/me/lists/saved', en['marks.saved']],
-	['/me/lists/applied', en['marks.applied']],
-	['/me/lists/hidden', en['marks.hidden']],
+	['/explore/list', en['curated.title']],
+	['/explore/organization', en['nav.explore']],
+	['/saved/saved', en['marks.saved']],
+	['/saved/applied', en['marks.applied']],
+	['/saved/hidden', en['marks.hidden']],
 	['/signin', en['signin.title']],
 	['/menu', en['nav.menu']],
-	['/organization', en['orgs.title']],
-	['/organization/page', en['orgs.page']],
-	['/organization/jobs', en['orgs.posts']],
-	['/organization/embed', en['embed.section']],
+	['/org', en['orgs.title']],
+	['/org/page', en['orgs.page']],
+	['/org/post', en['post.title']],
+	['/org/embed', en['embed.section']],
 	['/menu/accounts', en['accounts.title']],
 	['/menu/language', en['about.language']],
 	['/menu/collections', en['collections.transfer']],
 	['/menu/outbox', en['outbox.title']],
-	['/add', en['form.company.title']],
-	['/jobs/new', en['post.title']],
 	['/tools', config.name],
-	['/apps', en['apps.title']]
+	['/menu/apps', en['apps.title']]
 ];
 
 /** @param {string} path */
@@ -52,11 +50,11 @@ export function sitePages() {
 			listed: true,
 			meta: { title: `${config.name} · ${en['home.heading']}`, description: welcome, url: url('/'), body: `<h1>${escape(config.name)}</h1><p>${escape(welcome)}</p>` }
 		},
-		// Jobs moved to the home: an old link opens it there.
+		// The jobs of the organizations followed in a browser: nothing to index.
 		{
 			path: '/jobs',
 			listed: false,
-			meta: { title: `${en['nav.jobs']} · ${config.name}`, description: welcome, url: url('/'), body: '', noindex: true }
+			meta: { title: `${en['nav.jobs']} · ${config.name}`, description: welcome, url: url('/jobs'), body: '', noindex: true }
 		},
 		...appPages.map(([path, title]) => ({
 			path,

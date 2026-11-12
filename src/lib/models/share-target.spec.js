@@ -17,7 +17,7 @@ function share(shared) {
 
 describe('share target', () => {
 	it('opens the organization shared, with GET', () => {
-		expect(manifest.share_target).toMatchObject({ action: '/me/organization', method: 'GET' });
+		expect(manifest.share_target).toMatchObject({ action: '/explore/organization', method: 'GET' });
 	});
 	it('takes the shared url', () => {
 		expect(share({ title: 'Careers | Acme', url: 'https://acme.org/careers' }).link).toBe('https://acme.org/careers');

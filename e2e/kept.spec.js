@@ -15,7 +15,7 @@ async function search(page, what) {
 test('a link opens its organization, to keep; kept ones are remembered', async ({ page }) => {
 	await page.goto('/');
 	await search(page, 'instagram.com/some.coop');
-	await expect(page).toHaveURL(/\/me\/organization#url=https%3A%2F%2Finstagram\.com%2Fsome\.coop/);
+	await expect(page).toHaveURL(/\/explore\/organization#url=https%3A%2F%2Finstagram\.com%2Fsome\.coop/);
 	await page.getByRole('button', { name: 'Follow', exact: true }).first().click();
 	// Following one: the home is Jobs; another is followed from Following.
 	await page.goto('/');
@@ -46,8 +46,8 @@ test('a kept organization joblist does not know opens its profile, to forget or 
 	await page.getByRole('button', { name: 'Follow', exact: true }).first().click();
 	await page.goto('/');
 	await page.locator('jl-kept-organizations li a').first().click();
-	await expect(page).toHaveURL(/\/me\/organization#url=/);
-	await expect(page.getByRole('link', { name: 'Is this your organization?' })).toHaveAttribute('href', /^\/add\?url=https%3A%2F%2Finstagram\.com%2Fsome\.coop/);
+	await expect(page).toHaveURL(/\/explore\/organization#url=/);
+	await expect(page.getByRole('link', { name: 'Is this your organization?' })).toHaveAttribute('href', /^\/org\/page\?url=https%3A%2F%2Finstagram\.com%2Fsome\.coop/);
 	await page.getByRole('button', { name: 'Following', exact: true }).first().click();
 	await expect(page.getByRole('button', { name: 'Follow', exact: true }).first()).toBeVisible();
 });

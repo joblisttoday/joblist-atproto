@@ -233,7 +233,7 @@
 			<p>
 				{t('jobs.gone')}
 				{#if companies[0].url}<a href={companies[0].url} target="_blank" rel="noopener">{t('jobs.gone.website')}</a> ·{/if}
-				<a href="/add?key={encodeURIComponent(companies[0].key)}">{t('jobs.gone.fix')}</a>
+				<a href="/org/page?field=jobBoard">{t('jobs.gone.fix')}</a>
 			</p>
 		{:else}
 			<p>{jobs.length ? t('search.none') : t('jobs.none')}</p>

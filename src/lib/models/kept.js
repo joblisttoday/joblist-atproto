@@ -133,7 +133,7 @@ export function organizationPage(input, known) {
 	const home = new URL(link).pathname === '/' && !new URL(link).search;
 	const name = link.replace(/^https?:\/\/(www\.)?/, '');
 	if (key && home) return { href: `/${key}`, name, known: false, sure };
-	return { href: `/me/organization#${new URLSearchParams({ url: link })}`, name, known: false, sure };
+	return { href: `/explore/organization#${new URLSearchParams({ url: link })}`, name, known: false, sure };
 }
 
 /**

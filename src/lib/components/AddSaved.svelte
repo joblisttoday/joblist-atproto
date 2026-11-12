@@ -15,9 +15,9 @@
 	<p>{t('added.own.text', { name })}</p>
 	<menu>
 		<a href="/{key}">{t('added.open', { name })}</a>
-		<a href="/jobs/new?company={encodeURIComponent(key)}"><Icon name="post" /> {t('added.post')}</a>
+		<a href="/org/post?company={encodeURIComponent(key)}"><Icon name="post" /> {t('added.post')}</a>
 	</menu>
-	<p><small><a href="/add">{t('added.another')}</a></small></p>
+	<p><small><a href="/org/page">{t('added.another')}</a></small></p>
 </jl-add-saved>
 
 <style>

@@ -14,7 +14,7 @@
 	 * with what this browser finds of it from its link (network/discover.js): its Bluesky
 	 * account, its job board and open jobs (read live, one board), where those jobs are.
 	 * Kept in this browser or not, and suggested to joblist with all that was found.
-	 * address: what the page's address keeps besides its jobs' search (/me/organization: #url=…).
+	 * address: what the page's address keeps besides its jobs' search (/explore/organization: #url=…).
 	 * @type {{link: string, address?: Record<string, string>}}
 	 */
 	let { link, address = {} } = $props();

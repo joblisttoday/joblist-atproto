@@ -592,5 +592,6 @@
 	"orgs.copyLink": "Copy your page's link",
 	"orgs.field.add": "Add",
 	"orgs.from.short": "Your job board",
-	"post.expired": "Expired"
+	"post.expired": "Expired",
+	"menu.browse": "Browse jobs"
 }

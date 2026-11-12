@@ -11,7 +11,7 @@
 	// the next page, or the organization's; unless adding another account (/signin?add).
 	const adding = $derived(page.url.searchParams.has('add'));
 	$effect(() => {
-		if (session.handle && !adding) goto(nextPath(page.url.searchParams) || '/organization', { replace: true });
+		if (session.handle && !adding) goto(nextPath(page.url.searchParams) || '/org', { replace: true });
 	});
 </script>
 

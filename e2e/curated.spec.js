@@ -11,7 +11,7 @@ test('a pasted list offers its organizations, followed at once and tagged', asyn
 	await box.fill('https://bsky.app/profile/joblist.today/follows');
 	await expect(page.getByRole('link', { name: 'Follow the organizations of this list' })).toBeVisible();
 	await box.press('Enter');
-	await expect(page).toHaveURL(/\/following\/list#url=/);
+	await expect(page).toHaveURL(/\/explore\/list#url=/);
 	const follow = page.locator('jl-curated button[data-primary]');
 	await expect(follow).toBeVisible({ timeout: 20_000 });
 	const count = await page.locator('jl-curated li').count();

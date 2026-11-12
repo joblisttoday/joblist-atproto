@@ -592,5 +592,6 @@
 	"orgs.copyLink": "Copier le lien de votre page",
 	"orgs.field.add": "Ajouter",
 	"orgs.from.short": "Votre page d’offres",
-	"post.expired": "Expirée"
+	"post.expired": "Expirée",
+	"menu.browse": "Parcourir les offres"
 }

@@ -7,15 +7,13 @@ import links from '#lib/data/nav.json';
  */
 
 /**
- * The main navigation, the same on every screen: Explore (the home: the search, and the
- * organizations you follow), Jobs (theirs), Saved (your lists of jobs),
- * Your organization (signed in with its domain: its dashboard, with its picture), and the
- * Menu (settings).
+ * The job seeker's navigation (nav.json): Explore (the home: the search, and the
+ * organizations you follow), Jobs (theirs), Saved (your lists of jobs), Menu. An
+ * organization's, in /org, is made in Nav.svelte (docs/architecture.md).
  * badge: the count it shows ("saved": the new jobs of the saved searches).
  * within: the paths it is the tab of, besides its own (Explore: every job, organization and list, and adding one).
  * account: the tab that shows the signed-in account (its picture).
- * organization: shown only signed in with an organization's domain (its dashboard).
- * @returns {{href: string, label: string, icon: import('#lib/icons.js').IconName, badge?: string, account?: boolean, organization?: boolean, within: string[]}[]}
+ * @returns {{href: string, label: string, icon: import('#lib/icons.js').IconName, badge?: string, account?: boolean, within: string[]}[]}
  */
 export function navLinks() {
 	return links.map((link) => {
@@ -25,8 +23,7 @@ export function navLinks() {
 			label,
 			icon: /** @type {import('#lib/icons.js').IconName} */ (icon),
 			badge: 'badge' in link ? link.badge : undefined,
-			account: ('account' in link && link.account) || undefined,
-			organization: ('organization' in link && link.organization) || undefined,
+			account: 'account' in link && link.account === true ? true : undefined,
 			within: ('within' in link && link.within) || []
 		};
 	});

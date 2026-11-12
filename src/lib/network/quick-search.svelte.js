@@ -9,7 +9,7 @@ const companies = $derived(
 	kept.list.map((k) => {
 		const key = keyOf(k.url);
 		const name = k.name || k.url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
-		return { key: key || k.url, name, tags: k.tags || [], href: key ? `/${key}` : `/me/organization#${new URLSearchParams({ url: k.url })}` };
+		return { key: key || k.url, name, tags: k.tags || [], href: key ? `/${key}` : `/explore/organization#${new URLSearchParams({ url: k.url })}` };
 	})
 );
 

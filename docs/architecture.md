@@ -16,6 +16,32 @@ the browser, when it is asked for.
 
 One repository, two workflows, one host, no secret but the lexicon account's password.
 
+## Information architecture
+
+Two areas, by role; the address says which one you are in. Each has four tabs, at the
+bottom at every width (`src/lib/components/Nav.svelte`, `src/lib/data/nav.json`).
+
+| | Job seeker (default, never signs in) | Organization (signed in with its domain) |
+|---|---|---|
+| Home | `/` **Explore**: the search (a name, a link, a list) and the organizations followed; before any, the welcome with two doors | `/org` **Home**: its job offers (cards), Post a job, its page's status, its embed, its link, sign out |
+| 2nd tab | `/jobs` **Jobs**: the followed organizations' jobs, saved searches as chips | `/org/post` **Post a job** |
+| 3rd tab | `/saved` **Saved**: Saved, Applied, Hidden, named lists | `/{domain}` **Your page**: as visitors see it |
+| 4th tab | `/menu` **Menu** | `/menu` **Menu** |
+| Inside | `/{domain}` an organization · `/job/{did}/{rkey}` a posted job · `/saved/{id}` a list · `/explore/list` follow a Bluesky list · `/explore/organization#url=…` a link's organization | `/org/page` its page's parts (`?field=…` one alone, `?all` everything) · `/org/jobs/{rkey}` edit an offer · `/org/embed` its jobs on its website |
+
+- Menu, the same for both: You (this device, or an account: `/menu/accounts`), Hiring? or
+  Your organization (`/org`), Browse jobs (an organization), Language, Move to another
+  device, Apps and add-on (`/menu/apps`), Source code.
+- Signed in as an organization that follows nothing, `/` opens `/org`.
+- Signed in as an organization, the Menu keeps its tabs; Browse jobs (`/jobs`) shows the seeker's.
+- Old addresses lead to the new ones, with what follows the `?` and `#`
+  (`src/lib/components/Redirect.svelte`): `/organization*` → `/org*`, `/add` → `/org/page`,
+  `/jobs/new` → `/org/post`, `/job/{did}/{rkey}/edit` → `/org/jobs/{rkey}`, `/me/lists/{id}` →
+  `/saved/{id}`, `/following/list` → `/explore/list`, `/me/organization` →
+  `/explore/organization`, `/apps` → `/menu/apps`.
+- A change to a page, a tab or an address is checked against this table first; the table
+  changes with it.
+
 ## The contracts
 
 Pieces share no code path at run time; they share these:

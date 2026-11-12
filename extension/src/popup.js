@@ -150,7 +150,7 @@ async function start() {
 			}
 		});
 		// Where to go from here: its careers page, its job board, its page on joblist (its domain's).
-		const joblistPage = read.key ? site(`/${read.key}`) : site(`/me/organization#${new URLSearchParams({ url: read.link })}`);
+		const joblistPage = read.key ? site(`/${read.key}`) : site(`/explore/organization#${new URLSearchParams({ url: read.link })}`);
 		/** @type {[string, string][]} */
 		const ways = [
 			[read.careers && read.careers !== board?.url ? read.careers : '', t('careersPage')],

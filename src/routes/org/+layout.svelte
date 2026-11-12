@@ -5,13 +5,15 @@
 	import { ownOrganization } from '#lib/network/own-organization.svelte.js';
 
 	/**
-	 * The organization's dashboard and its pages (/organization/page, /jobs, /embed): one
-	 * column. Its pages are its account's only: anyone else is sent to /organization (how to sign in).
+	 * The organization's area (/org: its home; /org/page, /org/post, /org/jobs/{rkey}, /org/embed):
+	 * one column. Its pages are its account's only: anyone else is sent to /org (how to sign in);
+	 * /org/page stays open, to say how to describe one's organization ("Is this your organization?").
 	 * @type {{children: import('svelte').Snippet}}
 	 */
 	let { children } = $props();
 	$effect(() => {
-		if (session.ready && !ownOrganization.own && page.url.pathname !== '/organization') goto('/organization', { replace: true });
+		const open = ['/org', '/org/page'].includes(page.url.pathname);
+		if (session.ready && !ownOrganization.own && !open) goto('/org', { replace: true });
 	});
 </script>
 

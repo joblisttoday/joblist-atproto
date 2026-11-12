@@ -1,7 +1,6 @@
 [
-	{ "href": "/", "icon": "search", "label": "nav.explore", "within": ["/following", "/me/organization"] },
+	{ "href": "/", "icon": "search", "label": "nav.explore", "within": ["/following", "/explore"] },
 	{ "href": "/jobs", "icon": "jobs", "label": "nav.jobs", "badge": "saved", "within": ["/jobs", "/job"] },
-	{ "href": "/saved", "icon": "saved", "label": "nav.saved", "within": ["/me/lists"] },
-	{ "href": "/organization", "icon": "settings", "label": "orgs.yours", "organization": true, "account": true, "within": ["/add", "/jobs/new", "/signin"] },
-	{ "href": "/menu", "icon": "menu", "label": "nav.menu", "within": ["/me", "/apps"] }
+	{ "href": "/saved", "icon": "saved", "label": "nav.saved", "within": [] },
+	{ "href": "/menu", "icon": "menu", "label": "nav.menu", "within": ["/me", "/signin"] }
 ]

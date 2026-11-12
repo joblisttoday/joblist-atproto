@@ -12,9 +12,9 @@ qualityTests([
 	{ name: 'organization', path: '/joblist.today', touch },
 	{ name: 'menu', path: '/menu', touch },
 	{ name: 'language', path: '/menu/language', touch },
-	{ name: 'for organizations', path: '/organization', touch },
-	{ name: 'add an organization', path: '/add', touch },
-	{ name: 'post a job', path: '/jobs/new', touch },
+	{ name: 'for organizations', path: '/org', touch },
+	{ name: 'add an organization', path: '/org/page', touch },
+	{ name: 'post a job', path: '/org/post', touch },
 	{
 		name: 'job dialog',
 		touch,
@@ -29,7 +29,7 @@ qualityTests([
 		name: 'delete a collection',
 		touch,
 		open: async (page) => {
-			await page.goto('/me/lists');
+			await page.goto('/saved');
 			await page.getByRole('button', { name: 'New list of jobs' }).click();
 			await page.locator('jl-collection-name input').fill('Dream jobs');
 			await page.locator('jl-collection-name button[type="submit"]').click();

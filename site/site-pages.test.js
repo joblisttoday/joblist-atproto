@@ -9,7 +9,7 @@ test("the site's pages: what joblist is, never numbers", () => {
 		['/']
 	);
 	for (const { meta } of pages) assert.doesNotMatch(`${meta.title} ${meta.description}`, /\d{2,}/);
-	assert.ok(pages.some((p) => p.path === '/apps' && p.meta.noindex));
+	assert.ok(pages.some((p) => p.path === '/menu/apps' && p.meta.noindex));
 });
 
 test('every other address gets the 404 page, on which the app starts', () => {

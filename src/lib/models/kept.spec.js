@@ -109,7 +109,7 @@ describe('organizationPage', () => {
 	});
 	it("else its domain's page, else the link's", () => {
 		expect(organizationPage('www.acme.coop', known)).toEqual({ href: '/acme.coop', name: 'acme.coop', known: false, sure: true });
-		expect(organizationPage('instagram.com/some.coop', known)?.href).toBe('/me/organization#url=https%3A%2F%2Finstagram.com%2Fsome.coop');
+		expect(organizationPage('instagram.com/some.coop', known)?.href).toBe('/explore/organization#url=https%3A%2F%2Finstagram.com%2Fsome.coop');
 	});
 	it('words are no link', () => {
 		expect(organizationPage('product designer', known)).toBeNull();

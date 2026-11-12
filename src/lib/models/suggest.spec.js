@@ -7,7 +7,7 @@ describe('suggestAddress', () => {
 			suggestAddress({ link: 'https://instagram.com/acme', website: 'https://acme.org', name: 'Acme', board: 'https://jobs.lever.co/acme', description: 'A coop', others: ['https://bsky.app/profile/acme.org', 'https://acme.org'] }),
 			'https://joblist.example'
 		);
-		expect(address.pathname).toBe('/add');
+		expect(address.pathname).toBe('/org/page');
 		expect(Object.fromEntries([...address.searchParams].filter(([k]) => k !== 'link'))).toEqual({ url: 'https://acme.org', name: 'Acme', board: 'https://jobs.lever.co/acme', description: 'A coop' });
 		expect(address.searchParams.getAll('link')).toEqual(['https://bsky.app/profile/acme.org', 'https://instagram.com/acme']);
 	});

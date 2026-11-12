@@ -74,7 +74,7 @@
 	// Optional: "Not said" first, so a choice can be taken back.
 	const kindOptions = [{ value: '', label: t('kind.none') }, ...config.companyForm.kinds.map((kind) => ({ value: kind, label: t(`kind.${kind}`) }))];
 	const submitLabel = $derived(company ? t('form.save') : t('form.company.submit'));
-	// Editing one part (/add?field=…, from the dashboard): only that part, the rest kept as it is.
+	// Editing one part (/org/page?field=…): only that part, the rest kept as it is.
 	const parts = ['description', 'jobBoard', 'kind', 'tags', 'locations', 'links'];
 	const only = $derived(company && parts.includes(focus) ? focus : '');
 	/** @param {string} part */
@@ -217,7 +217,7 @@
 		<jl-form-actions>
 			{#if error}<p role="alert">{error}</p>{/if}
 			{#if !key}<p><small>{t('form.company.needsWebsite')}</small></p>{/if}
-			{#if taken}<p><small>{t('form.company.taken')} <a href="/add?key={encodeURIComponent(key)}">{t('form.website.improve')}</a></small></p>{/if}
+			{#if taken}<p><small>{t('form.company.taken')} <a href="/org/page?all">{t('form.website.improve')}</a></small></p>{/if}
 			<SaveHint />
 			<menu>
 				<button type="submit" disabled={busy || !key || taken}>{busy ? t('form.saving') : submitLabel}</button>

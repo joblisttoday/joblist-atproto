@@ -10,7 +10,7 @@
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * An organization's home, signed in with its domain (the home, and /organization): its job
+	 * An organization's home, signed in with its domain (/org): its job
 	 * offers first, with Post a job; then its page, its jobs on its website, its link, signing
 	 * out. No visitor counts: joblist tracks no one.
 	 */
@@ -36,13 +36,13 @@
 	/** @type {import('#lib/navigation/nav.js').MenuLink[]} */
 	const rows = $derived([
 		{
-			href: '/organization/page',
+			href: '/org/page',
 			icon: /** @type {const} */ ('edit'),
 			label: t('orgs.page'),
 			value: org.company ? t('orgs.page.done', { done: fields - org.missing.length, all: fields }) : t('orgs.page.none')
 		},
-		...(org.board ? [{ href: '/organization/jobs', icon: /** @type {const} */ ('jobs'), label: t('orgs.from.short'), value: provider }] : []),
-		{ href: '/organization/embed', icon: /** @type {const} */ ('embed'), label: t('embed.section') },
+		...(org.board ? [{ href: '/org/page?field=jobBoard', icon: /** @type {const} */ ('jobs'), label: t('orgs.from.short'), value: provider }] : []),
+		{ href: '/org/embed', icon: /** @type {const} */ ('embed'), label: t('embed.section') },
 		{ onclick: copy, icon: /** @type {const} */ ('copy'), label: copied ? t('apps.copied') : t('orgs.copyLink') },
 		...(org.waiting ? [{ href: '/menu/outbox', icon: /** @type {const} */ ('suggestions'), label: t('outbox.title'), value: String(org.waiting) }] : []),
 		{ onclick: out, icon: /** @type {const} */ ('signout'), label: t('me.signout') }
@@ -59,7 +59,7 @@
 	<section aria-labelledby="org-offers">
 		<h2 id="org-offers">{t('orgs.posts')}</h2>
 		{#if org.posts.length}<MyJobPosts posts={org.posts} />{:else if org.board}<p><small>{t('orgs.from.board', { provider, id: org.board.id })}</small></p>{/if}
-		<menu><a href="/jobs/new" data-primary><Icon name="add" /> {t('post.title')}</a></menu>
+		<menu><a href="/org/post" data-primary><Icon name="add" /> {t('post.title')}</a></menu>
 	</section>
 
 	<MenuLinks label={t('orgs.manage')} items={rows} />

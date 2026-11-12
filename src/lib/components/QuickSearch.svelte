@@ -41,7 +41,7 @@
 	const typed = $derived(text.trim().length >= 2);
 	const knows = $derived(knownBy(data.companies));
 	// A list someone curates on Bluesky: its organizations, to follow (before the page of bsky.app itself).
-	const curated = $derived(curatedLink(text) ? `/following/list#${new URLSearchParams({ url: text.trim() })}` : '');
+	const curated = $derived(curatedLink(text) ? `/explore/list#${new URLSearchParams({ url: text.trim() })}` : '');
 	const organization = $derived(curated ? null : organizationPage(text, knows));
 	/** @param {Partial<import('#lib/models/job.js').JobFilters>} filters */
 	const jobsPath = (filters) => addressOf(searchState({ query: '', where: '', remote: '', ...filters }), '/jobs');

@@ -6,7 +6,7 @@ import { outbox } from './outbox.svelte.js';
 
 /**
  * The organization signed in here (its domain is the account's handle), as its dashboard
- * (/organization and its pages) shows it: its record, its job offers, its board, what its
+ * (/org and its pages) shows it: its record, its job offers, its board, what its
  * page lacks, what waits to be sent.
  */
 const own = $derived(ownDomain(session.handle));

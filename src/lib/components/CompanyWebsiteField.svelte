@@ -39,7 +39,7 @@
 		{:else if read.state === 'exists' && existing}
 			{t('form.website.exists', { name: existing.name })}
 			<a href="/{read.key}">{t('form.website.open')}</a> ·
-			<a href="/add?key={encodeURIComponent(read.key)}">{t('form.website.improve')}</a>
+			<a href="/org/page?all">{t('form.website.improve')}</a>
 		{:else if read.state === 'invalid'}
 			{t('form.website.invalid')}
 		{:else if read.state === 'kept'}

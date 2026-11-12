@@ -11,9 +11,9 @@
 
 	/**
 	 * An organization's careers page, the same whether it publishes it (/{domain}) or only this
-	 * browser knows it (local: /me/organization#url=…, or a domain that does not publish one):
+	 * browser knows it (local: /explore/organization#url=…, or a domain that does not publish one):
 	 * its head (Save), then its jobs, opened in a dialog. Its own account sees it as anyone does,
-	 * with one bar to manage it (/organization); anyone else, at the end, how to publish theirs.
+	 * with one bar to manage it (/org); anyone else, at the end, how to publish theirs.
 	 * address: what its address keeps besides its jobs' search (a local one's #url=…).
 	 * onboard: a local one's job board, found by its name (BoardFinder).
 	 * @type {{company: import('#lib/models/company.js').Company, local?: import('#lib/models/kept.js').Local, address?: Record<string, string>, onboard?: (board: {provider: string, id: string}) => void}}
@@ -30,14 +30,14 @@
 			? placeCounts(jobs, 5).map(([place]) => place)
 			: (company.locations || []).map((l) => l.name || [l.address, l.country].filter(Boolean).join(', ')).filter(Boolean)
 	);
-	const claim = $derived(local ? local.suggest : `/add?url=${encodeURIComponent(`https://${key}`)}`);
+	const claim = $derived(local ? local.suggest : `/org/page?url=${encodeURIComponent(`https://${key}`)}`);
 </script>
 
 <jl-company-page>
 	{#if owner}
 		<jl-company-owner>
 			<span>{t('orgs.yourPage')}</span>
-			<a href="/organization"><Icon name="settings" /> {t('orgs.manage')}</a>
+			<a href="/org"><Icon name="settings" /> {t('orgs.manage')}</a>
 		</jl-company-owner>
 	{/if}
 	<CompanyHeader {company} {local} {places} />

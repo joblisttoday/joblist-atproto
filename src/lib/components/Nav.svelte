@@ -11,18 +11,22 @@
 	const all = navLinks();
 	const own = $derived(ownDomain(session.handle));
 	// An organization's tab only for its account.
-	// An organization signed in: its own tabs (its home with its picture, its page as visitors
-	// see it, posting a job, the menu); Jobs and Saved are a job seeker's, still a link away.
+	// Two areas, by role (docs/architecture.md): the job seeker's (nav.json: Explore, Jobs,
+	// Saved, Menu) and, signed in with its domain, the organization's in /org (its home with
+	// its picture, Post a job, its page as visitors see it, Menu). The address says which.
 	const menu = all.filter((i) => i.href === '/menu');
+	// The Menu is both areas': an organization keeps its tabs there; Browse jobs (/jobs) is the seeker's.
+	const path = $derived(page.url.pathname);
+	const inOrg = $derived(Boolean(own) && (path === '/org' || path.startsWith('/org/') || path === `/${own}` || path === '/menu' || path.startsWith('/menu/')));
 	const items = $derived(
-		own
+		inOrg
 			? [
-					{ href: '/', label: 'nav.home', icon: /** @type {const} */ ('home'), account: true, within: ['/organization', '/add', '/signin'] },
+					{ href: '/org', label: 'nav.home', icon: /** @type {const} */ ('home'), account: true, within: ['/org/page', '/org/embed', '/org/jobs'] },
+					{ href: '/org/post', label: 'post.title', icon: /** @type {const} */ ('add'), within: [] },
 					{ href: `/${own}`, label: 'orgs.page', icon: /** @type {const} */ ('companies'), within: [] },
-					{ href: '/jobs/new', label: 'post.title', icon: /** @type {const} */ ('add'), within: ['/job'] },
 					...menu
 				]
-			: all.filter((i) => !i.organization)
+			: all
 	);
 	/** The count a tab shows, 0 for none. @param {string | undefined} badge */
 	const count = (badge) => (badge === 'saved' ? savedJobs.fresh : 0);
