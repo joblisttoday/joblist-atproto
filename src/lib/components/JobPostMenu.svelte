@@ -2,7 +2,7 @@
 	import ConfirmDialog from './ConfirmDialog.svelte';
 	import config from '#lib/data/config.json';
 	import { session } from '#lib/auth/session.svelte.js';
-	import { daysLeft, postPath } from '#lib/models/job-post.js';
+	import { daysLeft } from '#lib/models/job-post.js';
 	import { deleteJob, renewJob } from '#lib/network/save-job.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
@@ -50,7 +50,7 @@
 	<jl-job-post-menu expired={left ? undefined : true}>
 		<small>{left ? t('post.daysLeft', { count: left }) : t('job.expired')}</small>
 		<menu>
-			<a href="{postPath(post.did, post.rkey)}/edit">{t('post.change')}</a>
+			<a href="/org/jobs/{post.rkey}">{t('post.change')}</a>
 			<button type="button" disabled={busy} onclick={renew}>{t('post.renew', { count: config.jobPost.days })}</button>
 			<button type="button" disabled={busy} onclick={() => confirmer?.ask()}>{t('post.delete')}</button>
 		</menu>

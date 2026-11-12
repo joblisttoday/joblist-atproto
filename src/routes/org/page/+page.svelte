@@ -2,6 +2,7 @@
 	import config from '#lib/data/config.json';
 	import Icon from '#lib/components/Icon.svelte';
 	import CompanyDelete from '#lib/components/CompanyDelete.svelte';
+	import Row from '#lib/components/Row.svelte';
 	import CompanyEditor from '#lib/components/CompanyEditor.svelte';
 	import { page } from '$app/state';
 	import { ownOrganization as org } from '#lib/network/own-organization.svelte.js';
@@ -24,18 +25,17 @@
 <h1>{t('orgs.page')}</h1>
 {#if org.company}
 	<p><a href="/{org.own}">{t('orgs.view')} <Icon name="next" /></a></p>
-	<ul>
+	<jl-rows>
 		{#each fields as field (field)}
 			{@const done = !org.missing.includes(field)}
-			<li>
-				<a href="/org/page?field={field}" data-done={done || undefined}>
-					<Icon name={done ? 'added' : 'add'} />
-					<span>{t(`orgs.field.${field}`)}</span>
-					<small>{done ? t('company.edit') : t('orgs.field.add')}</small>
-				</a>
-			</li>
+			<Row
+				href="/org/page?field={field}"
+				icon={done ? 'added' : 'add'}
+				title={t(`orgs.field.${field}`)}
+				chip={done ? null : { text: t('orgs.field.add'), tone: 'warn' }}
+			/>
 		{/each}
-	</ul>
+	</jl-rows>
 	<menu>
 		<a href="/org/page?all">{t('orgs.editAll')}</a>
 		<CompanyDelete company={org.company} />
@@ -47,37 +47,9 @@
 {/if}
 
 <style>
-	ul {
+	jl-rows {
+		display: block;
 		margin: var(--space-m) 0;
-		padding: 0;
-		list-style: none;
-		border: var(--border);
-		border-radius: var(--radius);
-	}
-	li + li {
-		border-top: var(--border);
-	}
-	ul a {
-		display: flex;
-		align-items: center;
-		gap: var(--space-s);
-		min-height: var(--tap-size);
-		padding: 0 var(--space-m);
-		color: var(--color-fg);
-		text-decoration: none;
-	}
-	ul a span {
-		flex: 1;
-	}
-	ul a small {
-		color: var(--color-muted);
-	}
-	ul a:not([data-done]) small {
-		color: var(--color-accent);
-		font-weight: var(--font-weight-strong);
-	}
-	ul a[data-done] :global(jl-icon) {
-		color: var(--color-ok);
 	}
 	menu {
 		gap: var(--space-s);

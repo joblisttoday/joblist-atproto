@@ -42,6 +42,29 @@ bottom at every width (`src/lib/components/Nav.svelte`, `src/lib/data/nav.json`)
 - A change to a page, a tab or an address is checked against this table first; the table
   changes with it.
 
+## Rows and chips
+
+Every thing listed (a job, an organization, an offer, a list, an account, a setting) is a
+row with the same anatomy (`src/lib/components/Row.svelte`; a job's is `JobItem`/`JobCard`,
+shared with the embed):
+
+```
+[avatar]  Title                                  [trailing]
+          (chip) meta · meta · meta
+```
+
+- **Avatar**: an organization's picture, else its initial in its own color (`JobAvatar`);
+  a list or a setting has an icon.
+- **Title**: what you tap; the whole row opens it.
+- **Meta**: one muted line, in this order: organization · place and team · workplace · pay
+  · when. Facts are text, not pills.
+- **Chip** (`<jl-chip tone=…>`, one style in `app.css`): at most one state per row, first on
+  the meta line: new (filled), ok (Applied, 27 this week, 30 days left, In use, on joblist),
+  warn (Expired, ending soon, Look for it, listed for long).
+- **Trailing**: one of a count, a checkbox, or "…" (its actions: Save, Hide, Unfollow, Edit,
+  Renew, Delete…); › when it goes somewhere. No buttons or × inside a row.
+- Filter chips (teams, tags, saved searches) are pressed buttons above a list, not rows.
+
 ## The contracts
 
 Pieces share no code path at run time; they share these:

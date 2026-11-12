@@ -14,10 +14,10 @@ test('a pasted list offers its organizations, followed at once and tagged', asyn
 	await expect(page).toHaveURL(/\/explore\/list#url=/);
 	const follow = page.locator('jl-curated button[data-primary]');
 	await expect(follow).toBeVisible({ timeout: 20_000 });
-	const count = await page.locator('jl-curated li').count();
+	const count = await page.locator('jl-curated jl-row').count();
 	expect(count).toBeGreaterThan(0);
 	await follow.click();
 	await expect(page).toHaveURL(/\/$/);
-	await expect(page.locator('jl-kept-organizations li')).toHaveCount(count);
-	await expect(page.locator('jl-kept-organizations li').first()).toContainText('joblist-today');
+	await expect(page.locator('jl-kept-organizations jl-row')).toHaveCount(count);
+	await expect(page.locator('jl-kept-organizations jl-row').first()).toContainText('joblist-today');
 });

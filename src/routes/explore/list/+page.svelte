@@ -4,6 +4,7 @@
 	import Empty from '#lib/components/Empty.svelte';
 	import Icon from '#lib/components/Icon.svelte';
 	import Pending from '#lib/components/Pending.svelte';
+	import Row from '#lib/components/Row.svelte';
 	import { curatedLink } from '#lib/models/curated.js';
 	import { slugify } from '#lib/models/landing.js';
 	import { readAddress } from '#lib/navigation/address.js';
@@ -54,18 +55,18 @@
 			<h1>{read.name || t('curated.title')}</h1>
 			<p><small>{t('curated.intro')}</small></p>
 			{#if read.candidates.length}
-				<ul>
+				<jl-rows>
 					{#each read.candidates as c (c.did)}
 						{@const already = isKeptLink(c.url)}
-						<li>
-							<label>
-								<input type="checkbox" checked={already || !skipped.has(c.did)} disabled={already} onchange={() => toggle(c.did)} />
-								{#if c.avatar}<img src={c.avatar} alt="" />{/if}
-								<span>{c.name} <small>{c.url.replace('https://', '')}{c.onJoblist ? ` · ${t('curated.onJoblist')}` : ''}{already ? ` · ${t('follow.done')}` : ''}</small></span>
-							</label>
-						</li>
+						<Row
+							title={c.name}
+							avatar={{ key: c.url, name: c.name, src: c.avatar }}
+							meta={[c.url.replace('https://', '')]}
+							chip={already ? { text: t('follow.done'), tone: 'ok' } : c.onJoblist ? { text: t('curated.onJoblist'), tone: 'ok' } : null}
+							check={{ checked: already || !skipped.has(c.did), disabled: already, onchange: () => toggle(c.did) }}
+						/>
 					{/each}
-				</ul>
+				</jl-rows>
 				<menu><button type="button" data-primary disabled={!chosen} onclick={() => follow(read)}><Icon name="save" /> {t('curated.follow', { count: formatNumber(chosen) })}</button></menu>
 			{:else}
 				<Empty text={t('curated.none')} />
@@ -84,35 +85,12 @@
 		margin-inline: auto;
 		padding-bottom: var(--space-xl);
 	}
-	ul {
-		margin: var(--space-m) 0;
-		padding: 0;
-		list-style: none;
-	}
-	li + li {
-		border-top: var(--border);
-	}
-	label {
-		display: flex;
-		align-items: center;
-		gap: var(--space-s);
-		min-height: var(--tap-size);
-		font-weight: normal;
-	}
-	label span {
-		min-width: 0;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
 	small {
 		color: var(--color-muted);
 	}
-	img {
-		width: var(--avatar-small);
-		height: var(--avatar-small);
-		border-radius: var(--radius-round);
-		object-fit: cover;
+	jl-rows {
+		display: block;
+		margin: var(--space-m) 0;
 	}
 	[data-primary] {
 		background: var(--color-accent);

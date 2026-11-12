@@ -1,6 +1,8 @@
 <script>
 	import config from '#lib/data/config.json';
+	import CardMenu from '#lib/components/CardMenu.svelte';
 	import Icon from '#lib/components/Icon.svelte';
+	import Row from '#lib/components/Row.svelte';
 	import { accounts } from '#lib/auth/accounts.js';
 	import { session, signOutOf, switchAccount, switchToDevice } from '#lib/auth/session.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
@@ -23,24 +25,33 @@
 
 <jl-accounts>
 	<h1>{t('accounts.title')}</h1>
-	<ul>
-		<li data-current={!session.did || undefined}>
-			<Icon name="me" />
-			<span><strong>{t('accounts.device')}</strong><small>{t('accounts.device.help')}</small></span>
-			{#if session.did}<button type="button" onclick={switchToDevice}>{t('accounts.use')}</button>{:else}<small>{t('accounts.current')}</small>{/if}
-		</li>
+	<jl-rows>
+		<Row
+			title={t('accounts.device')}
+			icon="me"
+			meta={[t('accounts.device.help')]}
+			chip={session.did ? null : { text: t('accounts.current'), tone: 'ok' }}
+			onclick={session.did ? switchToDevice : undefined}
+		/>
 		{#each list as account (account.did)}
 			{@const current = account.did === session.did}
-			<li data-current={current || undefined}>
-				{#if current && session.avatar}<img src={session.avatar} alt="" />{:else}<Icon name="companies" />{/if}
-				<span><strong>@{account.handle || account.did}</strong>{#if current}<small>{t('accounts.current')}</small>{/if}</span>
-				<menu>
-					{#if !current}<button type="button" onclick={() => switchAccount(account.did)}>{t('accounts.use')}</button>{/if}
-					<button type="button" onclick={() => out(account.did)}><Icon name="signout" /> {t('me.signout')}</button>
-				</menu>
-			</li>
+			{@const handle = account.handle || account.did}
+			<Row
+				title={`@${handle}`}
+				avatar={{ key: handle, name: handle, src: current && session.avatar ? session.avatar : '' }}
+				chip={current ? { text: t('accounts.current'), tone: 'ok' } : null}
+			>
+				{#snippet menu()}
+					<CardMenu label={t('card.actions', { name: handle })}>
+						{#snippet items(done)}
+							{#if !current}<li><button type="button" onclick={() => (switchAccount(account.did), done())}><Icon name="me" /> {t('accounts.use')}</button></li>{/if}
+							<li><button type="button" onclick={() => (out(account.did), done())}><Icon name="signout" /> {t('me.signout')}</button></li>
+						{/snippet}
+					</CardMenu>
+				{/snippet}
+			</Row>
 		{/each}
-	</ul>
+	</jl-rows>
 	<menu><a href="/signin?add&next=/menu/accounts"><Icon name="add" /> {t('accounts.add')}</a></menu>
 </jl-accounts>
 
@@ -51,42 +62,8 @@
 		margin-inline: auto;
 		padding-bottom: var(--space-xl);
 	}
-	ul {
+	jl-rows {
+		display: block;
 		margin: var(--space-m) 0;
-		padding: 0;
-		list-style: none;
-		border: var(--border);
-		border-radius: var(--radius);
-	}
-	li {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: var(--space-s);
-		padding: var(--space-s) var(--space-m);
-	}
-	li + li {
-		border-top: var(--border);
-	}
-	li[data-current] {
-		background: var(--color-soft);
-	}
-	li > span {
-		display: flex;
-		flex-direction: column;
-		flex: 1;
-		min-width: 0;
-	}
-	li small {
-		color: var(--color-muted);
-	}
-	img {
-		width: var(--avatar-small);
-		height: var(--avatar-small);
-		border-radius: var(--radius-round);
-		object-fit: cover;
-	}
-	li menu {
-		gap: var(--space-xs);
 	}
 </style>

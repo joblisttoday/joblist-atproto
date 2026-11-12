@@ -17,7 +17,7 @@ test('a first visit has two doors, and the home is Explore once one organization
 	await expect(page.getByRole('status').filter({ hasText: 'Following GitLab' })).toBeVisible();
 	await page.goto('/');
 	await expect(page.locator('h1')).toHaveText('Explore');
-	await expect(page.locator('jl-kept-organizations li')).toHaveCount(1);
+	await expect(page.locator('jl-kept-organizations jl-row')).toHaveCount(1);
 	await page.goto('/jobs');
 	await expect(page.locator('jl-explore')).toBeVisible();
 });
@@ -45,7 +45,7 @@ test('who you are: this device, with no account, private', async ({ page }) => {
 	await page.goto('/menu');
 	await page.locator('jl-menu-page').getByRole('link', { name: /^You/ }).click();
 	await expect(page).toHaveURL(/\/menu\/accounts$/);
-	await expect(page.locator('jl-accounts li[data-current]')).toContainText('This device');
+	await expect(page.locator('jl-accounts jl-row:first-of-type')).toContainText('This device');
 	await expect(page.getByRole('link', { name: 'Add an account' })).toHaveAttribute('href', /\/signin\?add/);
 });
 

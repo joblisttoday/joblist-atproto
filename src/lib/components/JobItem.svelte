@@ -52,9 +52,10 @@
 					minutes: travelMinutes(job.km)
 				})
 	);
-	// Where and for whom on one line; how far, how, how much and when as chips.
+	// One muted line (docs/architecture.md: rows and chips): where and for whom, how far, how,
+	// how much, when; its state as one chip.
 	const line = $derived(facts.line);
-	const chips = $derived([distance, facts.place, facts.pay, facts.age].filter(Boolean));
+	const meta = $derived([line, distance, facts.place, facts.pay, facts.age].filter(Boolean).join(' · '));
 	const applied = $derived(markOf(job) === 'applied');
 	// First seen long ago: still listed, said so beside its date.
 	const older = $derived(facts.older);
@@ -63,28 +64,20 @@
 	let open = $state(false);
 </script>
 
-{#snippet chipsRow()}
-	<jl-chips>{#if fresh}<mark data-new>{t('job.new')}</mark>{/if}{#if applied}<mark><Icon name="applied" /> {t('marks.applied')}</mark>{/if}{#each chips as chip (chip)}<span>{#if chip === distance}<Icon name={travelIcon} />{' '}{/if}{chip}</span>{/each}{#if older}<em title={t('job.older.hint', { days: config.jobs.olderDays })}>{t('job.older')}</em>{/if}</jl-chips>
-{/snippet}
-{#snippet lead()}{#if fresh}<mark data-new>{t('job.new')}</mark>{/if}{#if applied}<mark><Icon name="applied" /> {t('marks.applied')}</mark>{/if}{#if distance}<span><Icon name={travelIcon} /> {distance}</span>{/if}{/snippet}
+{#snippet state()}{#if fresh}<jl-chip tone="new">{t('job.new')}</jl-chip>{:else if applied}<jl-chip tone="ok"><Icon name="applied" /> {t('marks.applied')}</jl-chip>{:else if older}<jl-chip tone="warn" title={t('job.older.hint', { days: config.jobs.olderDays })}>{t('job.older')}</jl-chip>{/if}{/snippet}
+{#snippet lead()}{#if fresh}<jl-chip tone="new">{t('job.new')}</jl-chip>{:else if applied}<jl-chip tone="ok"><Icon name="applied" /> {t('marks.applied')}</jl-chip>{/if}{#if distance}<span><Icon name={travelIcon} /> {distance}</span>{/if}{/snippet}
 
 <jl-job menu={(menu && !read) || undefined} posted={posted ? (posted.verified ? 'company' : 'shared') : undefined} older={older || undefined} read={read || undefined} {open} fresh={fresh || undefined} selected={selected || undefined} applied={applied || undefined}>
 	{#if company}<JobAvatar key={job.company} name={company} src={avatar ? thumbnail(avatar) : ''} />{/if}
 	{#if posted}
 		{#if !read}<a href={postPath(posted.did, posted.rkey)}>{job.title}</a>{/if}
-		<small>{#if company}<a href="/{job.company}">{company}</a>{line ? ' · ' : ''}{/if}{line}</small>
-		<jl-chips>
-			{#if applied}<mark><Icon name="applied" /> {t('marks.applied')}</mark>{/if}
-			{#each chips as chip (chip)}<span>{#if chip === distance}<Icon name={travelIcon} />{' '}{/if}{chip}</span>{/each}
-			{#if posted.verified}<mark><Icon name="verified" /> {t('job.verified')}</mark>{/if}
-		</jl-chips>
+		<small>{@render state()}{#if posted.verified && !fresh && !applied}<jl-chip tone="ok"><Icon name="verified" /> {t('job.verified')}</jl-chip>{/if}<span>{#if company}<a href="/{job.company}">{company}</a>{meta ? ' · ' : ''}{/if}{meta}</span></small>
 		{#if !posted.verified}
 			<small>{t('job.sharedBy')} <a href="/{handleOf(posted.did)}">@{handleOf(posted.did)}</a></small>
 		{/if}
 		{#if read}<jl-job-body>{@render actions?.()}</jl-job-body>{/if}
 	{:else if read}
-		{#if line}<small>{line}</small>{/if}
-		{@render chipsRow()}
+		<small>{@render state()}<span>{meta}</span></small>
 		<!-- The offer itself takes the whole width, under the company's picture too. -->
 		<jl-job-body>{@render actions?.()}<JobDescription {job} {company} /></jl-job-body>
 	{:else if onselect}
@@ -144,25 +137,11 @@
 	jl-job[posted] > :global(jl-avatar) {
 		grid-row: 1 / span 4;
 	}
-	jl-chips {
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-xs);
-		margin-top: var(--space-xs);
-	}
-	jl-chips > * {
-		padding: 0 var(--space-s);
-		border-radius: var(--radius-round);
-		background: var(--color-soft);
-		color: var(--color-fg);
-		font-size: var(--font-size-small);
-		line-height: var(--chip-line);
-	}
 	/* A card opening the job in the page: the whole card is the button. */
 	jl-job > button {
 		display: block;
 		width: 100%;
-		min-height: 0;
+		min-height: var(--tap-size);
 		padding: 0;
 		border: 0;
 		background: none;
@@ -199,24 +178,13 @@
 		display: none;
 	}
 	small {
-		display: block;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0 var(--space-xs);
+		color: var(--color-muted);
 	}
 	small a {
 		color: var(--color-fg);
-	}
-	mark {
-		background: none;
-		color: var(--color-ok);
-	}
-	/* New since the search was last seen: the first chip, filled. */
-	:global(jl-chips) > mark[data-new] {
-		background: var(--color-ok);
-		color: var(--color-bg);
-		font-weight: var(--font-weight-strong);
-	}
-	/* An offer listed for long: told, not hidden. */
-	jl-chips > em {
-		font-style: normal;
-		color: var(--color-warn);
 	}
 </style>

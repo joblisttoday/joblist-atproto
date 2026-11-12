@@ -24,7 +24,7 @@ test('a link opens its organization, to keep; kept ones are remembered', async (
 	await expect(page.locator('h1')).toContainText('GitLab');
 	await page.getByRole('button', { name: 'Follow', exact: true }).first().click();
 	await page.goto('/');
-	const items = page.locator('jl-kept-organizations li');
+	const items = page.locator('jl-kept-organizations jl-row');
 	await expect(items).toHaveCount(2);
 	await expect(items.first()).toContainText('GitLab');
 	await page.reload();
@@ -45,7 +45,7 @@ test('a kept organization joblist does not know opens its profile, to forget or 
 	await search(page, 'instagram.com/some.coop');
 	await page.getByRole('button', { name: 'Follow', exact: true }).first().click();
 	await page.goto('/');
-	await page.locator('jl-kept-organizations li a').first().click();
+	await page.locator('jl-kept-organizations jl-row a').first().click();
 	await expect(page).toHaveURL(/\/explore\/organization#url=/);
 	await expect(page.getByRole('link', { name: 'Is this your organization?' })).toHaveAttribute('href', /^\/org\/page\?url=https%3A%2F%2Finstagram\.com%2Fsome\.coop/);
 	await page.getByRole('button', { name: 'Following', exact: true }).first().click();
@@ -55,7 +55,7 @@ test('a kept organization joblist does not know opens its profile, to forget or 
 test('a followed organization that posts its jobs on atproto has them, not "look for its job board"', async ({ page }) => {
 	await page.addInitScript(() => localStorage.setItem('joblist.kept.v1', JSON.stringify([{ url: 'https://joblist.today', name: 'joblist', at: '2026-11-01T00:00:00Z' }])));
 	await page.goto('/');
-	const row = page.locator('jl-kept-organizations li').first();
+	const row = page.locator('jl-kept-organizations jl-row').first();
 	await expect(row).toContainText(/open job|No open jobs/, { timeout: 20_000 });
 	await expect(row).not.toContainText('Look for it');
 });

@@ -3,21 +3,20 @@
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * What a job's card says, the same on joblist (JobItem) and in the embed on other sites:
-	 * its title, its organization, where and for which team, then as chips how, how much and
-	 * when it was published (models/job-card.js), and that it has been listed for long.
-	 * lead: chips before them (the site's: new, applied, how far).
+	 * What a job's row says, the same on joblist (JobItem) and in the embed on other sites, as
+	 * every row (docs/architecture.md: rows and chips): its title, then one muted line in the
+	 * usual order (organization · place and team · workplace · pay · when), its state first as
+	 * a chip (lead: the site's: new, applied; or listed for long).
 	 * @type {{title: string, company?: string, facts: import('#lib/models/job-card.js').Facts, lead?: import('svelte').Snippet}}
 	 */
 	let { title, company = '', facts, lead } = $props();
-	const chips = $derived([facts.place, facts.pay, facts.age].filter(Boolean));
+	const meta = $derived([company, facts.line, facts.place, facts.pay, facts.age].filter(Boolean).join(' · '));
 </script>
 
 <strong>{title}</strong>
-<small>{company ? `${company}${facts.line ? ' · ' : ''}` : ''}{facts.line}</small>
-<jl-chips>
-	{@render lead?.()}{#each chips as chip (chip)}<span>{chip}</span>{/each}{#if facts.older}<em title={t('job.older.hint', { days: config.jobs.olderDays })}>{t('job.older')}</em>{/if}
-</jl-chips>
+<small
+	>{@render lead?.()}{#if facts.older}<jl-chip tone="warn" title={t('job.older.hint', { days: config.jobs.olderDays })}>{t('job.older')}</jl-chip>{/if}<span>{meta}</span></small
+>
 
 <style>
 	strong {
@@ -25,27 +24,34 @@
 		font-weight: var(--font-weight-strong);
 	}
 	small {
-		display: block;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0 var(--space-xs);
 		color: var(--color-muted);
 		font-size: var(--font-size-small);
 	}
-	jl-chips {
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-xs);
-		margin-top: var(--space-xs);
-	}
-	jl-chips > :global(*) {
+	/* Its own copy of the chip (the embed lives in a shadow root, apart from the site's styles). */
+	small > :global(jl-chip) {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-xxs);
 		padding: 0 var(--space-s);
 		border-radius: var(--radius-round);
 		background: var(--color-soft);
 		color: var(--color-fg);
-		font-size: var(--font-size-small);
+		font-weight: var(--font-weight-strong);
 		line-height: var(--chip-line);
+		white-space: nowrap;
 	}
-	/* An offer listed for long: told, not hidden. */
-	jl-chips > em {
-		font-style: normal;
+	small > :global(jl-chip[tone='ok']) {
+		color: var(--color-ok);
+	}
+	small > :global(jl-chip[tone='warn']) {
 		color: var(--color-warn);
+	}
+	small > :global(jl-chip[tone='new']) {
+		background: var(--color-ok);
+		color: var(--color-bg);
 	}
 </style>

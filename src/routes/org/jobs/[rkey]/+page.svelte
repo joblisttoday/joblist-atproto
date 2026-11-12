@@ -12,7 +12,8 @@
 	import { t } from '#lib/i18n/index.svelte.js';
 	import { findPost } from '#lib/network/find-post.svelte.js';
 
-	const did = $derived(page.params.did || '');
+	// Its own offer (/org/jobs/{rkey}): the account signed in posted it.
+	const did = $derived(session.did || '');
 	const found = findPost(() => ({ did, rkey: page.params.rkey || '' }));
 	const post = $derived(found.post);
 </script>

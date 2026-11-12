@@ -523,19 +523,6 @@
 		jl-explore-panel > button {
 			display: none;
 		}
-		/* A list: one job a row, its chips at the end. */
-		jl-explore[view='list'] :global(jl-jobs > ul jl-job > button) {
-			display: grid;
-			grid-template-columns: minmax(0, 1fr) auto;
-			column-gap: var(--column-gap);
-			align-items: center;
-		}
-		jl-explore[view='list'] :global(jl-jobs > ul jl-job > button > jl-chips) {
-			grid-column: 2;
-			grid-row: 1 / span 2;
-			justify-content: flex-end;
-			margin-top: 0;
-		}
 		/* A grid: cards across the width. */
 		jl-explore[view='grid'] :global(jl-jobs > ul) {
 			display: grid;

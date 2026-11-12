@@ -3,7 +3,7 @@
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * The signed-in organization's job offers, expired ones too, as cards: the ones still
+	 * The signed-in organization's job offers, expired ones too, as rows: the ones still
 	 * shown first, the latest first.
 	 * @type {{posts: import('#lib/models/job-post.js').JobPost[]}}
 	 */
@@ -23,8 +23,6 @@
 
 <style>
 	ul {
-		display: grid;
-		gap: var(--space-s);
 		margin: 0;
 		padding: 0;
 		list-style: none;
