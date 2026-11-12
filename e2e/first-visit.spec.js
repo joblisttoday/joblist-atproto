@@ -18,3 +18,13 @@ test('a first visit is asked for an organization, and Jobs comes once one is sav
 	await expect(page.getByPlaceholder('Search your jobs, or paste a link')).toBeVisible();
 	await expect(page.locator('jl-kept-organizations li')).toHaveCount(1);
 });
+
+test('the menu is short, and signing in is for organizations', async ({ page }) => {
+	await page.goto('/menu');
+	const rows = page.locator('jl-menu-page menu > li');
+	await expect(rows).toHaveCount(5);
+	await rows.first().getByRole('link', { name: 'For organizations' }).click();
+	await expect(page).toHaveURL(/\/organization$/);
+	await expect(page.locator('ol li')).toHaveCount(3);
+	await expect(page.getByPlaceholder('example.org')).toBeVisible();
+});

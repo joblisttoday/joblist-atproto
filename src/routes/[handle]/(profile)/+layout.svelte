@@ -95,8 +95,8 @@
 	<jl-profile self={self || undefined}>
 		<ProfileHeader did={did || undefined} {handle}>
 			<menu>
-				<!-- Signing out, the language, profiles: /menu. -->
-				{#if self}<a href="/menu"><Icon name="menu" /> {t('nav.menu')}</a>{/if}
+				<!-- Its own: managing it, and signing out, are on /organization. -->
+				{#if self}<a href="/organization"><Icon name="settings" /> {t('orgs.manage')}</a>{/if}
 				<PageMenu />
 			</menu>
 		</ProfileHeader>

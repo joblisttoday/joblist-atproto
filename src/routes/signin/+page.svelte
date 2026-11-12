@@ -7,15 +7,15 @@
 	import { nextPath } from '#lib/navigation/next.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
-	// Signed in already: on to the next page, unless adding another account (/signin?add).
-	const adding = $derived(page.url.searchParams.has('add'));
+	// Signing in is for organizations (their domain as their handle). Signed in already: on to
+	// the next page, or the organization's.
 	$effect(() => {
-		if (session.handle && !adding) goto(nextPath(page.url.searchParams) || `/${session.handle}`, { replace: true });
+		if (session.handle) goto(nextPath(page.url.searchParams) || '/organization', { replace: true });
 	});
 </script>
 
 <svelte:head><title>{t('signin.title')} · {config.name}</title></svelte:head>
 
 <h1>{t('signin.title')}</h1>
-<p>{adding && session.handle ? t('accounts.add.intro', { handle: session.handle }) : t('signin.intro')}</p>
+<p>{t('signin.intro')}</p>
 <SignIn />

@@ -24,6 +24,7 @@ const appPages = [
 	['/me/lists/hidden', en['marks.hidden']],
 	['/signin', en['signin.title']],
 	['/menu', en['nav.menu']],
+	['/organization', en['orgs.title']],
 	['/menu/language', en['about.language']],
 	['/menu/collections', en['collections.transfer']],
 	['/menu/outbox', en['outbox.title']],

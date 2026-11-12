@@ -4,14 +4,15 @@
 	/**
 	 * A group of the menu's rows: each a place (a link) or an action (a button), with its
 	 * icon, what it is, and, small, its current value; a link goes on (›).
-	 * @type {{label: string, items: import('#lib/navigation/nav.js').MenuLink[]}}
+	 * hidden: the label is said to screen readers only (a page's one group, under its title).
+	 * @type {{label: string, items: import('#lib/navigation/nav.js').MenuLink[], hidden?: boolean}}
 	 */
-	let { label, items } = $props();
+	let { label, items, hidden = false } = $props();
 	const id = $props.id();
 </script>
 
 <section aria-labelledby={id}>
-	<h2 {id}>{label}</h2>
+	{#if hidden}<jl-visually-hidden><h2 {id}>{label}</h2></jl-visually-hidden>{:else}<h2 {id}>{label}</h2>{/if}
 	<menu>
 		{#each items as item (item.label)}
 			<li>
