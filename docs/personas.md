@@ -22,26 +22,25 @@ the app works with none of it, offline, on any domain.
 ### Keeper
 Starts from the places they would like to work, not from a search: a cooperative
 they heard of, a studio's Instagram, a lab's website.
-- **Today:** Keep any link (/me): an organization joblist knows shows its open
-  jobs; another has a profile (/me/organization#url=…, and /{domain} for
+- **Today:** Paste any link on the home: an organization that describes itself shows
+  its page and jobs; another has a profile (/me/organization#url=…, and /{domain} for
   any domain) with what their browser finds: its Bluesky account when its domain
   is its handle, its job board's name and open jobs (read live, one board), where
-  they are; "Suggest to joblist" opens the add form filled in with all of it.
-  A Save on each organization's page and card.
+  they are. A Save on each organization's page; saved ones are listed on the home.
+  Job seekers never sign in.
   The Firefox add-on (extension/), on any website: whether joblist knows it and
   its open jobs, its job board and social profiles read in the page; save and tag
-  it (one list with "Your organizations", synced when joblist.today is open) or
-  suggest it to joblist, filled in.
+  it (one list with "Your organizations", synced when joblist.today is open).
 - **Missing:** the new jobs of kept organizations counted like a search's; editing
   tags on the site (the add-on does); the add-on on addons.mozilla.org and in Chrome.
 
 ### Near home
 Wants a job they can reach by bike or on foot.
 - **Today:** a search on the home leads to the explorer (/jobs), with the
-  map; "Near me" with bike or walking minutes, a map area. On Me: saved
-  searches, applied and hidden jobs, private named lists of jobs ("Dream
-  jobs") and saved organizations with their tags, each at its own address
-  (/me/searches, /me/lists/…, /me/organizations), with a file to move them all.
+  map; "Near me" with bike or walking minutes, a map area. On the home: saved
+  searches, lists of jobs (saved, applied, hidden, and named ones like "Dream
+  jobs") and saved organizations with their tags (/me/searches, /me/lists/…),
+  with a file to move them all (Menu).
 - **Missing:** being told when a new job appears near them without opening
   the site; real bike routes (today: straight-line distance).
 
@@ -54,9 +53,8 @@ Wants remote work they are allowed to take from their country.
 ### Watching, not searching
 Has a job, looks now and then: wants the new jobs of their saved searches,
 and nothing else.
-- **Today:** the Me tab counts the new jobs of their searches, and so does
-  the home; /me/searches shows them per search. Any search can be followed in a feed reader
-  (`/feed/search.xml?q=…`), made from its address only: nothing is stored.
+- **Today:** the Home tab counts the new jobs of their searches, and the home
+  shows them; /me/searches shows them per search.
 - **Missing:** browser notifications (they would need the searches stored
   on a server: not unless asked for).
 
@@ -80,9 +78,10 @@ Gathers organizations (a city, a field, their network), adds them to joblist.
 Wants its page right and its jobs shown.
 - **Today:** with the Bluesky handle set to its domain, its company record
   and job posts are shown as its own, verified, with its Bluesky picture.
-  Its page says how ("Is this your company?"), and "You manage this page"
-  once signed in with the domain.
-- **Missing:** recruiters posting for it.
+  Menu → For organizations (/organization) says how in 3 steps; signed in with
+  the domain, the same page manages it: its description, posting a job, its jobs
+  on its website, its job offers.
+- **Missing:** recruiters posting for it (today only the organization's own account publishes).
 
 ### Project looking for contributors
 A cooperative, a nonprofit, an open source project: wants people to work
