@@ -5,6 +5,8 @@ joblist's record types are defined in [`lexicons/today/joblist/`](../lexicons/to
 joblist reads `company` and `job` only (`collections` in config): `list` and `suggestion`
 were published before, and their records stay valid, but lists gave way to organizations'
 tags and places, and to each person's saved organizations in their browser.
+A `company` or `job` record counts only from the organization's own account (its handle is
+the record's domain): no one describes another organization.
 Every field added since the first records is optional: older records stay valid,
 and apps that do not know a field ignore it.
 

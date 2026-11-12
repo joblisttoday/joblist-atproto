@@ -38,7 +38,6 @@ const companies = $derived(
 				links: [],
 				jobBoard: board,
 				verified: false,
-				unchecked: false,
 				editedAt: item.at,
 				versions: []
 			})

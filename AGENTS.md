@@ -35,6 +35,6 @@ npm run build:site                # what GitHub Pages serves, in build/
 - Measure before building: count with a few requests first, and say the numbers in the commit.
 - Wrong is worse than unknown: a job's workplace, pay or place is shown only when its board or its text says it clearly.
 - What a page shows (search, filters, view, open job) lives after the `#` ([src/lib/navigation/address.js](src/lib/navigation/address.js)); a different thing gets its own path.
-- An organization's page is written by the organization itself (its handle is its domain), or joblist's starter account (`config.bots`): no one else rewrites it (`countingVersions` in `src/lib/models/company.js`).
+- Only an organization describes itself, or posts its jobs: a `today.joblist.company` or `today.joblist.job` record counts only from the account whose handle is its domain (`countingVersions`, `mayDescribe` in `src/lib/models/company.js`). No one publishes about another organization; others keep it in their browser.
 - Lexicons stay small and are the owner's call: propose a change to `lexicons/` and wait for a yes; publishing is by hand only (docs/lexicons.md). A published field can never be taken back.
 - Look at UI changes at 390px and 1440px before committing; do not stop or reuse a dev server you did not start.

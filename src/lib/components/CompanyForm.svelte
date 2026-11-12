@@ -17,8 +17,8 @@
 	import { saveCompany } from '#lib/network/save-company.js';
 	import { clearCompanyDraft, readCompanyDraft, writeCompanyDraft } from '#lib/network/company-draft.js';
 	import { backToSave, leftToSave } from '#lib/network/drafts.js';
-	import { toForm } from '#lib/models/company.js';
-	import { draftApplies, previewCompany, readLink, readWebsite, saveOutcome } from '#lib/models/company-form.js';
+	import { mayDescribe, toForm } from '#lib/models/company.js';
+	import { draftApplies, previewCompany, readLink, readWebsite } from '#lib/models/company-form.js';
 	import { withPrefill } from '#lib/models/paste.js';
 	import { i18n, t } from '#lib/i18n/index.svelte.js';
 	import { onMount, untrack } from 'svelte';
@@ -29,7 +29,7 @@
 	 *   company?: import('#lib/models/company.js').Company | null,
 	 *   prefill?: Parameters<typeof withPrefill>[1],
 	 *   focus?: string,
-	 *   onsaved: (saved: {key: string, name: string, outcome: ReturnType<typeof saveOutcome>, added: boolean}) => void,
+	 *   onsaved: (saved: {key: string, name: string, added: boolean}) => void,
 	 *   oncancel?: () => void
 	 * }}
 	 *   focus: the part to start on (description, jobBoard, locations, tags, links), from an invitation on the company page.
@@ -102,14 +102,18 @@
 			if (company) writeCompanyDraft($state.snapshot(form));
 			return signin?.ask();
 		}
+		// Only the organization itself describes it, signed in with its domain as handle.
+		if (!mayDescribe({ key }, session)) {
+			error = t('form.company.notYours', { domain: key });
+			return;
+		}
 		busy = true;
 		try {
-			const outcome = saveOutcome(company, session.handle || '');
 			const added = !company;
 			const key = await saveCompany(form, company);
 			if (added || restored) clearCompanyDraft();
 			leftToSave(null);
-			onsaved({ key, name: form.name.trim(), outcome, added });
+			onsaved({ key, name: form.name.trim(), added });
 		} catch (err) {
 			error = err instanceof Error ? err.message : String(err);
 		} finally {

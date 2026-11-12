@@ -2,19 +2,16 @@
 	import Author from './Author.svelte';
 	import EditTime from './EditTime.svelte';
 	import { session } from '#lib/auth/session.svelte.js';
-	import { saveOutcome } from '#lib/models/company-form.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * What the form starts from and what saving does: the person's own version,
-	 * shown to everyone unless the company publishes its own.
+	 * What the form starts from, and that saving writes the organization's own record.
 	 * @type {{company: import('#lib/models/company.js').Company | null}}
 	 */
 	let { company } = $props();
-	const outcome = $derived(saveOutcome(company, session.handle || ''));
 </script>
 
-<jl-company-edit-note {outcome}>
+<jl-company-edit-note>
 	{#if company}
 		<p>
 			<small>
@@ -22,7 +19,7 @@
 			</small>
 		</p>
 	{/if}
-	<p><small>{t(`form.save.${company ? outcome : 'new'}`, { name: company?.name || '', domain: company?.key || '' })}</small></p>
+	<p><small>{t('form.save.own', { domain: company?.key || session.handle || '' })}</small></p>
 </jl-company-edit-note>
 
 <style>
@@ -36,8 +33,5 @@
 	}
 	p {
 		margin: 0;
-	}
-	jl-company-edit-note[outcome='behindOwn'] p:last-child small {
-		color: var(--color-warn);
 	}
 </style>

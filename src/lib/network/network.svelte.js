@@ -4,7 +4,7 @@ import { listRecords } from '#lib/atproto/records.js';
 import { resolveDid } from '#lib/atproto/identity.js';
 import { mapLimit } from '#lib/atproto/xrpc.js';
 import { session } from '#lib/auth/session.svelte.js';
-import { toCompany } from '#lib/models/company.js';
+import { isOwnRecord, speaksFor, toCompany } from '#lib/models/company.js';
 import { claimedCompanies, isLive, notFromCompany, toJob, toPost } from '#lib/models/job-post.js';
 import { allowed } from '#lib/models/moderation.js';
 import { isCompanyKey } from '#lib/models/landing.js';
@@ -51,12 +51,12 @@ export const network = $state({
 
 const profileMap = $derived(new Map(Object.entries(network.profiles)));
 
-/** One company per key, with the version picked for the current viewer. */
+/** One company per key: only its own record (its author's handle is its domain). */
 const companies = $derived.by(() => {
 	/** @type {Map<string, RepoRecord[]>} */
 	const byKey = new Map();
 	for (const r of network.companyRecords) {
-		if (!r.value?.name || !allowed(r) || !isCompanyKey(r.rkey)) continue;
+		if (!r.value?.name || !allowed(r) || !isCompanyKey(r.rkey) || !isOwnRecord(r, profileMap)) continue;
 		const versions = byKey.get(r.rkey) || [];
 		versions.push(r);
 		byKey.set(r.rkey, versions);
@@ -65,10 +65,10 @@ const companies = $derived.by(() => {
 	return new Companies([...byKey.values()].map((versions) => toCompany(versions, profileMap)));
 });
 
-/** Every job offer posted on joblist, also expired ones (their posters can renew them). */
+/** Every job offer an organization posted itself, also expired ones (it can renew them). */
 const posts = $derived(
 	network.jobRecords
-		.filter((r) => r.value?.title && r.value?.company && allowed(r))
+		.filter((r) => r.value?.title && r.value?.company && allowed(r) && speaksFor(profileMap, r.did, r.value.company))
 		.map((r) => toPost(r, profileMap))
 		.sort((a, b) => b.createdAt.localeCompare(a.createdAt))
 );

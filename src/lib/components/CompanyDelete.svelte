@@ -4,19 +4,16 @@
 	import config from '#lib/data/config.json';
 	import { deleteRecord } from '#lib/atproto/write.js';
 	import { session } from '#lib/auth/session.svelte.js';
-	import { afterDelete } from '#lib/models/company-form.js';
-	import { data, handleOf, removeLocal } from '#lib/network/network.svelte.js';
+	import { removeLocal } from '#lib/network/network.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * Delete the signed-in person's version of a company, once they have read
-	 * what it does to the page (a native dialog, "Keep it" by default).
+	 * Delete the organization's own description, once its account has read what it does
+	 * (a native dialog, "Keep it" by default).
 	 * @type {{company: import('#lib/models/company.js').Company}}
 	 */
 	let { company } = $props();
 	const own = $derived(company.versions.find((v) => v.did === session.did));
-	const after = $derived(afterDelete(company, session.did || '', data.profiles));
-	const handle = $derived('next' in after ? handleOf(after.next.did) : '');
 	/** @type {ConfirmDialog | undefined} */
 	let confirmer = $state();
 	let busy = $state(false);
@@ -25,14 +22,12 @@
 
 	async function remove() {
 		if (!own) return;
-		// Said before deleting: once deleted, what remains is another page.
-		const { outcome } = after;
 		busy = true;
 		error = null;
 		try {
 			await deleteRecord(config.collections.company, company.key);
 			removeLocal('company', own.uri);
-			if (outcome === 'gone') await goto('/');
+			await goto('/');
 		} catch (err) {
 			error = err instanceof Error ? err.message : String(err);
 		} finally {
@@ -48,8 +43,8 @@
 		</button>
 		<ConfirmDialog
 			bind:this={confirmer}
-			title={t(`company.delete.${after.outcome}`, { name: company.name, handle })}
-			text={t(`company.delete.${after.outcome}.text`, { name: company.name })}
+			title={t('company.delete.gone', { name: company.name })}
+			text={t('company.delete.gone.text', { name: company.name })}
 			keep={t('company.delete.keep')}
 			confirm={t('company.delete.confirm')}
 			onconfirm={remove}

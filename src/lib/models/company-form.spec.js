@@ -3,7 +3,6 @@ import config from '#lib/data/config.json';
 import { toCompany, toForm } from './company.js';
 import {
 	addTags,
-	afterDelete,
 	companyRecord,
 	draftApplies,
 	missingFields,
@@ -12,7 +11,6 @@ import {
 	readBoardInput,
 	readLink,
 	readWebsite,
-	saveOutcome,
 	splitTags,
 	tagWord
 } from './company-form.js';
@@ -25,8 +23,8 @@ const version = (did, date, value = {}) => ({
 	cid: '',
 	value: { name: 'Acme', createdAt: date, ...value }
 });
-/** @param {any[]} versions @param {Map<string, {handle: string}>} [profiles] */
-const company = (versions, profiles = new Map()) => toCompany(versions, profiles);
+/** A company described by itself (each author here is acme.org). @param {any[]} versions */
+const company = (versions) => toCompany(versions, new Map(versions.map((v) => [v.did, { handle: 'acme.org' }])));
 
 describe('tags', () => {
 	it('are lowercase words without #', () => {
@@ -119,46 +117,12 @@ describe('companyRecord', () => {
 		expect(record).toMatchObject({ $type: 'today.joblist.company', createdAt: '2026-05-01', updatedAt: '2026-05-01', jobBoard: { provider: 'ashby', id: 'acme' } });
 		expect(record.jobBoard).not.toHaveProperty('url');
 	});
-	it('keeps the key and the first description date of the person editing', () => {
-		const edited = company([version('did:me', '2026-01-01'), version('did:other', '2026-02-01')]);
+	it('keeps the key and the first description date', () => {
+		const edited = company([version('did:me', '2026-01-01')]);
 		const form = { ...toForm(edited), url: 'https://elsewhere.org' };
 		const { key, record } = companyRecord(form, edited, 'did:me', '2026-05-01');
 		expect(key).toBe('acme.org');
 		expect(record).toMatchObject({ createdAt: '2026-01-01', updatedAt: '2026-05-01' });
-		expect(companyRecord(form, edited, 'did:new', '2026-05-01').record.createdAt).toBe('2026-05-01');
-	});
-	it('starts from the version shown', () => {
-		const edited = company([version('did:a', '2026-01-01', { description: 'old' }), version('did:b', '2026-02-01', { description: 'new' })]);
-		expect(companyRecord(toForm(edited), edited, 'did:me').record.description).toBe('new');
-	});
-});
-
-describe('saveOutcome', () => {
-	const profiles = new Map([['did:org', { handle: 'acme.org' }]]);
-	it('is shown, unless the company has its own version', () => {
-		expect(saveOutcome(null, 'me.bsky.social')).toBe('shown');
-		expect(saveOutcome(company([version('did:a', '2026-01-01')]), 'me.bsky.social')).toBe('shown');
-		expect(saveOutcome(company([version('did:org', '2026-01-01')], profiles), 'me.bsky.social')).toBe('behindOwn');
-	});
-	it('is the company own version when saved from its domain', () => {
-		expect(saveOutcome(company([version('did:a', '2026-01-01')]), 'acme.org')).toBe('own');
-	});
-});
-
-describe('afterDelete', () => {
-	const profiles = new Map();
-	it('removes the company when it was the only version', () => {
-		expect(afterDelete(company([version('did:me', '2026-01-01')]), 'did:me', profiles)).toEqual({ outcome: 'gone' });
-	});
-	it('shows the next most recent version when the deleted one was shown', () => {
-		const c = company([version('did:me', '2026-03-01'), version('did:a', '2026-01-01'), version('did:b', '2026-02-01')]);
-		const result = afterDelete(c, 'did:me', profiles);
-		expect(result.outcome).toBe('replaced');
-		expect('next' in result && result.next.did).toBe('did:b');
-	});
-	it('changes nothing shown when another version was shown', () => {
-		const c = company([version('did:me', '2026-01-01'), version('did:a', '2026-02-01')]);
-		expect(afterDelete(c, 'did:me', profiles).outcome).toBe('unchanged');
 	});
 });
 

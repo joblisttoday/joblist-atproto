@@ -21,7 +21,6 @@ import providers from '#lib/data/providers.json' with { type: 'json' };
  *   jobBoard?: JobBoard,
  *   links: string[],
  *   verified: boolean,
- *   unchecked: boolean,
  *   editedAt: string,
  *   record: RepoRecord,
  *   versions: RepoRecord[]
@@ -90,49 +89,23 @@ export function byRecent(versions) {
 }
 
 /**
- * The versions that count for a company: the organization's own record, else joblist's
- * starter records (config.bots); someone else's only while neither exists (a suggestion,
- * how a new organization comes in). Nobody else rewrites an organization's page.
+ * The versions that count for a company: only the organization's own record (its
+ * handle is its domain). Nobody else describes an organization in public.
  * @param {RepoRecord[]} versions
  * @param {Map<string, Handle>} profiles
  * @returns {RepoRecord[]} the most recent first
  */
 export function countingVersions(versions, profiles) {
-	const own = versions.filter((v) => isOwnRecord(v, profiles));
-	if (own.length) return byRecent(own);
-	const starter = versions.filter((v) => config.bots.includes(v.did));
-	return byRecent(starter.length ? starter : versions);
+	return byRecent(versions.filter((v) => isOwnRecord(v, profiles)));
 }
 
 /**
- * The version shown for a company: its own record, else joblist's, else a suggestion.
+ * The version shown for a company: its own record (undefined when there is none).
  * @param {RepoRecord[]} versions
  * @param {Map<string, Handle>} profiles
  */
 export function pickVersion(versions, profiles) {
 	return countingVersions(versions, profiles)[0];
-}
-
-/**
- * Whether a version was written by a bot (config.bots), or by a new account over
- * someone else's (newAuthor, see indexer/seen.js), and no established person
- * has saved a newer version since: nobody has checked it yet.
- * @param {RepoRecord} version
- * @param {RepoRecord[]} versions
- * @param {string[]} [bots]
- */
-export function isUnchecked(version, versions, bots = config.bots) {
-	if (!bots.includes(version.did) && !version.newAuthor) return false;
-	return !versions.some((v) => v.did !== version.did && !bots.includes(v.did) && !v.newAuthor && editedAt(v) > editedAt(version));
-}
-
-/**
- * What to say about an unchecked version (an i18n key): the crawler's, or a new account's.
- * @param {RepoRecord} version
- * @param {string[]} [bots]
- */
-export function uncheckedLabel(version, bots = config.bots) {
-	return bots.includes(version.did) ? 'company.unchecked' : 'company.unchecked.newAccount';
 }
 
 /**
@@ -163,8 +136,6 @@ export function toCompany(versions, profiles) {
 		jobBoard: v.jobBoard,
 		links: (v.links || []).map((/** @type {unknown} */ link) => safeUrl(link)).filter(Boolean),
 		verified: isOwnRecord(record, profiles),
-		// A company's own record is never "the crawler's", even from a bot account.
-		unchecked: !isOwnRecord(record, profiles) && isUnchecked(record, versions),
 		editedAt: editedAt(record),
 		record,
 		versions: countingVersions(versions, profiles)
@@ -257,14 +228,13 @@ export function searchCompanies(companies, query, limit) {
  */
 
 /**
- * Who writes an organization's page: the organization itself (signed in with its domain
- * as its handle), or joblist's starter account (config.bots), whose records it replaces.
- * Anyone else keeps it privately, or tells it.
+ * Who writes an organization's page: the organization itself, signed in with its domain
+ * as its handle. Anyone else keeps it privately, in their browser.
  * @param {{key: string}} company
  * @param {{did?: string | null, handle?: string | null}} who the signed-in person
  */
 export function mayDescribe(company, who) {
-	return Boolean(who.handle && who.handle === company.key) || Boolean(who.did && config.bots.includes(who.did));
+	return Boolean(who.handle && who.handle === company.key);
 }
 
 /**
@@ -334,4 +304,13 @@ export function toForm(company) {
 export function withScheme(url) {
 	const value = url.trim();
 	return value.includes('://') ? value : `https://${value}`;
+}
+
+/**
+ * The organization a signed-in person speaks for: their handle, when it is a domain of
+ * its own (not a name on a shared host, like name.bsky.social); '' else.
+ * @param {string | null | undefined} handle
+ */
+export function ownDomain(handle) {
+	return handle && !config.hostedHandles.some((host) => handle.endsWith(host)) ? handle : '';
 }

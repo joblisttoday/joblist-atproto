@@ -32,8 +32,10 @@ Pieces share no code path at run time; they share these:
 - An organization is its own account: its handle is its domain, and its page here
   (`/{domain}`) reads its `today.joblist.company` record and its `today.joblist.job` offers
   from its own server when the page opens. No one else's version is shown.
-- People sign in with any atproto account (OAuth, asking only for the app's record types)
-  to post jobs or describe their own organization; what they write is in their account.
+- An organization signs in with its domain as its handle (OAuth, asking only for the app's
+  record types) to describe itself and post its jobs; what it writes is in its own account.
+  No one publishes about another organization: records about a domain from any other
+  account are not read.
 - Any other app can read the same records.
 
 ## Politeness

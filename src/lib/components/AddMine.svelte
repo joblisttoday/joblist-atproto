@@ -1,7 +1,7 @@
 <script>
-	import config from '#lib/data/config.json';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { data } from '#lib/network/network.svelte.js';
+	import { ownDomain } from '#lib/models/company.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
@@ -9,8 +9,7 @@
 	 * Describing it from this account makes its page the company's own (verified).
 	 * Handles on a shared host (name.bsky.social) are people, not companies.
 	 */
-	const handle = $derived(session.handle || '');
-	const domain = $derived(handle && !config.hostedHandles.some((host) => handle.endsWith(host)) ? handle : '');
+	const domain = $derived(ownDomain(session.handle));
 	const company = $derived(domain ? data.companies.get(domain) : undefined);
 	const href = $derived(company ? `/${domain}` : `/add?url=${encodeURIComponent(`https://${domain}`)}`);
 </script>

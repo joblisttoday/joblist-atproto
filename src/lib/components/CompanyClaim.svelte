@@ -7,7 +7,7 @@
 	/**
 	 * For the company itself: how to show its page as its own (its Bluesky handle is
 	 * its domain), or, signed in with that handle, what it can do here.
-	 * @type {{company: import('#lib/models/company.js').Company}}
+	 * @type {{company: {key: string, verified?: boolean}}}
 	 */
 	let { company } = $props();
 	const manager = $derived(session.handle === company.key);

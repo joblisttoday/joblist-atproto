@@ -1,7 +1,7 @@
 import config from '#lib/data/config.json' with { type: 'json' };
 import { detectBoard } from '#lib/ats/detect.js';
 import { safeUrl } from './url.js';
-import { ATPROTO, pickVersion, toDomain, toRecord, withScheme } from './company.js';
+import { ATPROTO, toDomain, toRecord, withScheme } from './company.js';
 import { boardFromCareers } from './paste.js';
 
 /**
@@ -158,7 +158,6 @@ export function previewCompany(form, key) {
 		jobBoard: record.jobBoard,
 		links: record.links || [],
 		verified: false,
-		unchecked: false,
 		editedAt: record.updatedAt,
 		record: version,
 		versions: [version]
@@ -177,34 +176,6 @@ export function companyRecord(form, company, did, now) {
 	const own = company?.versions.find((v) => v.did === did);
 	const key = company ? company.key : toDomain(form.url);
 	return { key, record: toRecord(boardFromCareers(form), own?.value.createdAt, now) };
-}
-
-/**
- * What saving does to the page: the person's version is the one shown, or
- * it stays in the history because the company's own version wins.
- * @param {Company | null} company
- * @param {string} handle the person saving
- * @returns {'own' | 'shown' | 'behindOwn'}
- */
-export function saveOutcome(company, handle) {
-	if (company && handle === company.key) return 'own';
-	return company?.verified ? 'behindOwn' : 'shown';
-}
-
-/**
- * What deleting the person's version does to the page: the company leaves
- * joblist (it was the only version), another version is shown instead, or
- * nothing shown changes (another version was shown already).
- * @param {Company} company
- * @param {string} did
- * @param {Map<string, {handle: string}>} profiles
- * @returns {{outcome: 'gone'} | {outcome: 'replaced' | 'unchanged', next: RepoRecord}}
- */
-export function afterDelete(company, did, profiles) {
-	const rest = company.versions.filter((v) => v.did !== did);
-	if (!rest.length) return { outcome: 'gone' };
-	const next = pickVersion(rest, profiles);
-	return { outcome: company.record.did === did ? 'replaced' : 'unchanged', next };
 }
 
 /**

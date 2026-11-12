@@ -72,7 +72,7 @@ field.
 ### Curator
 Gathers organizations (a city, a field, their network), adds them to joblist.
 - **Today:** saved organizations with their own tags, in their browser; Add
-  with a pasted link; tags and places on each organization, versions anyone can edit.
+  with a pasted link; tags on each, kept in their browser (nothing published about others).
 - **Missing:** knowing which of their saved organizations have new jobs, or a
   closed board to fix.
 

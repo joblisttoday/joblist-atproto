@@ -2057,7 +2057,6 @@ var X = {
 		company: "today.joblist.company",
 		job: "today.joblist.job"
 	},
-	bots: ["did:plc:jqaucxlucukeif3bltpuc7zx"],
 	lexicons: {
 		dir: "lexicons",
 		did: "did:plc:jqaucxlucukeif3bltpuc7zx",

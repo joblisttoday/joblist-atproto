@@ -15,7 +15,7 @@
 	import { findCompany, hasInput, parsePaste, readExtras, readParams, toPrefill } from '#lib/models/paste.js';
 	import { data } from '#lib/network/network.svelte.js';
 	import CompanyClaim from '#lib/components/CompanyClaim.svelte';
-	import { mayDescribe } from '#lib/models/company.js';
+	import { mayDescribe, ownDomain, toDomain } from '#lib/models/company.js';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
@@ -31,8 +31,10 @@
 		key ? data.companies.get(key) || null : started ? findCompany(data.companies, pasted) : null
 	);
 	const board = $derived(key ? null : pasted.board);
-	// One joblist has is written by itself (or joblist's starter account) only: anyone else is shown how to claim it.
-	const closed = $derived(Boolean(company) && !mayDescribe(/** @type {{key: string}} */ (company), session));
+	// An organization is described by itself only (signed in with its domain as handle):
+	// anyone else is shown how it can do it, and keeps it in their browser.
+	const target = $derived(company?.key || toDomain(pasted.url || '') || ownDomain(session.handle));
+	const closed = $derived(started && !mayDescribe({ key: target }, session));
 	const check = $derived(board ? checkBoard(board) : Promise.resolve(null));
 	const title = $derived(company ? t('form.company.edit') : t('form.company.title'));
 	// Described from "suggest a company" on a list (?list=/handle/rkey): go back there with it.
@@ -41,7 +43,7 @@
 	const back = $derived(params.get('next') || '');
 	/**
 	 * Saved here (not sent back to a list or a job): what next.
-	 * @typedef {{key: string, name: string, outcome: 'own' | 'shown' | 'behindOwn', added: boolean}} Saved
+	 * @typedef {{key: string, name: string, added: boolean}} Saved
 	 * @type {Saved | null}
 	 */
 	let saved = $state(null);
@@ -82,9 +84,13 @@
 				<p aria-live="polite"><small>{t('add.checking')}</small></p>
 			{:then found}
 				{#if !key}<AddFound {board} count={found?.count} existing={company} />{/if}
-				{#if closed && company}
-					<CompanyClaim {company} />
-					<p><a href="/{company.key}">{company.name}</a></p>
+				{#if closed}
+					{#if target}
+						<CompanyClaim company={company || { key: target, verified: false }} />
+						<p><a href="/{target}">{company?.name || target}</a></p>
+					{:else}
+						<p>{t('add.ownOnly')}</p>
+					{/if}
 				{:else}
 				{#key `${company?.key}:${page.url.search}`}
 					<CompanyForm

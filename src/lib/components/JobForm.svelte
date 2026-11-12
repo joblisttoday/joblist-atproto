@@ -14,6 +14,7 @@
 	import { postJob, updateJob } from '#lib/network/save-job.js';
 	import { data } from '#lib/network/network.svelte.js';
 	import { session } from '#lib/auth/session.svelte.js';
+	import { ownDomain } from '#lib/models/company.js';
 	import { clearDraft, readDraft, writeDraft } from '#lib/network/job-draft.js';
 	import { leftToSave } from '#lib/network/drafts.js';
 	import { longDate } from '#lib/i18n/dates.js';
@@ -61,9 +62,10 @@
 				}
 			: null
 	);
-	// Signed in as a company's account: its own company, unless another was chosen.
+	// An organization posts its own jobs: signed in with its domain as handle, the job is its.
+	const own = $derived(ownDomain(session.handle));
 	$effect(() => {
-		if (!post && !form.company && session.handle && data.companies.has(session.handle)) form.company = session.handle;
+		if (!post && own) form.company = own;
 	});
 	let busy = $state(false);
 	let tried = $state(false);
@@ -119,6 +121,10 @@
 		if (!canApply) return document.getElementById('apply-to')?.focus();
 		// Signed out: the offer stays in this browser while signing in, then is posted from here.
 		if (!session.did) return signin?.ask();
+		if (!post && form.company !== session.handle) {
+			error = t('form.company.notYours', { domain: form.company });
+			return;
+		}
 		busy = true;
 		error = null;
 		try {
@@ -146,7 +152,7 @@
 		{#if restored}
 			<p><small>{t('post.draft')} <button type="button" onclick={startOver}>{t('post.draft.clear')}</button></small></p>
 		{/if}
-		<JobCompanyField bind:this={companyField} bind:company={form.company} {back} locked={Boolean(post)} missing={tried && !form.company} />
+		<JobCompanyField bind:this={companyField} bind:company={form.company} {back} locked={Boolean(post || own)} missing={tried && !form.company} />
 		{#if form.company}<JobPoster company={form.company} />{/if}
 
 		<label for="job-title">{t('post.jobTitle')}</label>

@@ -4,15 +4,15 @@
 
 	/**
 	 * Once a company is saved: what happened, and what to do next with it.
-	 * @type {{key: string, name: string, outcome: 'own' | 'shown' | 'behindOwn', added: boolean}} added: a new company (not an edit)
+	 * @type {{key: string, name: string, added: boolean}} added: a new company (not an edit)
 	 */
-	let { key, name, outcome, added } = $props();
-	const title = $derived(added ? 'added.new' : `added.${outcome}`);
+	let { key, name, added } = $props();
+	const title = $derived(added ? 'added.new' : 'added.own');
 </script>
 
-<jl-add-saved {outcome}>
+<jl-add-saved>
 	<h1 tabindex="-1"><Icon name="applied" /> {t(title, { name })}</h1>
-	<p>{t(`added.${outcome}.text`, { name })}</p>
+	<p>{t('added.own.text', { name })}</p>
 	<menu>
 		<a href="/{key}">{t('added.open', { name })}</a>
 		<a href="/jobs/new?company={encodeURIComponent(key)}"><Icon name="post" /> {t('added.post')}</a>
