@@ -60,3 +60,21 @@ test('/apps offers the add-on, packed with the site, and how to try it', async (
 	expect(bytes.includes(Buffer.from('manifest.json'))).toBe(true);
 	await expect(page.getByText('about:debugging#/runtime/this-firefox')).toBeVisible();
 });
+
+test('the popup counts the jobs matching your saved searches (copied from joblist.today)', async ({ page }) => {
+	const gitlab = { url: 'https://about.gitlab.com/jobs/', title: 'GitLab jobs', metas: {}, links: ['https://job-boards.greenhouse.io/gitlab'] };
+	await page.addInitScript((fixture) => {
+		/** @type {Record<string, any>} */
+		const store = { searches: [{ query: 'product', where: '', remote: '' }] };
+		Object.assign(globalThis, {
+			browser: {
+				tabs: { query: async () => [{ id: 1, url: fixture.url }], get: async () => ({ id: 1 }), create: async () => {}, sendMessage: async () => {} },
+				scripting: { executeScript: async () => [{ result: fixture }] },
+				storage: { local: { get: async (/** @type {string[]} */ keys) => Object.fromEntries([keys].flat().map((k) => [k, store[k]])), set: async (/** @type {object} */ o) => Object.assign(store, o) } }
+			}
+		});
+	}, gitlab);
+	await page.setViewportSize({ width: 400, height: 700 });
+	await page.goto(popup);
+	await expect(page.locator('.status')).toContainText(/\d+ matching your searches/, { timeout: 20_000 });
+});

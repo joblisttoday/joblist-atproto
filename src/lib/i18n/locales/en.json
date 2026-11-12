@@ -608,5 +608,6 @@
 	"explore.noJobs": "No job read yet from the {count} organizations you follow: joblist knows none of their job boards.",
 	"explore.findBoards": "Find their job boards",
 	"explore.noJobs.one": "No job read yet from the organization you follow: joblist knows none of its job boards.",
-	"nav.org": "Organization"
+	"nav.org": "Organization",
+	"extension.matching": "{count} matching your searches"
 }

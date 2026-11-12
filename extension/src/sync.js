@@ -4,7 +4,9 @@ import { api } from './api.js';
 /**
  * On joblist.today: the add-on's changes made to the list the site keeps (in its own storage,
  * this page's), the site told ("joblist:kept"), and the add-on's copy of the list made the same.
- * Each change the site makes (it says "joblist:kept-written") is copied too. Nothing is sent anywhere.
+ * Each change the site makes (it says "joblist:kept-written") is copied too, and its saved
+ * searches ("joblist:searches-written"), for the popup to count the jobs matching them.
+ * Nothing is sent anywhere.
  */
 const KEY = 'joblist.kept.v1';
 
@@ -29,7 +31,17 @@ async function sync() {
 	}
 	// Changes made while this ran stay, for the next time.
 	const { changes: now = [] } = await api.storage.local.get('changes');
-	await api.storage.local.set({ mirror: list, changes: Array.isArray(now) ? now.slice(made.length) : [] });
+	await api.storage.local.set({ mirror: list, searches: siteSearches(), changes: Array.isArray(now) ? now.slice(made.length) : [] });
+}
+
+/** The site's saved searches (src/lib/network/saved-searches.svelte.js). */
+function siteSearches() {
+	try {
+		const list = JSON.parse(localStorage.getItem('joblist.searches.v1') || '[]');
+		return Array.isArray(list) ? list : [];
+	} catch {
+		return [];
+	}
 }
 
 sync();
@@ -37,3 +49,4 @@ api.runtime.onMessage.addListener((/** @type {any} */ message) => {
 	if (message?.joblist === 'sync') sync();
 });
 addEventListener('joblist:kept-written', () => api.storage.local.set({ mirror: siteList() }));
+addEventListener('joblist:searches-written', () => api.storage.local.set({ searches: siteSearches() }));

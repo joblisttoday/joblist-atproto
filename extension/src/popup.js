@@ -6,7 +6,7 @@ import { bluesky } from '../../src/lib/network/bluesky-account.js';
 import { api } from './api.js';
 import { collectPage } from './collect.js';
 import { getJobs } from '../../src/lib/ats/index.js';
-import { newestFirst } from '../../src/lib/models/job.js';
+import { filterJobs, newestFirst } from '../../src/lib/models/job.js';
 import { change, keptNow } from './store.js';
 import { locale, t } from './texts.js';
 
@@ -18,7 +18,7 @@ import { locale, t } from './texts.js';
  * It shows something at once, and says what went wrong rather than staying empty.
  * @typedef {import('../../src/lib/models/page-read.js').Read} Read
  * @typedef {{title: string, url: string, place: string}} Offer
- * @typedef {{state: 'none'} | {state: 'asking'} | {state: 'read', jobs: number, offers: Offer[]} | {state: 'offline'}} Jobs
+ * @typedef {{state: 'none'} | {state: 'asking'} | {state: 'read', jobs: number, matching: number | null, offers: Offer[]} | {state: 'offline'}} Jobs
  */
 
 const NEWEST = 5;
@@ -69,6 +69,9 @@ async function boardJobs(board, key) {
 	try {
 		const jobs = await getJobs(/** @type {any} */ ({ key, jobBoard: board }));
 		newestFirst(jobs);
+		// Your saved searches (copied from joblist.today, sync.js): how many of its jobs match one.
+		const { searches = [] } = await api.storage.local.get('searches');
+		const matching = Array.isArray(searches) && searches.length ? filterJobs(jobs, { query: '', where: '', remote: '', any: searches }, new Map()).length : null;
 		/** @type {Map<string, Offer>} */
 		const offers = new Map();
 		for (const job of jobs) {
@@ -79,7 +82,7 @@ async function boardJobs(board, key) {
 				if (place && !same.place.includes(place)) same.place = same.place ? `${same.place} · ${place}` : place;
 			} else offers.set(title.toLowerCase(), { title, url: job.url, place });
 		}
-		return { state: 'read', jobs: offers.size, offers: [...offers.values()].slice(0, NEWEST) };
+		return { state: 'read', jobs: offers.size, matching, offers: [...offers.values()].slice(0, NEWEST) };
 	} catch {
 		return { state: 'offline' };
 	}
@@ -108,7 +111,7 @@ const app = /** @type {HTMLElement} */ (document.getElementById('app'));
 document.documentElement.lang = locale;
 
 /** @param {string} text */
-const say = (text) => app.replaceChildren(h('p', { class: 'muted' }, text), h('footer', {}, link(site('/following'), {}, t('yours'))));
+const say = (text) => app.replaceChildren(h('p', { class: 'muted' }, text), h('footer', {}, link(site('/'), {}, t('yours'))));
 
 async function start() {
 	say(t('reading'));
@@ -131,7 +134,8 @@ async function start() {
 		const status = h(
 			'p',
 			{ class: 'status', 'data-in': found.state === 'read' || undefined },
-			h('span', {}, found.state === 'read' ? (found.jobs ? t('jobs', { count: found.jobs }) : t('noJobs')) : t(found.state === 'asking' ? 'asking' : found.state === 'offline' ? 'offline' : 'noBoard'))
+			h('span', {}, found.state === 'read' ? (found.jobs ? t('jobs', { count: found.jobs }) : t('noJobs')) : t(found.state === 'asking' ? 'asking' : found.state === 'offline' ? 'offline' : 'noBoard')),
+			found.state === 'read' && found.matching !== null ? h('strong', {}, ` · ${t('matching', { count: found.matching })}`) : null
 		);
 		const offers =
 			found.state === 'read' && found.offers.length
@@ -184,7 +188,7 @@ async function start() {
 				h('button', { type: 'button', 'aria-pressed': kept ? 'true' : 'false', onclick: () => (kept ? forget() : save(tags)) }, kept ? t('saved') : t('save')),
 				link(joblistPage, { class: 'primary' }, t('open'))
 			),
-			h('footer', {}, h('small', {}, t('private')), link(site('/following'), {}, t('yours')))
+			h('footer', {}, h('small', {}, t('private')), link(site('/'), {}, t('yours')))
 		];
 		// Drawn again when the board answers: what is being typed in the tag field stays.
 		const typing = /** @type {HTMLInputElement | null} */ (app.querySelector('.tags input'));

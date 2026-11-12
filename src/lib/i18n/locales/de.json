@@ -608,5 +608,6 @@
 	"explore.noJobs": "Noch keine Stelle gelesen von den {count} Organisationen, denen du folgst: joblist kennt keine ihrer Jobbörsen.",
 	"explore.findBoards": "Ihre Jobbörsen finden",
 	"explore.noJobs.one": "Noch keine Stelle gelesen von der Organisation, der du folgst: joblist kennt keine ihrer Jobbörsen.",
-	"nav.org": "Organisation"
+	"nav.org": "Organisation",
+	"extension.matching": "{count} passend zu deinen Suchen"
 }

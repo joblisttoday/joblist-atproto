@@ -608,5 +608,6 @@
 	"explore.noJobs": "Aún no se ha leído ninguna oferta de las {count} organizaciones que sigues: joblist no conoce ninguno de sus portales de empleo.",
 	"explore.findBoards": "Encontrar sus portales de empleo",
 	"explore.noJobs.one": "Aún no se ha leído ninguna oferta de la organización que sigues: joblist no conoce ninguno de sus portales de empleo.",
-	"nav.org": "Organización"
+	"nav.org": "Organización",
+	"extension.matching": "{count} coinciden con tus búsquedas"
 }

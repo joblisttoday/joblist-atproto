@@ -35,6 +35,8 @@ function write() {
 	} catch {
 		// storage full or blocked: the searches last until the page closes
 	}
+	// The add-on, on this page, keeps a copy (extension/src/sync.js).
+	if (typeof dispatchEvent === 'function') dispatchEvent(new CustomEvent('joblist:searches-written'));
 }
 
 /** @param {JobFilters} filters */
