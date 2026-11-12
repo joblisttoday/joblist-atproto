@@ -3,7 +3,8 @@ import links from '#lib/data/nav.json';
 /**
  * A row of the menu (/menu): a place (href) or an action (onclick), its icon and label,
  * its current value (small), external when it leaves joblist.
- * @typedef {{href?: string, onclick?: () => void, icon: import('#lib/icons.js').IconName, label: string, value?: string, external?: boolean}} MenuLink
+ *   chips: what it holds, each a chip under it (the Account row: this device and each account, the one in use ok).
+ * @typedef {{href?: string, onclick?: () => void, icon: import('#lib/icons.js').IconName, label: string, value?: string, external?: boolean, chips?: {text: string, tone?: 'new' | 'ok' | 'warn'}[]}} MenuLink
  */
 
 /**

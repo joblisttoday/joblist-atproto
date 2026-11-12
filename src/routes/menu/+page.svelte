@@ -1,6 +1,7 @@
 <script>
 	import config from '#lib/data/config.json';
 	import MenuLinks from '#lib/components/MenuLinks.svelte';
+	import { accounts } from '#lib/auth/accounts.js';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { ownDomain } from '#lib/models/company.js';
 	import { i18n, t } from '#lib/i18n/index.svelte.js';
@@ -13,7 +14,16 @@
 
 	/** @type {import('#lib/navigation/nav.js').MenuLink[]} */
 	const rows = $derived([
-		{ href: '/menu/accounts', icon: /** @type {const} */ ('me'), label: t('accounts.you'), value: session.handle ? `@${session.handle}` : t('accounts.device') },
+		{
+			href: '/menu/accounts',
+			icon: /** @type {const} */ ('me'),
+			label: t('accounts.you'),
+			// This device and every account signed in here, the one in use first and ok.
+			chips: [
+				{ text: t('accounts.device'), tone: session.did ? undefined : /** @type {const} */ ('ok') },
+				...accounts().list.map((a) => ({ text: `@${a.handle || a.did}`, tone: a.did === session.did ? /** @type {const} */ ('ok') : undefined }))
+			]
+		},
 		{ href: '/org', icon: /** @type {const} */ ('companies'), label: own ? t('orgs.yours') : t('menu.hiring'), value: own ? `@${own}` : undefined },
 		...(own ? [{ href: '/jobs', icon: /** @type {const} */ ('jobs'), label: t('menu.browse') }] : []),
 		{ href: '/menu/language', icon: /** @type {const} */ ('language'), label: t('about.language'), value: t(`locale.${i18n.locale}`) },

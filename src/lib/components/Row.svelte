@@ -7,7 +7,8 @@
 	 *   [avatar]  title                          [trailing]
 	 *             meta · meta · meta  (chip)
 	 * The whole row opens it (href, or onclick). avatar: an organization's picture, else its
-	 * initial; icon: a list's or a setting's. meta: one muted line. chip: at most one state.
+	 * initial; icon: a list's or a setting's. meta: one muted line. chip: at most one state
+	 * (chips: what a menu row holds, its accounts).
 	 * Trailing, one of: count, check (a checkbox), menu (its "…", a snippet: CardMenu), and ›
 	 * when it goes somewhere (an action, onclick, has none).
 	 * @type {{
@@ -19,12 +20,13 @@
 	 *   icon?: import('#lib/icons.js').IconName,
 	 *   meta?: (string | false | null | undefined)[],
 	 *   chip?: {text: string, tone?: 'new' | 'ok' | 'warn'} | null,
+	 *   chips?: {text: string, tone?: 'new' | 'ok' | 'warn'}[],
 	 *   count?: string | number,
 	 *   check?: {checked: boolean, disabled?: boolean, onchange: () => void},
 	 *   menu?: import('svelte').Snippet
 	 * }}
 	 */
-	let { title, href, onclick, external = false, avatar, icon, meta = [], chip, count, check, menu } = $props();
+	let { title, href, onclick, external = false, avatar, icon, meta = [], chip, chips = [], count, check, menu } = $props();
 	const line = $derived(meta.filter(Boolean).join(' · '));
 </script>
 
@@ -32,7 +34,7 @@
 	{#if avatar}<JobAvatar key={avatar.key} name={avatar.name} src={avatar.src} />{:else if icon}<jl-row-icon><Icon name={icon} /></jl-row-icon>{/if}
 	<jl-row-text>
 		<strong>{title}</strong>
-		{#if line || chip}<small>{#if chip}<jl-chip tone={chip.tone}>{chip.text}</jl-chip>{/if}{line}</small>{/if}
+		{#if line || chip || chips.length}<small>{#if chip}<jl-chip tone={chip.tone}>{chip.text}</jl-chip>{/if}{#each chips as c (c.text)}<jl-chip tone={c.tone}>{c.text}</jl-chip>{/each}{line}</small>{/if}
 	</jl-row-text>
 	{#if count !== undefined}<jl-row-count>{count}</jl-row-count>{/if}
 	{#if href && !menu && !check}<Icon name={external ? 'external' : 'next'} />{/if}

@@ -15,7 +15,7 @@
 	{#if hidden}<jl-visually-hidden><h2 {id}>{label}</h2></jl-visually-hidden>{:else}<h2 {id}>{label}</h2>{/if}
 	<menu>
 		{#each items as item (item.label)}
-			<li><Row title={item.label} icon={item.icon} href={item.href} onclick={item.onclick} external={item.external} count={item.value} /></li>
+			<li><Row title={item.label} icon={item.icon} href={item.href} onclick={item.onclick} external={item.external} count={item.value} chips={item.chips} /></li>
 		{/each}
 	</menu>
 </section>
