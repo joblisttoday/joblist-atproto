@@ -32,9 +32,18 @@ test('the tabs say what is there: Jobs, Following, Saved, Menu', async ({ page }
 test('the menu is short, and signing in is for organizations', async ({ page }) => {
 	await page.goto('/menu');
 	const rows = page.locator('jl-menu-page menu > li');
-	await expect(rows).toHaveCount(5);
-	await rows.first().getByRole('link', { name: /Hiring/ }).click();
+	await expect(rows).toHaveCount(6);
+	await expect(rows.first()).toContainText('This device');
+	await rows.nth(1).getByRole('link', { name: /Hiring/ }).click();
 	await expect(page).toHaveURL(/\/organization$/);
 	await expect(page.locator('ol li')).toHaveCount(3);
 	await expect(page.getByPlaceholder('example.org')).toBeVisible();
+});
+
+test('who you are: this device, with no account, private', async ({ page }) => {
+	await page.goto('/menu');
+	await page.locator('jl-menu-page').getByRole('link', { name: /^You/ }).click();
+	await expect(page).toHaveURL(/\/menu\/accounts$/);
+	await expect(page.locator('jl-accounts li[data-current]')).toContainText('This device');
+	await expect(page.getByRole('link', { name: 'Add an account' })).toHaveAttribute('href', /\/signin\?add/);
 });

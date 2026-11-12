@@ -25,6 +25,7 @@ const appPages = [
 	['/signin', en['signin.title']],
 	['/menu', en['nav.menu']],
 	['/organization', en['orgs.title']],
+	['/menu/accounts', en['accounts.title']],
 	['/menu/language', en['about.language']],
 	['/menu/collections', en['collections.transfer']],
 	['/menu/outbox', en['outbox.title']],

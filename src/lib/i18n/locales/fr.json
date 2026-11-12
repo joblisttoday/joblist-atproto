@@ -563,5 +563,12 @@
 	"boards.look.help": "Essaie son nom chez {count} fournisseurs de pages d’offres.",
 	"boards.looking": "Recherche chez {count} fournisseurs…",
 	"boards.found": "Trouvé, avec des offres ouvertes :",
-	"boards.none": "Rien trouvé sous son nom. Collez plutôt le lien de sa page carrières dans la recherche."
+	"boards.none": "Rien trouvé sous son nom. Collez plutôt le lien de sa page carrières dans la recherche.",
+	"accounts.title": "Changer de compte",
+	"accounts.you": "Vous",
+	"accounts.device": "Cet appareil",
+	"accounts.device.help": "Privé : ce que vous suivez et gardez reste ici, jamais publié.",
+	"accounts.use": "Utiliser",
+	"accounts.current": "Utilisé",
+	"accounts.add": "Ajouter un compte"
 }

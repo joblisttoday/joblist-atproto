@@ -563,5 +563,12 @@
 	"boards.look.help": "Prueba su nombre en {count} proveedores de portales de empleo.",
 	"boards.looking": "Buscando en {count} proveedores…",
 	"boards.found": "Encontrado, con ofertas abiertas:",
-	"boards.none": "Nada con su nombre. Pega mejor el enlace de su página de empleo en la búsqueda."
+	"boards.none": "Nada con su nombre. Pega mejor el enlace de su página de empleo en la búsqueda.",
+	"accounts.title": "Cambiar de cuenta",
+	"accounts.you": "Tú",
+	"accounts.device": "Este dispositivo",
+	"accounts.device.help": "Privado: lo que sigues y guardas se queda aquí, nunca publicado.",
+	"accounts.use": "Usar",
+	"accounts.current": "En uso",
+	"accounts.add": "Añadir una cuenta"
 }

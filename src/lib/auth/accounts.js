@@ -1,7 +1,8 @@
 /**
- * The Bluesky (atproto) accounts signed in on this browser, and the one in use: someone
- * can publish as themselves and as their organization, switching between them. What they
- * keep privately is one space whichever account is in use (local/space.js).
+ * Who you are here: this device (current: null; what you follow and save, private, no
+ * account), or one of the atproto accounts signed in on this browser (an organization
+ * publishing), switched between in Menu › Switch account. Signing out of one ends that one
+ * only, and you are this device again: never another account without asking.
  *
  * @typedef {{did: string, handle?: string}} Account
  * @typedef {{current: string | null, list: Account[]}} Accounts
@@ -103,13 +104,20 @@ export function useAccount(did) {
 }
 
 /**
- * An account signed out, or its session gone: off the list; another one, if any, is used next.
+ * An account signed out, or its session gone: off the list; if it was in use, this device is.
  * @param {string} did
  */
 export function removeAccount(did) {
 	update((a) => {
 		a.list = a.list.filter((x) => x.did !== did);
-		if (a.current === did) a.current = a.list[0]?.did || null;
+		if (a.current === did) a.current = null;
+	});
+}
+
+/** This device from now on, no account in use (the caller reloads); the accounts stay signed in. */
+export function useDevice() {
+	update((a) => {
+		a.current = null;
 	});
 }
 

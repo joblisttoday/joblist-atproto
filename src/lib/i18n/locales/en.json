@@ -563,5 +563,12 @@
 	"boards.look.help": "Tries its name at {count} job board providers.",
 	"boards.looking": "Looking at {count} job board providers…",
 	"boards.found": "Found with open jobs:",
-	"boards.none": "None found under its name. Paste its careers page link in the search instead."
+	"boards.none": "None found under its name. Paste its careers page link in the search instead.",
+	"accounts.title": "Switch account",
+	"accounts.you": "You",
+	"accounts.device": "This device",
+	"accounts.device.help": "Private: what you follow and save stays here, never published.",
+	"accounts.use": "Use",
+	"accounts.current": "In use",
+	"accounts.add": "Add an account"
 }

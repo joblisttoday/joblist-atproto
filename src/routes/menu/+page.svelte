@@ -6,13 +6,14 @@
 	import { i18n, t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * The menu, one short list: for organizations (signing in is only theirs), then this
-	 * browser's settings, then the source. What a job seeker keeps is on the home.
+	 * The menu, one short list: who you are (this device, or an account signed in: Switch
+	 * account), for organizations, then this browser's settings, then the source.
 	 */
 	const own = $derived(ownDomain(session.handle));
 
 	/** @type {import('#lib/navigation/nav.js').MenuLink[]} */
 	const rows = $derived([
+		{ href: '/menu/accounts', icon: /** @type {const} */ ('me'), label: t('accounts.you'), value: session.handle ? `@${session.handle}` : t('accounts.device') },
 		{ href: '/organization', icon: /** @type {const} */ ('companies'), label: own ? t('orgs.yours') : t('menu.hiring'), value: own ? `@${own}` : undefined },
 		{ href: '/menu/language', icon: /** @type {const} */ ('language'), label: t('about.language'), value: t(`locale.${i18n.locale}`) },
 		{ href: '/menu/collections', icon: /** @type {const} */ ('saved'), label: t('collections.transfer') },

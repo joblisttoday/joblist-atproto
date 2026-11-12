@@ -563,5 +563,12 @@
 	"boards.look.help": "Probiert ihren Namen bei {count} Jobbörsen-Anbietern.",
 	"boards.looking": "Suche bei {count} Anbietern…",
 	"boards.found": "Gefunden, mit offenen Stellen:",
-	"boards.none": "Unter ihrem Namen nichts gefunden. Füge stattdessen den Link ihrer Karriereseite in die Suche ein."
+	"boards.none": "Unter ihrem Namen nichts gefunden. Füge stattdessen den Link ihrer Karriereseite in die Suche ein.",
+	"accounts.title": "Konto wechseln",
+	"accounts.you": "Du",
+	"accounts.device": "Dieses Gerät",
+	"accounts.device.help": "Privat: Was du folgst und merkst, bleibt hier, nie veröffentlicht.",
+	"accounts.use": "Verwenden",
+	"accounts.current": "In Verwendung",
+	"accounts.add": "Konto hinzufügen"
 }

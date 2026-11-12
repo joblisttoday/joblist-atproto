@@ -4,7 +4,7 @@ import { nextPath } from '#lib/navigation/next.js';
 import { forgetAll } from '#lib/network/drafts.js';
 import { notReached } from '#lib/models/outbox.js';
 import { signingIn } from '#lib/navigation/address.js';
-import { accounts, accountsKept, addAccount, currentAccount, removeAccount, useAccount } from './accounts.js';
+import { accounts, accountsKept, addAccount, currentAccount, removeAccount, useAccount, useDevice } from './accounts.js';
 
 // The OAuth and API libraries are large: load them after the first paint.
 const auth = () => import('./client.js');
@@ -119,8 +119,8 @@ export async function signIn(handle) {
 }
 
 /**
- * Sign out of the account in use: the next one signed in here, if any, is used (the page
- * reloads). What was being written goes, for whoever uses this browser next.
+ * Sign out of the account in use: that one only; this device is in use after (never another
+ * account). What was being written goes, for whoever uses this browser next.
  */
 export async function signOut() {
 	forgetAll();
@@ -133,7 +133,28 @@ export async function signOut() {
 		}
 	}
 	clear();
-	if (currentAccount()) location.reload();
+}
+
+/**
+ * Sign out of an account signed in here, in use or not.
+ * @param {string} did
+ */
+export async function signOutOf(did) {
+	if (did === session.did) return signOut();
+	try {
+		client ??= await (await auth()).loadClient(clear);
+		await client.revoke(did);
+	} catch {
+		// its local session is cleared either way
+	}
+	removeAccount(did);
+}
+
+/** Back to this device, no account in use (the accounts stay signed in): the page reloads. */
+export function switchToDevice() {
+	if (!session.did) return;
+	useDevice();
+	location.reload();
 }
 
 /**
