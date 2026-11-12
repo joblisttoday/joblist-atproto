@@ -574,5 +574,6 @@
 	"orgs.from.here": "Posted here, from your account.",
 	"orgs.share": "Your page's link",
 	"company.claim.short": "Is this your organization?",
-	"company.filter": "Filter jobs"
+	"company.filter": "Filter jobs",
+	"orgs.editAll": "Edit everything"
 }

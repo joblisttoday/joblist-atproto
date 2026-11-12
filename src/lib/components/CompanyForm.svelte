@@ -32,7 +32,7 @@
 	 *   onsaved: (saved: {key: string, name: string, added: boolean}) => void,
 	 *   oncancel?: () => void
 	 * }}
-	 *   focus: the part to start on (description, jobBoard, locations, tags, links), from an invitation on the company page.
+	 *   focus: one part to edit alone, the rest kept as it is (description, jobBoard, kind, tags, locations, links), from the dashboard.
 	 */
 	let { company = null, prefill = {}, focus = '', onsaved, oncancel } = $props();
 
@@ -74,6 +74,11 @@
 	// Optional: "Not said" first, so a choice can be taken back.
 	const kindOptions = [{ value: '', label: t('kind.none') }, ...config.companyForm.kinds.map((kind) => ({ value: kind, label: t(`kind.${kind}`) }))];
 	const submitLabel = $derived(company ? t('form.save') : t('form.company.submit'));
+	// Editing one part (/add?field=…, from the dashboard): only that part, the rest kept as it is.
+	const parts = ['description', 'jobBoard', 'kind', 'tags', 'locations', 'links'];
+	const only = $derived(company && parts.includes(focus) ? focus : '');
+	/** @param {string} part */
+	const shows = (part) => !only || only === part;
 
 	/** @type {HTMLFormElement} */
 	let formElement;
@@ -122,16 +127,17 @@
 	}
 </script>
 
-<jl-company-form editing={company ? true : undefined}>
-	<CompanyEditNote {company} />
+<jl-company-form editing={company ? true : undefined} {only}>
+	{#if !only}<CompanyEditNote {company} />{/if}
 	<form bind:this={formElement} onsubmit={submit} toolname={tool.toolname} tooldescription={tool.tooldescription}>
-		<p><small data-required>{t('form.required')}</small></p>
+		{#if !only}<p><small data-required>{t('form.required')}</small></p>{/if}
 		<jl-form-fields>
 			<SaveResumed form="company" label={submitLabel} />
 			{#if restored}
 				<p><small>{t('form.company.draft')} <button type="button" onclick={startOver}>{t('form.company.draft.clear')}</button></small></p>
 			{/if}
 
+			{#if !only}
 			<CompanyWebsiteField bind:url={form.url} editing={company?.key} tool={tool.params.url} />
 
 			<label for="name">{t('form.name')}</label>
@@ -144,7 +150,9 @@
 				maxlength={nameMax}
 				autocomplete="organization"
 			/>
+			{/if}
 
+			{#if shows('description')}
 			<jl-form-part part-name="description">
 				<label for="description">{t('form.description')}</label>
 				<textarea
@@ -161,28 +169,40 @@
 					<data value={form.description.length}>{form.description.length.toLocaleString(i18n.locale)} / {descriptionMax.toLocaleString(i18n.locale)}</data>
 				</small>
 			</jl-form-part>
+			{/if}
 
+			{#if shows('jobBoard')}
 			<jl-form-part part-name="jobBoard">
 				<CompanyBoardFields bind:provider={form.provider} bind:boardId={form.boardId} bind:careersUrl={form.careersUrl} params={tool.params} />
 			</jl-form-part>
+			{/if}
 
+			{#if shows('kind')}
 			<jl-form-part part-name="kind">
 				<ChoiceChips name="kind" legend={t('form.kind')} options={kindOptions} bind:value={form.kind} help={t('form.kind.help')} />
 			</jl-form-part>
+			{/if}
 
+			{#if shows('tags')}
 			<jl-form-part part-name="tags">
 				<TagInput bind:tags={form.tags} tool={tool.params.tags} />
 			</jl-form-part>
+			{/if}
 
+			{#if shows('locations')}
 			<jl-form-part part-name="locations">
 				<LocationFields bind:locations={form.locations} />
 			</jl-form-part>
+			{/if}
 
+			{#if shows('links')}
 			<jl-form-part part-name="links">
 				<LinkFields bind:links={form.links} tool={tool.params.links} />
 			</jl-form-part>
+			{/if}
 		</jl-form-fields>
 
+		{#if !only}
 		<aside aria-labelledby="company-preview">
 			<h2 id="company-preview">{t('form.company.preview')}</h2>
 			{#if preview}
@@ -192,6 +212,7 @@
 				<p><small>{t('form.company.preview.empty')}</small></p>
 			{/if}
 		</aside>
+		{/if}
 
 		<jl-form-actions>
 			{#if error}<p role="alert">{error}</p>{/if}

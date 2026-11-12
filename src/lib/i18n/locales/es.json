@@ -574,5 +574,6 @@
 	"orgs.from.here": "Publicadas aquí, desde tu cuenta.",
 	"orgs.share": "El enlace de tu página",
 	"company.claim.short": "¿Es tu organización?",
-	"company.filter": "Filtrar ofertas"
+	"company.filter": "Filtrar ofertas",
+	"orgs.editAll": "Editar todo"
 }

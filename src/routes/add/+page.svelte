@@ -7,6 +7,7 @@
 	import AddSaved from '#lib/components/AddSaved.svelte';
 	import CompanyClaim from '#lib/components/CompanyClaim.svelte';
 	import CompanyForm from '#lib/components/CompanyForm.svelte';
+	import Pending from '#lib/components/Pending.svelte';
 	import { hasInput, parsePaste, readExtras, readParams, toPrefill } from '#lib/models/paste.js';
 	import { mayDescribe, ownDomain, toDomain } from '#lib/models/company.js';
 	import { data } from '#lib/network/network.svelte.js';
@@ -26,6 +27,10 @@
 	const company = $derived(target ? data.companies.get(target) || null : null);
 	const open = $derived(Boolean(target) && mayDescribe({ key: target }, session));
 	const back = $derived(params.get('next') || '');
+	// One part of it to edit (from the dashboard): titled after that part.
+	const field = $derived(company ? params.get('field') || '' : '');
+	const fieldTitles = /** @type {Record<string, string>} */ ({ description: 'orgs.field.description', jobBoard: 'orgs.field.jobBoard', locations: 'orgs.field.locations', tags: 'orgs.field.tags', kind: 'form.kind', links: 'form.links' });
+	const heading = $derived(fieldTitles[field] ? t(fieldTitles[field]) : company ? t('form.company.edit') : t('form.company.title'));
 	const prefill = $derived({ ...toPrefill(hasInput(params) ? pasted : parsePaste({ link: `https://${target}`, name: '', board: '' })), ...readExtras(params) });
 
 	/**
@@ -38,6 +43,8 @@
 	/** @param {Saved} done */
 	async function onsaved(done) {
 		if (back === '/jobs/new') return goto(`${back}?company=${encodeURIComponent(done.key)}`);
+		// An edit goes back to the dashboard; a first description says what comes next.
+		if (!done.added) return goto('/organization');
 		saved = done;
 		await tick();
 		scrollTo({ top: 0 });
@@ -52,9 +59,14 @@
 	{#if saved}
 		<AddSaved {...saved} />
 	{:else}
-		<h1>{company ? t('form.company.edit') : t('form.company.title')}</h1>
-		{#if open}
-			{#key `${target}:${page.url.search}`}
+		<h1>{heading}</h1>
+		{#if field && open}<p><small><a href="/add">{t('orgs.editAll')}</a></small></p>{/if}
+		{#if open && params.get('key') && !company}
+			<!-- Editing its record: the form waits for it, so it starts from what it says. -->
+			<Pending />
+		{:else if open}
+			<!-- Made again once its record is read: the form starts from what it says. -->
+			{#key `${company?.key || target}:${Boolean(company)}:${page.url.search}`}
 				<CompanyForm {company} {prefill} focus={params.get('field') || ''} {onsaved} oncancel={() => history.back()} />
 			{/key}
 		{:else if target}
