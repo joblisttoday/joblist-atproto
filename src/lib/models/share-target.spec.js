@@ -5,7 +5,7 @@ import { readParams } from './paste.js';
 const manifest = JSON.parse(manifestText);
 
 /**
- * What the add page reads when the system share sheet opens it.
+ * What the organization page reads when the system share sheet opens it.
  * @param {Record<string, string>} shared
  */
 function share(shared) {
@@ -16,8 +16,8 @@ function share(shared) {
 }
 
 describe('share target', () => {
-	it('opens the add page with GET', () => {
-		expect(manifest.share_target).toMatchObject({ action: '/add', method: 'GET' });
+	it('opens the organization shared, with GET', () => {
+		expect(manifest.share_target).toMatchObject({ action: '/me/organization', method: 'GET' });
 	});
 	it('takes the shared url', () => {
 		expect(share({ title: 'Careers | Acme', url: 'https://acme.org/careers' }).link).toBe('https://acme.org/careers');

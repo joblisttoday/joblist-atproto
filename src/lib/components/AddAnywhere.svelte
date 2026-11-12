@@ -5,55 +5,34 @@
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * Ways to send a company to joblist from the page it is on: share target, bookmarklet, and
-	 * AI assistants only in a browser that lets them use the page's tools (WebMCP, webmcp.js).
-	 * open: unfolded (on /apps).
-	 * @type {{open?: boolean}}
+	 * Open joblist on the page you are on: the share button of the installed app (the share
+	 * target), or the bookmarklet. Each opens the organization's page, to save it.
 	 */
-	let { open = false } = $props();
 	const code = $derived(bookmarklet(page.url.origin));
 	let dragHint = $state(false);
-	const agents = typeof document !== 'undefined' && Boolean(/** @type {any} */ (document).modelContext || /** @type {any} */ (navigator).modelContext);
 
 	/** @param {MouseEvent} event */
 	function click(event) {
-		// Clicked here it would add this page: it is meant to be dragged to the bookmarks.
+		// Clicked here it would open this page: it is meant to be dragged to the bookmarks.
 		event.preventDefault();
 		dragHint = true;
 	}
 </script>
 
 <jl-add-anywhere hinted={dragHint || undefined}>
-	<details {open}>
-		<summary>{t('anywhere.title')}</summary>
-		<p>{t('anywhere.intro')}</p>
+	<h2>{t('anywhere.share.title')}</h2>
+	<p>{t('anywhere.share.text')}</p>
 
-		<h3>{t('anywhere.share.title')}</h3>
-		<p>{t('anywhere.share.text')}</p>
-
-		<h3>{t('anywhere.bookmarklet.title')}</h3>
-		<p>{t('anywhere.bookmarklet.text')}</p>
-		<menu><a href={code} onclick={click} draggable="true"><Icon name="add" /> {t('anywhere.bookmarklet.link')}</a></menu>
-		<p><small role={dragHint ? 'status' : undefined}>{t('anywhere.bookmarklet.help')}</small></p>
-		<label for="bookmarklet-code">{t('anywhere.bookmarklet.code')}</label>
-		<textarea id="bookmarklet-code" readonly rows="4" aria-describedby="bookmarklet-code-help" onfocus={(e) => e.currentTarget.select()}>{code}</textarea>
-		<small id="bookmarklet-code-help">{t('anywhere.bookmarklet.code.help')}</small>
-
-		{#if agents}
-			<h3>{t('anywhere.agents.title')}</h3>
-			<p>{t('anywhere.agents.text')}</p>
-		{/if}
-	</details>
+	<h2>{t('anywhere.bookmarklet.title')}</h2>
+	<p>{t('anywhere.bookmarklet.text')}</p>
+	<menu><a href={code} onclick={click} draggable="true"><Icon name="add" /> {t('anywhere.bookmarklet.link')}</a></menu>
+	<p><small role={dragHint ? 'status' : undefined}>{t('anywhere.bookmarklet.help')}</small></p>
 </jl-add-anywhere>
 
 <style>
 	jl-add-anywhere {
 		display: block;
-		margin-top: var(--space-xl);
-		border-top: var(--border);
-	}
-	details[open] {
-		padding-bottom: var(--space-m);
+		margin-top: var(--space-l);
 	}
 	menu a {
 		cursor: grab;
@@ -66,12 +45,5 @@
 	}
 	jl-add-anywhere[hinted] [role='status'] {
 		color: var(--color-fg);
-	}
-	label {
-		font-weight: normal;
-		font-size: var(--font-size-small);
-	}
-	textarea {
-		font-family: monospace;
 	}
 </style>

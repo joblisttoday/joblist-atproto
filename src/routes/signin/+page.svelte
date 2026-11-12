@@ -2,7 +2,6 @@
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import config from '#lib/data/config.json';
-	import LocaleSwitch from '#lib/components/LocaleSwitch.svelte';
 	import SignIn from '#lib/components/SignIn.svelte';
 	import { session } from '#lib/auth/session.svelte.js';
 	import { nextPath } from '#lib/navigation/next.js';
@@ -20,4 +19,3 @@
 <h1>{t('signin.title')}</h1>
 <p>{adding && session.handle ? t('accounts.add.intro', { handle: session.handle }) : t('signin.intro')}</p>
 <SignIn />
-<LocaleSwitch />

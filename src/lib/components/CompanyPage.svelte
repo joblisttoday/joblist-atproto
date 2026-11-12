@@ -58,6 +58,8 @@
 				<CompanyJobs {company} bind:jobs {address} local={Boolean(local)} />
 			{:else if local}
 				<p>{t('org.jobsThere')} <a href={local.link} target="_blank" rel="noopener noreferrer">{local.link.replace(/^https?:\/\/(www\.)?/, '')}</a></p>
+			{:else}
+				<p>{t('org.jobsThere')} <a href={company.url || `https://${key}`} target="_blank" rel="noopener noreferrer">{key}</a></p>
 			{/if}
 		</section>
 		{#if !local}

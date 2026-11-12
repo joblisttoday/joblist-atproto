@@ -9,7 +9,7 @@
 	/**
 	 * joblist outside this site: the Firefox add-on (built with each deploy, packed as a zip
 	 * by scripts/build-extension.js: tried as a temporary add-on until it is signed by Mozilla),
-	 * and the ways to send a page to joblist from anywhere (share, bookmarklet, assistants).
+	 * and the ways to open joblist on any page (share, bookmarklet).
 	 */
 	const file = '/apps/joblist-firefox.zip';
 	// Built with the site (npm run build:extension); a copy of the app not built so has none:
@@ -40,11 +40,6 @@
 	<section aria-labelledby="apps-firefox">
 		<h2 id="apps-firefox">{t('apps.firefox.title')}</h2>
 		<p>{t('apps.firefox.text')}</p>
-		<ul>
-			<li>{t('apps.firefox.known')}</li>
-			<li>{t('apps.firefox.links')}</li>
-			<li>{t('apps.firefox.save')}</li>
-		</ul>
 		{#if packed}
 			<menu><a href={file} download data-primary><Icon name="down" /> {t('apps.firefox.download')}</a></menu>
 		{:else}
@@ -66,7 +61,7 @@
 		<p><small>{t('apps.firefox.temporary')}</small></p>
 	</section>
 
-	<AddAnywhere open />
+	<AddAnywhere />
 </jl-apps>
 
 <style>
@@ -79,14 +74,8 @@
 	section {
 		margin-top: var(--space-m);
 	}
-	ul,
 	ol {
 		padding-inline-start: var(--space-l);
-	}
-	ul {
-		list-style: disc;
-	}
-	ol {
 		list-style: decimal;
 	}
 	li + li {
