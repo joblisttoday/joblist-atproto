@@ -2,15 +2,18 @@
 	import Icon from './Icon.svelte';
 	import JobApply from './JobApply.svelte';
 	import JobPostMenu from './JobPostMenu.svelte';
+	import JobSave from './JobSave.svelte';
+	import { markOf, toggleMark } from '#lib/network/job-marks.svelte.js';
 	import PageMenu from './PageMenu.svelte';
 	import { data, handleOf } from '#lib/network/network.svelte.js';
-	import { isLive, notFromCompany, placeNames, postPageUrl } from '#lib/models/job-post.js';
+	import { isLive, notFromCompany, placeNames, postPageUrl, toJob } from '#lib/models/job-post.js';
 	import { time } from '#lib/models/job.js';
 	import { ago, longDate } from '#lib/i18n/dates.js';
 	import { i18n, t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * One job offer posted on joblist: what it is and how to apply.
+	 * One job offer posted on joblist: what it is, keeping it (Save, I applied: in this browser,
+	 * as any job), and how to apply.
 	 * @type {{post: import('#lib/models/job-post.js').JobPost, ondeleted?: () => void}}
 	 */
 	let { post, ondeleted } = $props();
@@ -19,6 +22,10 @@
 	// Someone else's post for a company that posts its own: a warning, and no way to apply here.
 	const unofficial = $derived(notFromCompany(post, data.claimed));
 	const handle = $derived(handleOf(post.did));
+	// As any job: saved and marked applied in this browser.
+	const job = $derived(toJob(post));
+	const name = $derived(company?.name || post.company);
+	const mark = $derived(markOf(job));
 	const facts = $derived(
 		[
 			placeNames(post.locations),
@@ -49,6 +56,10 @@
 				{live ? t('job.until', { date: longDate(post.expiresAt, i18n.locale) }) : t('job.expired')}
 			</small>
 		</p>
+		<menu data-keep>
+			<JobSave {job} company={name} />
+			<button type="button" aria-pressed={mark === 'applied'} onclick={() => toggleMark(job, 'applied', name)}><Icon name="applied" /> {t(mark === 'applied' ? 'marks.applied' : 'marks.apply')}</button>
+		</menu>
 		<JobPostMenu {post} {ondeleted} />
 		{#if unofficial}<p role="alert">{t('job.notFromCompany', { company: company?.name || post.company })}</p>{/if}
 	</header>
@@ -82,6 +93,11 @@
 	header + p {
 		white-space: pre-line;
 		overflow-wrap: anywhere;
+	}
+	[data-keep] {
+		flex-wrap: wrap;
+		gap: var(--space-xs);
+		margin: var(--space-s) 0;
 	}
 	mark {
 		background: none;

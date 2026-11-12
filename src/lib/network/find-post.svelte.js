@@ -1,6 +1,6 @@
 import { refused } from '#lib/atproto/xrpc.js';
 import { loadJob } from './load-job.js';
-import { data, network } from './network.svelte.js';
+import { data, lookup, network } from './network.svelte.js';
 import { toPost } from '#lib/models/job-post.js';
 
 /**
@@ -21,7 +21,13 @@ export function findPost(params) {
 		if (known || network.loading || data.status === 'reading') return;
 		unreachable = false;
 		loadJob(did, rkey)
-			.then((r) => (fetched = r ? toPost(r, data.profiles) : null))
+			.then((r) => {
+				fetched = r ? toPost(r, data.profiles) : null;
+				// Its organization's own account, read as its page does: whether it posted it itself
+				// (its handle, its name), and then the offer is known from there.
+				const company = String(r?.value?.company || '');
+				if (company) lookup(company).catch(() => null);
+			})
 			.catch((err) => (refused(err) ? (fetched = null) : (unreachable = true)));
 	});
 

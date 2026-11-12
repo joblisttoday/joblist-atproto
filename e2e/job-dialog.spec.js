@@ -35,3 +35,13 @@ test('a job of a followed organization shows its description, and can be saved',
 	await page.goto('/saved');
 	await expect(page.locator('main')).toContainText('1 job');
 });
+
+test("a job posted on atproto has its page, where it can be saved", async ({ page }) => {
+	await page.goto('/job/did:plc:jqaucxlucukeif3bltpuc7zx/3n24bcwmxy2qi');
+	const save = page.getByRole('button', { name: 'Save', exact: true });
+	await expect(save).toBeVisible({ timeout: 20_000 });
+	await save.click();
+	await expect(page.getByRole('button', { name: 'Saved', exact: true })).toBeVisible();
+	await page.goto('/saved');
+	await expect(page.locator('main')).toContainText('1 job');
+});
