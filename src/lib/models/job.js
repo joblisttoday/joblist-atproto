@@ -9,9 +9,10 @@ import { teamOf } from './team.js';
  * @typedef {'' | 'remote' | 'anywhere'} RemoteFilter
  *   remote: jobs done remotely; anywhere: remote jobs that name no country or region they are limited to.
  * @typedef {[[number, number], [number, number]]} Area [[west, south], [east, north]]
- * @typedef {{query: string, where: string, remote: RemoteFilter, pay?: boolean, field?: string, team?: string, near?: [number, number] | null, within?: number, area?: Area | null, places?: string[]}} JobFilters
+ * @typedef {{query: string, where: string, remote: RemoteFilter, pay?: boolean, field?: string, team?: string, near?: [number, number] | null, within?: number, area?: Area | null, places?: string[], any?: JobFilters[]}} JobFilters
  *   pay: only the jobs whose board says what they pay. field: only those of a team, across organizations (models/team.js: its key).
  *   team: only those of a team, on an organization's page (models/team.js).
+ *   any: only those matching at least one of these searches (your saved searches, on Jobs).
  *   places: only the jobs in one of them, as for `where` (a list about places: "Paris & Lyon").
  *   near: where the person is ([longitude, latitude]), to find jobs close by; never kept in the page address.
  *   area: only the jobs in it (the part of the map someone looks at).
@@ -68,7 +69,14 @@ export function remoteLimit(job) {
  * @param {JobFilters} filters
  * @param {Map<string, string>} names company names by key
  */
-export function filterJobs(jobs, { query, where, remote, pay, field, team, near, within = 0, area, places }, names) {
+export function filterJobs(jobs, filters, names) {
+	const { any } = filters;
+	// Your searches: the jobs matching one of them at least (where someone is aside), then the rest.
+	if (any?.length) {
+		const kept = new Set(any.flatMap((s) => filterJobs(jobs, { ...s, near: null, within: 0, area: null }, names).map((j) => j.url)));
+		jobs = jobs.filter((j) => kept.has(j.url));
+	}
+	const { query, where, remote, pay, field, team, near, within = 0, area, places } = filters;
 	const what = words(query);
 	const place = where.trim() ? placeMatcher(where) : null;
 	const among = places?.length ? places.map(placeMatcher) : null;

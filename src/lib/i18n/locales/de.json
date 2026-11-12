@@ -600,5 +600,8 @@
 	"search.kind.jobs": "Deine Stellen",
 	"search.kind.wikidata": "Wikidata",
 	"search.kind.bluesky": "Bluesky",
-	"search.kind.list": "Bluesky-Liste"
+	"search.kind.list": "Bluesky-Liste",
+	"searches.yours": "Deine Suchen",
+	"searches.hint": "Gib ein, was du suchst (Produkt, Design…), und tippe auf Suche speichern: Stellen zeigt dann nur diese.",
+	"kept.matching": "{count} passend"
 }

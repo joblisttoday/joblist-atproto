@@ -600,5 +600,8 @@
 	"search.kind.jobs": "Vos offres",
 	"search.kind.wikidata": "Wikidata",
 	"search.kind.bluesky": "Bluesky",
-	"search.kind.list": "Liste Bluesky"
+	"search.kind.list": "Liste Bluesky",
+	"searches.yours": "Vos recherches",
+	"searches.hint": "Tapez ce que vous cherchez (produit, design…) et touchez Enregistrer la recherche : Offres ne montrera plus que celles-là.",
+	"kept.matching": "{count} correspondent"
 }

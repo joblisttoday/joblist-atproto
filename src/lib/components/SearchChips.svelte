@@ -5,11 +5,12 @@
 	import { formatNumber, t } from '#lib/i18n/index.svelte.js';
 
 	/**
-	 * Your saved searches, as chips over the jobs: "All", then each with its new jobs; one tap
-	 * opens it (onopen), its new ones marked. Saved and forgotten with "Save search".
-	 * @type {{filters: import('#lib/models/job.js').JobFilters, jobs: import('#lib/ats/job.js').Job[], names: Map<string, string>, onopen: (search: import('#lib/models/saved-search.js').SavedSearch | null) => void}}
+	 * Your saved searches, as chips over the jobs: "Your searches" (the jobs matching any of
+	 * them, the default: onyours), each with its new jobs (onopen), and "All jobs" (onopen(null)).
+	 * Saved and forgotten with "Save search".
+	 * @type {{filters: import('#lib/models/job.js').JobFilters, jobs: import('#lib/ats/job.js').Job[], names: Map<string, string>, yours: boolean, onyours: () => void, onopen: (search: import('#lib/models/saved-search.js').SavedSearch | null) => void}}
 	 */
-	let { filters, jobs, names, onopen } = $props();
+	let { filters, jobs, names, yours, onyours, onopen } = $props();
 
 	/** @param {import('#lib/models/saved-search.js').SavedSearch} s */
 	const label = (s) =>
@@ -21,7 +22,7 @@
 {#if searches.list.length}
 	<jl-search-chips>
 		<menu aria-label={t('saved.searches')}>
-			<li><button type="button" aria-pressed={all ? 'true' : 'false'} onclick={() => onopen(null)}>{t('saved.all')}</button></li>
+			<li><button type="button" aria-pressed={yours ? 'true' : 'false'} onclick={onyours}>{t('searches.yours')}</button></li>
 			{#each searches.list as search (searchId(search))}
 				{@const fresh = jobs.length ? newCount(search, jobs, names) : 0}
 				<li>
@@ -31,6 +32,7 @@
 					</button>
 				</li>
 			{/each}
+			<li><button type="button" aria-pressed={all && !yours ? 'true' : 'false'} onclick={() => onopen(null)}>{t('saved.all')}</button></li>
 		</menu>
 	</jl-search-chips>
 {/if}

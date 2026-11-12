@@ -600,5 +600,8 @@
 	"search.kind.jobs": "Your jobs",
 	"search.kind.wikidata": "Wikidata",
 	"search.kind.bluesky": "Bluesky",
-	"search.kind.list": "Bluesky list"
+	"search.kind.list": "Bluesky list",
+	"searches.yours": "Your searches",
+	"searches.hint": "Type what you look for (product, design…) and tap Save search: Jobs then shows only those.",
+	"kept.matching": "{count} matching"
 }

@@ -243,3 +243,18 @@ describe('prepareJob', () => {
 		expect(filterJobs(jobs, { ...none, query: 'acme design' }, names).map((j) => j.url)).toEqual(['p1']);
 	});
 });
+
+describe('your searches', () => {
+	it('keep the jobs matching at least one of them', () => {
+		const names = new Map([['a', 'A']]);
+		const jobs = [
+			{ title: 'Product designer', url: '1', company: 'a' },
+			{ title: 'Backend engineer', url: '2', company: 'a' },
+			{ title: 'Product manager', url: '3', company: 'a', location: 'Paris' }
+		];
+		const none = { query: '', where: '', remote: /** @type {''} */ ('') };
+		const any = [{ ...none, query: 'designer' }, { ...none, query: 'manager' }];
+		expect(filterJobs(/** @type {any} */ (jobs), { ...none, any }, names).map((j) => j.url)).toEqual(['1', '3']);
+		expect(filterJobs(/** @type {any} */ (jobs), { ...none, query: 'product', any: [{ ...none, where: 'Paris' }] }, names).map((j) => j.url)).toEqual(['3']);
+	});
+});

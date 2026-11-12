@@ -51,6 +51,11 @@
 	};
 	const arrivedAt = readAddress(KEYS);
 	let filters = $state(filtersOf(arrivedAt));
+	// Your searches (saved here): with some saved and nothing searched, Jobs shows only the
+	// jobs matching one of them; "All jobs" shows them all. Typing a search looks in all.
+	let mine = $state(true);
+	const yours = $derived(mine && searches.list.length > 0 && isEmpty(filters) && !filters.near && !filters.area);
+	const shownFilters = $derived(yours ? { ...filters, any: searches.list } : filters);
 	let since = $state('');
 	/** @type {import('#lib/ats/job.js').Job[]} */
 	let jobs = $state.raw([]);
@@ -326,14 +331,22 @@
 		<jl-explore-results id="explore-results" hidden={pickedJobs ? true : undefined}>
 			<!-- The fields jobs are in: one tap shows a field's jobs, searched or not. -->
 			<!-- Your saved searches: one tap opens one, its new jobs marked; "All" clears the search. -->
-			<SearchChips {filters} {jobs} {names} onopen={(search) => (search ? open(search) : ((since = ''), (filters = { query: '', where: '', remote: '', pay: false, field: '', near: null, within: 0, area: null })))} />
+			<SearchChips
+				{filters}
+				{jobs}
+				{names}
+				{yours}
+				onyours={() => ((mine = true), (since = ''), (filters = { query: '', where: '', remote: '', pay: false, field: '', near: null, within: 0, area: null }))}
+				onopen={(search) => (search ? open(search) : ((mine = false), (since = ''), (filters = { query: '', where: '', remote: '', pay: false, field: '', near: null, within: 0, area: null })))}
+			/>
+			{#if !searches.list.length && jobs.length}<p data-hint><small>{t('searches.hint')}</small></p>{/if}
 			{#if jobs.length}<ExploreFields bind:field={filters.field} {jobs} />{/if}
 			{#if companies.length}
 				<Jobs
 					{companies}
 					careers={false}
 					search={false}
-					bind:filters
+					filters={shownFilters}
 					bind:jobs
 					bind:results
 					bind:places

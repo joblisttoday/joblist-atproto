@@ -3042,17 +3042,27 @@ function Ri(e) {
 function zi(e) {
 	return Ri(e) ? Si(e.location, Ai) : "";
 }
-function Bi(e, { query: t, where: n, remote: r, pay: i, field: a, team: o, near: s, within: c = 0, area: l, places: u }, d) {
-	let f = Ii(t), p = n.trim() ? bi(n) : null, m = u?.length ? u.map(bi) : null, h = !f.length && !p && !m && !r && !i && !a && !o && !l ? e : e.filter((e) => {
-		if (i && !e.salary || a && ki(e) !== a || o && ki(e) !== o || l && !(e.point && ci(e.point, l)) || r && !Ri(e) || r === "anywhere" && zi(e) || p && (!r || zi(e)) && !p(e.location, Ri(e)) || m && (!r || zi(e)) && !m.some((t) => t(e.location, Ri(e)))) return !1;
-		if (!f.length) return !0;
-		let t = Ji(e, d);
-		return f.every((e) => t.includes(e));
+function Bi(e, t, n) {
+	let { any: r } = t;
+	if (r?.length) {
+		let t = new Set(r.flatMap((t) => Bi(e, {
+			...t,
+			near: null,
+			within: 0,
+			area: null
+		}, n).map((e) => e.url)));
+		e = e.filter((e) => t.has(e.url));
+	}
+	let { query: i, where: a, remote: o, pay: s, field: c, team: l, near: u, within: d = 0, area: f, places: p } = t, m = Ii(i), h = a.trim() ? bi(a) : null, g = p?.length ? p.map(bi) : null, _ = !m.length && !h && !g && !o && !s && !c && !l && !f ? e : e.filter((e) => {
+		if (s && !e.salary || c && ki(e) !== c || l && ki(e) !== l || f && !(e.point && ci(e.point, f)) || o && !Ri(e) || o === "anywhere" && zi(e) || h && (!o || zi(e)) && !h(e.location, Ri(e)) || g && (!o || zi(e)) && !g.some((t) => t(e.location, Ri(e)))) return !1;
+		if (!m.length) return !0;
+		let t = Ji(e, n);
+		return m.every((e) => t.includes(e));
 	});
-	return s ? h.filter((e) => e.point).map((e) => ({
+	return u ? _.filter((e) => e.point).map((e) => ({
 		...e,
-		km: oi(s, e.point)
-	})).filter((e) => !c || si(e.km) <= c).sort((e, t) => Vi(e.km) - Vi(t.km) || Gi(t.published) - Gi(e.published) || e.km - t.km) : h;
+		km: oi(u, e.point)
+	})).filter((e) => !d || si(e.km) <= d).sort((e, t) => Vi(e.km) - Vi(t.km) || Gi(t.published) - Gi(e.published) || e.km - t.km) : _;
 }
 function Vi(e) {
 	return Math.floor(si(e) / X.travel.bandMinutes);

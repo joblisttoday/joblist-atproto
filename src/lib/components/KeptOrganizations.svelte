@@ -5,7 +5,8 @@
 	import { accountOf, thumbnail } from '#lib/network/accounts.svelte.js';
 	import providers from '#lib/data/providers.json';
 	import { boardOfKept, keyOf } from '#lib/models/kept.js';
-	import { offerCount } from '#lib/models/job.js';
+	import { filterJobs, offerCount } from '#lib/models/job.js';
+	import { searches } from '#lib/network/saved-searches.svelte.js';
 	import { forget, kept } from '#lib/network/kept.svelte.js';
 	import { keptJobs } from '#lib/network/kept-jobs.svelte.js';
 	import config from '#lib/data/config.json';
@@ -26,6 +27,11 @@
 	const counts = $derived(new Map([...keptJobs.jobs].map(([key, list]) => [key, offerCount(list)])));
 	const since = Date.now() - config.kept.newDays * 24 * 3600 * 1000;
 	const fresh = $derived(new Map([...keptJobs.jobs].map(([key, list]) => [key, offerCount(list.filter((j) => Date.parse(j.published || '') >= since))])));
+	// With searches saved: how many of its jobs match one of them (its chip, rather than this week's).
+	const names = $derived(new Map(keptJobs.companies.map((c) => [c.key, c.name])));
+	const matching = $derived(
+		searches.list.length ? new Map([...keptJobs.jobs].map(([key, list]) => [key, offerCount(filterJobs(list, { query: '', where: '', remote: '', any: searches.list }, names))])) : null
+	);
 
 	/** The link, short: its host and path. @param {string} url */
 	function short(url) {
@@ -44,6 +50,7 @@
 		{@const board = boardOfKept(item)}
 		{@const count = company ? counts.get(company.key) : undefined}
 		{@const lately = company ? fresh.get(company.key) || 0 : 0}
+		{@const matched = company && matching && count !== undefined ? matching.get(company.key) || 0 : null}
 		{@const name = item.name || company?.name || short(item.url)}
 		{@const key = keyOf(item.url) || item.url}
 		{@const picture = accountOf(key)?.avatar}
@@ -51,7 +58,13 @@
 			href={pageOf(item)}
 			title={name}
 			avatar={{ key, name, src: picture ? thumbnail(picture) : '' }}
-			chip={lately ? { text: t('kept.new', { count: lately }), tone: 'ok' } : count === undefined && !board ? { text: t('kept.find'), tone: 'warn' } : null}
+			chip={matched !== null
+				? { text: t('kept.matching', { count: matched }), tone: matched ? 'ok' : undefined }
+				: lately
+					? { text: t('kept.new', { count: lately }), tone: 'ok' }
+					: count === undefined && !board
+						? { text: t('kept.find'), tone: 'warn' }
+						: null}
 			meta={[
 				count !== undefined ? (count ? t('kept.jobs', { count }) : t('kept.noJobs')) : board ? t('kept.board', { provider: provider(board.provider) }) : t('kept.noBoard'),
 				item.tags?.join(', ')
