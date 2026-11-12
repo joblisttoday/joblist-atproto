@@ -43,7 +43,7 @@ test('the menu is short, and signing in is for organizations', async ({ page }) 
 
 test('who you are: this device, with no account, private', async ({ page }) => {
 	await page.goto('/menu');
-	await page.locator('jl-menu-page').getByRole('link', { name: /^You/ }).click();
+	await page.locator('jl-menu-page').getByRole('link', { name: /^Account/ }).click();
 	await expect(page).toHaveURL(/\/menu\/accounts$/);
 	await expect(page.locator('jl-accounts jl-row:first-of-type')).toContainText('This device');
 	await expect(page.getByRole('link', { name: 'Add an account' })).toHaveAttribute('href', /\/signin\?add/);

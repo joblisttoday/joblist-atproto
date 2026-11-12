@@ -29,7 +29,7 @@ bottom at every width (`src/lib/components/Nav.svelte`, `src/lib/data/nav.json`)
 | 4th tab | `/menu` **Menu** | `/menu` **Menu** |
 | Inside | `/{domain}` an organization · `/job/{did}/{rkey}` a posted job · `/saved/{id}` a list · `/explore/list` follow a Bluesky list · `/explore/organization#url=…` a link's organization | `/org/page` its page's parts (`?field=…` one alone, `?all` everything) · `/org/jobs/{rkey}` edit an offer · `/org/embed` its jobs on its website |
 
-- Menu, the same for both: You (this device, or an account: `/menu/accounts`), Hiring? or
+- Menu, the same for both: Account (this device, or an account: `/menu/accounts`), Hiring? or
   Your organization (`/org`), Browse jobs (an organization), Language, Move to another
   device, Apps and add-on (`/menu/apps`), Source code.
 - Signed in as an organization that follows nothing, `/` opens `/org`.
