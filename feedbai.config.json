@@ -1,0 +1,16 @@
+{
+  "$schema": "https://raw.githubusercontent.com/internet4000/feedbai/main/schemas/config.schema.json",
+  "projects": [
+    {
+      "id": "joblist",
+      "repository": "https://github.com/joblisttoday/joblist-atproto",
+      "maintainers": ["@4www:hwww.org"],
+      "filing": "agent",
+      "sources": [
+        { "id": "matrix", "type": "matrix", "room": "#joblisttoday:matrix.org" },
+        { "id": "bluesky", "type": "bluesky", "mode": "search", "query": "joblist.today" },
+        { "id": "atproto", "type": "atproto", "project": "https://github.com/joblisttoday/joblist-atproto" }
+      ]
+    }
+  ]
+}
