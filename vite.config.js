@@ -44,10 +44,13 @@ export default defineConfig({
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
 			adapter: adapter({ fallback: 'index.html' }),
+			// No service worker for new visitors; the one browsers kept from before removes itself
+			// (src/service-worker.js).
+			serviceWorker: { register: false },
 			// Only this site's scripts run (its inline start script by hash; the analytics are a copy
 			// served from here, static/vendor/umami.js). No other site's script: Cloudflare's Web
 			// Analytics beacon is refused too (turn it off in the dashboard, see README).
-			// Requests go to any https address: job boards, each person's own atproto server, Umami's collector.
+			// Requests go to any https address: each organization's own atproto server, Umami's collector.
 			csp: {
 				mode: 'hash',
 				directives: {

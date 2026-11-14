@@ -4,7 +4,6 @@
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
-		"predev": "npm run build:extension && npm run build:embed",
 		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "vite preview",
@@ -13,14 +12,13 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
 		"test:unit": "vitest",
 		"test": "npm run test:unit -- --run && node --test 'scripts/**/*.test.js' 'site/**/*.test.js'",
-		"build:site": "npm run build:extension && npm run build:embed && vite build && node site/site.js build",
+		"build:site": "npm run build:embed && vite build && node site/site.js build",
 		"build:embed": "node scripts/build-embed.js",
-		"test:e2e": "npm run build:extension && playwright test",
-		"build:extension": "node scripts/build-extension.js --zip static/apps/joblist-firefox.zip"
+		"test:e2e": "playwright test",
+		"predev": "npm run build:embed"
 	},
 	"devDependencies": {
 		"@axe-core/playwright": "^4.14.0",
-		"@lucide/svelte": "^1.70.0",
 		"@playwright/test": "^1.65.0",
 		"@sveltejs/adapter-static": "^4.0.0",
 		"@sveltejs/kit": "^3.0.0",
@@ -37,10 +35,8 @@
 	},
 	"dependencies": {
 		"@atproto/api": "^0.28.0",
-		"@atproto/oauth-client-browser": "^0.5.10",
-		"idb-keyval": "^6.3.0",
-		"maplibre-gl": "^6.15.0"
+		"@atproto/oauth-client-browser": "^0.5.10"
 	},
 	"license": "GPL-3.0-or-later",
-	"description": "Companies that hire, curated by people, on atproto"
+	"description": "Organizations describe themselves and post their jobs on atproto"
 }

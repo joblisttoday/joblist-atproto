@@ -2,22 +2,18 @@
 	import '../app.css';
 	import favicon from '#lib/assets/favicon.svg';
 	import config from '#lib/data/config.json';
-	import Nav from '#lib/components/Nav.svelte';
-	import OutboxStatus from '#lib/components/OutboxStatus.svelte';
-	import { startOutbox } from '#lib/network/outbox.svelte.js';
-	import { initSession } from '#lib/auth/session.svelte.js';
-	import { startNetwork } from '#lib/network/network.svelte.js';
+	import Logo from '#lib/components/Logo.svelte';
+	import { initSession, session } from '#lib/session.svelte.js';
+	import { page } from '$app/state';
 	import { i18n, t } from '#lib/i18n/index.svelte.js';
-	import { registerTools } from '#lib/webmcp.js';
 
-	/** @type {{children: import('svelte').Snippet}} */
+	/**
+	 * Every page: joblist's mark (home), the signed-in organization's page (else, to sign in) and
+	 * settings, then the page, then the source.
+	 * @type {{children: import('svelte').Snippet}}
+	 */
 	let { children } = $props();
-
 	initSession();
-	startOutbox();
-	startNetwork();
-	registerTools();
-
 	$effect(() => {
 		document.documentElement.lang = i18n.locale;
 	});
@@ -30,30 +26,54 @@
 	<script defer src={config.analytics.script} data-host-url={config.analytics.hostUrl} data-website-id={config.analytics.websiteId} data-domains={config.analytics.domains} data-exclude-search="true"></script>
 </svelte:head>
 
-<a href="#main">{t('nav.skip')}</a>
-<Nav />
-<OutboxStatus />
-<main id="main" tabindex="-1">
+<header>
+	<a href="/"><Logo /><b>{config.name}</b></a>
+	<nav>
+		{#if session.handle}
+			<a href="/{session.handle}" aria-current={page.url.pathname.startsWith(`/${session.handle}`) ? 'page' : undefined}>{t('nav.organization')}</a>
+		{:else if session.ready}
+			<a href="/signin" aria-current={page.url.pathname === '/signin' ? 'page' : undefined}>{t('signin.title')}</a>
+		{/if}
+		<a href="/settings" aria-current={page.url.pathname === '/settings' ? 'page' : undefined}>{t('nav.settings')}</a>
+	</nav>
+</header>
+<main id="main">
 	{@render children()}
 </main>
+<footer>
+	<a href={config.source} target="_blank" rel="noopener">{t('footer.source')}</a>
+</footer>
 
 <style>
-	a[href='#main'] {
-		position: absolute;
-		left: var(--space-s);
-		top: calc(-1 * var(--tap-size) * 2);
-		z-index: 20;
+	header,
+	footer {
 		display: flex;
 		align-items: center;
+		justify-content: space-between;
+		gap: var(--space-m);
+		width: 100%;
+		max-width: calc(var(--reading-width) + 2 * var(--gutter));
+		margin-inline: auto;
+		padding: var(--space-s) var(--gutter);
+	}
+	header a,
+	footer a {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-s);
 		min-height: var(--tap-size);
-		padding: 0 var(--space-m);
-		background: var(--color-accent);
-		color: var(--color-accent-fg);
+		text-decoration: none;
 	}
-	a[href='#main']:focus {
-		top: var(--space-s);
+	nav {
+		display: flex;
+		gap: var(--space-m);
 	}
-	main:focus {
-		outline: none;
+	nav a[aria-current] {
+		text-decoration: underline;
+	}
+	footer {
+		justify-content: flex-end;
+		border-top: var(--border);
+		font-size: var(--font-size-small);
 	}
 </style>

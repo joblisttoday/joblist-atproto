@@ -1,8 +1,8 @@
 /**
- * The embed (embed/src/joblist-jobs.svelte.js) as one file anyone can load: joblist's job board
- * readers and its texts built in, nothing fetched from joblist.today. Written to
+ * The embed (embed/src/joblist-jobs.svelte.js) as one file anyone can load: reading an
+ * organization's account and its texts built in, nothing fetched from joblist.today. Written to
  * embed/dist/joblist-jobs.js, kept in the repository so that jsDelivr serves it from GitHub
- * by version (cdn.jsdelivr.net/gh/joblisttoday/joblist-atproto@<tag>/embed/dist/joblist-jobs.js);
+ * by version (cdn.jsdelivr.net/gh/joblisttoday/joblisttoday.github.io@<tag>/embed/dist/joblist-jobs.js);
  * the site serves a copy at /embed/joblist-jobs.js (static/embed, not kept in the repository).
  * Run: node scripts/build-embed.js [out-dir]
  */

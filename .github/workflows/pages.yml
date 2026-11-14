@@ -1,6 +1,6 @@
-# The site on GitHub Pages (joblist.today), built on each push to main: the app, its pages,
-# the browser add-on and the embed (npm run build:site). Static files only: joblist reads
-# job boards and atproto in each person's browser, and keeps nothing of its own.
+# The site on GitHub Pages (joblist.today), built on each push to main: the app, its pages
+# and the embed (npm run build:site). Static files only: joblist reads atproto in each
+# person's browser, and keeps nothing of its own.
 # Settings → Pages → Source: GitHub Actions; the domain is the build's CNAME file.
 name: pages
 

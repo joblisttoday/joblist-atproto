@@ -1,7 +1,7 @@
-// /embed/?board=greenhouse:acme (or ?organization=acme.org)&query=legal&where=Berlin&search&lang=fr&limit=10: the page's address sets the jobs shown.
+// /embed/?organization=acme.org&lang=fr&limit=10: the page's address sets the jobs shown.
 const params = new URLSearchParams(location.search);
 const jobs = document.querySelector('joblist-jobs');
-for (const name of ['board', 'organization', 'lang', 'limit', 'query', 'where', 'remote', 'search']) {
+for (const name of ['organization', 'lang', 'limit']) {
 	const value = params.get(name);
 	if (value !== null && jobs) jobs.setAttribute(name, value);
 }

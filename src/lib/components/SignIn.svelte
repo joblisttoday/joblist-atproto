@@ -1,56 +1,39 @@
 <script>
-	import Icon from './Icon.svelte';
 	import config from '#lib/data/config.json';
-	import { page } from '$app/state';
-	import { session, signIn } from '#lib/auth/session.svelte.js';
+	import { session, signIn } from '#lib/session.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
-	// A link can fill it in (a company page: "sign in as example.com").
-	let handle = $state(page.url.searchParams.get('handle') || '');
-	let busy = $state(false);
-	/** @type {string | null} */
-	let error = $state(null);
+	/**
+	 * Signing in with an atproto handle (an organization's: its domain): off to its account's
+	 * server, then back (to `back`, else its own page).
+	 * @type {{back?: string}}
+	 */
+	let { back = '' } = $props();
+	const id = $props.id();
+	let handle = $state('');
+	let going = $state(false);
+	let error = $state('');
 
 	/** @param {SubmitEvent} event */
 	async function submit(event) {
 		event.preventDefault();
-		busy = true;
-		error = null;
+		going = true;
+		error = '';
 		try {
-			await signIn(handle);
+			await signIn(handle, back);
 		} catch (err) {
 			error = err instanceof Error ? err.message : String(err);
-			busy = false;
+			going = false;
 		}
 	}
 </script>
 
-<jl-signin>
-	<form onsubmit={submit}>
-		<label for="handle">{t('signin.handle')}</label>
-		<input
-			id="handle"
-			bind:value={handle}
-			placeholder={t('signin.placeholder')}
-			autocomplete="username"
-			autocapitalize="none"
-			spellcheck="false"
-			inputmode="url"
-			enterkeyhint="go"
-			required
-			aria-describedby="handle-help"
-		/>
-		<small id="handle-help">{t('signin.help')}</small>
-		{#if error || session.error}<p role="alert">{t('signin.error')} <small>{error || session.error}</small></p>{/if}
-		<menu><button type="submit" disabled={busy}>{busy ? t('signin.busy') : t('signin.submit')}</button></menu>
-		<p>
-			<small>{t('signin.noAccount')} <a href={config.links.signup} target="_blank" rel="noopener">{t('signin.create')} <Icon name="external" /></a></small>
-		</p>
-	</form>
-</jl-signin>
-
-<style>
-	menu button {
-		width: 100%;
-	}
-</style>
+<form onsubmit={submit}>
+	<label for={id}>
+		{t('signin.handle')}
+		<input {id} bind:value={handle} type="text" placeholder={t('signin.placeholder')} autocomplete="username" autocapitalize="none" spellcheck="false" required />
+	</label>
+	<menu><button type="submit" disabled={going}>{going ? t('signin.going') : t('signin.submit')}</button></menu>
+	{#if error || session.error}<p role="alert">{t('signin.failed', { error: error || session.error || '' })}</p>{/if}
+	<p><small>{t('signin.noAccount')} <a href={config.links.signup} target="_blank" rel="noopener">{t('signin.create')}</a></small></p>
+</form>

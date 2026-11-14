@@ -1,17 +1,24 @@
 {
 	"about": "What /llms.txt says to agents and other programs, written at each build by site/llms.js. {name}, {url}, {source} are filled from config; the record types and the docs are added from the lexicons and docs/.",
-	"intro": "{name} ({url}) is a tool for a job hunt, in the browser: it reads an organization's open jobs straight from its own job board (Ashby, Greenhouse, Lever, Personio, Recruitee, Rippling, SmartRecruiters, Workable) and its Bluesky account, keeps the organizations, searches and jobs someone saves in their own browser, and lets an organization describe itself and post its jobs on atproto (the Bluesky protocol), from its own account. It keeps no list of organizations or jobs, and nothing of anyone's. Open source (GPL-3.0), no ads, no tracking, no accounts of its own.",
-	"lead": "There is no index to read: an organization's jobs are on its own job board, and what organizations publish is in their own atproto accounts (the records below). Jobs link to the organization's own posting: apply there. Jobs posted on atproto have their own page here.",
+	"intro": "{name} ({url}) lets an organization describe itself and post its jobs on atproto (the Bluesky protocol), from its own account, its domain as its handle; shows its page; and shows its jobs on its own website. It keeps nothing of its own: no server, no list, no accounts. Open source (GPL-3.0), no ads, no tracking.",
+	"lead": "There is no index to read: what organizations publish is in their own atproto accounts (the records below). A job links to where to apply: applications go straight to the organization.",
 	"pages": [
-		{ "title": "Explore", "path": "/", "about": "the search (a name, a link, a domain or a Bluesky list opens its organizations) and the organizations followed in this browser" },
-		{ "title": "An organization", "about": "`/{domain}`, e.g. `/gitlab.com`: its open jobs read live from its board, its Bluesky account; its places at `/{domain}/places`" },
-		{ "title": "Jobs", "path": "/jobs", "about": "the open jobs of the organizations followed in this browser (`/jobs#q=design&where=Berlin`)" },
-		{ "title": "Jobs posted on atproto", "about": "`/job/{did}/{rkey}`, with schema.org JobPosting data" },
-		{ "title": "Embed", "path": "/embed", "about": "an organization's open jobs on any website: `<joblist-jobs board=\"greenhouse:acme\">`" }
+		{
+			"title": "An organization",
+			"about": "`/{domain}`, e.g. `/joblist.today`: its description and its open jobs, read from its own account"
+		},
+		{
+			"title": "A job",
+			"about": "`/job/{did}/{rkey}`: one offer, and where to apply"
+		},
+		{
+			"title": "Embed",
+			"about": "an organization's open jobs on any website: `<joblist-jobs organization=\"acme.org\">`, or the frame `/embed/?organization=acme.org`"
+		}
 	],
 	"etiquette": [
-		"joblist's requests come from each person's browser, a few job boards at a time; it never crawls.",
-		"Link to an organization's page here, or to its job's own posting; never copy applications through joblist, it has none.",
-		"An organization that wants a fix: describe it on joblist with its own account (its handle is its domain), or open an issue at {source}/issues."
+		"joblist's requests come from each person's browser, to the organization's own account; it never crawls.",
+		"Link to an organization's page here, or to a job's page; joblist has no applications to pass on.",
+		"An organization that wants a fix: edit its page on joblist with its own account (its handle is its domain), or open an issue at {source}/issues."
 	]
 }

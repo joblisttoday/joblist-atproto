@@ -1,61 +1,29 @@
 <script>
-	import config from '#lib/data/config.json';
-	import Icon from '#lib/components/Icon.svelte';
-	import CompanyDelete from '#lib/components/CompanyDelete.svelte';
-	import Row from '#lib/components/Row.svelte';
-	import CompanyEditor from '#lib/components/CompanyEditor.svelte';
-	import OwnOnly from '#lib/components/OwnOnly.svelte';
+	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import { ownOrganization as org } from '#lib/network/own-organization.svelte.js';
+	import config from '#lib/data/config.json';
+	import CompanyForm from '#lib/components/CompanyForm.svelte';
+	import OwnOnly from '#lib/components/OwnOnly.svelte';
+	import { getRecord } from '#lib/atproto.js';
+	import { domainOf } from '#lib/profile.js';
+	import { session } from '#lib/session.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 
-	/**
-	 * Editing its page (/{domain}/edit, its own account's: OwnOnly): each part done or not, each
-	 * edited alone (?field=…), all of it at once (?all), or its description deleted. With ?field,
-	 * ?all or what a link gives (?url=…), the form (CompanyEditor).
-	 */
-	const handle = $derived(page.params.handle || '');
-	const editing = $derived(['field', 'all', 'url', 'name', 'board', 'key', 'text', 'title', 'next'].some((k) => page.url.searchParams.has(k)));
-	const fields = /** @type {const} */ (['description', 'jobBoard', 'locations', 'tags']);
+	/** Describing one's organization (/{domain}/edit): its own account's, its record read first. */
+	const domain = $derived(domainOf(page.params.handle || ''));
+	/** undefined while read @type {Record<string, any> | null | undefined} */
+	let value = $state(undefined);
+	$effect(() => {
+		const did = session.handle === domain ? session.did : null;
+		if (did) getRecord(did, config.collections.company, domain).then((r) => (value = r?.value || null), () => (value = null));
+	});
 </script>
 
-<svelte:head><title>{t('orgs.page')} · {config.name}</title></svelte:head>
+<svelte:head><title>{t('company.title')} · {config.name}</title></svelte:head>
 
-<OwnOnly {handle}>
-{#if editing}
-	<CompanyEditor />
-{:else}
-<h1>{t('orgs.page')}</h1>
-{#if org.company}
-	<p><a href="/{org.own}">{t('orgs.view')} <Icon name="next" /></a></p>
-	<jl-rows>
-		{#each fields as field (field)}
-			{@const done = !org.missing.includes(field)}
-			<Row
-				href="/{handle}/edit?field={field}"
-				icon={done ? 'added' : 'add'}
-				title={t(`orgs.field.${field}`)}
-				chip={done ? null : { text: t('orgs.field.add'), tone: 'warn' }}
-			/>
-		{/each}
-	</jl-rows>
-	<menu>
-		<a href="/{handle}/edit?all">{t('orgs.editAll')}</a>
-		<CompanyDelete company={org.company} />
-	</menu>
-{:else}
-	<p>{t('orgs.none')}</p>
-	<menu><a href="/{handle}/edit?all" data-primary><Icon name="add" /> {t('orgs.describe')}</a></menu>
-{/if}
-{/if}
+<OwnOnly handle={domain}>
+	<h1>{t('company.title')}</h1>
+	{#if value !== undefined}
+		<CompanyForm {domain} {value} onsaved={() => goto(`/${domain}`)} oncancel={() => history.back()} />
+	{/if}
 </OwnOnly>
-
-<style>
-	jl-rows {
-		display: block;
-		margin: var(--space-m) 0;
-	}
-	menu {
-		gap: var(--space-s);
-	}
-</style>

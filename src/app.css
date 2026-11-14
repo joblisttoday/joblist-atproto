@@ -1,34 +1,28 @@
+/* joblist's look: a few tokens, light and dark, and the elements as they are. One column,
+   as wide as reading, at every width (mobile first). */
 :root {
 	--color-bg: #fff;
 	--color-fg: #111;
 	--color-muted: #6b6b6b;
 	--color-line: #d9d9d9;
-	/* Edges of what is typed in or toggled: at least 3:1 against the page (WCAG 1.4.11). */
+	/* Edges of what is typed in: at least 3:1 against the page (WCAG 1.4.11). */
 	--color-control-line: #767676;
 	--color-soft: #f2f2f2;
 	--color-accent: #111;
 	--color-accent-fg: #fff;
 	--color-ok: #0a7a3d;
 	--color-error: #b3261e;
-	--color-warn: #8a5a00;
 	--color-focus: #1a5fd0;
-	/* Charts (/stats): one hue for amounts, three for kinds, gray for "not said" (checked for colour blindness). */
-	--color-series-1: #2a78d6;
-	--color-series-2: #eb6834;
-	--color-series-3: #1baf7a;
-	--color-series-none: #c9c9c7;
 
 	--font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 	--font-size: 1rem;
 	--font-size-small: 0.875rem;
-	--font-size-label: 0.75rem;
 	--font-size-large: 1.375rem;
-	--font-size-xl: clamp(1.375rem, 1rem + 2vw, 2.25rem);
+	--font-size-xl: clamp(1.5rem, 1rem + 2vw, 2.25rem);
 	--font-weight-strong: 600;
 	--line-height: 1.45;
 	--line-height-tight: 1.2;
 
-	--space-xxs: 0.125rem;
 	--space-xs: 0.25rem;
 	--space-s: 0.5rem;
 	--space-m: 1rem;
@@ -36,99 +30,19 @@
 	--space-xl: 2.5rem;
 
 	--radius: 0.5rem;
-	--radius-round: 999px;
-	--border-width: 1px;
-	--border: var(--border-width) solid var(--color-line);
-	--border-dashed: var(--border-width) dashed var(--color-line);
-	--control-border: var(--border-width) solid var(--color-control-line);
-	--focus-ring: 2px solid var(--color-focus);
-	--focus-offset: 2px;
-	/* The page uses the whole screen: fluid gutters, text kept to a readable measure, result lists in as many columns as fit. */
-	--gutter: clamp(var(--space-m), 3vw, var(--space-xl));
-	--measure: 40rem;
-	--column-min: 20rem;
-	--column-gap: var(--gutter);
-	--columns: repeat(auto-fill, minmax(min(100%, var(--column-min)), 1fr));
-	--explore-list-width: 28rem;
-	--sheet-peek: 7.5rem;
-	--handle-height: 2rem;
-	--sheet-half: 55%;
-	--sheet-max: 85dvh;
-	--popover-top: calc(var(--space-s) + var(--chip-height) + var(--space-xs));
-	--color-backdrop: rgb(0 0 0 / 0.4);
-	--handle-width: 2.5rem;
 	--radius-large: 1rem;
-	/* Charts (/stats): bars at most 24px thick, 4px rounded ends, 2px apart. */
-	--chart-height: 10rem;
-	--chart-bar: 1.5rem;
-	--chart-thin: 0.5rem;
-	--chart-gap: 2px;
-	--chart-radius: 4px;
-	--chart-label: 9rem;
-	--chart-swatch: 0.625rem;
-	/* A long text folded to this many lines (a company's description). */
-	--fold-lines: 4;
-	--menu-width: 14rem;
-	--shadow: 0 2px 8px rgb(0 0 0 / 0.25);
-	--tap-size: 2.75rem;
-	/* Chips and small buttons: a finger's size on touch screens, more compact with a mouse. */
-	--chip-height: var(--tap-size);
-	--chip-height-fine: 2.25rem;
-	--chips-fade: var(--space-l);
-	--avatar-size: 4rem;
-	--avatar-small: 2.5rem;
-	--avatar-saturation: 45%;
-	--avatar-lightness: 42%;
-	--color-avatar-fg: #fff;
-	--chip-line: 1.6;
-	--selected-bar: 3px;
-	--nav-height: 3.5rem;
-	--nav-icon-size: 1.25rem;
-	--icon-size: 1.15em;
-	--map-height: 60vh;
-	--map-height-small: 16rem;
-	--transition: 120ms ease-out;
-	--logo-size: 1.75rem;
-	--badge-size: 1.1rem;
-	--icon-avatar: 1.5rem;
-	--search-width: 28rem;
-	--search-width-wide: 48rem;
-	--card-min: 20rem;
-	--dialog-width: 72rem;
-	--dialog-bar-height: calc(var(--chip-height) + 2 * var(--space-xs));
-	/* Set by a dialog to its header's real height. */
-	--dialog-header-height: var(--dialog-bar-height);
-	--backdrop: rgb(0 0 0 / 0.45);
-	--account-width: 12rem;
-	--tooltip-width: 14rem;
-	--hidden-size: 1px;
-	--textarea-min: 8rem;
-	--textarea-max: 60vh;
+	--radius-round: 999px;
+	--border: 1px solid var(--color-line);
+	--control-border: 1px solid var(--color-control-line);
+	--gutter: clamp(var(--space-m), 3vw, var(--space-xl));
 	--reading-width: 42rem;
-	--hidden-size: 1px;
-	--aside-width: 22rem;
-	/* A form's preview spans its rows, beside the fields (wide screens). */
-	--form-rows: 40;
-	/* Pages of sections (Saved): as many columns as fit. */
-	--section-min: 26rem;
-	--required-mark: ' *';
-	--font-size-badge: 0.7rem;
+	/* What a finger taps: never smaller (WCAG 2.5.8, and phones). */
+	--tap-size: 2.75rem;
+	--avatar-size: 3rem;
+	--logo-size: 1.75rem;
 	--logo-stroke: 2.2;
 	--logo-open: 450ms cubic-bezier(0.3, 1.5, 0.5, 1);
-
 	color-scheme: light dark;
-}
-
-/* What gets the keyboard is never hidden under the bottom navigation (WCAG 2.4.11). */
-html {
-	scroll-padding-block: 0 calc(var(--nav-height) + env(safe-area-inset-bottom));
-}
-
-
-@media (hover: hover) and (pointer: fine) {
-	:root {
-		--chip-height: var(--chip-height-fine);
-	}
 }
 
 @media (prefers-color-scheme: dark) {
@@ -143,13 +57,7 @@ html {
 		--color-accent-fg: #111;
 		--color-ok: #4cc382;
 		--color-error: #ff8a80;
-		--color-warn: #f0b85a;
 		--color-focus: #8ab4ff;
-		--color-series-1: #3987e5;
-		--color-series-2: #d95926;
-		--color-series-3: #199e70;
-		--color-series-none: #4a4a48;
-		--color-backdrop: rgb(0 0 0 / 0.6);
 	}
 }
 
@@ -160,6 +68,9 @@ html {
 }
 
 body {
+	display: flex;
+	flex-direction: column;
+	min-height: 100dvh;
 	margin: 0;
 	background: var(--color-bg);
 	color: var(--color-fg);
@@ -169,45 +80,26 @@ body {
 	-webkit-text-size-adjust: 100%;
 }
 
-/* The page is at least the screen's height: main takes what is left, the footer stays at the bottom. */
-body {
-	display: flex;
-	flex-direction: column;
-	min-height: 100dvh;
-}
-
 main {
-	display: block;
 	flex: 1 0 auto;
+	width: 100%;
+	max-width: calc(var(--reading-width) + 2 * var(--gutter));
+	margin-inline: auto;
 	padding: 0 var(--gutter) var(--space-xl);
 }
 
-/* Running text stays readable on wide screens. */
-main p {
-	max-width: var(--measure);
-}
-
-/* Room for the bottom navigation, at every width (mobile first).
-   One breakpoint for the rest of the layout (header, explorer): (min-width: 64rem),
-   the same as config.layout.wide (media queries cannot read CSS variables). */
-body {
-	padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom));
-}
-
 h1,
-h2,
-h3 {
+h2 {
 	line-height: var(--line-height-tight);
 	margin: var(--space-l) 0 var(--space-s);
 }
 
 h1 {
 	font-size: var(--font-size-xl);
-	margin-top: var(--space-m);
 }
 
 h2 {
-	font-size: var(--font-size);
+	font-size: var(--font-size-large);
 }
 
 p {
@@ -220,8 +112,8 @@ a {
 }
 
 :focus-visible {
-	outline: var(--focus-ring);
-	outline-offset: var(--focus-offset);
+	outline: 2px solid var(--color-focus);
+	outline-offset: 2px;
 }
 
 small {
@@ -229,16 +121,26 @@ small {
 	font-size: var(--font-size-small);
 }
 
-ul,
-ol {
-	list-style: none;
+ul {
 	margin: 0;
 	padding: 0;
+	list-style: none;
+}
+
+ol {
+	margin: 0 0 var(--space-m);
+	padding-inline-start: var(--space-l);
+}
+
+ol > li + li {
+	margin-top: var(--space-xs);
 }
 
 img {
 	max-width: 100%;
 }
+
+/* — Forms — */
 
 button,
 input,
@@ -248,298 +150,97 @@ textarea {
 	color: inherit;
 }
 
-/* Never under 16px, wherever they sit: phones zoom into smaller fields. */
-input,
-select,
-textarea {
-	font-size: max(var(--font-size), 1em);
+form {
+	display: grid;
+	gap: var(--space-m);
 }
 
+label {
+	display: grid;
+	gap: var(--space-xs);
+	font-weight: var(--font-weight-strong);
+}
+
+label small {
+	font-weight: normal;
+}
+
+/* Never under 16px: phones zoom into smaller fields. */
 input,
 select,
 textarea {
 	width: 100%;
 	min-height: var(--tap-size);
-	padding: var(--space-s);
+	padding: var(--space-s) var(--space-m);
 	border: var(--control-border);
 	border-radius: var(--radius);
 	background: var(--color-bg);
-}
-
-/* Choosing a file: its button looks like the others. */
-input[type='file'] {
-	border-style: dashed;
-	cursor: pointer;
-}
-input[type='file']::file-selector-button {
-	min-height: var(--chip-height);
-	margin-inline-end: var(--space-s);
-	padding: 0 var(--space-m);
-	border: var(--border);
-	border-radius: var(--radius);
-	background: var(--color-soft);
-	color: var(--color-fg);
-	font: inherit;
-	cursor: pointer;
+	font-size: max(var(--font-size), 1em);
+	font-weight: normal;
 }
 
 textarea {
-	min-height: calc(var(--tap-size) * 2);
+	min-height: 10rem;
 	resize: vertical;
 }
 
+/* Buttons and the links that act as one, in a row. */
+menu {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--space-s);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
 button,
-menu > li > a,
 menu > a {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	gap: var(--space-xs);
+	gap: var(--space-s);
 	min-height: var(--tap-size);
-	padding: var(--space-s) var(--space-m);
-	border: var(--border);
-	border-radius: var(--radius);
+	padding: 0 var(--space-m);
+	border: var(--control-border);
+	border-radius: var(--radius-round);
 	background: var(--color-bg);
 	text-decoration: none;
 	cursor: pointer;
-	transition: background var(--transition);
 }
 
-button:hover:not(:disabled),
-menu > li > a:hover,
+button:hover,
 menu > a:hover {
 	background: var(--color-soft);
 }
 
-/* A toggle off shows only its edge. */
-button[aria-pressed='false'] {
-	border: var(--control-border);
-}
-
-button[type='submit'] {
+button[type='submit'],
+[data-primary] {
+	border-color: var(--color-accent);
 	background: var(--color-accent);
 	color: var(--color-accent-fg);
-	border-color: var(--color-accent);
 }
 
-button[type='submit']:hover:not(:disabled) {
+button[type='submit']:hover:not(:disabled),
+[data-primary]:hover {
 	background: var(--color-accent);
 	opacity: 0.85;
 }
 
 button:disabled {
-	opacity: 0.5;
 	cursor: default;
-}
-
-/* Contribute (add a company, a list, a job, a missing part): one look everywhere,
-   a round chip with a plus; "main" when it is what the page is for. */
-a[data-add],
-button[data-add] {
-	display: inline-flex;
-	align-items: center;
-	gap: var(--space-xs);
-	min-height: var(--chip-height);
-	padding: 0 var(--space-m);
-	border: var(--border-dashed);
-	border-color: var(--color-muted);
-	border-radius: var(--radius-round);
-	background: var(--color-bg);
-	color: var(--color-fg);
-	font-size: var(--font-size-small);
-	text-decoration: none;
-}
-a[data-add]:hover,
-button[data-add]:hover:not(:disabled) {
-	border-style: solid;
-	background: var(--color-soft);
-}
-a[data-add='main'],
-a[data-add='main']:hover {
-	border: var(--border-width) solid var(--color-accent);
-	background: var(--color-accent);
-	color: var(--color-accent-fg);
-	font-weight: var(--font-weight-strong);
-}
-
-label {
-	display: block;
-	margin: var(--space-m) 0 var(--space-xs);
-	font-weight: var(--font-weight-strong);
-}
-
-/* Required fields, in forms that say what the mark means: after their name (the field itself tells screen readers). */
-form:has(> p > small[data-required]) label:has(+ :is(input, select, textarea):required)::after,
-form:has(> p > small[data-required]) legend[data-required]::after {
-	content: var(--required-mark);
-	color: var(--color-error);
-}
-
-label:has(> input[type='checkbox']) {
-	display: inline-flex;
-	align-items: center;
-	gap: var(--space-s);
-	min-height: var(--tap-size);
-	margin: 0;
-	font-weight: normal;
-}
-
-input[type='checkbox'] {
-	width: auto;
-	min-height: auto;
-	accent-color: var(--color-accent);
-}
-
-/* A choice (radio or checkbox) shown as a chip: <label><input><span>…</span></label>.
-   The input stays for keyboards, screen readers and forms; the chip shows it. */
-label > input:is([type='radio'], [type='checkbox']):has(+ span) {
-	position: absolute;
-	opacity: 0;
-	width: var(--hidden-size);
-	height: var(--hidden-size);
-}
-label > input:is([type='radio'], [type='checkbox']) + span {
-	display: inline-flex;
-	align-items: center;
-	min-height: var(--chip-height);
-	padding: 0 var(--space-m);
-	border: var(--control-border);
-	border-radius: var(--radius-round);
-	cursor: pointer;
-	font-size: var(--font-size-small);
-	font-weight: normal;
-}
-label:hover > input:is([type='radio'], [type='checkbox']) + span {
-	background: var(--color-soft);
-}
-label > input:is([type='radio'], [type='checkbox']):checked + span {
-	background: var(--color-fg);
-	color: var(--color-bg);
-	border-color: var(--color-fg);
-}
-label > input:is([type='radio'], [type='checkbox']):focus-visible + span {
-	outline: var(--focus-ring);
-	outline-offset: var(--focus-offset);
-}
-
-summary {
-	min-height: var(--chip-height);
-	align-content: center;
-	padding: var(--space-xs) 0;
-	cursor: pointer;
-	font-weight: var(--font-weight-strong);
-}
-
-progress {
-	display: block;
-	width: 100%;
-	height: var(--space-xs);
-	accent-color: var(--color-fg);
-}
-
-label + small,
-input + small,
-textarea + small {
-	display: block;
-	margin-top: var(--space-xs);
-}
-
-fieldset {
-	border: var(--border);
-	border-radius: var(--radius);
-	margin: var(--space-m) 0;
-	padding: var(--space-s) var(--space-m) var(--space-m);
-}
-
-legend {
-	font-weight: var(--font-weight-strong);
-	padding: 0 var(--space-xs);
-}
-
-menu {
-	display: flex;
-	list-style: none;
-	flex-wrap: wrap;
-	gap: var(--space-s);
-	margin: var(--space-m) 0;
-	padding: 0;
-}
-
-/* A row of chips swiped sideways fades at the side where more chips are hidden. */
-@property --chips-fade-start {
-	syntax: '<length>';
-	inherits: false;
-	initial-value: 0px;
-}
-@property --chips-fade-end {
-	syntax: '<length>';
-	inherits: false;
-	initial-value: 0px;
-}
-@keyframes chips-fade {
-	from {
-		--chips-fade-start: 0px;
-		--chips-fade-end: var(--chips-fade);
-	}
-	10% {
-		--chips-fade-start: var(--chips-fade);
-	}
-	90% {
-		--chips-fade-end: var(--chips-fade);
-	}
-	to {
-		--chips-fade-start: var(--chips-fade);
-		--chips-fade-end: 0px;
-	}
-}
-jl-search-chips > menu,
-jl-explore-chips > menu,
-jl-explore-lists > menu {
-	mask-image: linear-gradient(
-		to right,
-		transparent,
-		black var(--chips-fade-start),
-		black calc(100% - var(--chips-fade-end)),
-		transparent
-	);
-	animation: chips-fade linear both;
-	animation-timeline: scroll(self inline);
+	opacity: 0.6;
 }
 
 [role='alert'] {
 	color: var(--color-error);
 }
 
-[hidden] {
-	display: none !important;
-}
-
-/* A search field keeps its name in sight, small on its top edge (the placeholder is only an example). */
-jl-search-field {
-	position: relative;
-	display: block;
-	min-width: 0;
-}
-jl-search-field label {
-	position: absolute;
-	inset-block-start: 0;
-	inset-inline-start: var(--space-s);
-	translate: 0 -50%;
-	margin: 0;
-	padding: 0 var(--space-xs);
-	background: var(--color-bg);
-	color: var(--color-muted);
-	font-size: var(--font-size-label);
-	font-weight: normal;
-	line-height: var(--line-height-tight);
-	pointer-events: none;
-}
-
-/* Heard by screen readers, not shown: a page's title where its search bar says what it is. */
+/* Said to screen readers only. */
 jl-visually-hidden {
 	position: absolute;
-	width: var(--hidden-size);
-	height: var(--hidden-size);
+	width: 1px;
+	height: 1px;
 	overflow: hidden;
 	clip-path: inset(50%);
 	white-space: nowrap;
@@ -548,66 +249,8 @@ jl-visually-hidden {
 @media (prefers-reduced-motion: reduce) {
 	*,
 	*::before,
-/* A search field keeps its name in sight, small on its top edge (the placeholder is only an example). */
-jl-search-field {
-	position: relative;
-	display: block;
-	min-width: 0;
-}
-jl-search-field label {
-	position: absolute;
-	inset-block-start: 0;
-	inset-inline-start: var(--space-s);
-	translate: 0 -50%;
-	margin: 0;
-	padding: 0 var(--space-xs);
-	background: var(--color-bg);
-	color: var(--color-muted);
-	font-size: var(--font-size-label);
-	font-weight: normal;
-	line-height: var(--line-height-tight);
-	pointer-events: none;
-}
-
-/* Heard by screen readers, not shown: a page's title where its search bar says what it is. */
-jl-visually-hidden {
-	position: absolute;
-	width: var(--hidden-size);
-	height: var(--hidden-size);
-	overflow: hidden;
-	clip-path: inset(50%);
-	white-space: nowrap;
-}
-
 	*::after {
 		transition: none !important;
 		animation: none !important;
-		scroll-behavior: auto !important;
 	}
-}
-
-/* A state, one per row at most (docs/architecture.md: rows and chips): "3 new", "Applied",
-   "30 days left", "Expired", "on joblist". tone: new (filled), ok, warn; none is plain. */
-jl-chip {
-	display: inline-flex;
-	align-items: center;
-	gap: var(--space-xxs);
-	padding: 0 var(--space-s);
-	border-radius: var(--radius-round);
-	background: var(--color-soft);
-	color: var(--color-fg);
-	font-size: var(--font-size-small);
-	font-weight: var(--font-weight-strong);
-	line-height: var(--chip-line);
-	white-space: nowrap;
-}
-jl-chip[tone='ok'] {
-	color: var(--color-ok);
-}
-jl-chip[tone='warn'] {
-	color: var(--color-warn);
-}
-jl-chip[tone='new'] {
-	background: var(--color-ok);
-	color: var(--color-bg);
 }

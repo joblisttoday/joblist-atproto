@@ -1,9 +1,7 @@
 {
-	"userAgent": "joblist.today (+https://joblist.today/llms.txt)",
 	"name": "joblist",
 	"url": "https://joblist.today",
-	"source": "https://github.com/joblisttoday/joblisttoday",
-	"shareImage": { "path": "/og.png", "width": 1200, "height": 630 },
+	"source": "https://github.com/joblisttoday/joblisttoday.github.io",
 	"collections": {
 		"company": "today.joblist.company",
 		"job": "today.joblist.job"
@@ -13,67 +11,6 @@
 		"did": "did:plc:jqaucxlucukeif3bltpuc7zx",
 		"permissionSet": "today.joblist.authFull"
 	},
-	"services": {
-		"relay": "https://relay1.us-east.bsky.network",
-		"relayFallbacks": ["https://relay1.us-west.bsky.network"],
-		"appview": "https://public.api.bsky.app",
-		"plc": "https://plc.directory",
-		"handleResolver": "https://public.api.bsky.app",
-		"placeSearch": "https://photon.komoot.io/api/"
-	},
-	"device": {
-		"name": "device"
-	},
-	"layout": {
-		"wide": "(min-width: 64rem)",
-		"dragThreshold": 6,
-		"finePointer": "(hover: hover) and (pointer: fine)",
-		"sheetPeekBelow": 0.3,
-		"sheetFullAbove": 0.72,
-		"copiedMs": 3000
-	},
-	"map": {
-		"style": "https://tiles.openfreemap.org/styles/positron",
-		"styleDark": "https://tiles.openfreemap.org/styles/dark",
-		"projection": "globe",
-		"clusterRadius": 40,
-		"clusterMaxZoom": 13,
-		"nearZoom": 11,
-		"selectZoom": 12,
-		"globeSizePx": 320,
-		"globeMinZoom": 1,
-		"globeCenter": [10, 30],
-		"globeSpan": 90,
-		"frameDelayMs": 600,
-		"loadWaitMs": 3000,
-		"center": [
-			13.405,
-			52.52
-		],
-		"zoom": 2,
-		"maxZoom": 13,
-		"padding": 40,
-		"pointRadius": 6,
-		"pointStroke": 2,
-		"popupMax": 8,
-		"placeMax": 500,
-		"focus": { "cellDeg": 0.5, "km": 40, "share": 0.5 },
-		"font": ["Noto Sans Regular"],
-		"hitRadius": 22,
-		"areaMinZoom": 4
-	},
-	"limits": {
-		"concurrency": 6,
-		"jobsConcurrency": 6,
-		"liveBoards": 20,
-		"pagesPerRepo": 100,
-		"indexerConcurrency": 8,
-		"boardPageSize": 100,
-		"jobsPerBoard": 2000,
-		"perAccount": { "company": 200, "job": 50 },
-		"boardsPerAccount": 100,
-		"boards": 3000
-	},
 	"locales": [
 		"en",
 		"fr",
@@ -81,107 +18,10 @@
 		"es"
 	],
 	"defaultLocale": "en",
-	"placeSearch": {
-		"limit": 6,
-		"minLength": 2,
-		"delayMs": 250,
-		"languages": ["en", "fr", "de"],
-		"layers": ["city", "locality", "district", "county", "state", "country"]
-	},
-	"hostedHandles": [".bsky.social"],
 	"embed": {
 		"page": "/embed",
 		"scripts": "/embed/",
 		"shown": 20
-	},
-	"curated": {
-		"max": 500
-	},
-	"nameSearch": {
-		"minLength": 3,
-		"waitMs": 600,
-		"shown": 5,
-		"cacheDays": 7,
-		"wikidata": "https://www.wikidata.org/w/api.php",
-		"bluesky": "https://public.api.bsky.app/xrpc/app.bsky.actor.searchActorsTypeahead",
-		"socials": {
-			"P2002": "https://x.com/{id}",
-			"P4033": "mastodon",
-			"P12361": "https://bsky.app/profile/{id}",
-			"P4264": "https://www.linkedin.com/company/{id}",
-			"P2037": "https://github.com/{id}",
-			"P2003": "https://www.instagram.com/{id}",
-			"P2013": "https://www.facebook.com/{id}",
-			"P2397": "https://www.youtube.com/channel/{id}"
-		}
-	},
-	"quickSearch": {
-		"places": 2000,
-		"shown": { "fields": 2, "cities": 2, "companies": 4, "tags": 2, "places": 3 }
-	},
-	"jobs": {
-		"pageSize": 50,
-		"companySearchFrom": 10,
-		"teamsShown": 12,
-		"spread": 2,
-		"olderDays": 90,
-		"placesSuggested": 30,
-		"companyPlaces": 12,
-		"prepareChunk": 500,
-		"prepareWaitMs": 5000,
-		"placesShown": 3,
-		"nearbyShown": 5,
-		"typingDelayMs": 200,
-		"notJobs": ["general application", "open application", "spontaneous application", "unsolicited application", "initiativbewerbung", "blindbewerbung", "candidature spontan[ée]e", "talent (pool|community|network)"],
-		"jobParam": "job",
-		"remoteWords": [
-			"remote",
-			"anywhere",
-			"home office",
-			"homeoffice",
-			"work from home",
-			"wfh",
-			"distributed",
-			"télétravail",
-			"teletravail",
-			"fernarbeit",
-			"mobiles arbeiten"
-		],
-		"hybridWords": ["hybrid", "hybride"],
-		"onsiteWords": ["on-site", "onsite", "on site", "in-office", "in office", "office-based", "office based", "in-person", "in person", "sur site", "vor ort"]
-	},
-	"companyForm": {
-		"kinds": ["company", "cooperative", "nonprofit", "collective", "project", "public"],
-		"foldAt": 320,
-		"nameMax": 100,
-		"descriptionMax": 3000,
-		"tagsMax": 20,
-		"tagMax": 64,
-		"linksMax": 20,
-		"tagSuggestions": 8,
-		"boardCheckDelayMs": 600
-	},
-	"saveSignIn": {
-		"returnMinutes": 30
-	},
-	"me": { "glance": 3 },
-	"kept": { "max": 500, "namesShown": 5, "boardsPerVisit": 40, "refreshHours": 6, "newDays": 7 },
-	"jobCollections": {
-		"file": "joblist-collections.json",
-		"fileMaxBytes": 5000000,
-		"max": 100,
-		"jobsMax": 5000,
-		"idMax": 40,
-		"nameMax": 80,
-		"titleMax": 300,
-		"companyMax": 200,
-		"urlMax": 2000,
-		"keyMax": 2500
-	},
-	"links": {
-		"signup": "https://bsky.app",
-		"profile": "https://bsky.app/profile/{handle}",
-		"handleHelp": "https://bsky.social/about/blog/4-28-2023-domain-handle-tutorial"
 	},
 	"analytics": {
 		"script": "/vendor/umami.js",
@@ -189,24 +29,25 @@
 		"websiteId": "479fa5c4-e9c9-4d8d-85c6-9a88c886dd24",
 		"domains": "joblist.today"
 	},
-	"travel": {
-		"kmPerHour": { "walk": 5, "bike": 15 },
-		"mode": "bike",
-		"detour": 1.3,
-		"bandMinutes": 5,
-		"minutes": [15, 30, 45, 60]
+	"services": {
+		"appview": "https://public.api.bsky.app",
+		"plc": "https://plc.directory",
+		"handleResolver": "https://public.api.bsky.app",
+		"dns": "https://cloudflare-dns.com/dns-query"
 	},
-	"cache": {
-		"writeDelayMs": 400
-	},
-	"outbox": {
-		"retryMs": 30000
+	"links": {
+		"signup": "https://bsky.app"
 	},
 	"jobPost": {
-		"renewWithin": 7,
 		"days": 30,
 		"maxDays": 120,
-		"dayChoices": [7, 14, 30, 60, 120],
+		"dayChoices": [
+			7,
+			14,
+			30,
+			60,
+			120
+		],
 		"titleMax": 200,
 		"descriptionMax": 10000,
 		"page": "/job/{did}/{rkey}",
@@ -221,14 +62,14 @@
 			"contract",
 			"internship",
 			"volunteer"
-		],
-		"status": ["open", "filled", "closed"],
-		"schemaEmployment": {
-			"full-time": "FULL_TIME",
-			"part-time": "PART_TIME",
-			"contract": "CONTRACTOR",
-			"internship": "INTERN",
-			"volunteer": "VOLUNTEER"
-		}
+		]
+	},
+	"limits": {
+		"pagesPerRepo": 100
+	},
+	"shareImage": {
+		"path": "/og.png",
+		"width": 1200,
+		"height": 630
 	}
 }

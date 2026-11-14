@@ -8,8 +8,11 @@ test("the site's pages: what joblist is, never numbers", () => {
 		pages.filter((p) => p.listed).map((p) => p.path),
 		['/']
 	);
+	assert.deepEqual(
+		pages.filter((p) => !p.listed).map((p) => p.path),
+		['/signin', '/settings']
+	);
 	for (const { meta } of pages) assert.doesNotMatch(`${meta.title} ${meta.description}`, /\d{2,}/);
-	assert.ok(pages.some((p) => p.path === '/menu/apps' && p.meta.noindex));
 });
 
 test('every other address gets the 404 page, on which the app starts', () => {

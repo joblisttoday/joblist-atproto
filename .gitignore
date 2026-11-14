@@ -27,7 +27,5 @@ vite.config.ts.timestamp-*
 /test-results/
 /playwright-report/
 
-# Browser add-on (scripts/build-extension.js)
-/extension/dist
-/static/apps/joblist-firefox.zip
+# The embed's copy the site serves (scripts/build-embed.js)
 /static/embed/joblist-jobs.js

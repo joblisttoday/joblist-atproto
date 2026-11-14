@@ -2,9 +2,9 @@
 
 joblist's record types are defined in [`lexicons/today/joblist/`](../lexicons/today/joblist):
 `company`, `list`, `suggestion`, `job`, and `authFull` (an OAuth permission set).
-joblist reads `company` and `job` only (`collections` in config): `list` and `suggestion`
-were published before, and their records stay valid, but lists gave way to organizations'
-tags and places, and to each person's saved organizations in their browser.
+joblist reads and writes `company` and `job` only (`collections` in config): `list` and
+`suggestion` were published before, and their records stay valid, but joblist no longer
+reads them.
 A `company` or `job` record counts only from the organization's own account (its handle is
 the record's domain): no one describes another organization.
 Every field added since the first records is optional: older records stay valid,
@@ -12,10 +12,9 @@ and apps that do not know a field ignore it.
 
 ## Company keys
 
-A company record's key is its domain, normalised the same way everywhere
-(`toDomain` in [`src/lib/models/company.js`](../src/lib/models/company.js)):
-the website's host name, lowercase, without `www.`, at most 253 characters
-(a DNS name). `https://www.Example.org/jobs` is `example.org`. Other records
+A company record's key is its domain, the account's own handle: lowercase, at most 253
+characters (a DNS name); joblist reads it only from the account whose handle it is
+(`loadProfile` in [`src/lib/profile.js`](../src/lib/profile.js)). Other records
 refer to a company by this key (`job.company`, `list.companies`,
 `suggestion.company`), with the same limit.
 
@@ -38,12 +37,10 @@ alongside the country's name.
 
 ## Limits on read
 
-Anyone can write any record: the lexicon's limits (lengths, numbers of tags,
-links, places…) are applied to every record read by the app
-([`src/lib/models/limits.js`](../src/lib/models/limits.js), which reads them
-from the lexicon files). Free text past its limit is cut; a link, date or code
-past its limit, a value of the wrong type or a field the lexicon does not have
-is left out.
+Anyone can write any record: joblist shows its text as text (never as HTML), follows its
+links only when they are web links (and email, to apply), and shows a job offer only while
+it is open and not past `expiresAt`, never further than `config.jobPost.maxDays` from now
+([`src/lib/records.js`](../src/lib/records.js)).
 
 ## Publishing them (owner only)
 

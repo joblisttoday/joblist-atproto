@@ -2,12 +2,12 @@ import { mount } from 'svelte';
 import JoblistJobs from './JoblistJobs.svelte';
 
 /**
- * <joblist-jobs board="greenhouse:acme" (or organization="acme.org", on atproto) query="" where="" remote="remote" search lang="en" limit="20">: an organization's open jobs on any website,
- * as joblist shows them (JoblistJobs.svelte), in its own shadow root (the page's styles
+ * <joblist-jobs organization="acme.org" lang="en" limit="20">: an organization's open jobs on any
+ * website, from its own atproto account (JoblistJobs.svelte), in its own shadow root (the page's styles
  * never reach it, its styles never leave it). Its attributes are its properties, followed.
  * Built by scripts/build-embed.js into embed/dist/joblist-jobs.js.
  */
-const NAMES = ['board', 'organization', 'lang', 'limit', 'query', 'where', 'remote', 'search'];
+const NAMES = ['organization', 'lang', 'limit'];
 
 class Element extends HTMLElement {
 	static observedAttributes = NAMES;
@@ -28,7 +28,7 @@ class Element extends HTMLElement {
 	/** @param {string} name */
 	read(name) {
 		const value = this.getAttribute(name);
-		this.props[name] = name === 'search' ? value !== null : (value ?? '');
+		this.props[name] = value ?? '';
 	}
 }
 
