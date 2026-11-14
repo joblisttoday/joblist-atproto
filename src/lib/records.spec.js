@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import config from '#lib/data/config.json';
-import { companyForm, companyRecord, isLive, jobForm, jobPath, jobRecord, safeUrl, toApplyUrl, toJob } from './records.js';
+import { companyForm, companyRecord, isLive, jobForm, jobPath, jobRecord, newPlaces, safeUrl, toApplyUrl, toJob } from './records.js';
 import { domainOf } from './profile.js';
 
 const now = Date.parse('2026-11-12T12:00:00Z');
@@ -27,9 +27,17 @@ describe('an organization', () => {
 	it('writes over its record: the fields the form does not show are kept', () => {
 		const before = { name: 'Acme', createdAt: '2026-01-01T00:00:00Z', locations: [{ name: 'Berlin' }], jobBoard: { provider: 'lever', id: 'acme' } };
 		const form = { ...companyForm('acme.org', before), name: ' Acme coop ', tags: 'a, b, a', description: '' };
-		const record = companyRecord(form, before, now);
+		const record = companyRecord(form, before, { now });
 		expect(record).toMatchObject({ $type: config.collections.company, name: 'Acme coop', url: 'https://acme.org', tags: ['a', 'b'], createdAt: before.createdAt, locations: before.locations, jobBoard: before.jobBoard });
 		expect(record).not.toHaveProperty('description');
+	});
+
+	it('writes one part alone, the rest as it was; a new one is named after its domain', () => {
+		const before = { name: 'Acme', description: 'Gardens', createdAt: '2026-01-01T00:00:00Z' };
+		const places = companyRecord({ locations: [{ name: 'Berlin', latitude: '52.5', longitude: '13.4' }, { name: '' }] }, before, { now });
+		expect(places).toMatchObject({ name: 'Acme', description: 'Gardens', locations: [{ name: 'Berlin', latitude: '52.5', longitude: '13.4' }] });
+		const links = companyRecord({ links: ['bsky.app/profile/acme.org', 'javascript:x', ''] }, null, { domain: 'acme.org', now });
+		expect(links).toMatchObject({ name: 'acme.org', links: ['https://bsky.app/profile/acme.org'] });
 	});
 });
 
@@ -51,8 +59,14 @@ describe('a job offer', () => {
 		const before = { title: 'Gardener', company: 'acme.org', url: 'https://acme.org/jobs/1', locations: [{ name: 'Berlin', country: 'DE' }], salary: { min: 1, currency: 'EUR', period: 'month' }, createdAt: '2026-11-01T00:00:00Z', expiresAt: '2026-11-20T00:00:00Z' };
 		const same = jobRecord(jobForm(before, now), where, before, now);
 		expect(same).toMatchObject({ url: before.url, locations: before.locations, salary: before.salary, createdAt: before.createdAt });
-		const moved = jobRecord({ ...jobForm(before, now), place: 'Paris' }, where, before, now);
-		expect(moved.locations).toEqual([{ name: 'Paris' }]);
+		const moved = jobRecord({ ...jobForm(before, now), locations: [{ name: 'Paris', latitude: '48.85', longitude: '2.35' }] }, where, before, now);
+		expect(moved.locations).toEqual([{ name: 'Paris', latitude: '48.85', longitude: '2.35' }]);
+		const remote = jobRecord({ ...jobForm(before, now), remote: 'remote' }, where, before, now);
+		expect(remote).not.toHaveProperty('locations');
+	});
+
+	it("knows the places it adds to its organization's", () => {
+		expect(newPlaces([{ name: 'Berlin', country: 'Germany' }], [{ name: 'berlin', country: 'germany' }, { name: 'Paris' }])).toEqual([{ name: 'Paris' }]);
 	});
 
 	it('is never shown further than an offer can run: a date years away is not live', () => {

@@ -10,7 +10,7 @@ test("the site's pages: what joblist is, never numbers", () => {
 	);
 	assert.deepEqual(
 		pages.filter((p) => !p.listed).map((p) => p.path),
-		['/signin', '/settings']
+		['/signin', '/settings', '/settings/language', '/about']
 	);
 	for (const { meta } of pages) assert.doesNotMatch(`${meta.title} ${meta.description}`, /\d{2,}/);
 });

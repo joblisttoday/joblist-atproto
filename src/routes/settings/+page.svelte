@@ -1,37 +1,113 @@
 <script>
 	import config from '#lib/data/config.json';
+	import Logo from '#lib/components/Logo.svelte';
+	import SettingsLinks from '#lib/components/SettingsLinks.svelte';
+	import { getProfile } from '#lib/atproto.js';
 	import { session, signOut } from '#lib/session.svelte.js';
-	import { i18n, setLocale, t } from '#lib/i18n/index.svelte.js';
+	import { i18n, t } from '#lib/i18n/index.svelte.js';
 
-	/** Settings (/settings): the language of this device, the account signed in here. */
-	const id = $props.id();
+	/**
+	 * Settings (/settings): who is signed in here, once and large (its page), else to sign in;
+	 * then plain rows (the language, its own page; about joblist; the source); signing out last.
+	 */
+	/** Its Bluesky picture, when it comes */
+	const avatar = $derived(session.did ? getProfile(session.did).then((p) => p?.avatar || '') : Promise.resolve(''));
+	const language = $derived(new Intl.DisplayNames([i18n.locale], { type: 'language' }).of(i18n.locale) || i18n.locale);
 </script>
 
 <svelte:head><title>{t('nav.settings')} · {config.name}</title></svelte:head>
 
 <h1>{t('nav.settings')}</h1>
 
-<section aria-labelledby="{id}-language">
-	<h2 id="{id}-language">{t('settings.language')}</h2>
-	<select aria-labelledby="{id}-language" value={i18n.locale} onchange={(e) => setLocale(e.currentTarget.value)}>
-		{#each config.locales as locale (locale)}<option value={locale}>{new Intl.DisplayNames([locale], { type: 'language' }).of(locale)}</option>{/each}
-	</select>
-</section>
+{#if session.handle}
+	<a href="/{session.handle}" data-you>
+		<span data-avatar>
+			{#await avatar then src}{#if src}<img {src} alt="" />{:else}{session.handle.charAt(0).toUpperCase()}{/if}{/await}
+		</span>
+		<strong>@{session.handle}</strong>
+		<small>{t('company.title')}</small>
+	</a>
+{:else if session.ready}
+	<SettingsLinks items={[{ href: '/signin', icon: 'signin', label: t('signin.title') }]} />
+{/if}
 
-<section aria-labelledby="{id}-account">
-	<h2 id="{id}-account">{t('settings.account')}</h2>
-	{#if !session.ready}
-		<p><small>…</small></p>
-	{:else if session.handle}
-		<p>{t('signin.as', { handle: session.handle })}</p>
-		<menu><button type="button" onclick={signOut}>{t('signin.out')}</button></menu>
-	{:else}
-		<menu><a href="/signin" data-primary>{t('signin.title')}</a></menu>
-	{/if}
-</section>
+<SettingsLinks
+	items={[
+		{ href: '/settings/language', icon: 'language', label: t('settings.language'), value: language },
+		{ href: '/about', icon: 'about', label: t('settings.about') },
+		{ href: config.source, icon: 'source', label: t('settings.source'), external: true }
+	]}
+/>
+
+{#if session.handle}
+	<SettingsLinks items={[{ icon: 'signout', label: t('signin.out'), onclick: signOut }]} />
+{/if}
+
+<footer>
+	<a href="/about"><Logo />{config.name}</a>
+</footer>
 
 <style>
-	select {
-		width: auto;
+	/* joblist's mark, last, centered: about it. */
+	footer {
+		display: flex;
+		justify-content: center;
+		margin-top: var(--space-xl);
+	}
+	footer a {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: var(--space-xs);
+		min-height: var(--tap-size);
+		padding: var(--space-s) var(--space-m);
+		--logo-size: 2.5rem;
+		color: var(--color-muted);
+		font-weight: var(--font-weight-strong);
+		text-decoration: none;
+	}
+	footer a:hover {
+		color: var(--color-fg);
+	}
+	/* Who is signed in, once and large, centered. */
+	[data-you] {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: var(--space-xs);
+		margin-bottom: var(--space-m);
+		padding: var(--space-m);
+		border-radius: var(--radius-large);
+		color: inherit;
+		text-align: center;
+		text-decoration: none;
+	}
+	[data-you]:hover {
+		background: var(--color-soft);
+	}
+	[data-avatar] {
+		display: grid;
+		place-items: center;
+		width: 4rem;
+		height: 4rem;
+		margin-bottom: var(--space-xs);
+		overflow: hidden;
+		border-radius: var(--radius-large);
+		background: var(--color-soft);
+		font-size: var(--font-size-large);
+		font-weight: var(--font-weight-strong);
+	}
+	[data-avatar] img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+	strong {
+		max-width: 100%;
+		font-size: var(--font-size-large);
+		overflow-wrap: anywhere;
+	}
+	small {
+		color: var(--color-muted);
 	}
 </style>

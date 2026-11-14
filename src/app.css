@@ -36,10 +36,18 @@
 	--control-border: 1px solid var(--color-control-line);
 	--gutter: clamp(var(--space-m), 3vw, var(--space-xl));
 	--reading-width: 42rem;
+	/* Pages with a map or pictures beside their text use more of a big screen. */
+	--wide-width: 76rem;
 	/* What a finger taps: never smaller (WCAG 2.5.8, and phones). */
 	--tap-size: 2.75rem;
 	--avatar-size: 3rem;
 	--logo-size: 1.75rem;
+	--icon-size: 1.25rem;
+	/* The tabs, floating at the bottom. */
+	--nav-height: 3.5rem;
+	--float-space: var(--space-s);
+	--color-bar: rgb(255 255 255 / 92%);
+	--shadow-menu: 0 8px 32px rgb(0 0 0 / 15%);
 	--logo-stroke: 2.2;
 	--logo-open: 450ms cubic-bezier(0.3, 1.5, 0.5, 1);
 	color-scheme: light dark;
@@ -58,6 +66,8 @@
 		--color-ok: #4cc382;
 		--color-error: #ff8a80;
 		--color-focus: #8ab4ff;
+		--color-bar: rgb(17 17 17 / 92%);
+		--shadow-menu: 0 8px 32px rgb(0 0 0 / 50%);
 	}
 }
 
@@ -78,6 +88,8 @@ body {
 	font-size: var(--font-size);
 	line-height: var(--line-height);
 	-webkit-text-size-adjust: 100%;
+	/* Room for the tabs floating at the bottom. */
+	padding-bottom: calc(var(--nav-height) + 2 * var(--float-space) + env(safe-area-inset-bottom));
 }
 
 main {
@@ -86,6 +98,29 @@ main {
 	max-width: calc(var(--reading-width) + 2 * var(--gutter));
 	margin-inline: auto;
 	padding: 0 var(--gutter) var(--space-xl);
+}
+
+/* A page with its map (or pictures) beside its text: wider on a big screen, the text in one
+   column, the map in the other, kept in view. Forms and settings stay as wide as reading. */
+main:has(jl-wide, jl-home, jl-about) {
+	max-width: calc(var(--wide-width) + 2 * var(--gutter));
+}
+jl-wide {
+	display: block;
+}
+@media (min-width: 64rem) {
+	jl-wide:has(> aside figure) {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		gap: var(--space-xl);
+		align-items: start;
+	}
+	jl-wide > aside {
+		position: sticky;
+		top: var(--space-l);
+		--map-height: calc(100dvh - var(--nav-height) - 2 * var(--float-space) - 3 * var(--space-l));
+		--map-margin: var(--space-l) 0 0;
+	}
 }
 
 h1,

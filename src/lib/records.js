@@ -1,4 +1,5 @@
 import config from '#lib/data/config.json' with { type: 'json' };
+import { locationLabel, samePlace, toLocations } from '#lib/places.js';
 
 /**
  * joblist's two records (lexicons/), as pages show them and forms write them:
@@ -47,7 +48,8 @@ const words = (text) => [...new Set(text.split(',').map((w) => w.trim()).filter(
 /* — An organization — */
 
 /**
- * @typedef {{name: string, url: string, description: string, kind: string, tags: string}} CompanyForm
+ * The whole form; each part of it (config companyForm.sections) writes only its fields.
+ * @typedef {{name: string, url: string, description: string, kind: string, tags: string, locations: import('#lib/places.js').Location[], links: string[]}} CompanyForm
  */
 
 /**
@@ -60,7 +62,9 @@ export function toCompany(value) {
 		url: safeUrl(value.url),
 		description: String(value.description || ''),
 		kind: String(value.kind || ''),
-		tags: Array.isArray(value.tags) ? value.tags.filter((t) => typeof t === 'string') : []
+		tags: Array.isArray(value.tags) ? value.tags.filter((t) => typeof t === 'string') : [],
+		locations: toLocations(value.locations, config.companyForm.locationsMax),
+		links: Array.isArray(value.links) ? value.links.map((l) => safeUrl(l)).filter(Boolean) : []
 	};
 }
 
@@ -72,31 +76,36 @@ export function toCompany(value) {
  */
 export function companyForm(domain, value) {
 	const c = toCompany(value || {});
-	return { name: c.name, url: c.url || `https://${domain}`, description: c.description, kind: c.kind, tags: c.tags.join(', ') };
+	return { name: c.name, url: c.url || `https://${domain}`, description: c.description, kind: c.kind, tags: c.tags.join(', '), locations: c.locations, links: c.links };
 }
 
 /**
- * The record the form writes, over the one it edits.
- * @param {CompanyForm} form
+ * The record a form writes, over the one it edits: only the fields it has (a part of the
+ * form, or all of it); a new one is named after its domain until it is given a name.
+ * @param {Partial<CompanyForm>} form
  * @param {Record<string, any> | null} [value]
- * @param {number} [now]
+ * @param {{domain?: string, now?: number}} [options]
  */
-export function companyRecord(form, value, now = Date.now()) {
+export function companyRecord(form, value, { domain = '', now = Date.now() } = {}) {
 	const at = new Date(now).toISOString();
 	/** @type {Record<string, any>} */
-	const record = { ...(value || {}), $type: config.collections.company, name: form.name.trim(), createdAt: value?.createdAt || at, updatedAt: at };
+	const record = { ...(value || {}), $type: config.collections.company, createdAt: value?.createdAt || at, updatedAt: at };
 	const set = (/** @type {string} */ key, /** @type {unknown} */ v) => (v && (!Array.isArray(v) || v.length) ? (record[key] = v) : delete record[key]);
-	set('url', withScheme(form.url));
-	set('description', form.description.trim());
-	set('kind', form.kind);
-	set('tags', words(form.tags).slice(0, 20));
+	record.name = (form.name ?? '').trim() || String(value?.name || '') || domain;
+	if (form.url !== undefined) set('url', withScheme(form.url));
+	if (form.description !== undefined) set('description', form.description.trim());
+	if (form.kind !== undefined) set('kind', form.kind);
+	if (form.tags !== undefined) set('tags', words(form.tags).slice(0, 20));
+	if (form.locations !== undefined) set('locations', toLocations(form.locations, config.companyForm.locationsMax));
+	if (form.links !== undefined) set('links', [...new Set(form.links.map((l) => safeUrl(withScheme(l))).filter(Boolean))].slice(0, config.companyForm.linksMax));
 	return record;
 }
 
 /* — A job offer — */
 
 /**
- * @typedef {{title: string, description: string, place: string, remote: string, employment: string, apply: string, days: number}} JobForm
+ * @typedef {{title: string, description: string, locations: import('#lib/places.js').Location[], remote: string, employment: string, apply: string, days: number}} JobForm
+ *   locations: where it is done (on site or hybrid); none when remote.
  */
 
 /**
@@ -131,12 +140,13 @@ export function daysLeft(expiresAt, now = Date.now()) {
  * @param {Record<string, any>} value
  */
 export function toJob(value) {
-	const places = Array.isArray(value.locations) ? value.locations : [];
+	const locations = toLocations(value.locations, 20);
 	return {
 		title: String(value.title || ''),
 		company: String(value.company || ''),
 		description: String(value.description || ''),
-		place: places.map((l) => l?.name || [l?.address, l?.country].filter(Boolean).join(', ')).filter(Boolean).join(' · '),
+		locations,
+		place: locations.map(locationLabel).filter(Boolean).join(' · '),
 		remote: String(value.remote || ''),
 		employment: String(value.employment || ''),
 		// Where to apply: its link for it, else its own page elsewhere (not its page here).
@@ -158,7 +168,7 @@ export function jobForm(value, now = Date.now()) {
 	return {
 		title: j.title,
 		description: j.description,
-		place: j.place,
+		locations: j.locations,
 		remote: j.remote,
 		employment: j.employment,
 		apply: apply.replace(/^mailto:/i, ''),
@@ -188,13 +198,21 @@ export function jobRecord(form, { company, did, rkey }, value, now = Date.now())
 		updatedAt: at,
 		expiresAt: new Date(now + days * DAY).toISOString()
 	};
-	const set = (/** @type {string} */ key, /** @type {unknown} */ v) => (v ? (record[key] = v) : delete record[key]);
+	const set = (/** @type {string} */ key, /** @type {unknown} */ v) => (v && (!Array.isArray(v) || v.length) ? (record[key] = v) : delete record[key]);
 	set('description', form.description.trim().slice(0, config.jobPost.descriptionMax));
 	set('remote', config.jobPost.remote.includes(form.remote) ? form.remote : '');
 	set('employment', config.jobPost.employment.includes(form.employment) ? form.employment : '');
-	// Its place, as typed: the one it had, kept as it was when unchanged.
-	if (form.place.trim() !== toJob(value || {}).place) set('locations', form.place.trim() ? [{ name: form.place.trim() }] : '');
+	// Where it is done, unless remote.
+	set('locations', form.remote === 'remote' ? '' : toLocations(form.locations, 20).slice(0, 20));
 	const apply = toApplyUrl(form.apply);
 	set('apply', apply ? { ...(value?.apply || {}), url: apply } : value?.apply?.bluesky ? { bluesky: true } : '');
 	return record;
 }
+
+/**
+ * The places a job adds to its organization's: those it names that the organization does
+ * not have yet.
+ * @param {import('#lib/places.js').Location[]} company
+ * @param {import('#lib/places.js').Location[]} job
+ */
+export const newPlaces = (company, job) => job.filter((l) => !company.some((c) => samePlace(c, l)));

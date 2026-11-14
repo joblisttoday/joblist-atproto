@@ -33,7 +33,9 @@
 		"appview": "https://public.api.bsky.app",
 		"plc": "https://plc.directory",
 		"handleResolver": "https://public.api.bsky.app",
-		"dns": "https://cloudflare-dns.com/dns-query"
+		"dns": "https://cloudflare-dns.com/dns-query",
+		"relay": "https://relay1.us-east.bsky.network",
+		"placeSearch": "https://photon.komoot.io/api/"
 	},
 	"links": {
 		"signup": "https://bsky.app"
@@ -71,5 +73,60 @@
 		"path": "/og.png",
 		"width": 1200,
 		"height": 630
+	},
+	"map": {
+		"style": "https://tiles.openfreemap.org/styles/positron",
+		"styleDark": "https://tiles.openfreemap.org/styles/dark",
+		"projection": "globe",
+		"center": [
+			10,
+			30
+		],
+		"zoom": 1,
+		"maxZoom": 11,
+		"padding": 48,
+		"pointRadius": 6,
+		"pointStroke": 2,
+		"clusterRadius": 40,
+		"clusterMaxZoom": 11,
+		"popupMax": 8,
+		"font": [
+			"Noto Sans Regular"
+		],
+		"finePointer": "(hover: hover) and (pointer: fine)"
+	},
+	"placeSearch": {
+		"limit": 6,
+		"minLength": 2,
+		"delayMs": 250,
+		"languages": [
+			"en",
+			"fr",
+			"de"
+		],
+		"layers": [
+			"city",
+			"locality",
+			"district",
+			"county",
+			"state",
+			"country"
+		]
+	},
+	"search": {
+		"minLength": 2,
+		"shown": 30,
+		"organizations": 200
+	},
+	"companyForm": {
+		"locationsMax": 50,
+		"linksMax": 20,
+		"sections": [
+			"about",
+			"kind",
+			"tags",
+			"places",
+			"links"
+		]
 	}
 }

@@ -14,5 +14,7 @@ qualityTests([
 	{ name: 'post a job, signed out', path: '/joblist.today/post', touch },
 	{ name: 'embed', path: '/joblist.today/embed', touch },
 	{ name: 'settings', path: '/settings', touch },
+	{ name: 'language', path: '/settings/language', touch },
+	{ name: 'about', path: '/about', touch },
 	{ name: 'not found', path: '/a/b/c', touch }
 ]);

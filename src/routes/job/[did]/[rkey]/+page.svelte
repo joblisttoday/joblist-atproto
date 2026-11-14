@@ -2,6 +2,11 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import config from '#lib/data/config.json';
+	import ContextMenu from '#lib/components/ContextMenu.svelte';
+	import OrgPill from '#lib/components/OrgPill.svelte';
+	import PlacesMap from '#lib/components/PlacesMap.svelte';
+	import { locationPoints } from '#lib/places.js';
+	import { share } from '#lib/share.js';
 	import { ago } from '#lib/i18n/dates.js';
 	import { loadJob } from '#lib/profile.js';
 	import { daysLeft } from '#lib/records.js';
@@ -10,8 +15,8 @@
 
 	/**
 	 * A job offer's page (/job/{did}/{rkey}, the address its record keeps), read from its
-	 * organization's own account: what, where, how to apply. Its own account also changes or
-	 * deletes it.
+	 * organization's own account: what, where, how to apply; a "⋯" menu shares it, and, for
+	 * its own account, changes or deletes it.
 	 */
 	const did = $derived(page.params.did || '');
 	const rkey = $derived(page.params.rkey || '');
@@ -36,6 +41,17 @@
 			: []
 	);
 
+	let copied = $state(false);
+	const actions = $derived([
+		{ label: t('menu.share'), icon: /** @type {const} */ ('share'), onclick: async () => (copied = (await share({ title: found?.title || '', url: location.href })) === 'copied') },
+		...(own
+			? [
+					{ label: t('profile.edit'), icon: /** @type {const} */ ('edit'), href: `${page.url.pathname}/edit` },
+					{ label: t('job.delete'), icon: /** @type {const} */ ('delete'), onclick: remove, danger: true }
+				]
+			: [])
+	]);
+
 	async function remove() {
 		if (!found || !confirm(t('job.delete.confirm'))) return;
 		await deleteRecord(config.collections.job, rkey);
@@ -53,29 +69,33 @@
 	<h1>{t('notFound.title')}</h1>
 	<p>{t('job.notFound')}</p>
 {:else}
-	<p><a href="/{found.company}">{found.name}</a></p>
-	<h1>{found.title}</h1>
-	{#if facts.length}<p>{facts.join(' · ')}</p>{/if}
-	<p><small>{when.join(' · ')}</small></p>
-	{#if !found.live}<p role="status">{t('job.closed')}</p>{/if}
-	<menu>
-		{#if found.live && found.apply}<a href={found.apply} target="_blank" rel="noopener noreferrer" data-primary>{t('job.apply')}</a>{/if}
-		{#if own}
-			<a href="{page.url.pathname}/edit">{t('profile.edit')}</a>
-			<button type="button" onclick={remove}>{t('job.delete')}</button>
-		{/if}
-	</menu>
-	{#if found.description}<p data-text>{found.description}</p>{/if}
+	<jl-wide>
+		<div>
+			<header>
+				<OrgPill domain={found.company} name={found.name} avatar={found.avatar} />
+				<ContextMenu label={t('menu.more')} items={actions} />
+			</header>
+			{#if copied}<p role="status"><small>{t('menu.copied')}</small></p>{/if}
+			<h1>{found.title}</h1>
+			{#if facts.length}<p>{facts.join(' · ')}</p>{/if}
+			<p><small>{when.join(' · ')}</small></p>
+			{#if !found.live}<p role="status">{t('job.closed')}</p>{/if}
+			{#if found.live && found.apply}<menu><a href={found.apply} target="_blank" rel="noopener noreferrer" data-primary>{t('job.apply')}</a></menu>{/if}
+			{#if found.description}<p data-text>{found.description}</p>{/if}
+		</div>
+		<aside>{#if found.remote !== 'remote'}<PlacesMap points={locationPoints(found.locations)} />{/if}</aside>
+	</jl-wide>
 {/if}
 
 <style>
-	p:first-child {
+	header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--space-m);
 		margin-top: var(--space-m);
 	}
-	menu {
-		margin-bottom: var(--space-l);
-	}
-	[data-text] {
-		white-space: pre-line;
+	header + h1 {
+		margin-top: var(--space-m);
 	}
 </style>

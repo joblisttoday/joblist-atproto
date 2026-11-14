@@ -43,7 +43,7 @@ export async function loadProfile(domain) {
 }
 
 /**
- * One job offer, with its organization's domain and name: null when it is not there, or not
+ * One job offer, with its organization's domain, name and picture: null when it is not there, or not
  * its organization's own.
  * @param {string} did
  * @param {string} rkey
@@ -52,6 +52,6 @@ export async function loadJob(did, rkey) {
 	if (blocked.has(did)) return null;
 	const [record, handle] = await Promise.all([getRecord(did, config.collections.job, rkey), handleOf(did)]);
 	if (!record?.value?.title || !handle || record.value.company !== handle) return null;
-	const company = await getRecord(did, config.collections.company, handle).catch(() => null);
-	return { ...toJob(record.value), rkey, did, name: String(company?.value?.name || handle), live: isLive(record.value), value: record.value };
+	const [company, bluesky] = await Promise.all([getRecord(did, config.collections.company, handle).catch(() => null), getProfile(did)]);
+	return { ...toJob(record.value), rkey, did, name: String(company?.value?.name || handle), avatar: bluesky?.avatar || '', live: isLive(record.value), value: record.value };
 }

@@ -4,6 +4,7 @@
 	import config from '#lib/data/config.json';
 	import JobForm from '#lib/components/JobForm.svelte';
 	import OwnOnly from '#lib/components/OwnOnly.svelte';
+	import { getRecord } from '#lib/atproto.js';
 	import { loadJob } from '#lib/profile.js';
 	import { jobPath } from '#lib/records.js';
 	import { t } from '#lib/i18n/index.svelte.js';
@@ -13,8 +14,16 @@
 	const rkey = $derived(page.params.rkey || '');
 	/** @type {Awaited<ReturnType<typeof loadJob>> | undefined} */
 	let job = $state(undefined);
+	/** Its organization's record (its places). @type {Record<string, any> | null} */
+	let companyValue = $state(null);
 	$effect(() => {
-		loadJob(did, rkey).then((j) => (job = j), () => (job = null));
+		loadJob(did, rkey).then(
+			async (j) => {
+				companyValue = j ? ((await getRecord(did, config.collections.company, j.company).catch(() => null))?.value ?? null) : null;
+				job = j;
+			},
+			() => (job = null)
+		);
 	});
 </script>
 
@@ -28,6 +37,6 @@
 {:else}
 	<OwnOnly handle={job.company}>
 		<h1>{t('post.edit')}</h1>
-		<JobForm company={job.company} {rkey} value={job.value} onsaved={() => goto(jobPath(did, rkey))} oncancel={() => history.back()} />
+		<JobForm company={job.company} {companyValue} {rkey} value={job.value} onsaved={() => goto(jobPath(did, rkey))} oncancel={() => history.back()} />
 	</OwnOnly>
 {/if}

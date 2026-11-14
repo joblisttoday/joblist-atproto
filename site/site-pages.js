@@ -1,6 +1,6 @@
 /**
  * The site's own pages, for search engines and link previews: the home, so it answers with
- * what joblist is, and the app's own (/signin, /settings), so they answer
+ * what joblist is, and the app's own (/signin, /settings, /about), so they answer
  * 200, not for search results; anything else (an organization's /{domain}, a job's /job/…) gets 404.html,
  * on which the app starts and shows it (GitHub Pages). Written with the app's build
  * (site/site.js).
@@ -30,7 +30,9 @@ export function sitePages() {
 	];
 	for (const [path, key] of [
 		['/signin', 'signin.title'],
-		['/settings', 'nav.settings']
+		['/settings', 'nav.settings'],
+		['/settings/language', 'settings.language'],
+		['/about', 'settings.about']
 	]) {
 		const title = `${en[/** @type {keyof typeof en} */ (key)]} · ${config.name}`;
 		pages.push({ path, listed: false, meta: { title, description: welcome, url: url(path), body: `<h1>${escape(title)}</h1><p>${escape(welcome)}</p>`, noindex: true } });

@@ -5,15 +5,24 @@ import { expect, test } from '@playwright/test';
  * explain; open an organization's page; sign in; its jobs; its embed; settings; nothing else.
  */
 
-test('the home says what joblist does, leads to signing in, and opens a page by its domain', async ({ page }) => {
+test('the home says what joblist does, how it works, and leads to signing in', async ({ page }) => {
 	await page.goto('/');
 	await expect(page.locator('h1')).toHaveText('joblist');
+	await page.getByRole('link', { name: 'How it works' }).click();
+	await expect(page).toHaveURL(/\/about$/);
+	await page.goto('/');
 	await page.getByRole('main').getByRole('link', { name: 'Sign in' }).click();
 	await expect(page).toHaveURL(/\/signin$/);
 	await expect(page.getByLabel('Handle')).toBeVisible();
+});
+
+test('search, on the home: organizations on joblist, found through the network; a domain opens its page', async ({ page }) => {
 	await page.goto('/');
-	await page.getByLabel('Its domain').fill('https://joblist.today/');
-	await page.getByRole('button', { name: 'Open' }).click();
+	const box = page.getByRole('searchbox', { name: 'Search organizations and jobs' });
+	await box.fill('joblist');
+	await expect(page.getByRole('link', { name: /joblist\.today/ }).first()).toBeVisible({ timeout: 30_000 });
+	await box.fill('https://joblist.today/');
+	await box.press('Enter');
 	await expect(page).toHaveURL(/\/joblist\.today$/);
 });
 
@@ -25,8 +34,12 @@ test("an organization's page is read from its own account: who it is, its open j
 	await expect(page.locator('h1')).toHaveText('bsky.app');
 	await expect(page.getByText('Not described yet.')).toBeVisible();
 	await expect(page.getByText('No open jobs right now.')).toBeVisible();
-	// Not its own: none of its tools.
+	// Its menu: to share it; not its own, none of its tools.
+	await page.getByRole('button', { name: 'More' }).click();
+	await expect(page.getByRole('button', { name: 'Share' })).toBeVisible();
 	await expect(page.getByRole('link', { name: 'Post a job' })).toHaveCount(0);
+	await page.keyboard.press('Escape');
+	await expect(page.getByRole('button', { name: 'Share' })).toHaveCount(0);
 });
 
 test('a domain no account has as its handle is no organization here', async ({ page }) => {
@@ -42,11 +55,19 @@ test("an organization's tools are its own account's: anyone else is asked to sig
 	}
 });
 
-test('settings: the language, and signing in', async ({ page }) => {
+test('settings: signing in, the language on its own page, the source', async ({ page }) => {
 	await page.goto('/settings');
-	await page.getByRole('combobox', { name: 'Language' }).selectOption('fr');
-	await expect(page.locator('h1')).toHaveText('Réglages');
-	await expect(page.getByRole('main').getByRole('link', { name: 'Se connecter' })).toBeVisible();
+	await expect(page.getByRole('main').getByRole('link', { name: 'Sign in' })).toBeVisible();
+	await expect(page.getByRole('link', { name: 'Source code' })).toHaveAttribute('href', /github\.com/);
+	await page.getByRole('link', { name: 'About' }).click();
+	await expect(page.locator('main section h2')).toHaveCount(4);
+	await page.goto('/settings');
+	await page.getByRole('link', { name: /Language/ }).click();
+	await expect(page).toHaveURL(/\/settings\/language$/);
+	await page.getByLabel('français').check();
+	await expect(page.locator('h1')).toHaveText('Langue');
+	await page.getByRole('link', { name: 'Réglages' }).first().click();
+	await expect(page.getByRole('link', { name: /Langue/ })).toContainText('français');
 });
 
 test('its jobs on any website: a line to paste, and the frame it opens', async ({ page }) => {
@@ -60,7 +81,7 @@ test('its jobs on any website: a line to paste, and the frame it opens', async (
 
 test('static files and statuses, as GitHub Pages serves them', async ({ request }) => {
 	expect((await request.get('/a/b/c')).status()).toBe(404);
-	for (const path of ['/signin', '/settings']) expect((await request.get(path)).status()).toBe(200);
+	for (const path of ['/signin', '/settings', '/settings/language', '/about']) expect((await request.get(path)).status()).toBe(200);
 	expect(await (await request.get('/robots.txt')).text()).toContain('Sitemap:');
 	expect(await (await request.get('/llms.txt')).text()).toContain('today.joblist.job');
 });
