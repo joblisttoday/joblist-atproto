@@ -42,7 +42,7 @@ Settings are in [`src/lib/data/config.json`](src/lib/data/config.json), interfac
 The embed (`<joblist-jobs organization="acme.org">`, [`embed/src/`](embed/src/JoblistJobs.svelte)):
 an organization's open jobs on its own site, read from its account by the visitor's
 browser. Built to `embed/dist`, kept in the repository, so jsDelivr serves it from GitHub:
-`https://cdn.jsdelivr.net/gh/joblisttoday/joblisttoday.github.io@<tag>/embed/dist/joblist-jobs.js`;
+`https://cdn.jsdelivr.net/gh/joblisttoday/joblisttoday@<tag>/embed/dist/joblist-jobs.js`;
 the site serves a copy at `/embed/joblist-jobs.js`. `npm run build:embed` after changing it
 (a test says when it is out of date).
 

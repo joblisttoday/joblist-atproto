@@ -1,7 +1,7 @@
 {
 	"name": "joblist",
 	"url": "https://joblist.today",
-	"source": "https://github.com/joblisttoday/joblisttoday.github.io",
+	"source": "https://github.com/joblisttoday/joblisttoday",
 	"collections": {
 		"company": "today.joblist.company",
 		"job": "today.joblist.job"

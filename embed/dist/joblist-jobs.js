@@ -1948,7 +1948,7 @@ typeof window < "u" && ((window.__svelte ??= {}).v ??= /* @__PURE__ */ new Set()
 var $ = {
 	name: "joblist",
 	url: "https://joblist.today",
-	source: "https://github.com/joblisttoday/joblisttoday.github.io",
+	source: "https://github.com/joblisttoday/joblisttoday",
 	collections: {
 		company: "today.joblist.company",
 		job: "today.joblist.job"
